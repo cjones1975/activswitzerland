@@ -6,7 +6,7 @@
   background: #1a2f4a;
   border: none;
   border-radius: 0;
-  padding: 0.75rem 1.25rem;
+  padding: 0.50rem 1rem;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -24,8 +24,20 @@
   color: #ffffff;
 }
 
+:host ::ng-deep .toggle-btn .p-button {
+  background: #285278 !important;
+  border-radius: 8px;
+  box-shadow: none;
+}
+
+:host ::ng-deep .toggle-btn .p-button:focus,
+:host ::ng-deep .toggle-btn .p-button:focus-visible,
+:host ::ng-deep .toggle-btn .p-button:hover {
+  background: #dbeafe !important;
+}
+
 .brand {
-  font-size: 1.125rem;
+  font-size: 1.4rem;
   font-weight: 600;
   color: #ffffff;
   letter-spacing: 0.01em;
