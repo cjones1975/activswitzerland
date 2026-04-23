@@ -15,7 +15,7 @@
                 </div>
                 <div class="menu-brand-text">
                     <span class="menu-brand-name">ActivSwitzerland</span>
-                    <span class="menu-brand-tagline">Discover · Explore · Plan</span>
+                    <span class="menu-brand-tagline">{{ 'nav-drawer.subtitle' | translate }}</span>
                 </div>
             </div>
             <button class="menu-close" type="button" (click)="onDrawerClose('menu-nav')">
@@ -24,10 +24,4 @@
         </div>
     </ng-template>
     <app-menu-nav></app-menu-nav>
-    <ng-template #footer>
-        <div class="menu-footer">
-            <p>Switzerland travel discovery prototype</p>
-            <p>v1.0 · 2024</p>
-        </div>
-    </ng-template>
 </p-drawer>
