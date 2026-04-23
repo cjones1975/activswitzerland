@@ -1,0 +1,15 @@
+{
+  "app": {
+    "title": "La mia app Angular",
+    "welcome": "Benvenuto"
+  },
+  "nav-drawer": {
+    "subtitle": "Scoprire · Esplorare · Pianificare"
+  },
+  "nav": {
+    "navigation": "NAVIGAZIONE",
+    "home": "Home",
+    "explore": "Esplora",
+    "mapplanner": "Pianificatore mappa"
+  }
+}

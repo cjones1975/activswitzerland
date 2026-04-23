@@ -41,3 +41,11 @@ None
 - PrimeNG Menubar added to `frontend/src/app/shell/header-nav`
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
+
+### 2026-04-23 — Site Language Selection Completed
+- PrimeNG `Select` added to bottom of `menu-nav`, pinned with flex column layout on `:host`
+- Options: English (en, default), Deutsch (de), Français (fr), Italiano (it)
+- Selection wired to `changeLanguage()` in `MenuNav`; language persisted to `localStorage`
+- `zone.js` installed and added to polyfills in `angular.json`
+- Populated `de.json` and `it.json` (were empty); all four locale files include `nav.*` and `nav-drawer.*` keys
+- Fixed duplicate `TranslateService` initialisation — removed from `DrawerHost`, owned by `MenuNav`

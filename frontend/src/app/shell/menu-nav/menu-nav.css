@@ -1,5 +1,7 @@
 :host {
-    display: block;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
 }
 
 .nav-section {
@@ -95,4 +97,13 @@
 
 .login-btn .pi-chevron-right {
     font-size: 0.8rem;
+}
+
+.lang-selector {
+    margin-top: auto;
+    padding-top: 1rem;
+}
+
+.lang-select {
+    width: 100%;
 }

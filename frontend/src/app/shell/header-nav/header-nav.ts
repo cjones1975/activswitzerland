@@ -10,6 +10,7 @@ import { Drawer } from '../../shared/services/drawer';
   styleUrl: './header-nav.css',
 })
 export class HeaderNav {
+
   private drawer = inject(Drawer);
 
   toggleMenu() {
