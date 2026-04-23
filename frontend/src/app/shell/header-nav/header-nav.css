@@ -1,0 +1,32 @@
+:host {
+  display: block;
+}
+
+:host ::ng-deep .header-nav.p-menubar {
+  background: #1a2f4a;
+  border: none;
+  border-radius: 0;
+  padding: 0.75rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+:host ::ng-deep .header-nav .p-menubar-start {
+  flex: 1;
+}
+
+:host ::ng-deep .header-nav .p-menubar-end {
+  flex: 0 0 auto;
+}
+
+:host ::ng-deep .toggle-btn .p-button {
+  color: #ffffff;
+}
+
+.brand {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #ffffff;
+  letter-spacing: 0.01em;
+}
