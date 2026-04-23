@@ -1,0 +1,16 @@
+<!-- LANGUAGES -->
+<p-drawer [visible]="svc.isOpen('menu-nav')" [closable]="false" (visibleChange)="onVisibleChange('menu-nav', $event)"
+    position="left" appendTo="body" [baseZIndex]="svc.zIndexFor('menu-nav')">
+    <ng-template #header>
+        <div class="drawer-icon">
+            <button type="button" (click)="onDrawerClose('menu-nav')">
+                <i class="fa-light fa-circle-chevron-left"></i>
+            </button>
+            Language
+        </div>
+    </ng-template>
+    <div>
+        <app-menu-nav></app-menu-nav>
+    </div>
+    <ng-template #footer></ng-template>
+</p-drawer>
