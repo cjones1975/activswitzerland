@@ -28,6 +28,15 @@ None
 - Feature scoped: PrimeNG Menubar with custom template, brand left / hamburger right
 - Side drawer activation deferred to Phase 2
 
+### 2026-04-23 — Navigation Side Menu Started
+- Feature scoped: wire up hamburger toggle to drawer-host/DrawerService, build side menu to match Toggle_menu.png
+
+### 2026-04-23 — Navigation Side Menu Completed
+- Hamburger button in header-nav wired to `DrawerService.toggle('menu-nav')`
+- `DrawerHost` added to `main-layout`, manages all drawer overlays
+- `menu-nav` built with NAVIGATION section (Home, Explore, Map Planner) and Log In button
+- Visual styling matches `Toggle_menu.png` reference; icon borders removed, hover color `#dbeafe`
+
 ### 2026-04-23 — Top Navigation Menu Phase 1 Completed
 - PrimeNG Menubar added to `frontend/src/app/shell/header-nav`
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right

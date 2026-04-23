@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { Menubar } from 'primeng/menubar';
 import { Button } from 'primeng/button';
+import { Drawer } from '../../shared/services/drawer';
 
 @Component({
   selector: 'app-header-nav',
@@ -8,4 +9,10 @@ import { Button } from 'primeng/button';
   templateUrl: './header-nav.html',
   styleUrl: './header-nav.css',
 })
-export class HeaderNav {}
+export class HeaderNav {
+  private drawer = inject(Drawer);
+
+  toggleMenu() {
+    this.drawer.toggle('menu-nav');
+  }
+}
