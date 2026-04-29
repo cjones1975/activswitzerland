@@ -12,6 +12,22 @@
     "explore": "Esplora",
     "mapplanner": "Pianificatore mappa"
   },
+  "auth": {
+    "hero": {
+      "title": "Bentornato",
+      "subtitle": "Accedi per visualizzare i tuoi viaggi e le recensioni salvate"
+    },
+    "tabs": {
+      "login": "Accedi",
+      "register": "Crea account"
+    },
+    "benefits": {
+      "title": "Perché creare un account?",
+      "save": "Salva idee di viaggio",
+      "reviews": "Leggi e scrivi recensioni della community",
+      "ai": "Lascia che l'AI costruisca il tuo itinerario"
+    }
+  },
   "hero": {
     "badge": "Il meglio della Svizzera",
     "title": "Benvenuto in Svizzera",

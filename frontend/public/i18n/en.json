@@ -12,6 +12,22 @@
     "explore": "Explore",
     "mapplanner": "Map Planner"
   },
+  "auth": {
+    "hero": {
+      "title": "Welcome Back",
+      "subtitle": "Log in to access your saved trips and reviews"
+    },
+    "tabs": {
+      "login": "Login",
+      "register": "Create account"
+    },
+    "benefits": {
+      "title": "Why create an account?",
+      "save": "Save trip ideas",
+      "reviews": "Leave and read community reviews",
+      "ai": "Let AI build an itinerary"
+    }
+  },
   "hero": {
     "badge": "Switzerland's finest experiences",
     "title": "Welcome to Switzerland",
