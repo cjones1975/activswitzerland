@@ -15,11 +15,11 @@
     width: 44px;
     height: 44px;
     border-radius: 50%;
-    background: #1a3a5c;
+    background: var(--navy-700);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
+    color: var(--color-white);
     font-size: 1.25rem;
     flex-shrink: 0;
 }
@@ -32,20 +32,20 @@
 .menu-brand-name {
     font-size: 1rem;
     font-weight: 700;
-    color: #1a2f4a;
+    color: var(--navy-800);
     line-height: 1.2;
 }
 
 .menu-brand-tagline {
     font-size: 0.75rem;
-    color: #6b7280;
+    color: var(--gray-500);
 }
 
 .menu-close {
     background: none;
     border: none;
     cursor: pointer;
-    color: #6b7280;
+    color: var(--gray-500);
     font-size: 1.1rem;
     padding: 0.35rem;
     display: flex;
@@ -55,13 +55,13 @@
 }
 
 .menu-close:hover {
-    color: #1a2f4a;
-    background: #f3f4f6;
+    color: var(--navy-800);
+    background: var(--gray-100);
 }
 
 .menu-footer {
     text-align: center;
-    color: #9ca3af;
+    color: var(--gray-400);
     font-size: 0.7rem;
     line-height: 1.6;
 }

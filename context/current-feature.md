@@ -42,6 +42,16 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-29 — Login Page Completed
+- Reactive form with `email` (required + email validator) and `password` (required) controls
+- Email field: envelope icon, `--gray-50` fill, placeholder `your@email.com`
+- Password field: padlock icon, `--gray-50` fill, placeholder `Your password`, eye toggle shown only when field has a value
+- Red border (`--color-error`) on touched invalid fields; submit button disabled (`opacity: 0.45`) until form is valid
+- "Forgot password?" router link right-aligned below password field
+- Log In button background `--navy-900`, hover `--navy-500`
+- CSS custom properties (`--navy-*`, `--amber-*`, `--gray-*`, semantic) defined in `styles.css`
+- All hex colour values replaced with variables across 7 component CSS files
+
 ### 2026-04-29 — Auth Layout Page Completed
 - `AuthLayout` created as a separate layout from `MainLayout`, routed at `/auth`
 - Hero section (200px) with blue gradient, amber lock icon circle (`#b45309`), title and subtitle

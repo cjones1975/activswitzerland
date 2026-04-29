@@ -50,7 +50,7 @@
 }
 
 .hero-badge .pi-map-marker {
-    color: #f59e0b;
+    color: var(--amber-400);
     font-size: 0.85rem;
 }
 
@@ -58,7 +58,7 @@
     margin: 0;
     font-size: 2.6rem;
     font-weight: 800;
-    color: #ffffff;
+    color: var(--color-white);
     line-height: 1.1;
     letter-spacing: -0.02em;
 }
@@ -78,8 +78,8 @@
     gap: 0.5rem;
     align-self: flex-start;
     padding: 0.85rem 1.75rem;
-    background: #d97706;
-    color: #1a1a1a;
+    background: var(--amber-600);
+    color: var(--color-text-dark);
     border: none;
     border-radius: 999px;
     font-size: 1rem;
@@ -89,13 +89,13 @@
 }
 
 .hero-cta:hover {
-    background: #b45309;
+    background: var(--amber-700);
 }
 
 .hero-stats {
     display: flex;
     align-items: center;
-    gap: 1.25rem;
+    gap: 1rem;
     padding-top: 0.75rem;
     padding-bottom: 0.75rem;
     border-top: 1px solid rgba(255, 255, 255, 0.15);
@@ -115,7 +115,7 @@
 .stat-value {
     font-size: 1.3rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--color-white);
     line-height: 1;
 }
 
