@@ -42,6 +42,13 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-29 — Footer Navigation Menu Completed
+- `FooterNav` component built with five Font Awesome Light icons: Home, Explore, Map, Trips, Profile
+- Fixed to bottom via `position: fixed`; added to `MainLayout` template and imports
+- Active route (Home) styled `#b45309`; inactive icons `#0e3e6b`; hover shows circle background with white icon
+- Only Home route wired (`/`); others stubbed (`/explore`, `/map`, `/trips`, `/profile`) for later
+- Footer background `#dbeafe`; hover circle color `#0e3e6b`
+
 ### 2026-04-29 — Homepage Hero Section Completed
 - `Home` component wired as default child route of `MainLayout`
 - Hero section built with `hero.jpg` background, dark gradient overlay, responsive layout
