@@ -42,6 +42,15 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-29 — Homepage Hero Section Completed
+- `Home` component wired as default child route of `MainLayout`
+- Hero section built with `hero.jpg` background, dark gradient overlay, responsive layout
+- Content: badge, title, subtitle, CTA button (events deferred), and stats row (200+ Attractions, 26 Cantons, 13 UNESCO Sites)
+- `src/assets` added to `angular.json` assets config so `hero.jpg` is served correctly
+- Header nav set to `position: fixed` with `z-index: 100`
+- Hero height set to 500px; badge and stats bar styled with `rgba(0,0,0,0.2)` background
+- `hero.*` i18n keys added to all four locale files (en, de, fr, it)
+
 ### 2026-04-23 — Site Language Selection Completed
 - PrimeNG `Select` added to bottom of `menu-nav`, pinned with flex column layout on `:host`
 - Options: English (en, default), Deutsch (de), Français (fr), Italiano (it)

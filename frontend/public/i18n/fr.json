@@ -11,5 +11,16 @@
     "home": "Accueil",
     "explore": "Explorer",
     "mapplanner": "Carte"
+  },
+  "hero": {
+    "badge": "Le meilleur de la Suisse",
+    "title": "Bienvenue en Suisse",
+    "subtitle": "Découvrez des excursions, des sites incontournables et des trésors cachés — depuis votre point de départ.",
+    "cta": "Planifier un voyage",
+    "stats": {
+      "attractions": "Attractions",
+      "cantons": "Cantons",
+      "unesco": "Sites UNESCO"
+    }
   }
 }
