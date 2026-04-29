@@ -1,1 +1,42 @@
-<p>login works!</p>
+<form [formGroup]="form" (ngSubmit)="form.valid && form.value">
+
+    <div class="field">
+        <label class="field-label">Email address</label>
+        <div class="input-wrap">
+            <i class="fa-sharp fa-light fa-envelope input-icon"></i>
+            <input
+                class="field-input"
+                type="email"
+                formControlName="email"
+                placeholder="your@email.com"
+                [class.invalid]="form.controls.email.invalid && form.controls.email.touched"
+            />
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="field-label">Password</label>
+        <div class="input-wrap">
+            <i class="fa-light fa-lock input-icon"></i>
+            <input
+                class="field-input"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Your password"
+                [class.invalid]="form.controls.password.invalid && form.controls.password.touched"
+            />
+            @if (form.controls.password.value) {
+                <button type="button" class="eye-btn" (click)="showPassword.set(!showPassword())">
+                    <i class="fa-light" [class.fa-eye]="!showPassword()" [class.fa-eye-slash]="showPassword()"></i>
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="forgot-wrap">
+        <a class="forgot-link" routerLink="/auth/forgot-password">Forgot password?</a>
+    </div>
+
+    <button class="submit-btn" type="submit" [disabled]="form.invalid">Log in</button>
+
+</form>

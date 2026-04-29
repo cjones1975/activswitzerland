@@ -1,6 +1,6 @@
 .auth-page {
     min-height: 100svh;
-    background: #f2f5f7;
+    background: var(--gray-50);
     padding-top: 56px;
     padding-bottom: 72px;
     display: flex;
@@ -10,7 +10,7 @@
 /* Hero */
 .auth-hero {
     height: 200px;
-    background: linear-gradient(to bottom, #1d4573 0%, #0c2340 100%);
+    background: linear-gradient(to bottom, var(--navy-500) 0%, var(--navy-900) 100%);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -23,11 +23,11 @@
     width: 48px;
     height: 48px;
     border-radius: 50%;
-    background: #b45309;
+    background: var(--amber-700);
     display: flex;
     align-items: center;
     justify-content: center;
-    color: #ffffff;
+    color: var(--color-white);
     font-size: 1.35rem;
     margin-bottom: 0.65rem;
 }
@@ -36,7 +36,7 @@
     margin: 0 0 0.3rem;
     font-size: 1.4rem;
     font-weight: 700;
-    color: #ffffff;
+    color: var(--color-white);
 }
 
 .auth-hero-subtitle {
@@ -48,7 +48,7 @@
 
 /* Overlapping card */
 .auth-card {
-    background: #ffffff;
+    background: var(--color-white);
     border-radius: 16px;
     box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
     margin: -15px 1rem 1.5rem;
@@ -59,7 +59,7 @@
 .auth-tabs {
     display: flex;
     gap: 0.5rem;
-    background: #f2f5f7;
+    background: var(--gray-50);
     padding: 0.4rem;
     border-radius: 12px;
     margin: 1rem;
@@ -75,12 +75,12 @@
     cursor: pointer;
     transition: background 0.2s, box-shadow 0.2s, color 0.2s;
     background: transparent;
-    color: #6b7280;
+    color: var(--gray-500);
 }
 
 .auth-tab-btn.active {
-    background: #ffffff;
-    color: #1a2f4a;
+    background: var(--color-white);
+    color: var(--navy-800);
     box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
 }
 
@@ -91,6 +91,7 @@
 /* Benefits */
 .auth-benefits {
     padding: 0 1rem;
+    margin-bottom: 1rem;
     display: flex;
     flex-direction: column;
     gap: 9px;
@@ -100,7 +101,7 @@
     margin: 0 0 0.75rem;
     font-size: 1rem;
     font-weight: 700;
-    color: #000000;
+    color: var(--color-black);
 }
 
 .benefit-card {
@@ -108,14 +109,14 @@
     align-items: center;
     gap: 1rem;
     height: 80px;
-    background: #ffffff;
+    background: var(--color-white);
     border-radius: 12px;
     padding: 0 1.25rem;
 }
 
 .benefit-icon {
     font-size: 1.3rem;
-    color: #b45309;
+    color: var(--amber-700);
     flex-shrink: 0;
 }
 
@@ -123,10 +124,10 @@
     flex: 1;
     font-size: 0.9rem;
     font-weight: 500;
-    color: #1f2937;
+    color: var(--gray-900);
 }
 
 .benefit-chevron {
     font-size: 0.75rem;
-    color: #9ca3af;
+    color: var(--gray-400);
 }

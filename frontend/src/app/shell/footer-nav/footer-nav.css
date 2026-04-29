@@ -7,8 +7,8 @@
     display: flex;
     align-items: center;
     justify-content: space-around;
-    background: #dbeafe;
-    border-top: 1px solid #e5e7eb;
+    background: var(--navy-100);
+    border-top: 1px solid var(--gray-200);
     padding: 0.5rem 0;
     height: 64px;
 }
@@ -20,7 +20,7 @@
     flex: 1;
     height: 100%;
     text-decoration: none;
-    color: #0e3e6b;
+    color: var(--navy-600);
     font-size: 1.35rem;
     background: none;
     border: none;
@@ -29,7 +29,7 @@
 }
 
 .footer-btn.active {
-    color: #b45309;
+    color: var(--amber-700);
 }
 
 .footer-icon-wrap {
@@ -43,11 +43,11 @@
 }
 
 .footer-btn:hover .footer-icon-wrap {
-    background: #0e3e6b;
+    background: var(--navy-600);
     transform: scale(1.15);
-    color: #ffffff;
+    color: var(--color-white);
 }
 
 .footer-btn:hover .footer-icon-wrap i {
-    color: #ffffff;
+    color: var(--color-white);
 }

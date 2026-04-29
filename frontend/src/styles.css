@@ -1,3 +1,35 @@
 @import 'tailwindcss';
 @plugin 'tailwindcss-primeui';
 @import 'primeicons/primeicons.css';
+
+:root {
+  /* Navy — primary brand (darkest to lightest) */
+  --navy-900: #0c2340;
+  --navy-800: #1a2f4a;
+  --navy-700: #1a3a5c;
+  --navy-600: #0e3e6b;
+  --navy-500: #1d4573;
+  --navy-400: #243f61;
+  --navy-300: #285278;
+  --navy-100: #dbeafe;
+
+  /* Amber — accent */
+  --amber-700: #b45309;
+  --amber-600: #d97706;
+  --amber-400: #f59e0b;
+
+  /* Gray — neutral */
+  --gray-900: #1f2937;
+  --gray-700: #374151;
+  --gray-500: #6b7280;
+  --gray-400: #9ca3af;
+  --gray-200: #e5e7eb;
+  --gray-100: #f3f4f6;
+  --gray-50:  #f2f5f7;
+
+  /* Semantic */
+  --color-white:     #ffffff;
+  --color-black:     #000000;
+  --color-text-dark: #1a1a1a;
+  --color-error:     #dc2626;
+}
