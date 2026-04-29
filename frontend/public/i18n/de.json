@@ -12,6 +12,22 @@
     "explore": "Entdecken",
     "mapplanner": "Kartenplaner"
   },
+  "auth": {
+    "hero": {
+      "title": "Willkommen zurück",
+      "subtitle": "Melden Sie sich an, um auf Ihre gespeicherten Reisen und Bewertungen zuzugreifen"
+    },
+    "tabs": {
+      "login": "Anmelden",
+      "register": "Konto erstellen"
+    },
+    "benefits": {
+      "title": "Warum ein Konto erstellen?",
+      "save": "Reiseideen speichern",
+      "reviews": "Community-Bewertungen lesen und schreiben",
+      "ai": "KI erstellt Ihre Reiseroute"
+    }
+  },
   "hero": {
     "badge": "Das Beste der Schweiz",
     "title": "Willkommen in der Schweiz",

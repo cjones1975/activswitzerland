@@ -1,0 +1,58 @@
+<app-header-nav></app-header-nav>
+
+<div class="auth-page">
+
+    <div class="auth-hero">
+        <div class="auth-icon-circle">
+            <i class="fa-light fa-lock"></i>
+        </div>
+        <h1 class="auth-hero-title">{{ 'auth.hero.title' | translate }}</h1>
+        <p class="auth-hero-subtitle">{{ 'auth.hero.subtitle' | translate }}</p>
+    </div>
+
+    <div class="auth-card">
+        <div class="auth-tabs">
+            <button
+                class="auth-tab-btn"
+                [class.active]="activeTab() === 'login'"
+                (click)="activeTab.set('login')">
+                {{ 'auth.tabs.login' | translate }}
+            </button>
+            <button
+                class="auth-tab-btn"
+                [class.active]="activeTab() === 'register'"
+                (click)="activeTab.set('register')">
+                {{ 'auth.tabs.register' | translate }}
+            </button>
+        </div>
+        <div class="auth-tab-content">
+            @if (activeTab() === 'login') {
+                <app-login></app-login>
+            } @else {
+                <app-register></app-register>
+            }
+        </div>
+    </div>
+
+    <div class="auth-benefits">
+        <h2 class="auth-benefits-title">{{ 'auth.benefits.title' | translate }}</h2>
+        <div class="benefit-card">
+            <i class="fa-light fa-bookmark benefit-icon"></i>
+            <span class="benefit-text">{{ 'auth.benefits.save' | translate }}</span>
+            <i class="fa-light fa-chevron-right benefit-chevron"></i>
+        </div>
+        <div class="benefit-card">
+            <i class="fa-light fa-star benefit-icon"></i>
+            <span class="benefit-text">{{ 'auth.benefits.reviews' | translate }}</span>
+            <i class="fa-light fa-chevron-right benefit-chevron"></i>
+        </div>
+        <div class="benefit-card">
+            <i class="fa-light fa-sparkles benefit-icon"></i>
+            <span class="benefit-text">{{ 'auth.benefits.ai' | translate }}</span>
+            <i class="fa-light fa-chevron-right benefit-chevron"></i>
+        </div>
+    </div>
+
+</div>
+
+<app-footer-nav></app-footer-nav>

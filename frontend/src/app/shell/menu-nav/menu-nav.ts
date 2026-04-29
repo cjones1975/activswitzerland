@@ -1,12 +1,13 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 
 @Component({
   standalone: true,
   selector: 'app-menu-nav',
-  imports: [TranslatePipe, FormsModule, Select],
+  imports: [TranslatePipe, FormsModule, Select, RouterLink],
   templateUrl: './menu-nav.html',
   styleUrl: './menu-nav.css',
 })

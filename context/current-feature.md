@@ -42,6 +42,15 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-29 — Auth Layout Page Completed
+- `AuthLayout` created as a separate layout from `MainLayout`, routed at `/auth`
+- Hero section (200px) with blue gradient, amber lock icon circle (`#b45309`), title and subtitle
+- Overlapping white card (-15px margin): gray pill tab bar toggling between `Login` and `Create account`
+- `Login` and `Register` stub components conditionally rendered via `activeTab` signal
+- Three benefit cards (white, 80px, 9px gap): bookmark, star, sparkles icons with amber colour
+- Log In button in `menu-nav` updated to `routerLink="/auth"`
+- `auth.*` i18n keys added to all four locale files (en, de, fr, it)
+
 ### 2026-04-29 — Footer Navigation Menu Completed
 - `FooterNav` component built with five Font Awesome Light icons: Home, Explore, Map, Trips, Profile
 - Fixed to bottom via `position: fixed`; added to `MainLayout` template and imports

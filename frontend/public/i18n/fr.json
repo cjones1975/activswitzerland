@@ -12,6 +12,22 @@
     "explore": "Explorer",
     "mapplanner": "Carte"
   },
+  "auth": {
+    "hero": {
+      "title": "Bon retour",
+      "subtitle": "Connectez-vous pour accéder à vos voyages et avis enregistrés"
+    },
+    "tabs": {
+      "login": "Connexion",
+      "register": "Créer un compte"
+    },
+    "benefits": {
+      "title": "Pourquoi créer un compte ?",
+      "save": "Enregistrer des idées de voyage",
+      "reviews": "Lire et laisser des avis communautaires",
+      "ai": "Laisser l'IA créer votre itinéraire"
+    }
+  },
   "hero": {
     "badge": "Le meilleur de la Suisse",
     "title": "Bienvenue en Suisse",
