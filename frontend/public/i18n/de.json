@@ -11,5 +11,16 @@
     "home": "Start",
     "explore": "Entdecken",
     "mapplanner": "Kartenplaner"
+  },
+  "hero": {
+    "badge": "Das Beste der Schweiz",
+    "title": "Willkommen in der Schweiz",
+    "subtitle": "Entdecken Sie Tagesausflüge, Wahrzeichen und versteckte Juwelen — von Ihrem Standort aus.",
+    "cta": "Reise planen",
+    "stats": {
+      "attractions": "Attraktionen",
+      "cantons": "Kantone",
+      "unesco": "UNESCO-Stätten"
+    }
   }
 }

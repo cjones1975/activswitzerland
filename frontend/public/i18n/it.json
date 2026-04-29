@@ -11,5 +11,16 @@
     "home": "Home",
     "explore": "Esplora",
     "mapplanner": "Pianificatore mappa"
+  },
+  "hero": {
+    "badge": "Il meglio della Svizzera",
+    "title": "Benvenuto in Svizzera",
+    "subtitle": "Scopri gite giornaliere, luoghi iconici e gemme nascoste — da dove sei.",
+    "cta": "Pianifica un viaggio",
+    "stats": {
+      "attractions": "Attrazioni",
+      "cantons": "Cantoni",
+      "unesco": "Siti UNESCO"
+    }
   }
 }

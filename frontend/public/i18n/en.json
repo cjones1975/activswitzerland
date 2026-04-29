@@ -11,5 +11,16 @@
     "home": "Home",
     "explore": "Explore",
     "mapplanner": "Map Planner"
+  },
+  "hero": {
+    "badge": "Switzerland's finest experiences",
+    "title": "Welcome to Switzerland",
+    "subtitle": "Discover day trips, iconic landmarks, and hidden gems — all from where you are.",
+    "cta": "Plan a trip",
+    "stats": {
+      "attractions": "Attractions",
+      "cantons": "Cantons",
+      "unesco": "UNESCO Sites"
+    }
   }
 }
