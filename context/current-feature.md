@@ -42,6 +42,15 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-30 — Login Wire-up Completed
+- `AuthService.login()` async method: HTTP POST to `http://localhost:3000/api/v1/auth/login`
+- `token` signal initialised from `localStorage`; `isLoggedIn` computed from token presence
+- Success toast (`toast-success` styleClass) and error toast (`toast-error` styleClass) via `ToastService`
+- `tokenInterceptor` functional interceptor adds `Authorization: Bearer <token>` to outgoing requests
+- `provideHttpClient(withInterceptors([tokenInterceptor]))` and `MessageService` added to `app.config.ts`
+- PrimeNG `Toast` with custom message template (FA icons by severity, 300px, centered) added to `app.html`
+- Login form wired: `onSubmit()` calls `AuthService.login()`, `submitting` signal disables button during request
+
 ### 2026-04-29 — Login Page Completed
 - Reactive form with `email` (required + email validator) and `password` (required) controls
 - Email field: envelope icon, `--gray-50` fill, placeholder `your@email.com`

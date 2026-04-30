@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="form.valid && form.value">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
 
     <div class="field">
         <label class="field-label">Email address</label>
@@ -37,6 +37,8 @@
         <a class="forgot-link" routerLink="/auth/forgot-password">Forgot password?</a>
     </div>
 
-    <button class="submit-btn" type="submit" [disabled]="form.invalid">Log in</button>
+    <button class="submit-btn" type="submit" [disabled]="form.invalid || submitting()">
+        {{ submitting() ? 'Logging in...' : 'Log in' }}
+    </button>
 
 </form>
