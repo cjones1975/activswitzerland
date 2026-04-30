@@ -1,1 +1,113 @@
-<p>register works!</p>
+<form [formGroup]="form" (ngSubmit)="form.valid">
+
+    <div class="field-row">
+        <div class="field">
+            <label class="field-label">First name</label>
+            <input
+                pInputText
+                class="field-input"
+                type="text"
+                formControlName="firstName"
+                placeholder="First name"
+                [class.invalid]="form.controls.firstName.invalid && form.controls.firstName.touched"
+            />
+        </div>
+        <div class="field">
+            <label class="field-label">Last name</label>
+            <input
+                pInputText
+                class="field-input"
+                type="text"
+                formControlName="lastName"
+                placeholder="Last name"
+                [class.invalid]="form.controls.lastName.invalid && form.controls.lastName.touched"
+            />
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="field-label">Country</label>
+        <div class="input-wrap">
+            <i class="fa-light fa-globe input-icon"></i>
+            <p-select
+                class="field-select"
+                formControlName="country"
+                [options]="countries"
+                optionLabel="label"
+                optionValue="value"
+                placeholder="Select your country"
+                [filter]="true"
+                [checkmark]="true"
+                [class.invalid]="form.controls.country.invalid && form.controls.country.touched"
+            />
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="field-label">Email address</label>
+        <div class="input-wrap">
+            <i class="fa-sharp fa-light fa-envelope input-icon"></i>
+            <input
+                pInputText
+                class="field-input"
+                type="email"
+                formControlName="email"
+                placeholder="your@email.com"
+                [class.invalid]="form.controls.email.invalid && form.controls.email.touched"
+            />
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="field-label">Password</label>
+        <div class="input-wrap">
+            <i class="fa-light fa-lock input-icon"></i>
+            <input
+                pInputText
+                class="field-input"
+                [type]="showPassword() ? 'text' : 'password'"
+                formControlName="password"
+                placeholder="Create a password"
+                [class.invalid]="form.controls.password.invalid && form.controls.password.touched"
+            />
+            @if (form.controls.password.value) {
+                <button type="button" class="eye-btn" (click)="showPassword.set(!showPassword())">
+                    <i class="fa-light" [class.fa-eye]="!showPassword()" [class.fa-eye-slash]="showPassword()"></i>
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="field">
+        <label class="field-label">Verify password</label>
+        <div class="input-wrap">
+            <i class="fa-light fa-lock input-icon"></i>
+            <input
+                pInputText
+                class="field-input"
+                [type]="showPasswordCheck() ? 'text' : 'password'"
+                formControlName="passwordCheck"
+                placeholder="Confirm your password"
+                [class.invalid]="(form.controls.passwordCheck.invalid && form.controls.passwordCheck.touched) || passwordMismatch"
+            />
+            @if (form.controls.passwordCheck.value) {
+                <button type="button" class="eye-btn" (click)="showPasswordCheck.set(!showPasswordCheck())">
+                    <i class="fa-light" [class.fa-eye]="!showPasswordCheck()" [class.fa-eye-slash]="showPasswordCheck()"></i>
+                </button>
+            }
+        </div>
+    </div>
+
+    <div class="newsletter-card">
+        <div class="newsletter-text">
+            <span class="newsletter-title">Email newsletter</span>
+            <span class="newsletter-sub">Receive trip ideas and seasonal highlights</span>
+        </div>
+        <p-toggleswitch formControlName="emailUpdates" />
+    </div>
+
+    <button class="submit-btn" type="submit" [disabled]="form.invalid">
+        Create account
+    </button>
+
+</form>

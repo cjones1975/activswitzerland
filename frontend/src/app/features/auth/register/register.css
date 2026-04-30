@@ -1,0 +1,134 @@
+.field-row {
+    display: flex;
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+}
+
+.field-row .field {
+    flex: 1;
+    margin-bottom: 0;
+}
+
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.35rem;
+    margin-bottom: 1rem;
+}
+
+.field-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--gray-700);
+}
+
+.input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-icon {
+    position: absolute;
+    left: 0.85rem;
+    font-size: 0.9rem;
+    color: var(--gray-500);
+    pointer-events: none;
+    z-index: 1;
+}
+
+.field-input {
+    width: 100%;
+    padding: 0.75rem 0.85rem 0.75rem 2.5rem;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    font-size: 0.9rem;
+    color: var(--gray-900);
+    outline: none;
+    box-sizing: border-box;
+}
+
+.field-input::placeholder {
+    color: var(--gray-400);
+}
+
+.field-input:focus {
+    border-color: var(--navy-500);
+}
+
+.field-input.invalid {
+    border-color: var(--color-error);
+}
+
+.field-select {
+    width: 100%;
+    padding-left: 2rem;
+}
+
+.field-select.invalid {
+    border-color: var(--color-error);
+}
+
+.eye-btn {
+    position: absolute;
+    right: 0.85rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray-500);
+    font-size: 0.9rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+}
+
+.newsletter-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    padding: 0.85rem 1rem;
+    margin-bottom: 1.25rem;
+}
+
+.newsletter-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+}
+
+.newsletter-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--gray-900);
+}
+
+.newsletter-sub {
+    font-size: 0.78rem;
+    color: var(--gray-500);
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--navy-900);
+    color: var(--color-white);
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: var(--navy-500);
+}
+
+.submit-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
