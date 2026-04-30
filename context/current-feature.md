@@ -42,6 +42,13 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-30 — Register Wire-up Completed
+- `Country` interface (`alpha2Code`, `shortName`) created at `frontend/src/app/models/country.ts`
+- `ReferenceData` service: `getCountries()` HTTP GET with `CountriesResponse` interface to unwrap `{ success, count, data }` envelope via `map(res => res.data)`
+- `AuthService.register()` HTTP POST to `/api/v1/auth/register`; stores JWT, fires success toast, redirects to `/`
+- `AuthService`: renamed interface to `AuthResponse`, extracted `storeToken()` helper shared by login and register
+- `Register` component: loads `Country[]` via `ReferenceData` in `ngOnInit`; select uses `optionLabel/Value="shortName"`; `onSubmit()` calls `auth.register()`; `submitting` signal disables button during request
+
 ### 2026-04-30 — Register Page Completed
 - Reactive form: `firstName`, `lastName` (required), `country` (required), `email` (required + email), `password` (required, min 8), `passwordCheck` (required + group match validator), `emailUpdates`
 - First name / Last name rendered side by side in a flex row

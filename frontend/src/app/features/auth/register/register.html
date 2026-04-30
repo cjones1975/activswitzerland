@@ -1,4 +1,4 @@
-<form [formGroup]="form" (ngSubmit)="form.valid">
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
 
     <div class="field-row">
         <div class="field">
@@ -33,8 +33,8 @@
                 class="field-select"
                 formControlName="country"
                 [options]="countries"
-                optionLabel="label"
-                optionValue="value"
+                optionLabel="shortName"
+                optionValue="shortName"
                 placeholder="Select your country"
                 [filter]="true"
                 [checkmark]="true"
@@ -106,8 +106,8 @@
         <p-toggleswitch formControlName="emailUpdates" />
     </div>
 
-    <button class="submit-btn" type="submit" [disabled]="form.invalid">
-        Create account
+    <button class="submit-btn" type="submit" [disabled]="form.invalid || submitting()">
+        {{ submitting() ? 'Creating account...' : 'Create account' }}
     </button>
 
 </form>
