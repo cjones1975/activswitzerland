@@ -1,8 +1,11 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { AbstractControl, ReactiveFormsModule, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { ToggleSwitch } from 'primeng/toggleswitch';
+import { Auth } from '../../../core/services/auth';
+import { ReferenceData } from '../../../core/services/referenceData';
+import { Country } from '../../../models/country';
 
 function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
   const pw = group.get('password')?.value;
@@ -17,24 +20,15 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
-export class Register {
+export class Register implements OnInit {
   private fb = inject(FormBuilder);
+  private auth = inject(Auth);
+  private refData = inject(ReferenceData);
 
   showPassword = signal(false);
   showPasswordCheck = signal(false);
-
-  countries = [
-    { label: 'Switzerland', value: 'CH' },
-    { label: 'Germany', value: 'DE' },
-    { label: 'France', value: 'FR' },
-    { label: 'Italy', value: 'IT' },
-    { label: 'Austria', value: 'AT' },
-    { label: 'United Kingdom', value: 'GB' },
-    { label: 'United States', value: 'US' },
-    { label: 'Netherlands', value: 'NL' },
-    { label: 'Belgium', value: 'BE' },
-    { label: 'Spain', value: 'ES' },
-  ];
+  submitting = signal(false);
+  countries: Country[] = [];
 
   form = this.fb.nonNullable.group(
     {
@@ -49,7 +43,27 @@ export class Register {
     { validators: passwordMatchValidator }
   );
 
+  async ngOnInit(): Promise<void> {
+    try {
+      this.countries = await this.refData.getCountries();
+      console.log(this.countries);
+    } catch {
+      this.countries = [];
+    }
+  }
+
   get passwordMismatch(): boolean {
     return this.form.hasError('passwordMismatch') && !!this.form.get('passwordCheck')?.touched;
+  }
+
+  async onSubmit(): Promise<void> {
+    if (this.form.invalid) return;
+    this.submitting.set(true);
+    try {
+      const { firstName, lastName, country, email, password, emailUpdates } = this.form.getRawValue();
+      await this.auth.register({ firstName, lastName, country, email, password, emailUpdates });
+    } finally {
+      this.submitting.set(false);
+    }
   }
 }
