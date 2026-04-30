@@ -33,3 +33,48 @@
   --color-text-dark: #1a1a1a;
   --color-error:     #dc2626;
 }
+
+/* Toast */
+.p-toast {
+    max-width: 300px;
+}
+
+.toast-success .p-toast-message-content {
+    background: var(--navy-900);
+    border-radius: 8px;
+}
+
+.toast-error .p-toast-message-content {
+    background: var(--color-error);
+    border-radius: 8px;
+}
+
+.custom-toast {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.25rem;
+}
+
+.custom-toast-icon {
+    font-size: 1.2rem;
+    color: var(--color-white);
+    flex-shrink: 0;
+}
+
+.toast-text {
+    display: flex;
+    flex-direction: column;
+    gap: 0.1rem;
+}
+
+.toast-summary {
+    font-weight: 600;
+    font-size: 0.9rem;
+    color: var(--color-white);
+}
+
+.toast-detail {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.85);
+}
