@@ -42,6 +42,16 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-30 — Register Page Completed
+- Reactive form: `firstName`, `lastName` (required), `country` (required), `email` (required + email), `password` (required, min 8), `passwordCheck` (required + group match validator), `emailUpdates`
+- First name / Last name rendered side by side in a flex row
+- Country: PrimeNG `Select` with filter, checkmark, and globe icon
+- Email: envelope icon, `your@email.com` placeholder
+- Password / Verify password: padlock icon, eye toggle visible only when field has a value; red border on mismatch
+- Newsletter: `ToggleSwitch` in a styled card with title and subtitle
+- Create account button: `--navy-900` background, disabled (`opacity: 0.45`) until form is valid
+- All inputs use `--gray-50` fill and CSS design token variables
+
 ### 2026-04-30 — Login Wire-up Completed
 - `AuthService.login()` async method: HTTP POST to `http://localhost:3000/api/v1/auth/login`
 - `token` signal initialised from `localStorage`; `isLoggedIn` computed from token presence
