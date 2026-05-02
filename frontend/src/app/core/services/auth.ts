@@ -67,6 +67,21 @@ export class Auth {
     }
   }
 
+  async forgotPassword(email: string): Promise<void> {
+    try {
+      await firstValueFrom(
+        this.http.post('http://localhost:3000/api/v1/auth/forgotPassword', { email })
+      );
+      this.toast.success('Email sent', 'We have sent you a link to your email address to reset your password.', 4000, 'toast-success');
+    } catch (err: any) {
+      const detail = err?.status === 500
+        ? 'No user with the provided email was found.'
+        : 'Oops something went wrong. Please try again.';
+      this.toast.error('Request failed', detail, 4000, 'toast-error');
+      throw err;
+    }
+  }
+
   logout(): void {
     this.token.set(null);
     localStorage.removeItem('auth-token');

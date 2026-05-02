@@ -42,6 +42,13 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-30 — Forgot Password Wire-up Completed
+- `AuthService.forgotPassword(email)` POST to `/api/v1/auth/forgotPassword`
+- Success toast: "We have sent you a link to your email address to reset your password."
+- Error status 500: "No user with the provided email was found."
+- Any other error: "Oops something went wrong. Please try again."
+- `ForgotPassword` component: injects `Auth`, `onSubmit()` calls `auth.forgotPassword()` with `submitting` signal; `(ngSubmit)` wired to `onSubmit()`
+
 ### 2026-04-30 — Forgot Password Page Completed
 - `ForgotPassword` component routed at `/auth/forgot-password` (standalone, not inside `auth-layout`)
 - Same hero design as auth-layout: blue gradient, amber circle with `fa-light fa-key`, translated title and subtitle
