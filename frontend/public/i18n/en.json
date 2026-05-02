@@ -28,6 +28,15 @@
       "ai": "Let AI build an itinerary"
     }
   },
+  "forgot": {
+    "title": "Reset your password",
+    "subtitle": "Enter your email and we'll send you a link to reset your password.",
+    "email_label": "Email address",
+    "email_placeholder": "your@email.com",
+    "submit": "Reset Password",
+    "sending": "Sending...",
+    "back": "Back to log in"
+  },
   "hero": {
     "badge": "Switzerland's finest experiences",
     "title": "Welcome to Switzerland",

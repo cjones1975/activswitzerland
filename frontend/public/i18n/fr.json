@@ -28,6 +28,15 @@
       "ai": "Laisser l'IA créer votre itinéraire"
     }
   },
+  "forgot": {
+    "title": "Réinitialiser votre mot de passe",
+    "subtitle": "Entrez votre e-mail et nous vous enverrons un lien pour réinitialiser votre mot de passe.",
+    "email_label": "Adresse e-mail",
+    "email_placeholder": "votre@email.com",
+    "submit": "Réinitialiser le mot de passe",
+    "sending": "Envoi en cours...",
+    "back": "Retour à la connexion"
+  },
   "hero": {
     "badge": "Le meilleur de la Suisse",
     "title": "Bienvenue en Suisse",

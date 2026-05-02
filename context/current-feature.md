@@ -42,6 +42,15 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-30 — Forgot Password Page Completed
+- `ForgotPassword` component routed at `/auth/forgot-password` (standalone, not inside `auth-layout`)
+- Same hero design as auth-layout: blue gradient, amber circle with `fa-light fa-key`, translated title and subtitle
+- Reactive form with `email` control (required + email format); red border on invalid touched state
+- Email field: `--gray-50` fill, envelope icon, placeholder translated per locale
+- "Reset Password" submit button (`--navy-900`), disabled until valid; shows "Sending…" while in flight
+- "Back to log in" link routes to `/auth`
+- `forgot.*` i18n keys added to all four locale files (en, de, fr, it)
+
 ### 2026-04-30 — Register Wire-up Completed
 - `Country` interface (`alpha2Code`, `shortName`) created at `frontend/src/app/models/country.ts`
 - `ReferenceData` service: `getCountries()` HTTP GET with `CountriesResponse` interface to unwrap `{ success, count, data }` envelope via `map(res => res.data)`

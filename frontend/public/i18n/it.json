@@ -28,6 +28,15 @@
       "ai": "Lascia che l'AI costruisca il tuo itinerario"
     }
   },
+  "forgot": {
+    "title": "Reimposta la password",
+    "subtitle": "Inserisci la tua email e ti invieremo un link per reimpostare la password.",
+    "email_label": "Indirizzo email",
+    "email_placeholder": "tua@email.com",
+    "submit": "Reimposta password",
+    "sending": "Invio in corso...",
+    "back": "Torna al login"
+  },
   "hero": {
     "badge": "Il meglio della Svizzera",
     "title": "Benvenuto in Svizzera",
