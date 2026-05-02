@@ -28,6 +28,15 @@
       "ai": "KI erstellt Ihre Reiseroute"
     }
   },
+  "forgot": {
+    "title": "Passwort zurücksetzen",
+    "subtitle": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen.",
+    "email_label": "E-Mail-Adresse",
+    "email_placeholder": "ihre@email.com",
+    "submit": "Passwort zurücksetzen",
+    "sending": "Wird gesendet...",
+    "back": "Zurück zur Anmeldung"
+  },
   "hero": {
     "badge": "Das Beste der Schweiz",
     "title": "Willkommen in der Schweiz",
