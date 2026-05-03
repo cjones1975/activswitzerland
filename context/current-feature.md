@@ -42,6 +42,18 @@ None
 - Custom template with brand name 'ActivSwitzerland' on the left and hamburger toggle on the right
 - Side drawer toggle activation remains deferred to Phase 2
 
+### 2026-04-30 — Profile Page Completed
+- Hero with initials avatar (amber circle), bold name and email; same gradient hero design as auth pages
+- Three stat cards overlapping the hero (`margin-top: -20px`): Saved trips (`--navy-900`), Reviews written (`--color-green`), Reviews liked (`--amber-700`)
+- Profile details card: view/edit toggle via separate Edit (`toggleEdit()`) and Save (`saveEdit()`) buttons
+- Reactive form (`editForm`) with validation: firstName, lastName, country (required), email (required + email format)
+- Red border on invalid-touched fields; Save button disabled (`opacity: 0.4`) until form is valid
+- On save, `user` object updated from form values; on cancel (re-click Edit), form re-patches from current `user`
+- Edit mode uses `formControlName` on InputText, Select (country with filter), ToggleSwitch (newsletter)
+- Sign out button calls `auth.logout()` and navigates to `/auth`
+- `--color-green` added to `styles.css`; `profile.*` i18n keys added to all four locale files
+- Route `/auth/profile` protected by `authGuard`; user data hardcoded for layout phase
+
 ### 2026-04-30 — Forgot Password Wire-up Completed
 - `AuthService.forgotPassword(email)` POST to `/api/v1/auth/forgotPassword`
 - Success toast: "We have sent you a link to your email address to reset your password."

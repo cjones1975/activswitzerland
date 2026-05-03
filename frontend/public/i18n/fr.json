@@ -13,6 +13,21 @@
     "mapplanner": "Carte"
   },
   "auth": {
+    "toast": {
+      "login_success": "Connecté",
+      "login_welcome": "Bon retour !",
+      "login_failed": "Échec de la connexion",
+      "login_check_credentials": "Veuillez vérifier vos identifiants et réessayer.",
+      "register_success": "Compte créé",
+      "register_welcome": "Bienvenue sur ActivSwitzerland !",
+      "register_failed": "Échec de l'inscription",
+      "register_failed_detail": "L'inscription a échoué. Veuillez réessayer.",
+      "forgot_success": "E-mail envoyé",
+      "forgot_success_detail": "Nous vous avons envoyé un lien pour réinitialiser votre mot de passe.",
+      "forgot_failed": "Demande échouée",
+      "forgot_no_user": "Aucun utilisateur trouvé avec l'adresse e-mail fournie.",
+      "generic_error": "Oups, une erreur s'est produite. Veuillez réessayer."
+    },
     "hero": {
       "title": "Bon retour",
       "subtitle": "Connectez-vous pour accéder à vos voyages et avis enregistrés"
@@ -27,6 +42,26 @@
       "reviews": "Lire et laisser des avis communautaires",
       "ai": "Laisser l'IA créer votre itinéraire"
     }
+  },
+  "profile": {
+    "stats": {
+      "trips": "Voyages enregistrés",
+      "reviews": "Avis rédigés",
+      "likes": "Avis aimés"
+    },
+    "details": {
+      "title": "Détails du profil",
+      "edit": "Modifier",
+      "save": "Enregistrer",
+      "firstname": "Prénom",
+      "lastname": "Nom de famille",
+      "country": "Pays",
+      "email": "Adresse e-mail",
+      "newsletter": "Newsletter par e-mail",
+      "subscribed": "Abonné",
+      "not_subscribed": "Non abonné"
+    },
+    "signout": "Se déconnecter"
   },
   "forgot": {
     "title": "Réinitialiser votre mot de passe",

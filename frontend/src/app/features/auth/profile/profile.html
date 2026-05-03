@@ -1,0 +1,131 @@
+<app-header-nav></app-header-nav>
+
+<div class="profile-page">
+
+    <!-- Hero -->
+    <div class="profile-hero">
+        <div class="profile-avatar">{{ initials }}</div>
+        <h1 class="profile-name">{{ user.firstName }} {{ user.lastName }}</h1>
+        <p class="profile-email">{{ user.email }}</p>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="stat-row">
+        <div class="stat-card">
+            <i class="fa-light fa-bookmark stat-icon" style="color: var(--navy-900)"></i>
+            <span class="stat-count">{{ stats.savedTrips }}</span>
+            <span class="stat-label">{{ 'profile.stats.trips' | translate }}</span>
+        </div>
+        <div class="stat-card">
+            <i class="fa-light fa-comment stat-icon" style="color: var(--color-green)"></i>
+            <span class="stat-count">{{ stats.reviewsWritten }}</span>
+            <span class="stat-label">{{ 'profile.stats.reviews' | translate }}</span>
+        </div>
+        <div class="stat-card">
+            <i class="fa-light fa-thumbs-up stat-icon" style="color: var(--amber-700)"></i>
+            <span class="stat-count">{{ stats.reviewsLiked }}</span>
+            <span class="stat-label">{{ 'profile.stats.likes' | translate }}</span>
+        </div>
+    </div>
+
+    <!-- Profile details -->
+    <div class="details-card" [formGroup]="editForm">
+        <div class="details-header">
+            <span class="details-title">{{ 'profile.details.title' | translate }}</span>
+            @if (!isEditing()) {
+                <button class="edit-btn" (click)="toggleEdit()">
+                    <i class="fa-light fa-gear"></i>
+                    {{ 'profile.details.edit' | translate }}
+                </button>
+            } @else {
+                <button class="edit-btn" (click)="saveEdit()" [disabled]="editForm.invalid">
+                    <i class="fa-light fa-floppy-disk"></i>
+                    {{ 'profile.details.save' | translate }}
+                </button>
+            }
+        </div>
+
+        <div class="detail-row">
+            <i class="fa-sharp fa-light fa-circle-user detail-icon"></i>
+            <div class="detail-content">
+                <span class="detail-label">{{ 'profile.details.firstname' | translate }}</span>
+                @if (!isEditing()) {
+                    <span class="detail-value">{{ user.firstName }}</span>
+                } @else {
+                    <input pInputText class="detail-input" formControlName="firstName"
+                           [class.invalid]="editForm.controls.firstName.invalid && editForm.controls.firstName.touched" />
+                }
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <i class="fa-sharp fa-light fa-circle-user detail-icon"></i>
+            <div class="detail-content">
+                <span class="detail-label">{{ 'profile.details.lastname' | translate }}</span>
+                @if (!isEditing()) {
+                    <span class="detail-value">{{ user.lastName }}</span>
+                } @else {
+                    <input pInputText class="detail-input" formControlName="lastName"
+                           [class.invalid]="editForm.controls.lastName.invalid && editForm.controls.lastName.touched" />
+                }
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <i class="fa-light fa-globe detail-icon"></i>
+            <div class="detail-content">
+                <span class="detail-label">{{ 'profile.details.country' | translate }}</span>
+                @if (!isEditing()) {
+                    <span class="detail-value">{{ user.country }}</span>
+                } @else {
+                    <p-select
+                        class="detail-select"
+                        formControlName="country"
+                        [options]="countries"
+                        optionLabel="label"
+                        optionValue="value"
+                        [filter]="true"
+                        [class.invalid]="editForm.controls.country.invalid && editForm.controls.country.touched"
+                    />
+                }
+            </div>
+        </div>
+
+        <div class="detail-row">
+            <i class="fa-light fa-envelope detail-icon"></i>
+            <div class="detail-content">
+                <span class="detail-label">{{ 'profile.details.email' | translate }}</span>
+                @if (!isEditing()) {
+                    <span class="detail-value">{{ user.email }}</span>
+                } @else {
+                    <input pInputText class="detail-input" formControlName="email" type="email"
+                           [class.invalid]="editForm.controls.email.invalid && editForm.controls.email.touched" />
+                }
+            </div>
+        </div>
+
+        <div class="detail-row detail-row--last">
+            <i class="fa-light fa-bell detail-icon"></i>
+            <div class="detail-content">
+                <span class="detail-label">{{ 'profile.details.newsletter' | translate }}</span>
+                @if (!isEditing()) {
+                    <span class="detail-value" [class.subscribed]="user.emailUpdates">
+                        {{ (user.emailUpdates ? 'profile.details.subscribed' : 'profile.details.not_subscribed') | translate }}
+                    </span>
+                } @else {
+                    <p-toggleswitch formControlName="emailUpdates" />
+                }
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign out -->
+    <div class="signout-wrap">
+        <button class="signout-btn" (click)="signOut()">
+            {{ 'profile.signout' | translate }}
+        </button>
+    </div>
+
+</div>
+
+<app-footer-nav></app-footer-nav>

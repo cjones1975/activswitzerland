@@ -13,6 +13,21 @@
     "mapplanner": "Kartenplaner"
   },
   "auth": {
+    "toast": {
+      "login_success": "Angemeldet",
+      "login_welcome": "Willkommen zurück!",
+      "login_failed": "Anmeldung fehlgeschlagen",
+      "login_check_credentials": "Bitte überprüfen Sie Ihre Anmeldedaten und versuchen Sie es erneut.",
+      "register_success": "Konto erstellt",
+      "register_welcome": "Willkommen bei ActivSwitzerland!",
+      "register_failed": "Registrierung fehlgeschlagen",
+      "register_failed_detail": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "forgot_success": "E-Mail gesendet",
+      "forgot_success_detail": "Wir haben Ihnen einen Link zum Zurücksetzen Ihres Passworts gesendet.",
+      "forgot_failed": "Anfrage fehlgeschlagen",
+      "forgot_no_user": "Kein Benutzer mit der angegebenen E-Mail-Adresse gefunden.",
+      "generic_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut."
+    },
     "hero": {
       "title": "Willkommen zurück",
       "subtitle": "Melden Sie sich an, um auf Ihre gespeicherten Reisen und Bewertungen zuzugreifen"
@@ -27,6 +42,26 @@
       "reviews": "Community-Bewertungen lesen und schreiben",
       "ai": "KI erstellt Ihre Reiseroute"
     }
+  },
+  "profile": {
+    "stats": {
+      "trips": "Gespeicherte Reisen",
+      "reviews": "Geschriebene Bewertungen",
+      "likes": "Bewertungen geliked"
+    },
+    "details": {
+      "title": "Profildetails",
+      "edit": "Bearbeiten",
+      "save": "Speichern",
+      "firstname": "Vorname",
+      "lastname": "Nachname",
+      "country": "Land",
+      "email": "E-Mail-Adresse",
+      "newsletter": "E-Mail-Newsletter",
+      "subscribed": "Abonniert",
+      "not_subscribed": "Nicht abonniert"
+    },
+    "signout": "Abmelden"
   },
   "forgot": {
     "title": "Passwort zurücksetzen",

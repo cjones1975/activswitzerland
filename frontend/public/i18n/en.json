@@ -13,6 +13,21 @@
     "mapplanner": "Map Planner"
   },
   "auth": {
+    "toast": {
+      "login_success": "Logged in",
+      "login_welcome": "Welcome back!",
+      "login_failed": "Login failed",
+      "login_check_credentials": "Please check your credentials and try again.",
+      "register_success": "Account created",
+      "register_welcome": "Welcome to ActivSwitzerland!",
+      "register_failed": "Registration failed",
+      "register_failed_detail": "Registration failed. Please try again.",
+      "forgot_success": "Email sent",
+      "forgot_success_detail": "We have sent you a link to your email address to reset your password.",
+      "forgot_failed": "Request failed",
+      "forgot_no_user": "No user with the provided email was found.",
+      "generic_error": "Oops something went wrong. Please try again."
+    },
     "hero": {
       "title": "Welcome Back",
       "subtitle": "Log in to access your saved trips and reviews"
@@ -27,6 +42,26 @@
       "reviews": "Leave and read community reviews",
       "ai": "Let AI build an itinerary"
     }
+  },
+  "profile": {
+    "stats": {
+      "trips": "Saved trips",
+      "reviews": "Reviews written",
+      "likes": "Reviews liked"
+    },
+    "details": {
+      "title": "Profile details",
+      "edit": "Edit",
+      "save": "Save",
+      "firstname": "First name",
+      "lastname": "Last name",
+      "country": "Country",
+      "email": "Email address",
+      "newsletter": "Email newsletter",
+      "subscribed": "Subscribed",
+      "not_subscribed": "Not subscribed"
+    },
+    "signout": "Sign out"
   },
   "forgot": {
     "title": "Reset your password",
