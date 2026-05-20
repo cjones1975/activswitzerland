@@ -1,18 +1,19 @@
 import { Component, inject, signal } from '@angular/core';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { Auth } from '../../../core/services/auth';
+import { Drawer } from '../../../shared/services/drawer';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule],
   templateUrl: './login.html',
   styleUrl: './login.css',
 })
 export class Login {
   private fb = inject(FormBuilder);
   private auth = inject(Auth);
+  private drawer = inject(Drawer);
 
   showPassword = signal(false);
   submitting = signal(false);
@@ -31,5 +32,10 @@ export class Login {
     } finally {
       this.submitting.set(false);
     }
+  }
+
+  openForgotPassword(): void {
+    this.drawer.close('auth');
+    this.drawer.open('forgot-password');
   }
 }

@@ -1,11 +1,13 @@
 import { Injectable, signal, computed } from '@angular/core';
 
 export type DrawerKey =
-  | 'menu-nav' 
+  | 'menu-nav'
+  | 'auth'
+  | 'forgot-password'
   | 'weather'
   | 'language'
   | 'profile'
-  
+
 
 const DRAWER_BASE_Z = 4000;
 const DRAWER_STEP = 10;

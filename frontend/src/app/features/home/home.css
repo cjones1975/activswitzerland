@@ -1,7 +1,7 @@
 .hero {
     position: relative;
-    height: 500px;
-    background-image: url('/assets/hero.jpg');
+    height: 700px;
+    background-image: url('/assets/hero1.jpg');
     background-size: cover;
     background-position: center;
     display: flex;
@@ -129,4 +129,15 @@
     width: 1px;
     height: 2rem;
     background: rgba(255, 255, 255, 0.2);
+}
+
+@media (min-width: 1024px) {
+    .hero-title {
+        font-size: 4.8rem;
+    }
+
+    .hero-subtitle {
+        font-size: 2rem;
+        max-width: 680px;
+    }
 }

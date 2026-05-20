@@ -6,11 +6,13 @@ import { TranslatePipe } from '@ngx-translate/core';
 
 // Drawers
 import { MenuNav } from '../../shell/menu-nav/menu-nav';
+import { AuthLayout } from '../../features/auth/auth-layout/auth-layout';
+import { ForgotPassword } from '../../features/auth/forgot-password/forgot-password';
 
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })

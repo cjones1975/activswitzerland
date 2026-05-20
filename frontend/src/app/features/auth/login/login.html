@@ -34,7 +34,7 @@
     </div>
 
     <div class="forgot-wrap">
-        <a class="forgot-link" routerLink="/auth/forgot-password">Forgot password?</a>
+        <button class="forgot-link" type="button" (click)="openForgotPassword()">Forgot password?</button>
     </div>
 
     <button class="submit-btn" type="submit" [disabled]="form.invalid || submitting()">
