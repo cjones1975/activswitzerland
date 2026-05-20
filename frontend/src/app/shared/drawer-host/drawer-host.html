@@ -25,3 +25,57 @@
     </ng-template>
     <app-menu-nav></app-menu-nav>
 </p-drawer>
+
+<!-- AUTH -->
+<p-drawer
+    [visible]="svc.isOpen('auth')"
+    [closable]="false"
+    (visibleChange)="onVisibleChange('auth', $event)"
+    position="right"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('auth')"
+    [style]="{ width: 'min(420px, 100vw)' }">
+    <ng-template #header>
+        <div class="menu-header">
+            <div class="menu-brand">
+                <div class="menu-avatar">
+                    <i class="fa-light fa-lock"></i>
+                </div>
+                <div class="menu-brand-text">
+                    <span class="menu-brand-name">ActivSwitzerland</span>
+                </div>
+            </div>
+            <button class="menu-close" type="button" (click)="onDrawerClose('auth')">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+    </ng-template>
+    <app-auth-layout></app-auth-layout>
+</p-drawer>
+
+<!-- FORGOT PASSWORD -->
+<p-drawer
+    [visible]="svc.isOpen('forgot-password')"
+    [closable]="false"
+    (visibleChange)="onVisibleChange('forgot-password', $event)"
+    position="right"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('forgot-password')"
+    [style]="{ width: 'min(420px, 100vw)' }">
+    <ng-template #header>
+        <div class="menu-header">
+            <div class="menu-brand">
+                <div class="menu-avatar">
+                    <i class="fa-light fa-key"></i>
+                </div>
+                <div class="menu-brand-text">
+                    <span class="menu-brand-name">Reset Password</span>
+                </div>
+            </div>
+            <button class="menu-close" type="button" (click)="onDrawerClose('forgot-password')">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+    </ng-template>
+    <app-forgot-password></app-forgot-password>
+</p-drawer>

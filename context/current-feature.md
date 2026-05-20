@@ -1,22 +1,20 @@
 # Current Feature
 
-None
-
 ## Status
-
-—
 
 ## Goals
 
-—
-
 ## Notes
-
-—
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-05-20 — Responsive Layout Completed
+- Footer component hidden on screens 600px and above (mobile-only via media query)
+- Hero title and subtitle font sizes doubled on screens 1024px and above
+- `auth-layout` component converted to a side drawer using `DrawerService` (same pattern as `menu-nav`)
+- `forgot-password` component converted to a side drawer using `DrawerService`
 
 ### 2026-04-16 — Initial Git Setup
 - Initialized repository on `main` branch

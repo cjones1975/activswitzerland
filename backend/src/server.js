@@ -14,14 +14,26 @@ if (process.env.NODE_ENV !== 'test') {
     connectDB();
 }
 
+// Import Routes
+import auth from './routes/auth.js';
+import country from './routes/country.js';
+import myswitzerland from './routes/myswitzerland.js';
+
 // Create an instance of Express
 const app = express();
 
-// Cors
+// Middleware
+app.use(express.json({ limit: '10mb' }));
+app.use(express.urlencoded({ extended: false, limit: '10mb' }));
 app.use(corsHandler());
 
+// Mount routes
+app.use('/api/v1/auth', auth);
+app.use('/api/v1/country', country);
+app.use('/api/v1/myswitzerland', myswitzerland);
+
 app.get('/', (req, res) => {
-    res.send('Hello from theoakcellar');
+    res.send('Hello from ActivSwitzerland API');
   });
 
   // Error handler

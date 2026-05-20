@@ -1,8 +1,5 @@
 .auth-page {
-    min-height: 100svh;
     background: var(--gray-50);
-    padding-top: 56px;
-    padding-bottom: 72px;
     display: flex;
     flex-direction: column;
 }

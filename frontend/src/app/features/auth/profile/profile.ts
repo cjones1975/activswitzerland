@@ -67,6 +67,6 @@ export class Profile {
 
   signOut(): void {
     this.auth.logout();
-    this.router.navigate(['/auth']);
+    this.router.navigate(['/']);
   }
 }

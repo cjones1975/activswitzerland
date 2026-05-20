@@ -1,18 +1,19 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
+import { Drawer } from '../../shared/services/drawer';
 
 @Component({
   standalone: true,
   selector: 'app-menu-nav',
-  imports: [TranslatePipe, FormsModule, Select, RouterLink],
+  imports: [TranslatePipe, FormsModule, Select],
   templateUrl: './menu-nav.html',
   styleUrl: './menu-nav.css',
 })
 export class MenuNav {
   private translate = inject(TranslateService);
+  private drawer = inject(Drawer);
 
   languages = [
     { label: 'English', value: 'en' },
@@ -30,5 +31,10 @@ export class MenuNav {
   changeLanguage(lang: string): void {
     this.translate.use(lang);
     localStorage.setItem('app-lang', lang);
+  }
+
+  openAuth(): void {
+    this.drawer.close('menu-nav');
+    this.drawer.open('auth');
   }
 }

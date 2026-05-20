@@ -1,318 +1,285 @@
-# TheOakCellar Project Overview
+# ActivSwitzerland Project Overview
+## Vision
 
-Mobile-first travel discovery and planning app focused on helping users find the best experiences in Switzerland based on where they are starting from.
+ActivSwitzerland is a premium Swiss travel planning platform that transforms how people discover and experience Switzerland through visually immersive, map-centric journey planning.
 
----
+The platform combines route planning, attraction discovery, transport information, weather insights, and itinerary management into a single seamless experience focused specifically on Swiss travel. Users can create personalized road or rail journeys, explore attractions along their routes, save and share itineraries, and discover curated experiences through an interactive community-driven ecosystem.
 
-## Problem
+Designed with a modern, high-end travel experience in mind, ActivSwitzerland aims to bridge the gap between inspiration and practical trip planning by combining the visual appeal of modern travel applications with the utility of intelligent route and destination discovery.
 
-Planning trips in Switzerland is fragmented:
+The long-term vision is to become the leading digital platform for exploring Switzerland — connecting travelers, destinations, transport, and hospitality services through a beautifully designed and highly interactive planning experience.
 
-- Users know where they are starting from, but not what is worth doing nearby
-- Attractions, transport, weather, and hotels are spread across multiple platforms
-- Generic map/search tools require too much manual effort
-- Tourists want quick, high-quality day trip ideas
-- Locals want spontaneous nearby experiences
+## Users can:
 
-This leads to:
+- create custom travel itineraries
+- plan journeys by road or rail
+- discover attractions along routes and at destinations
+- get weather information at destinations
+- visually explore Switzerland through interactive maps
+- save and organize itineraries
+- share itineraries publicly or keep them private
+- review and rate travel experiences
 
+The first phase focuses on Swiss cities and popular travel destinations, while the platform architecture and UX should support future expansion into:
+
+- regions
+- mountains
+- lakes
+- glaciers
+- villages
+- scenic routes
+- alpine experiences
+- Product Philosophy
+
+## The application should feel:
+
+- modern
+- premium
+- immersive
+- map-centric
+- highly visual
+- travel inspiring
+- minimalist but information rich
+
+## The experience should combine the feel of:
+
+- MapLibre OpenStreet Maps
+- Airbnb Experiences
+- modern travel applications
+- Apple-quality UI polish
+- clean Notion-style layouts
+
+## The platform should emphasize:
+
+- visual exploration
+- intuitive planning
+- elegant interactions
+- smooth navigation
+- fast decision making
+- premium presentation of Swiss destinations
+- Problem
+
+## Planning travel in Switzerland is fragmented across multiple platforms.
+
+### Users often need separate tools for:
+
+- attractions
+- maps
+- rail journeys
+- road routes
+- weather
+- hotels
+- itinerary planning
+
+### This creates:
+
+- unnecessary complexity
+- fragmented planning
 - decision fatigue
-- poor trip choices
-- missed opportunities
-- too much switching between apps
+- missed attractions
+- poor travel coordination
 
-The app helps users discover, compare, and plan Swiss trips from one place.
+### Most platforms also focus either on:
 
----
+- destination discovery or ransport booking
 
-## Differentiation
+Very few combine:
 
-Compared to generic travel tools:
+- inspiration
+- route planning
+- map exploration
+- attraction discovery
+- itinerary management
+- user community
 
-- Location + radius based discovery
-- Smart suggestions before raw search results
-- Attraction pages connected to transport, weather, and hotels
-- Built specifically for Switzerland
-- Mobile-first planning for day trips and short stays
+into a single experience.
 
----
+ActivSwitzerland solves this by combining all of these layers into one premium travel planning platform focused specifically on Switzerland.
 
-## 🧑‍💻 Users
+## Users
+### Persona	Needs
+- Tourists	Easy multi-day trip planning, attractions, transport, hotels
+- Locals	Weekend escapes, scenic drives, spontaneous journeys
+- Couples & Families	Organized itineraries and practical planning
+- Rail Travelers	Scenic rail route discovery and journey planning
+- Road Trip Explorers	Flexible route customization and attraction discovery
+- Adventure Travelers	Mountains, lakes, outdoor destinations, scenic experiences
+- Core Product Features Home / Discovery Page
 
-| Persona | Needs 															|
-|------------------ |-----------------------------------------------------	|
-| Tourists			| Easy trip planning, attractions, hotels, transport	|
-| Locals  			| Nearby ideas, day trips, spontaneous outings 			|
-| Couples/Families  | Clear planning, practical logistics					|
-| Weekend Explorers | Scenic escapes within a chosen radius					|
+The homepage acts as both an inspiration hub and entry point into trip planning.
 
----
+### Features
+- Hero search section
+- “Plan a Trip” CTA
+- Featured Swiss destinations
+- Seasonal inspiration cards
+- Scenic route highlights
+- Suggested itineraries
+- Interactive Switzerland map
+- Trending experiences
+- Popular rail journeys
+- Weekend escape suggestions
 
-## Core Features
+The homepage should feel visually rich and inspiring while maintaining a clean premium layout.
 
-### Navigation Menu
-- Top primeng 
+## Trip Planner
 
-### Homepage
+The Trip Planner is the central experience of the platform.
 
-- Hero image and welcoming CTA
-- Popular destinations carousel
-- Fast route into planning flow
+### Users can:
 
-### Smart Explore
+- choose a starting city
+- choose a destination city
+select:
+ - road trip
+ - rail journey
+ - visually explore the route on a map
+ - discover attractions along the journey
+ - add or remove attractions from the itinerary
+ - estimate travel duration
+ - review transport options
+ - check weather conditions
+ - explore nearby hotels and accommodation partners
+ - Planner Experience
 
-- Select start point on Switzerland map
-- Set travel radius
-- Get best experiences within range
-- Toggle list view / map view
+### The layout should heavily integrate:
+
+- interactive maps
+- route overlays
+- attraction pins
+- expandable side panels
+- floating route summaries
+- animated transitions
+
+The map should always feel central to the planning experience.
 
 ### Attraction Discovery
 
-- Pins on map for attractions
-- Preview tooltips
-- Attraction categories and summaries
+Users can discover attractions:
+
+- directly on the map
+- along routes
+- within destinations
+- through seasonal recommendations
+- Nearby experiences
+- Region-based browsing
+- Attraction Detail Page
+
+Detailed attraction pages should include:
+
+- large imagery
+- attraction descriptions
+- opening information
+- nearby attractions
+- seasonal recommendations
+- transport access information
+- weather overview
+- nearby hotel suggestions
+- map preview
+- “Add to Itinerary” actions
+
+The page should balance inspiration with practical planning.
+
+### Saved Itineraries
+
+#### Users can:
+
+- save trips
+- organize itineraries
+- duplicate itineraries
+- edit saved journeys
+- revisit previous trips
+- mark itineraries:
+  public
+  private
+
+The layout should use modern card and grid-based designs.
+
+### Public Community Itineraries
+
+- Users can browse and discover public itineraries created by the community.
+- This creates long-term engagement and discovery beyond static tourism content.
+
+### Full-Screen Map Experience
+
+The map experience should function as a dedicated exploration mode.
+
+#### Features
+- Full-screen interactive map
+- Route overlays
+- Clustered attraction markers
+- Destination previews
+- Transport type switching
+- Smooth transitions and animations
+- Dynamic route highlighting
+
+The map should feel like the core layer connecting the entire product experience.
+
+### Smart Recommendations
+
+The platform should support intelligent travel recommendations based on:
+
+- selected route
+- destination type
+- weather
+- season
+- transport type
+- travel duration
+- popularity
+- UNESCO
+Recommendation Examples
+- nearby attractions
+- suggested overnight stays
+- Weather, Transport & Hotel Integration
+
+A key differentiator of the platform is the integration of practical travel layers directly into the itinerary experience.
+
+- Weather Integration
+ - 7-day destination forecasts
+ - route weather awareness
+- Transport Integration
+ - rail connection references
+ - route duration estimates
+- Hotel Partnerships
+ - nearby accommodation suggestions
+ - partner hotel integrations
+ - destination lodging recommendations
+
+
+### The focus of this project phase is not backend architecture or production implementation.
+
+#### The primary goal is to design:
+
+- premium UI screens
+- polished UX flows
+- realistic travel interactions
+- map-centric planning experiences
+- visually compelling prototypes
+
+The final experience should feel like:
 
-### Attraction Detail Page
+a high-end Figma prototype translated into a modern travel application.
 
-- Images and description
-- Best season / duration / region
-- Why visit section
-- Nearby highlights
-- Plan this trip CTA
+- Technology Stack
+- Category	Choice
+- Frontend	Angular
+- UI Components	PrimeNG
+- Language	TypeScript/Javascript
+- Maps	MapLibre OpenStreetMaps
+- Mobile	Capacitor
+- Backend	Node.js / Express
+- Database	MongoDB
+- Deployment	Docker
+- Guiding Principle
 
-### Planning Layer
+ActivSwitzerland is not simply a tourism directory or route planner.
 
-- Transport lookup n- 7-day weather
-- Nearby hotels
-- Mini itinerary timeline
-- Optional overnight stay suggestions
+It is a premium Swiss journey planning ecosystem focused on:
 
-### Account Features
+- inspiration
+- exploration
+- route discovery
+- visual planning
+- memorable travel experiences
 
-- Save trips
-- User reviews
-- Personal preferences
-
----
-
-## Smart Suggestions Logic (phase based)
-
-### Account Features
-
-- Start location
-- Radius
-- Weather
-- Transport preference
-- Trip style (scenic / active / culture / family)
-
-### Output
-
-- Ranked nearby destinations / attractions
-- Estimated travel time
-- Relevance reason
-- Suggested trip plan
-
-### Contraints
-
-- Must use real source data only
-- No hallucinated attractions
-- Fast response time
-
----
-
-## Learning & Personalization
-
-The system improves over time using:
-
-- Saved trips
-- Reviews
-- Popular searches
-- Click behavior
-- Preferred regions/styles
-
-This data feeds:
-
-- Better homepage recommendations
-- Better ranking of attractions
-- Personalized trip ideas
-
----
-
-## Core User Flows
-
-### Explore Flow
-
-- User opens app
-- Clicks Plan a Trip
-- Selects start location
-- Sets radius
-- Reviews smart suggestions
-- Opens attraction detail
-- Clicks Plan this Trip
-- Uses transport/weather/hotel info
-
-### Save Trip Flow
-
-- User selects attraction or plan
-- Clicks Save Trip
-- Logs in or creates account
-- Trip stored in account
-
-### Review Flow
-- Logged-in user visits completed attraction
-- Leaves rating and review
-
----
-
-## MVP Scope
-
-### Included
-- Homepage
-- Map + radius search
-- Attraction discovery
-- Attraction detail page
-- Weather links/integration
-- Transport links/integration
-- Hotel partner links
-- Authentication
-- Save trips
-
-### Excluded
-- Full AI itinerary engine
-- Social features
-- Paid subscriptions
-- Deep personalization
-
----
-
-## Roadmap
-
-### MVP
-
-- Core discovery flow
-- Map radius experience
-- Save trips
-- Basic monetization via hotel partner links
-
-### Phase 2
-
-- Smart ranking engine
-- Reviews
-- Personalized recommendations
-- Better trip itineraries
-
-### Phase 3
-
-- AI travel assistant
-- Real-time weather rerouting
-- Premium features
-
----
-
-## Monetization
-
-| Plan | Price | Features |
-|-------------------|-----------|---------------------------------------|
-| Free 				| $0 		| Discovery, planning basics 			|
-| Partner Revenue 	| Variable 	| Hotel booking commissions 			|
-| Premium (future) 	| TBD 		| Advanced planning, AI, offline trips 	|
-
-Notes:
-- Booking commissions are initial revenue source
-- Premium layer can be added later
-
----
-
-## Architecture
-
-### Authentication
-
-- Custom app authentication with JWT tokens
-- Passwords encrypted
-
-Features:
-
-- Register
-- Login
-- Get User
-- Update User
-- Forgot / Reset Password
-
-
-### Backend Responsibilities
-
-- Aggregate external APIs
-- Radius filtering
-- Recommendation ranking
-- Store users/trips/reviews
-- Protect API keys
-
----
-
-## UI / UX
-
-- Mobile-first
-- Map-centric but not map-only
-- Premium scenic visual style
-- Fast decision-making UX
-- Minimal friction onboarding
-- PrimeNG components
-
-Principles:
-- Help users decide quickly
-- Make Switzerland feel exciting
-- Blend inspiration with utility
-
----
-
-## Tech Stack
-
-| Category | Choice |
-|---------------|-----------------------------------|
-| Frontend 		| Angular (Capacitor for mobile) 	|
-| Backend 		| Nodejs / Express 					|
-| Language 		| TypeScript 						|
-| Database 		| MongoDB 							|
-| Caching 		| Redis (optional) 					|
-| Auth 			| Custom JWT						|
-| Maps 			| MapTiler SDK JS					|
-| Deployment 	| Docker / Synology NAS 			|
-
----
-
-## Data Model
-
-> This schema is a starting point and will evolve.
-
-```ts
-const UserSchema = new mongoose.Schema({
-    firstName: String,
-    lastName: String,
-    email: { type: String, unique: true },
-    stripeCustomerId: String,
-    stripeSubscriptionId: String,
-    country: String,
-    emailUpdates: { type: Boolean, default: false },
-    isPro: { type: Boolean, default: false },
-    createdAt: { type: Date, default: Date.now }
-});
-
-const SavedTripSchema = new mongoose.Schema({
-  userId: mongoose.Schema.Types.ObjectId,
-  title: String,
-  startLocation: Object,
-  radiusKm: Number,
-  attractionId: String,
-  itinerary: Array,
-  createdAt: { type: Date, default: Date.now }
-});
-
-const SavedTripSchema = new mongoose.Schema({
-  userId: mongoose.Schema.Types.ObjectId,
-  title: String,
-  startLocation: Object,
-  radiusKm: Number,
-  attractionId: String,
-  itinerary: Array,
-  createdAt: { type: Date, default: Date.now }
-});
+through a modern, map-first user experience.
