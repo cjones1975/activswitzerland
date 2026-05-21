@@ -1,0 +1,125 @@
+:host {
+  display: block;
+}
+
+.list-header {
+  margin-bottom: 1rem;
+}
+
+.list-header-top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+}
+
+.view-all {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--navy-900);
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.view-all:hover {
+  text-decoration: underline;
+}
+
+.list-title {
+  margin: 0 0 0.25rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--navy-900);
+}
+
+.list-subtitle {
+  margin: 0;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.scroll-strip {
+  display: flex;
+  gap: 0.75rem;
+  overflow-x: auto;
+  padding-bottom: 0.5rem;
+  scrollbar-width: none;
+}
+
+.scroll-strip::-webkit-scrollbar {
+  display: none;
+}
+
+/* show a thin scrollbar on desktop (hover-capable) devices */
+@media (hover: hover) {
+  .scroll-strip {
+    scrollbar-width: thin;
+    scrollbar-color: #cbd5e1 transparent;
+    padding-bottom: 0.75rem;
+  }
+
+  .scroll-strip::-webkit-scrollbar {
+    display: block;
+    height: 4px;
+  }
+
+  .scroll-strip::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .scroll-strip::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 999px;
+  }
+}
+
+.skeleton-card {
+  flex: 0 0 160px;
+  height: 200px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.destination-card {
+  position: relative;
+  flex: 0 0 160px;
+  height: 200px;
+  border-radius: 12px;
+  background-size: cover;
+  background-position: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+}
+
+.card-type {
+  position: absolute;
+  top: 0.625rem;
+  left: 0.625rem;
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #fff;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  background: rgba(30, 30, 30, 0.35);
+  padding: 3px 8px;
+  border-radius: 999px;
+}
+
+.card-name {
+  padding: 2rem 0.625rem 0.625rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.65) 0%, transparent 100%);
+  line-height: 1.2;
+}
+
+@media (min-width: 768px) {
+  .skeleton-card,
+  .destination-card {
+    flex: 0 0 200px;
+    height: 240px;
+  }
+}

@@ -10,6 +10,19 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-05-21 — Destinations Horizontal List Completed
+- `Destination` and `DestinationsResponse` interfaces created at `frontend/src/app/models/destination.ts`
+- `DestinationsService` created at `frontend/src/app/shared/services/destinations.ts`; HTTP GET to `/api/v1/myswitzerland/destinations` with params `language`, `page`, `hitsPerPage`, `facets`, `expand`, `translate`, `stripHtml`, `top`
+- `destination-horizontal-list` component accepts inputs `cardTitle`, `title`, `subTitle`, `facet`, `viewAllRoute`; fetches on init and re-fetches on `onLangChange` via `switchMap`; subscription auto-cleaned with `takeUntilDestroyed`
+- PrimeNG `SkeletonModule` used for loading state — 6 placeholder cards shown while data is in-flight
+- `title` and `subTitle` inputs accept i18n keys, piped through `TranslatePipe` in template
+- `cardTitle` rendered on a semi-transparent dark pill in the top-left corner of each card
+- Horizontal scrollbar hidden on touch devices, shown as a thin 4px bar on hover/desktop (`@media (hover: hover)`)
+- `destinations-layout` shell component wraps the list with `#f8fafc` background and `.container`; placed below the hero in `Home`
+- `destinations.cityBreaks.*` and `destinations.viewAll` i18n keys added to all four locale files
+- `View all` link routes to `/destinations` (`DestinationVerticalList`) registered as a child of `MainLayout`
+- Hero height reduced to `500px` on mobile, restored to `700px` at `1024px`
+
 ### 2026-05-20 — Responsive Layout Completed
 - Footer component hidden on screens 600px and above (mobile-only via media query)
 - Hero title and subtitle font sizes doubled on screens 1024px and above

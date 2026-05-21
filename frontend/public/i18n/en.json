@@ -72,6 +72,13 @@
     "sending": "Sending...",
     "back": "Back to log in"
   },
+  "destinations": {
+    "viewAll": "View all",
+    "cityBreaks": {
+      "title": "City Breaks",
+      "subtitle": "Discover Switzerland one city at a time"
+    }
+  },
   "hero": {
     "badge": "Switzerland's finest experiences",
     "title": "Welcome to Switzerland",

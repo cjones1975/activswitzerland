@@ -72,6 +72,13 @@
     "sending": "Envoi en cours...",
     "back": "Retour à la connexion"
   },
+  "destinations": {
+    "viewAll": "Voir tout",
+    "cityBreaks": {
+      "title": "Séjours en ville",
+      "subtitle": "Découvrez la Suisse une ville à la fois"
+    }
+  },
   "hero": {
     "badge": "Le meilleur de la Suisse",
     "title": "Bienvenue en Suisse",
