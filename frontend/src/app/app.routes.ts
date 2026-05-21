@@ -1,6 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './shell/main-layout/main-layout';
 import { Home } from './features/home/home';
+import { DestinationVerticalList } from './features/destinations/destination-vertical-list/destination-vertical-list';
 import { Profile } from './features/auth/profile/profile';
 import { authGuard } from './core/guards/auth';
 
@@ -10,6 +11,7 @@ export const routes: Routes = [
     component: MainLayout,
     children: [
       { path: '', component: Home },
+      { path: 'destinations', component: DestinationVerticalList },
     ]
   },
   { path: 'auth', redirectTo: '', pathMatch: 'full' },

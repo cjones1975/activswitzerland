@@ -1,1 +1,25 @@
-<p>destination-horizontal-list works!</p>
+<div class="list-header">
+  <div class="list-header-top">
+    <h2 class="list-title">{{ title | translate }}</h2>
+    @if (viewAllRoute) {
+      <a class="view-all" [routerLink]="viewAllRoute">{{ 'destinations.viewAll' | translate }}</a>
+    }
+  </div>
+  <p class="list-subtitle">{{ subTitle | translate }}</p>
+</div>
+<div class="scroll-strip">
+  @if (loading()) {
+    @for (s of skeletons; track $index) {
+      <div class="skeleton-card">
+        <p-skeleton width="100%" height="100%" borderRadius="12px" />
+      </div>
+    }
+  } @else {
+    @for (dest of destinations; track dest.identifier) {
+      <div class="destination-card" [style.background-image]="'url(' + dest.photo + ')'">
+        <span class="card-type">{{ cardTitle }}</span>
+        <span class="card-name">{{ dest.name }}</span>
+      </div>
+    }
+  }
+</div>

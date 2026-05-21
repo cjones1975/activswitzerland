@@ -72,6 +72,13 @@
     "sending": "Wird gesendet...",
     "back": "Zurück zur Anmeldung"
   },
+  "destinations": {
+    "viewAll": "Alle anzeigen",
+    "cityBreaks": {
+      "title": "Städtereisen",
+      "subtitle": "Entdecken Sie die Schweiz Stadt für Stadt"
+    }
+  },
   "hero": {
     "badge": "Das Beste der Schweiz",
     "title": "Willkommen in der Schweiz",
