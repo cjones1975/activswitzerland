@@ -10,6 +10,20 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-05-28 — Destinations Vertical List & Detail Completed
+- `DestinationVerticalList` built with full-screen map hero (MapLibre, `app-map` shared component) and vertical card list below
+- Cards show photo background, `cardTitle` pill, coordinates button (triggers `flyTo` on map), destination name, abstract (3-line clamp), and "Let's Visit" routerLink to `/destinations/:id`
+- PrimeNG `SkeletonModule` used for loading state (6 placeholder cards)
+- `MapComponent` shared component at `frontend/src/app/shared/map`; accepts `markers`, `zoom`, `center`, `activeMarker` inputs; handles marker sync and `flyTo` on active marker change
+- `destinations.letsVisit` and `destinations.allCities.*` i18n keys added to all four locale files
+- `/destinations/:id` route now resolves to `DestinationsLayout` (repurposed as the map+drawer shell)
+- `DestinationsLayout` loads the destination by ID, centers the map on it, and controls a slide-in drawer
+- Drawer slides up from bottom on mobile (max 70vh, rounded top corners), slides in from right on desktop (420px wide, full height) — pure CSS transition, no Angular animations module
+- `DestinationDetail` rewritten as a presentational panel: `@Input() destination`, `@Output() close`; shows photo hero with name overlay, abstract, and external "Visit official page" link
+- `DestinationsService.getDestination(id, language)` added for single-destination endpoint
+- Home page now imports `DestinationHorizontalList` directly; `DestinationsLayout` freed for the detail route
+- `destinations.detail.back` and `destinations.detail.visit` i18n keys added to all four locale files
+
 ### 2026-05-21 — Destinations Horizontal List Completed
 - `Destination` and `DestinationsResponse` interfaces created at `frontend/src/app/models/destination.ts`
 - `DestinationsService` created at `frontend/src/app/shared/services/destinations.ts`; HTTP GET to `/api/v1/myswitzerland/destinations` with params `language`, `page`, `hitsPerPage`, `facets`, `expand`, `translate`, `stripHtml`, `top`

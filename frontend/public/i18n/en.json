@@ -74,9 +74,18 @@
   },
   "destinations": {
     "viewAll": "View all",
+    "letsVisit": "Let's Visit",
+    "allCities": {
+      "title": "All Cities",
+      "subtitle": "{{count}} destinations"
+    },
     "cityBreaks": {
       "title": "City Breaks",
       "subtitle": "Discover Switzerland one city at a time"
+    },
+    "detail": {
+      "back": "Back to destinations",
+      "visit": "Visit official page"
     }
   },
   "hero": {

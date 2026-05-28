@@ -74,9 +74,18 @@
   },
   "destinations": {
     "viewAll": "Voir tout",
+    "letsVisit": "Allons-y",
+    "allCities": {
+      "title": "Toutes les villes",
+      "subtitle": "{{count}} destinations"
+    },
     "cityBreaks": {
       "title": "Séjours en ville",
       "subtitle": "Découvrez la Suisse une ville à la fois"
+    },
+    "detail": {
+      "back": "Retour aux destinations",
+      "visit": "Visiter la page officielle"
     }
   },
   "hero": {

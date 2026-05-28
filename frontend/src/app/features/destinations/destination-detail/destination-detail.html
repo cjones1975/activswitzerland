@@ -1,0 +1,20 @@
+Hello
+<div class="detail-panel">
+  <button class="back-btn" (click)="close.emit()">
+    <i class="fa-solid fa-arrow-left"></i>
+    {{ 'destinations.detail.back' | translate }}
+  </button>
+
+  @if (destination) {
+    <div class="hero-photo" [style.background-image]="'url(' + destination.photo + ')'">
+      <span class="dest-name">{{ destination.name }}</span>
+    </div>
+    <div class="content">
+      <p class="abstract">{{ destination.abstract }}</p>
+      <a [href]="destination.url" target="_blank" rel="noopener" class="visit-link">
+        {{ 'destinations.detail.visit' | translate }}
+        <i class="fa-solid fa-arrow-up-right-from-square"></i>
+      </a>
+    </div>
+  }
+</div>

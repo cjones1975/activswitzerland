@@ -74,9 +74,18 @@
   },
   "destinations": {
     "viewAll": "Vedi tutto",
+    "letsVisit": "Andiamo a visitare",
+    "allCities": {
+      "title": "Tutte le città",
+      "subtitle": "{{count}} destinazioni"
+    },
     "cityBreaks": {
       "title": "Soggiorni in città",
       "subtitle": "Scopri la Svizzera una città alla volta"
+    },
+    "detail": {
+      "back": "Torna alle destinazioni",
+      "visit": "Visita la pagina ufficiale"
     }
   },
   "hero": {

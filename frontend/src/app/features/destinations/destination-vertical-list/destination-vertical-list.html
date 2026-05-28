@@ -1,1 +1,40 @@
-<p>destination-vertical-list works!</p>
+<div class="page-content">
+  <div class="map-section" #mapSection>
+    <app-map [markers]="mapMarkers()" [zoom]="6" [activeMarker]="activeMarker()"></app-map>
+  </div>
+
+  <div class="list-header">
+    <h1 class="list-title">{{ title | translate }}</h1>
+    <p class="list-subtitle">{{ subTitle | translate: { count: destinations.length } }}</p>
+  </div>
+
+  <div class="card-list">
+    @if (loading()) {
+      @for (s of skeletons; track $index) {
+        <div class="skeleton-card">
+          <p-skeleton width="100%" height="100%" borderRadius="12px" />
+        </div>
+      }
+    } @else {
+      @for (dest of destinations; track dest.identifier) {
+        <div class="destination-card">
+          <div class="card-photo" [style.background-image]="'url(' + dest.photo + ')'">
+            <span class="card-type">{{ cardTitle }}</span>
+            @if (dest.geo.latitude && dest.geo.longitude) {
+              <button class="card-coords" (click)="selectMarker(dest.geo.latitude, dest.geo.longitude)">
+                {{ formatCoords(dest.geo.latitude, dest.geo.longitude) }}
+              </button>
+            }
+            <span class="card-name">{{ dest.name }}</span>
+          </div>
+          <div class="card-text">
+            <p class="card-abstract">{{ dest.abstract }}</p>
+            <a class="visit-btn" [routerLink]="['/destinations', dest.identifier]">
+              {{ 'destinations.letsVisit' | translate }} <i class="fa-sharp fa-solid fa-circle-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>
