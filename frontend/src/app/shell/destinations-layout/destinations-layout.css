@@ -1,11 +1,55 @@
 :host {
   display: block;
-  background: #f8fafc;
+  position: relative;
+  height: calc(100svh - 3.5rem - 64px);
+  overflow: hidden;
 }
 
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1.5rem;
-  margin-bottom: 40px;
+.map-wrapper {
+  position: absolute;
+  inset: 0;
+}
+
+.drawer {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  max-height: 70vh;
+  background: var(--color-white);
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.18);
+  transform: translateY(100%);
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow-y: auto;
+  z-index: 10;
+}
+
+.drawer.open {
+  transform: translateY(0);
+}
+
+@media (min-width: 600px) {
+  :host {
+    height: calc(100svh - 3.5rem);
+  }
+}
+
+@media (min-width: 768px) {
+  .drawer {
+    top: 0;
+    bottom: 0;
+    right: 0;
+    left: auto;
+    width: 420px;
+    max-height: none;
+    border-radius: 0;
+    border-left: 1px solid var(--gray-200);
+    box-shadow: -4px 0 24px rgba(0, 0, 0, 0.1);
+    transform: translateX(100%);
+  }
+
+  .drawer.open {
+    transform: translateX(0);
+  }
 }

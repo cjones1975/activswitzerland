@@ -1,9 +1,9 @@
-<div class="container">
-  <app-destination-horizontal-list
-    cardTitle="City"
-    title="destinations.cityBreaks.title"
-    subTitle="destinations.cityBreaks.subtitle"
-    facet="placetypes:cities"
-    viewAllRoute="/destinations">
-  </app-destination-horizontal-list>
+<div class="map-wrapper">
+  <app-map [markers]="marker()" [zoom]="12" [center]="center()"></app-map>
+</div>
+<div class="drawer" [class.open]="drawerOpen">
+  <app-destination-detail
+    [destination]="destination()"
+    (close)="closeDrawer()">
+  </app-destination-detail>
 </div>

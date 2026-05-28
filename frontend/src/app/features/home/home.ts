@@ -1,11 +1,11 @@
 import { Component } from '@angular/core';
 import { TranslatePipe } from '@ngx-translate/core';
-import { DestinationsLayout } from '../../shell/destinations-layout/destinations-layout';
+import { DestinationHorizontalList } from '../destinations/destination-horizontal-list/destination-horizontal-list';
 
 @Component({
   selector: 'app-home',
   standalone: true,
-  imports: [TranslatePipe, DestinationsLayout],
+  imports: [TranslatePipe, DestinationHorizontalList],
   templateUrl: './home.html',
   styleUrl: './home.css',
 })

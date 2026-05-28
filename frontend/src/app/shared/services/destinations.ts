@@ -29,4 +29,15 @@ export class DestinationsService {
       .get<DestinationsResponse>(this.baseUrl, { params: httpParams })
       .pipe(map(res => res.data.data));
   }
+
+  getDestination(id: string, language: string): Observable<Destination> {
+    const httpParams = new HttpParams()
+      .set('language', language)
+      .set('translate', 'true')
+      .set('stripHtml', 'false');
+
+    return this.http
+      .get<{ success: boolean; data: { data: Destination } }>(`${this.baseUrl}/${id}`, { params: httpParams })
+      .pipe(map(res => res.data.data));
+  }
 }

@@ -74,9 +74,18 @@
   },
   "destinations": {
     "viewAll": "Alle anzeigen",
+    "letsVisit": "Jetzt besuchen",
+    "allCities": {
+      "title": "Alle Städte",
+      "subtitle": "{{count}} Reiseziele"
+    },
     "cityBreaks": {
       "title": "Städtereisen",
       "subtitle": "Entdecken Sie die Schweiz Stadt für Stadt"
+    },
+    "detail": {
+      "back": "Zurück zu den Reisezielen",
+      "visit": "Offizielle Seite besuchen"
     }
   },
   "hero": {
