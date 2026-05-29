@@ -4,6 +4,7 @@ export type DrawerKey =
   | 'menu-nav'
   | 'auth'
   | 'forgot-password'
+  | 'destination-detail'
   | 'weather'
   | 'language'
   | 'profile'
@@ -90,4 +91,5 @@ export class Drawer {
   setPayload(key: DrawerKey, payload: any) {
     this.payloads.set(key, payload);
   }
+
 }

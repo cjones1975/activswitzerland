@@ -4,8 +4,8 @@ import { getDestinations, getDestinationsByGeobBox, getDestination } from '../co
 const router = express.Router();
 
 router.get('/destinations', getDestinations);
-router.get('destinationsbygeobbox', getDestinationsByGeobBox);
-router.get('/destination:id', getDestination);
+router.get('/destinationsbygeobbox', getDestinationsByGeobBox);
+router.get('/destinations/:id', getDestination);
 
 
 export default router;

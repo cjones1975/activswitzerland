@@ -33,7 +33,6 @@ export class DestinationsService {
   getDestination(id: string, language: string): Observable<Destination> {
     const httpParams = new HttpParams()
       .set('language', language)
-      .set('translate', 'true')
       .set('stripHtml', 'false');
 
     return this.http

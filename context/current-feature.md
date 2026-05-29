@@ -10,6 +10,17 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-05-29 — Destination Detail & Map Page Completed
+- `DestinationsLayout` uses `MapComponent` as a full-cover background (`position: fixed; inset: 0; z-index: 101`); map flies to destination coordinates on load (race-condition fix: `flyTo` called both in `ngOnChanges` and in the map `load` handler)
+- `DestinationDetail` rendered inside a `DrawerHost`-managed PrimeNG `p-drawer` (position: left, `min(600px, calc(100vw - 20px))` wide); drawer opens automatically on navigation, expanded by default
+- Drawer header: "Back to destinations" button (left) and × close button (right); navigation owned by `DrawerHost.onDestinationBack()`
+- When drawer is closed an "Open destination" pill button appears on the map; `DestinationsLayout` caches the loaded destination and re-passes it as the drawer payload on reopen
+- Drawer content: destination name, image gallery (PrimeNG Galleria), Switzerland Tourism link (`links.self`), abstract, action grid with "Plan a Trip" button (left) and weather placeholder (right)
+- `MapComponent` `:host` changed to `position: absolute; inset: 0`; `destination-vertical-list .map-section` gained `position: relative` to match
+- `header-nav` z-index bumped to 200 so it remains above the destinations layout (101) and footer-nav (100)
+- `destinations.detail.open` i18n key added to all four locale files
+- Collapse/expand partial-drawer logic fully removed from `DrawerService`, `DrawerHost`, and all call sites
+
 ### 2026-05-28 — Destinations Vertical List & Detail Completed
 - `DestinationVerticalList` built with full-screen map hero (MapLibre, `app-map` shared component) and vertical card list below
 - Cards show photo background, `cardTitle` pill, coordinates button (triggers `flyTo` on map), destination name, abstract (3-line clamp), and "Let's Visit" routerLink to `/destinations/:id`

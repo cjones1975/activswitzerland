@@ -1,9 +1,10 @@
 <div class="map-wrapper">
   <app-map [markers]="marker()" [zoom]="12" [center]="center()"></app-map>
 </div>
-<div class="drawer" [class.open]="drawerOpen">
-  <app-destination-detail
-    [destination]="destination()"
-    (close)="closeDrawer()">
-  </app-destination-detail>
-</div>
+
+@if (!drawer.isOpen('destination-detail') && destination()) {
+  <button class="open-dest-btn" type="button" (click)="openDetail()">
+    <i class="fa-solid fa-map-location-dot"></i>
+    {{ 'destinations.detail.open' | translate }}
+  </button>
+}

@@ -85,7 +85,9 @@
     },
     "detail": {
       "back": "Back to destinations",
-      "visit": "Visit official page"
+      "visit": "Visit official page",
+      "planTrip": "Plan a Trip",
+      "open": "Open destination"
     }
   },
   "hero": {
