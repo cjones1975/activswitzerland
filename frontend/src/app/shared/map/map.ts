@@ -50,12 +50,18 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.map?.resize();
       this.mapLoaded = true;
       this.syncMarkers();
+      if (this.center) {
+        this.map?.flyTo({ center: this.center, zoom: this.zoom, duration: 800 });
+      }
     });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes['markers'] && this.mapLoaded) {
       this.syncMarkers();
+    }
+    if (changes['center'] && this.mapLoaded && this.center) {
+      this.map?.flyTo({ center: this.center, zoom: this.zoom, duration: 800 });
     }
     if (changes['activeMarker'] && this.mapLoaded && this.activeMarker) {
       this.activateMarker(this.activeMarker);
@@ -80,7 +86,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     for (const marker of this.markers) {
       const el = document.createElement('i');
-      el.className = 'fa-solid fa-map-pin map-marker-icon';
+      el.className = 'fa-solid fa-bullseye map-marker-icon';
 
       const instance = new maplibregl.Marker({ element: el })
         .setLngLat([marker.lng, marker.lat])

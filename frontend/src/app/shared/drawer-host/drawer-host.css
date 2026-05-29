@@ -69,3 +69,34 @@
 .menu-footer p {
     margin: 0;
 }
+
+/* Destination detail drawer */
+.dest-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.dest-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.8rem;
+    font-weight: 600;
+    color: var(--gray-500);
+    padding: 0.35rem;
+    border-radius: 6px;
+    transition: color 0.2s;
+}
+
+.dest-back:hover {
+    color: var(--navy-700);
+}
+
+::ng-deep .dest-drawer .p-drawer-content {
+    overflow-y: auto;
+}

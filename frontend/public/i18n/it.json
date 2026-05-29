@@ -85,7 +85,9 @@
     },
     "detail": {
       "back": "Torna alle destinazioni",
-      "visit": "Visita la pagina ufficiale"
+      "visit": "Visita la pagina ufficiale",
+      "planTrip": "Pianifica un viaggio",
+      "open": "Apri destinazione"
     }
   },
   "hero": {

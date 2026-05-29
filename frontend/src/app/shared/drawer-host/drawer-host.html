@@ -79,3 +79,27 @@
     </ng-template>
     <app-forgot-password></app-forgot-password>
 </p-drawer>
+
+<!-- DESTINATION DETAIL -->
+<p-drawer
+    [visible]="svc.isOpen('destination-detail')"
+    [closable]="false"
+    (visibleChange)="onVisibleChange('destination-detail', $event)"
+    position="left"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('destination-detail')"
+    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
+    styleClass="dest-drawer">
+    <ng-template #header>
+        <div class="dest-header">
+            <button class="dest-back" type="button" (click)="onDestinationBack()">
+                <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
+                {{ 'destinations.detail.back' | translate }}
+            </button>
+            <button class="menu-close" type="button" (click)="onDrawerClose('destination-detail')">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+    </ng-template>
+    <app-destination-detail></app-destination-detail>
+</p-drawer>

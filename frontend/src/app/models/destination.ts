@@ -4,14 +4,26 @@ export interface DestinationGeo {
   longitude: number;
 }
 
+export interface DestinationImage {
+  '@type'?: string;
+  url: string;
+  name?: string;
+  keywords?: string;
+  encodingFormat?: string;
+  width?: number;
+  height?: number;
+}
+
 export interface Destination {
   '@context': string;
   '@type': string;
   identifier: string;
   name: string;
   abstract: string;
+  description?: string;
   url: string;
   photo: string;
+  image?: DestinationImage[];
   geo: DestinationGeo;
   links: { self: string };
 }
