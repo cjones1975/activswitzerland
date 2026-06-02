@@ -90,6 +90,14 @@
       "open": "Reiseziel öffnen"
     }
   },
+  "attractions": {
+    "title": "Top-Attraktionen",
+    "titleFallback": "Attraktionen",
+    "seeAll": "Alle Attraktionen anzeigen",
+    "backToDestination": "Zurück zum Reiseziel",
+    "backToAttractions": "Zurück zu den Attraktionen",
+    "openAll": "Attraktionen öffnen"
+  },
   "hero": {
     "badge": "Das Beste der Schweiz",
     "title": "Willkommen in der Schweiz",

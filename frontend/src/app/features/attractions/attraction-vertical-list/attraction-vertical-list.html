@@ -1,0 +1,29 @@
+<div class="attractions-section">
+  <div class="attractions-header">
+    <h2 class="attractions-title">{{ (isTop() ? 'attractions.title' : 'attractions.titleFallback') | translate }}</h2>
+    <button class="see-all-link" type="button" (click)="onSeeAll()">{{ 'attractions.seeAll' | translate }}</button>
+  </div>
+
+  <div class="card-list">
+    @if (loading()) {
+      @for (s of skeletons; track $index) {
+        <div class="skeleton-card">
+          <p-skeleton width="100%" height="100%" borderRadius="10px" />
+        </div>
+      }
+    } @else {
+      @for (attraction of attractions; track attraction.identifier) {
+        <div class="attraction-card" (click)="onAttractionClick(attraction)">
+          <div
+            class="card-photo"
+            [style.background-image]="'url(' + attraction.photo + ')'">
+          </div>
+          <div class="card-text">
+            <h3 class="card-name">{{ attraction.name }}</h3>
+            <p class="card-abstract">{{ attraction.abstract }}</p>
+          </div>
+        </div>
+      }
+    }
+  </div>
+</div>

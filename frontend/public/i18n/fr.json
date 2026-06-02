@@ -90,6 +90,14 @@
       "open": "Ouvrir la destination"
     }
   },
+  "attractions": {
+    "title": "Meilleures attractions",
+    "titleFallback": "Attractions",
+    "seeAll": "Voir toutes les attractions",
+    "backToDestination": "Retour à la destination",
+    "backToAttractions": "Retour aux attractions",
+    "openAll": "Ouvrir les attractions"
+  },
   "hero": {
     "badge": "Le meilleur de la Suisse",
     "title": "Bienvenue en Suisse",

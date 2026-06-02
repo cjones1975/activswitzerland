@@ -3,11 +3,12 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { GalleriaModule } from 'primeng/galleria';
 import { Drawer } from '../../../shared/services/drawer';
 import { Destination } from '../../../models/destination';
+import { AttractionVerticalList } from '../../attractions/attraction-vertical-list/attraction-vertical-list';
 
 @Component({
   selector: 'app-destination-detail',
   standalone: true,
-  imports: [TranslatePipe, GalleriaModule],
+  imports: [TranslatePipe, GalleriaModule, AttractionVerticalList],
   templateUrl: './destination-detail.html',
   styleUrl: './destination-detail.css',
 })

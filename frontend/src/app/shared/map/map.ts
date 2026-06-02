@@ -14,6 +14,8 @@ export interface MapMarker {
   lng: number;
   lat: number;
   label?: string;
+  icon?: string;
+  color?: string;
 }
 
 @Component({
@@ -86,11 +88,11 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     for (const marker of this.markers) {
       const el = document.createElement('i');
-      el.className = 'fa-solid fa-bullseye map-marker-icon';
+      el.className = `${marker.icon ?? 'fa-solid fa-bullseye'} map-marker-icon`;
+      if (marker.color) el.style.color = marker.color;
 
       const instance = new maplibregl.Marker({ element: el })
-        .setLngLat([marker.lng, marker.lat])
-        .addTo(this.map!);
+        .setLngLat([marker.lng, marker.lat]);
 
       if (marker.label) {
         const popup = new maplibregl.Popup({
@@ -101,17 +103,10 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
         const key = `${marker.lng},${marker.lat}`;
         this.popupInstances.set(key, popup);
-
-        el.addEventListener('click', (e) => {
-          e.stopPropagation();
-          if (popup.isOpen()) {
-            popup.remove();
-          } else {
-            popup.setLngLat([marker.lng, marker.lat]).addTo(this.map!);
-          }
-        });
+        instance.setPopup(popup);
       }
 
+      instance.addTo(this.map!);
       this.markerInstances.push(instance);
     }
   }

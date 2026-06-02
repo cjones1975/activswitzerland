@@ -1,0 +1,11 @@
+.attraction-detail-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+  padding: 1rem;
+}
+
+.placeholder {
+  font-size: 1rem;
+  color: var(--gray-600);
+}

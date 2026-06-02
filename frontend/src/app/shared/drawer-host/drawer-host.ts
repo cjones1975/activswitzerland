@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Drawer, DrawerKey } from '../services/drawer';
@@ -10,11 +10,14 @@ import { MenuNav } from '../../shell/menu-nav/menu-nav';
 import { AuthLayout } from '../../features/auth/auth-layout/auth-layout';
 import { ForgotPassword } from '../../features/auth/forgot-password/forgot-password';
 import { DestinationDetail } from '../../features/destinations/destination-detail/destination-detail';
+import { AllAttractions } from '../../features/attractions/all-attractions/all-attractions';
+import { AttractionDetail, AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
+import { Destination } from '../../models/destination';
 
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -30,8 +33,36 @@ export class DrawerHost {
     this.svc.close(key);
   }
 
+  onCollapse(key: DrawerKey) {
+    this.svc.collapse(key);
+  }
+
   onDestinationBack() {
     this.svc.close('destination-detail');
     this.router.navigate(['/destinations']);
+  }
+
+  onAllAttractionsBack() {
+    const dest = this.svc.getPayload<Destination>('all-attractions');
+    this.svc.close('all-attractions');
+    this.svc.open('destination-detail', dest);
+  }
+
+  attractionDetailBackKey = computed(() => {
+    this.svc.list();
+    const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail');
+    return payload?.source === 'destination-detail'
+      ? 'attractions.backToDestination'
+      : 'attractions.backToAttractions';
+  });
+
+  onAttractionDetailBack() {
+    const { destination, source } = this.svc.getPayload<AttractionDetailPayload>('attraction-detail')!;
+    this.svc.close('attraction-detail');
+    if (source === 'all-attractions') {
+      this.svc.open('all-attractions', destination);
+    } else {
+      this.svc.open('destination-detail', destination);
+    }
   }
 }

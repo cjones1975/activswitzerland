@@ -10,6 +10,21 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-06-02 — Attraction List Completed
+- `AttractionVerticalList` component renders top attractions inside `destination-detail` as cards (full-height photo left, name + abstract right); fetches with `top=true` and falls back to first 3 non-top if none returned; re-fetches on language change via `onLangChange` + `startWith`
+- `AllAttractions` component rendered inside a `all-attractions` drawer (left, same width as destination-detail); infinite scroll via `IntersectionObserver` on a sentinel element; resets and re-fetches when destination changes or language changes
+- `AttractionDetail` component rendered inside an `attraction-detail` drawer; payload carries the `Attraction`, the parent `Destination`, and the navigation `source` (`'destination-detail'` or `'all-attractions'`)
+- Back navigation: destination-detail → all-attractions → attraction-detail, with correct reverse routing per `source`; `DrawerHost` owns all navigation handlers
+- Collapse behaviour on `all-attractions` drawer: X button collapses (preserves payload); "Open attractions" reopen button appears on the map; `attraction-detail` X button fully closes (no reopen button)
+- `AttractionMarkersService` (`@shared/services`) holds a single `markers` signal; `AttractionVerticalList` writes top-attraction markers; `AllAttractions` writes all-attraction markers (does not clear top markers before first page loads, so map stays populated during transition)
+- Map markers use `fa-solid fa-circle-info` in `#1a2f4a` for all attraction types; destination marker removed (served no purpose)
+- MapLibre clustering removed after review — max 119 attractions per destination makes individual markers sufficient; cluster source, layers, idle listener, and related fields all deleted from `MapComponent`
+- `AttractionsService` split into two endpoints: `getTopAttractions` → `/topattractions` (with `top` param), `getAttractions` → `/attractions` (no `top` param, returns full dataset including top attractions)
+- Backend: `getTopAttractions` and `getAttractions` controllers added to `myswitzerland.js`; routes registered at `/topattractions` and `/attractions` in `myswitzerland.js` router
+- `DestinationsLayout` now re-fetches destination on language change via nested `onLangChange` + `startWith` inside the route-params `switchMap`, keeping destination name/abstract in sync
+- `hasValidGeo()` utility extracted to `attraction-markers.ts` and shared by both `AttractionVerticalList` and `AllAttractions`
+- `attractions.*` i18n keys added to all four locale files; `openDetail` key later removed when its reopen button was removed
+
 ### 2026-05-29 — Destination Detail & Map Page Completed
 - `DestinationsLayout` uses `MapComponent` as a full-cover background (`position: fixed; inset: 0; z-index: 101`); map flies to destination coordinates on load (race-condition fix: `flyTo` called both in `ngOnChanges` and in the map `load` handler)
 - `DestinationDetail` rendered inside a `DrawerHost`-managed PrimeNG `p-drawer` (position: left, `min(600px, calc(100vw - 20px))` wide); drawer opens automatically on navigation, expanded by default
