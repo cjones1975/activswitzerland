@@ -1,0 +1,76 @@
+.all-attractions-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 0.75rem 0 1.5rem;
+}
+
+.skeleton-card {
+  height: 90px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 1rem;
+}
+
+.attraction-card {
+  display: flex;
+  height: 90px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 1rem;
+  background: var(--gray-50);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.attraction-card:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.card-photo {
+  width: 36%;
+  flex-shrink: 0;
+  background-size: cover;
+  background-position: center;
+}
+
+.card-text {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.card-name {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.card-abstract {
+  margin: 0;
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--gray-600);
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+}
+
+.sentinel {
+  height: 1px;
+}

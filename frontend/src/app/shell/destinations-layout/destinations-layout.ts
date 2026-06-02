@@ -1,12 +1,13 @@
 import { Component, DestroyRef, OnDestroy, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { switchMap } from 'rxjs';
-import { TranslatePipe } from '@ngx-translate/core';
+import { startWith, switchMap } from 'rxjs';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DestinationsService } from '../../shared/services/destinations';
 import { Destination } from '../../models/destination';
-import { MapComponent, MapMarker } from '../../shared/map/map';
+import { MapComponent } from '../../shared/map/map';
 import { Drawer } from '../../shared/services/drawer';
+import { AttractionMarkersService } from '../../shared/services/attraction-markers';
 
 @Component({
   selector: 'app-destinations-layout',
@@ -18,25 +19,33 @@ import { Drawer } from '../../shared/services/drawer';
 export class DestinationsLayout implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private destinationsService = inject(DestinationsService);
+  private translate = inject(TranslateService);
   protected drawer = inject(Drawer);
   private destroyRef = inject(DestroyRef);
+  private attractionMarkers = inject(AttractionMarkersService);
 
-  marker = signal<MapMarker[]>([]);
   center = signal<[number, number] | undefined>(undefined);
   destination = signal<Destination | null>(null);
+  allMarkers = this.attractionMarkers.markers;
+
+  private openDetailTimer?: ReturnType<typeof setTimeout>;
 
   ngOnInit(): void {
-    const lang = localStorage.getItem('app-lang') || 'en';
     this.route.params.pipe(
-      switchMap(params => this.destinationsService.getDestination(params['id'], lang)),
+      switchMap(params =>
+        this.translate.onLangChange.pipe(
+          startWith({ lang: localStorage.getItem('app-lang') || 'en' }),
+          switchMap(({ lang }) => this.destinationsService.getDestination(params['id'], lang)),
+        )
+      ),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(dest => {
       this.destination.set(dest);
       if (dest.geo?.latitude && dest.geo?.longitude) {
         this.center.set([dest.geo.longitude, dest.geo.latitude]);
-        this.marker.set([{ lng: dest.geo.longitude, lat: dest.geo.latitude, label: dest.name }]);
       }
-      setTimeout(() => this.drawer.open('destination-detail', dest), 100);
+      clearTimeout(this.openDetailTimer);
+      this.openDetailTimer = setTimeout(() => this.drawer.open('destination-detail', dest), 100);
     });
   }
 
@@ -45,7 +54,13 @@ export class DestinationsLayout implements OnInit, OnDestroy {
     if (dest) this.drawer.open('destination-detail', dest);
   }
 
-  ngOnDestroy(): void {
+  reopenAllAttractions(): void {
+    this.drawer.open('all-attractions');
+  }
+
+ngOnDestroy(): void {
+    clearTimeout(this.openDetailTimer);
     this.drawer.close('destination-detail');
+    this.attractionMarkers.clear();
   }
 }

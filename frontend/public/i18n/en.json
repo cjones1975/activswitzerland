@@ -90,6 +90,14 @@
       "open": "Open destination"
     }
   },
+  "attractions": {
+    "title": "Top attractions",
+    "titleFallback": "Attractions",
+    "seeAll": "See all attractions",
+    "backToDestination": "Back to destination",
+    "backToAttractions": "Back to attractions",
+    "openAll": "Open attractions"
+  },
   "hero": {
     "badge": "Switzerland's finest experiences",
     "title": "Welcome to Switzerland",

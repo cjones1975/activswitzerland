@@ -80,6 +80,58 @@
     <app-forgot-password></app-forgot-password>
 </p-drawer>
 
+<!-- ALL ATTRACTIONS -->
+<p-drawer
+    [visible]="svc.isOpen('all-attractions')"
+    [closable]="false"
+    [dismissible]="false"
+    [closeOnEscape]="false"
+    (visibleChange)="onVisibleChange('all-attractions', $event)"
+    position="left"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('all-attractions')"
+    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
+    styleClass="dest-drawer">
+    <ng-template #header>
+        <div class="dest-header">
+            <button class="dest-back" type="button" (click)="onAllAttractionsBack()">
+                <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
+                {{ 'attractions.backToDestination' | translate }}
+            </button>
+            <button class="menu-close" type="button" (click)="onCollapse('all-attractions')">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+    </ng-template>
+    <app-all-attractions></app-all-attractions>
+</p-drawer>
+
+<!-- ATTRACTION DETAIL -->
+<p-drawer
+    [visible]="svc.isOpen('attraction-detail')"
+    [closable]="false"
+    [dismissible]="false"
+    [closeOnEscape]="false"
+    (visibleChange)="onVisibleChange('attraction-detail', $event)"
+    position="left"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('attraction-detail')"
+    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
+    styleClass="dest-drawer">
+    <ng-template #header>
+        <div class="dest-header">
+            <button class="dest-back" type="button" (click)="onAttractionDetailBack()">
+                <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
+                {{ attractionDetailBackKey() | translate }}
+            </button>
+            <button class="menu-close" type="button" (click)="onCollapse('attraction-detail')">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+    </ng-template>
+    <app-attraction-detail></app-attraction-detail>
+</p-drawer>
+
 <!-- DESTINATION DETAIL -->
 <p-drawer
     [visible]="svc.isOpen('destination-detail')"
