@@ -1,5 +1,117 @@
 @if (payload(); as p) {
   <div class="attraction-detail-panel">
-    <p class="placeholder">{{ p.attraction.name }}</p>
+
+    <h1 class="attrac-name">{{ p.attraction.name }}</h1>
+
+    <p class="abstract" [innerHTML]="p.attraction.abstract"></p>
+
+    @if (loading()) {
+      <div class="galleria-wrap skeleton-wrap">
+        <p-skeleton height="240px" borderRadius="10px" />
+      </div>
+    } @else if (fullAttraction()?.image?.length) {
+      <div class="galleria-wrap">
+        <p-galleria
+          [value]="fullAttraction()!.image!"
+          [circular]="true"
+          [showItemNavigators]="fullAttraction()!.image!.length > 1"
+          [showThumbnails]="fullAttraction()!.image!.length > 1"
+          [numVisible]="4">
+          <ng-template #item let-img>
+            <div class="galleria-img" [style.background-image]="'url(' + img.url + ')'"></div>
+          </ng-template>
+          <ng-template #thumbnail let-img>
+            <div class="galleria-thumb" [style.background-image]="'url(' + img.url + ')'"></div>
+          </ng-template>
+        </p-galleria>
+      </div>
+    } @else if (p.attraction.photo) {
+      <div class="galleria-wrap">
+        <div class="galleria-img" [style.background-image]="'url(' + p.attraction.photo + ')'"></div>
+      </div>
+    }
+
+    @if (p.attraction.url) {
+      <div class="tourism-link">
+        <a [href]="p.attraction.url" target="_blank" rel="noopener">Switzerland Tourism</a>
+      </div>
+    }
+
+    @if (fullAttraction()?.description) {
+      <div class="description-wrap">
+        <p class="description" [innerHTML]="fullAttraction()!.description"></p>
+      </div>
+    }
+
+    @if (!loading() && (neededTime() || wheelchairAccess() || spokenLanguages() || groupSize() || priceInfo())) {
+      <div class="detail-fields">
+
+        @if (neededTime()) {
+          <div class="detail-row">
+            <span class="detail-label">{{ 'attractions.detail.neededTime' | translate }}</span>
+            <span class="detail-value">{{ neededTime() }}</span>
+          </div>
+        }
+
+        @if (wheelchairAccess()) {
+          <div class="detail-row">
+            <span class="detail-label">{{ 'attractions.detail.wheelchair' | translate }}</span>
+            <span class="detail-value">{{ wheelchairAccess() }}</span>
+          </div>
+        }
+
+        @if (spokenLanguages()) {
+          <div class="detail-row">
+            <span class="detail-label">{{ 'attractions.detail.languages' | translate }}</span>
+            <span class="detail-value">{{ spokenLanguages()!.join(', ') }}</span>
+          </div>
+        }
+
+        @if (groupSize(); as gs) {
+          <div class="detail-row">
+            <span class="detail-label">{{ 'attractions.detail.groupSize' | translate }}</span>
+            <span class="detail-value">{{ 'attractions.detail.groupMin' | translate }}: {{ gs.min }} · {{ 'attractions.detail.groupMax' | translate }}: {{ gs.max }}</span>
+          </div>
+        }
+
+        @if (priceInfo()) {
+          <div class="detail-row">
+            <span class="detail-label">{{ 'attractions.detail.price' | translate }}</span>
+            <span class="detail-value">{{ priceInfo() }}</span>
+          </div>
+        }
+
+      </div>
+    }
+
+    @if (hasAddress()) {
+      <div class="address-block">
+        @for (addr of fullAttraction()!.address!; track $index) {
+          @if (addr.name) {
+            <div class="addr-name">{{ addr.name }}</div>
+          }
+          @if (addr.streetAddress || addr.postalCode || addr.addressLocality) {
+            <div class="addr-line">{{ formatAddressLine(addr) }}</div>
+          }
+          @if (addr.telephone) {
+            <div class="addr-line">
+              <i class="fa-light fa-phone"></i> {{ addr.telephone }}
+            </div>
+          }
+          @if (addr.email) {
+            <div class="addr-line">
+              <i class="fa-light fa-envelope"></i> {{ addr.email }}
+            </div>
+          }
+          @if (addr.url) {
+            <div class="addr-line">
+              <i class="fa-light fa-globe"></i>
+              <a [href]="addr.url" target="_blank" rel="noopener">{{ addr.url }}</a>
+            </div>
+          }
+        }
+      </div>
+    }
+
   </div>
 }

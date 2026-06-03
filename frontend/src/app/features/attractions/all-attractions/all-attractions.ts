@@ -91,10 +91,10 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       this.totalElements = totalElements;
       this.page++;
       this.hasMore.set(this.attractions.length < this.totalElements);
+      const geoAttractions = this.attractions.filter(hasValidGeo);
       this.attractionMarkers.set(
-        this.attractions
-          .filter(hasValidGeo)
-          .map(a => ({ lng: Number(a.geo.longitude), lat: Number(a.geo.latitude), label: a.name, icon: 'fa-solid fa-circle-info', color: '#1a2f4a' }))
+        geoAttractions.map(a => ({ id: a.identifier, lng: Number(a.geo.longitude), lat: Number(a.geo.latitude), label: a.name, icon: 'fa-solid fa-circle-info', color: '#1a2f4a', clickable: true })),
+        geoAttractions
       );
       this.loading.set(false);
     });

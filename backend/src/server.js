@@ -18,6 +18,7 @@ if (process.env.NODE_ENV !== 'test') {
 import auth from './routes/auth.js';
 import country from './routes/country.js';
 import myswitzerland from './routes/myswitzerland.js';
+import weather from './routes/weather.js';
 
 // Create an instance of Express
 const app = express();
@@ -31,6 +32,7 @@ app.use(corsHandler());
 app.use('/api/v1/auth', auth);
 app.use('/api/v1/country', country);
 app.use('/api/v1/myswitzerland', myswitzerland);
+app.use('/api/v1/weather', weather);
 
 app.get('/', (req, res) => {
     res.send('Hello from ActivSwitzerland API');

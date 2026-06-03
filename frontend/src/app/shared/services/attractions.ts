@@ -4,6 +4,13 @@ import { Observable, map } from 'rxjs';
 
 import { Attraction, AttractionsResponse } from '../../models/attraction';
 
+interface AttractionResponse {
+  success: boolean;
+  data: {
+    data: Attraction;
+  };
+}
+
 export interface AttractionsPage {
   attractions: Attraction[];
   totalElements: number;
@@ -39,6 +46,7 @@ export class AttractionsService {
       .pipe(map(res => res.data.data));
   }
 
+
   getAttractions(params: {
     language: string;
     page: number;
@@ -60,5 +68,12 @@ export class AttractionsService {
         attractions: res.data.data,
         totalElements: res.data.meta?.page?.totalElements ?? 0,
       })));
+  }
+
+  getAttraction(id: string, language: string): Observable<Attraction> {
+    const httpParams = new HttpParams().set('language', language);
+    return this.http
+      .get<AttractionResponse>(`${this.baseUrl}/attractions/${id}`, { params: httpParams })
+      .pipe(map(res => res.data.data));
   }
 }

@@ -96,7 +96,17 @@
     "seeAll": "See all attractions",
     "backToDestination": "Back to destination",
     "backToAttractions": "Back to attractions",
-    "openAll": "Open attractions"
+    "openAll": "Open attractions",
+    "listAll": "List all attractions",
+    "detail": {
+      "neededTime": "Required time for this activity",
+      "wheelchair": "Wheelchair accessible",
+      "languages": "Spoken languages",
+      "groupSize": "Group size",
+      "groupMin": "Minimum",
+      "groupMax": "Maximum",
+      "price": "Price information"
+    }
   },
   "hero": {
     "badge": "Switzerland's finest experiences",

@@ -56,16 +56,18 @@ export class AttractionVerticalList implements OnInit {
     ).subscribe(({ attractions, isTop }) => {
       this.attractions = attractions;
       this.isTop.set(isTop);
+      const geoAttractions = attractions.filter(hasValidGeo);
       this.attractionMarkers.set(
-        attractions
-          .filter(hasValidGeo)
-          .map((a: Attraction) => ({
-            lng: Number(a.geo.longitude),
-            lat: Number(a.geo.latitude),
-            label: a.name,
-            icon: 'fa-solid fa-circle-info',
-            color: '#1a2f4a',
-          }))
+        geoAttractions.map((a: Attraction) => ({
+          id: a.identifier,
+          lng: Number(a.geo.longitude),
+          lat: Number(a.geo.latitude),
+          label: a.name,
+          icon: 'fa-solid fa-circle-info',
+          color: '#1a2f4a',
+          clickable: true,
+        })),
+        geoAttractions
       );
       this.loading.set(false);
     });
