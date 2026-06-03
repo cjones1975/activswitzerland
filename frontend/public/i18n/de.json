@@ -96,7 +96,17 @@
     "seeAll": "Alle Attraktionen anzeigen",
     "backToDestination": "Zurück zum Reiseziel",
     "backToAttractions": "Zurück zu den Attraktionen",
-    "openAll": "Attraktionen öffnen"
+    "openAll": "Attraktionen öffnen",
+    "listAll": "Alle Attraktionen auflisten",
+    "detail": {
+      "neededTime": "Benötigte Zeit für diese Aktivität",
+      "wheelchair": "Rollstuhlzugänglich",
+      "languages": "Gesprochene Sprachen",
+      "groupSize": "Gruppengrösse",
+      "groupMin": "Minimum",
+      "groupMax": "Maximum",
+      "price": "Preisinformation"
+    }
   },
   "hero": {
     "badge": "Das Beste der Schweiz",

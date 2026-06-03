@@ -1,12 +1,16 @@
 import {
   Component,
+  EventEmitter,
   Input,
+  NgZone,
   OnChanges,
   AfterViewInit,
   OnDestroy,
+  Output,
   ElementRef,
   ViewChild,
   SimpleChanges,
+  inject,
 } from '@angular/core';
 import maplibregl, { Map as MapLibreMap, Marker, Popup } from 'maplibre-gl';
 
@@ -16,6 +20,9 @@ export interface MapMarker {
   label?: string;
   icon?: string;
   color?: string;
+  id?: string;
+  highlight?: boolean;
+  clickable?: boolean;
 }
 
 @Component({
@@ -32,8 +39,11 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() style = 'https://tiles.openfreemap.org/styles/bright';
   @Input() activeMarker?: { lng: number; lat: number };
 
+  @Output() markerClick = new EventEmitter<MapMarker>();
+
   @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef<HTMLDivElement>;
 
+  private ngZone = inject(NgZone);
   private map?: MapLibreMap;
   private markerInstances: Marker[] = [];
   private popupInstances = new Map<string, Popup>();
@@ -88,18 +98,35 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     for (const marker of this.markers) {
       const el = document.createElement('i');
-      el.className = `${marker.icon ?? 'fa-solid fa-bullseye'} map-marker-icon`;
+      el.className = `${marker.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${marker.highlight ? ' marker-selected' : ''}`;
       if (marker.color) el.style.color = marker.color;
+      if (marker.highlight) el.style.color = '#e53e3e';
 
       const instance = new maplibregl.Marker({ element: el })
         .setLngLat([marker.lng, marker.lat]);
 
       if (marker.label) {
+        const popupHtml = marker.clickable
+          ? `<button class="popup-btn" type="button"><span class="popup-name">${marker.label}</span><i class="fa-solid fa-circle-arrow-right popup-arrow"></i></button>`
+          : `<span class="popup-name">${marker.label}</span>`;
+
         const popup = new maplibregl.Popup({
           closeButton: false,
           closeOnClick: true,
           offset: 20,
-        }).setText(marker.label);
+        }).setHTML(popupHtml);
+
+        if (marker.clickable) {
+          popup.on('open', () => {
+            const btn = popup.getElement()?.querySelector('.popup-btn') as HTMLElement | null;
+            if (btn) {
+              btn.addEventListener('click', () => {
+                popup.remove();
+                this.ngZone.run(() => this.markerClick.emit(marker));
+              });
+            }
+          });
+        }
 
         const key = `${marker.lng},${marker.lat}`;
         this.popupInstances.set(key, popup);
@@ -117,7 +144,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     this.map?.flyTo({
       center: [target.lng, target.lat],
-      zoom: Math.max(this.map.getZoom(), 9),
+      zoom: 15,
       duration: 800,
     });
 

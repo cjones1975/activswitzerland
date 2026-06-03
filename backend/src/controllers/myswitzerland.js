@@ -118,6 +118,31 @@ export const getTopAttractions = asyncHandler(async (req, res, next) => {
   }
 });
 
+// @desc    GET attraction by id
+// @route   GET /api/v1/attractions/:id
+// @access  Public
+export const getAttraction = asyncHandler(async (req, res, next) => {
+  const { id } = req.params;
+  const config = {
+    method: 'get',
+    url: `${process.env.MYS_ENDPOINT}/v1/attractions/${id}?lang=${req.query.language}&expand=true&striphtml=false`,
+    headers: {
+      'x-api-key': process.env.MYS_KEY,
+      accept: 'application/json'
+    },
+  };
+  try {
+    const response = await axios(config);
+    if (!response.data) {
+      return next(new ErrorResponse(`No attraction data found for id ${id}`, 404));
+    }
+    res.status(200).json({ success: true, data: response.data });
+  } catch (error) {
+    console.error(error);
+    next(new ErrorResponse(`An error occurred during the request: ${error.message}`, 500));
+  }
+});
+
 // @desc    GET attractions
 // @route   GET /api/v1/attractions
 // @access  Public

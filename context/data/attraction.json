@@ -1,0 +1,194 @@
+ "data": [
+    {
+      "@context": "https://schema.org/",
+      "@type": "TouristAttraction",
+      "subjectOf": {
+        "@type": "CreativeWork",
+        "license": "http://creativecommons.org/licenses/by-sa/4.0/"
+      },
+      "links": {
+        "self": "https://opendata.myswitzerland.io/v1/attractions/?expand=true&facets.translate=true&hitsPerPage=30&lang=en&page=1&placeId=87487fe3-bd11-429d-9550-61ba4ea716cd&striphtml=false"
+      },
+      "identifier": "feab1cc5-e915-42c6-a35e-4de0c31fb22f",
+      "name": "Voyage Culinaire Zurich",
+      "abstract": "Enjoy a culinary experience consisting of team spirit, fun and sightseeing!",
+      "description": "This culinary event is composed of a guided tour through Zurich and gastronomic team activities revolving around the topics of food and drink. Enjoy a 3-course menu in 1-2 different venues and a wine presentation of the wines you have selected for dinner.",
+      "address": [],
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 47.36971111302351,
+        "longitude": 8.539036274620086
+      },
+      "image": [
+        {
+          "@type": "ImageObject",
+          "name": "zrh.jpg",
+          "keywords": "voyage culinaire zürich,leisure,winter",
+          "publisher": "Switzerland Tourism",
+          "width": 2312,
+          "height": 1427,
+          "encodingFormat": "image/jpeg",
+          "url": "https://www.myswitzerland.com/-/media/st/images/meetings/various/zrh_247599.jpg"
+        },
+        {
+          "@type": "ImageObject",
+          "name": "weinprasi_bearbeitet.jpg",
+          "keywords": "voyage culinaire,leisure,summer,winter",
+          "publisher": "Switzerland Tourism",
+          "width": 827,
+          "height": 768,
+          "encodingFormat": "image/jpeg",
+          "url": "https://www.myswitzerland.com/-/media/st/images/meetings/various/weinprasi_bearbeitet_247599.jpg"
+        },
+        {
+          "@type": "ImageObject",
+          "name": "p1300863.jpg",
+          "keywords": "voyage culinaire,leisure,summer,winter",
+          "publisher": "Switzerland Tourism",
+          "width": 3264,
+          "height": 2145,
+          "encodingFormat": "image/jpeg",
+          "url": "https://www.myswitzerland.com/-/media/st/images/meetings/various/p1300863_247599.jpg"
+        },
+        {
+          "@type": "ImageObject",
+          "name": "voyage_culinaire.jpg",
+          "keywords": "voyage culinaire,luzern zug aktivität gruppen,leisure,summer,winter",
+          "publisher": "Switzerland Tourism",
+          "width": 3264,
+          "height": 2448,
+          "encodingFormat": "image/jpeg",
+          "url": "https://www.myswitzerland.com/-/media/st/gadmin/images/food%20and%20drink/various/voyage_culinaire_247599.jpg"
+        },
+        {
+          "@type": "ImageObject",
+          "name": "luzern_a_la_carte_14.jpg",
+          "keywords": "voyage culinaire,leisure,summer,winter",
+          "publisher": "Switzerland Tourism",
+          "width": 3264,
+          "height": 2199,
+          "encodingFormat": "image/jpeg",
+          "url": "https://www.myswitzerland.com/-/media/st/images/meetings/various/luzern_a_la_carte_14_247599.jpg"
+        }
+      ],
+      "classification": [
+        {
+          "@context": "https://myswitzerland.io/",
+          "@type": "Classification",
+          "name": "month",
+          "values": [
+            {
+              "name": "allyear",
+              "title": "All year"
+            }
+          ]
+        },
+        {
+          "@context": "https://myswitzerland.io/",
+          "@type": "Classification",
+          "name": "gametype",
+          "title": "Game type",
+          "values": [
+            {
+              "name": "teambuilding",
+              "title": "Teambuilding"
+            }
+          ]
+        },
+        {
+          "@context": "https://myswitzerland.io/",
+          "@type": "Classification",
+          "name": "suitablefortype",
+          "title": "Suitable for",
+          "values": [
+            {
+              "name": "group",
+              "title": "Groups"
+            }
+          ]
+        },
+        {
+          "@context": "https://myswitzerland.io/",
+          "@type": "Classification",
+          "name": "neededtime",
+          "title": "Needed time",
+          "values": [
+            {
+              "name": "2to4hourshalfday",
+              "title": "2 to 4 hours (half day)"
+            }
+          ]
+        },
+        {
+          "@context": "https://myswitzerland.io/",
+          "@type": "Classification",
+          "values": [
+            {
+              "name": "en",
+              "title": "English"
+            },
+            {
+              "name": "de",
+              "title": "German"
+            }
+          ]
+        },
+        {
+          "@context": "https://myswitzerland.io/",
+          "@type": "Classification",
+          "name": "licences",
+          "values": [
+            {
+              "name": "bysa",
+              "title": "BY-SA"
+            }
+          ]
+        },
+        {
+          "@context": "https://myswitzerland.io/",
+          "@type": "Classification",
+          "name": "geographicallocations",
+          "values": [
+            {
+              "name": "alonggrandtour",
+              "title": "Along the Grand Tour"
+            }
+          ]
+        }
+      ],
+      "containedInPlace": {
+        "@type": "TouristDestination",
+        "identifier": "87487fe3-bd11-429d-9550-61ba4ea716cd",
+        "url": "https://opendata.myswitzerland.io/v1/destinations/87487fe3-bd11-429d-9550-61ba4ea716cd?lang=en"
+      },
+      "availableLanguage": [
+        {
+          "@type": "Language",
+          "alternateName": "de"
+        },
+        {
+          "@type": "Language",
+          "alternateName": "en"
+        }
+      ],
+      "event": {
+        "@type": "Event",
+        "audience": {
+          "@type": "PeopleAudience",
+          "audienceType": "Groups"
+        },
+        "minimumAttendeeCapacity": 12,
+        "maximumAttendeeCapacity": 100
+      },
+      "isAccessibleForFree": false,
+      "price": {
+        "@type": "PriceSpecification",
+        "minPrice": 161,
+        "priceCurrency": "CHF"
+      },
+      "selfGuided": true,
+      "recommendedSeason": "allyear",
+      "url": "https://www.myswitzerland.com/en/experiences/voyage-culinaire-zurich/",
+      "photo": "https://www.myswitzerland.com/-/media/st/images/meetings/various/weinprasi_bearbeitet_247599.jpg"
+    },
+]

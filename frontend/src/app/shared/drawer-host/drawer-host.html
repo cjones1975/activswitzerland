@@ -99,7 +99,7 @@
                 {{ 'attractions.backToDestination' | translate }}
             </button>
             <button class="menu-close" type="button" (click)="onCollapse('all-attractions')">
-                <i class="pi pi-times"></i>
+                <i class="fa-regular fa-map-location"></i>
             </button>
         </div>
     </ng-template>
@@ -122,10 +122,10 @@
         <div class="dest-header">
             <button class="dest-back" type="button" (click)="onAttractionDetailBack()">
                 <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
-                {{ attractionDetailBackKey() | translate }}
+                {{ 'attractions.backToAttractions' | translate }}
             </button>
             <button class="menu-close" type="button" (click)="onCollapse('attraction-detail')">
-                <i class="pi pi-times"></i>
+                <i class="fa-regular fa-map-location"></i>
             </button>
         </div>
     </ng-template>
@@ -149,7 +149,7 @@
                 {{ 'destinations.detail.back' | translate }}
             </button>
             <button class="menu-close" type="button" (click)="onDrawerClose('destination-detail')">
-                <i class="pi pi-times"></i>
+                <i class="fa-regular fa-map-location"></i>
             </button>
         </div>
     </ng-template>

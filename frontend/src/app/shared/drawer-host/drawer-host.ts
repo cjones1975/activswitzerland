@@ -57,12 +57,8 @@ export class DrawerHost {
   });
 
   onAttractionDetailBack() {
-    const { destination, source } = this.svc.getPayload<AttractionDetailPayload>('attraction-detail')!;
+    const { destination } = this.svc.getPayload<AttractionDetailPayload>('attraction-detail')!;
     this.svc.close('attraction-detail');
-    if (source === 'all-attractions') {
-      this.svc.open('all-attractions', destination);
-    } else {
-      this.svc.open('destination-detail', destination);
-    }
+    this.svc.open('all-attractions', destination);
   }
 }

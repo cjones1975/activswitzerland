@@ -96,7 +96,17 @@
     "seeAll": "Vedi tutte le attrazioni",
     "backToDestination": "Torna alla destinazione",
     "backToAttractions": "Torna alle attrazioni",
-    "openAll": "Apri attrazioni"
+    "openAll": "Apri attrazioni",
+    "listAll": "Elenca tutte le attrazioni",
+    "detail": {
+      "neededTime": "Tempo richiesto per questa attività",
+      "wheelchair": "Accessibile in sedia a rotelle",
+      "languages": "Lingue parlate",
+      "groupSize": "Dimensione del gruppo",
+      "groupMin": "Minimo",
+      "groupMax": "Massimo",
+      "price": "Informazioni sul prezzo"
+    }
   },
   "hero": {
     "badge": "Il meglio della Svizzera",

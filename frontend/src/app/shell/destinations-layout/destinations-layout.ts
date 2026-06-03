@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { startWith, switchMap } from 'rxjs';
@@ -6,6 +6,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DestinationsService } from '../../shared/services/destinations';
 import { Destination } from '../../models/destination';
 import { MapComponent } from '../../shared/map/map';
+import type { MapMarker } from '../../shared/map/map';
 import { Drawer } from '../../shared/services/drawer';
 import { AttractionMarkersService } from '../../shared/services/attraction-markers';
 
@@ -26,7 +27,20 @@ export class DestinationsLayout implements OnInit, OnDestroy {
 
   center = signal<[number, number] | undefined>(undefined);
   destination = signal<Destination | null>(null);
-  allMarkers = this.attractionMarkers.markers;
+
+  displayMarkers = computed(() => {
+    const selectedId = this.attractionMarkers.selectedId();
+    return this.attractionMarkers.markers().map(m =>
+      selectedId && m.id === selectedId ? { ...m, highlight: true } : m
+    );
+  });
+
+  selectedMarker = computed(() => {
+    const selectedId = this.attractionMarkers.selectedId();
+    if (!selectedId) return undefined;
+    const m = this.attractionMarkers.markers().find(m => m.id === selectedId);
+    return m ? { lng: m.lng, lat: m.lat } : undefined;
+  });
 
   private openDetailTimer?: ReturnType<typeof setTimeout>;
 
@@ -52,6 +66,24 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   openDetail(): void {
     const dest = this.destination();
     if (dest) this.drawer.open('destination-detail', dest);
+  }
+
+  onMarkerClick(marker: MapMarker): void {
+    if (!marker.id) return;
+    const attraction = this.attractionMarkers.attractionMap().get(marker.id);
+    const dest = this.destination();
+    if (!attraction || !dest) return;
+    if (this.drawer.isOpen('all-attractions') || this.drawer.isCollapsed('all-attractions')) {
+      this.drawer.close('all-attractions');
+    }
+    this.drawer.open('attraction-detail', { attraction, destination: dest, source: 'all-attractions' });
+  }
+
+  listAllAttractions(): void {
+    const dest = this.destination();
+    if (!dest) return;
+    this.drawer.close('destination-detail');
+    this.drawer.open('all-attractions', dest);
   }
 
   reopenAllAttractions(): void {

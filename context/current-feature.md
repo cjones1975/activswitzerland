@@ -1,6 +1,7 @@
 # Current Feature
 
 ## Status
+Completed
 
 ## Goals
 
@@ -9,6 +10,16 @@
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-06-03 — Attraction Detail Completed
+- `AttractionDetail` fetches the full attraction via `AttractionsService.getAttraction(id, lang)` triggered by an effect on the drawer payload; `loading` signal shows a `p-skeleton` while in-flight
+- Image gallery uses PrimeNG `p-galleria` with `circular` and `showItemNavigators`/`showThumbnails` (hidden when only one image); falls back to a single `photo` field if no `image` array; shows nothing if neither is present
+- Switzerland Tourism link rendered from `attraction.url`; `description` rendered below the gallery when present
+- Conditional detail fields shown in a `.detail-fields` block only when at least one has a value: `neededTime` and `wheelchairAccess` from the `classification` array, `spokenLanguages` from `availableLanguage` (2-letter codes mapped to full names via `LANG_NAMES`), `groupSize` from `event.audience`/`minimumAttendeeCapacity`/`maximumAttendeeCapacity`, `priceInfo` from `price.minPrice`
+- Address block rendered only when `address` is a non-empty array; each entry shows name, street/postal/locality line, telephone, email, and URL
+- Selected attraction marker highlighted in red (`#e53e3e`) with `.marker-selected` CSS class; `AttractionMarkersService.selectedId` signal drives this; `DestinationsLayout` computes `highlightedMarkers` by merging `selectedId` into the markers array with `highlight: true`; `AttractionDetail.ngOnDestroy` clears the selection
+- `AttractionsService.getAttraction(id, lang)` single-attraction endpoint added; backend route and controller added to `myswitzerland.js`
+- `attractions.detail.*` i18n keys (`neededTime`, `wheelchair`, `languages`, `groupSize`, `groupMin`, `groupMax`, `price`) added to all four locale files
 
 ### 2026-06-02 — Attraction List Completed
 - `AttractionVerticalList` component renders top attractions inside `destination-detail` as cards (full-height photo left, name + abstract right); fetches with `top=true` and falls back to first 3 non-top if none returned; re-fetches on language change via `onLangChange` + `startWith`

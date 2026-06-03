@@ -1,5 +1,5 @@
 <div class="map-wrapper">
-  <app-map [markers]="allMarkers()" [zoom]="12" [center]="center()"></app-map>
+  <app-map [markers]="displayMarkers()" [zoom]="12" [center]="center()" [activeMarker]="selectedMarker()" (markerClick)="onMarkerClick($event)"></app-map>
 </div>
 
 <div class="reopen-btns">
@@ -9,11 +9,16 @@
       {{ 'destinations.detail.open' | translate }}
     </button>
   }
+  @if (destination() && !drawer.isOpen('all-attractions') && !drawer.isCollapsed('all-attractions')) {
+    <button class="reopen-btn" type="button" (click)="listAllAttractions()">
+      <i class="fa-solid fa-list"></i>
+      {{ 'attractions.listAll' | translate }}
+    </button>
+  }
   @if (drawer.isCollapsed('all-attractions')) {
     <button class="reopen-btn" type="button" (click)="reopenAllAttractions()">
       <i class="fa-solid fa-list"></i>
       {{ 'attractions.openAll' | translate }}
     </button>
   }
-
 </div>
