@@ -1,9 +1,11 @@
 import { inject } from '@angular/core';
 import { HttpInterceptorFn } from '@angular/common/http';
+import { environment } from '../../environments/environment';
 import { Auth } from '../services/auth';
 
 export const tokenInterceptor: HttpInterceptorFn = (req, next) => {
-  if (!req.url.startsWith('http://localhost:3000')) return next(req);
+  const apiUrl = environment.apiUrl || '/api/';
+  if (!req.url.startsWith(apiUrl)) return next(req);
 
   const token = inject(Auth).token();
 

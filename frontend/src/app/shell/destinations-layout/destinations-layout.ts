@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { startWith, switchMap } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DestinationsService } from '../../shared/services/destinations';
+import { LangService } from '../../shared/services/lang';
 import { Destination } from '../../models/destination';
 import { MapComponent } from '../../shared/map/map';
 import type { MapMarker } from '../../shared/map/map';
@@ -21,6 +22,7 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
   private destinationsService = inject(DestinationsService);
   private translate = inject(TranslateService);
+  private langSvc = inject(LangService);
   protected drawer = inject(Drawer);
   private destroyRef = inject(DestroyRef);
   private attractionMarkers = inject(AttractionMarkersService);
@@ -48,7 +50,7 @@ export class DestinationsLayout implements OnInit, OnDestroy {
     this.route.params.pipe(
       switchMap(params =>
         this.translate.onLangChange.pipe(
-          startWith({ lang: localStorage.getItem('app-lang') || 'en' }),
+          startWith({ lang: this.langSvc.current }),
           switchMap(({ lang }) => this.destinationsService.getDestination(params['id'], lang)),
         )
       ),

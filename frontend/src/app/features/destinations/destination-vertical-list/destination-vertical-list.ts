@@ -5,6 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { startWith, switchMap, tap } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { DestinationsService } from '../../../shared/services/destinations';
+import { LangService } from '../../../shared/services/lang';
 import { Destination } from '../../../models/destination';
 import { MapComponent, MapMarker } from '../../../shared/map/map';
 
@@ -25,6 +26,7 @@ export class DestinationVerticalList implements OnInit {
 
   private destinationsService = inject(DestinationsService);
   private translate = inject(TranslateService);
+  private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
 
   destinations: Destination[] = [];
@@ -35,7 +37,7 @@ export class DestinationVerticalList implements OnInit {
 
   ngOnInit(): void {
     this.translate.onLangChange.pipe(
-      startWith({ lang: localStorage.getItem('app-lang') || 'en' }),
+      startWith({ lang: this.langSvc.current }),
       tap(() => this.loading.set(true)),
       switchMap(event => this.destinationsService.getDestinations({
         language: event.lang,

@@ -93,7 +93,7 @@ export const getDestination = asyncHandler(async (req, res, next) => {
 });
 
 // @desc    GET top attractions
-// @route   GET /api/v1/attractions
+// @route   GET /api/v1/topattractions
 // @access  Public
 export const getTopAttractions = asyncHandler(async (req, res, next) => {
   const config = {
@@ -150,6 +150,32 @@ export const getAttractions = asyncHandler(async (req, res, next) => {
   const config = {
     method: 'get',
     url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}&placeId=${req.query.placeId}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}`,
+    headers: {
+      'x-api-key': process.env.MYS_KEY,
+      accept: 'application/json'
+    },
+  };
+  try {
+    let response = await axios(config);
+    if (!response.data) {
+      return next(new ErrorResponse(`No attraction data found`, 404));
+    }
+    res.status(200).json({ success: true, data: response.data });
+  } catch (error) {
+    console.error(error);
+    next(
+      new ErrorResponse(`An error occurred during the request: ${error}`, 500)
+    );
+  }
+});
+
+// @desc    GET searched attractions
+// @route   GET /api/v1/searchattractions
+// @access  Public
+export const searchAttractions = asyncHandler(async (req, res, next) => {
+  const config = {
+    method: 'get',
+    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}&placeId=${req.query.placeId}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'

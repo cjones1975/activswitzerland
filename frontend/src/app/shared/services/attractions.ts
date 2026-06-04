@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
-
+import { environment } from '../../../environments/environment';
 import { Attraction, AttractionsResponse } from '../../models/attraction';
 
 interface AttractionResponse {
@@ -19,7 +19,7 @@ export interface AttractionsPage {
 @Injectable({ providedIn: 'root' })
 export class AttractionsService {
   private http = inject(HttpClient);
-  private baseUrl = 'http://localhost:3000/api/v1/myswitzerland';
+  private baseUrl = `${environment.apiUrl}/api/v1/myswitzerland`;
 
   getTopAttractions(params: {
     language: string;
@@ -64,6 +64,36 @@ export class AttractionsService {
 
     return this.http
       .get<AttractionsResponse>(this.baseUrl + '/attractions', { params: httpParams })
+      .pipe(map(res => ({
+        attractions: res.data.data,
+        totalElements: res.data.meta?.page?.totalElements ?? 0,
+      })));
+  }
+
+  searchAttractions(params: {
+    language: string;
+    page: number;
+    search: string;
+    hitsPerPage: number;
+    placeId: string;
+    expand: boolean;
+    translate: boolean;
+    stripHtml: boolean;
+    top: boolean;
+  }): Observable<AttractionsPage> {
+    const httpParams = new HttpParams()
+      .set('language', params.language)
+      .set('page', params.page)
+      .set('search', params.search)
+      .set('hitsPerPage', params.hitsPerPage)
+      .set('placeId', params.placeId)
+      .set('expand', String(params.expand))
+      .set('translate', String(params.translate))
+      .set('stripHtml', String(params.stripHtml))
+      .set('top', String(params.top));
+
+    return this.http
+      .get<AttractionsResponse>(this.baseUrl + '/searchattractions', { params: httpParams })
       .pipe(map(res => ({
         attractions: res.data.data,
         totalElements: res.data.meta?.page?.totalElements ?? 0,
