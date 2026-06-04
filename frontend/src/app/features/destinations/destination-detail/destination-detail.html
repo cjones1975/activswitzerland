@@ -37,9 +37,29 @@
           <i class="fa-solid fa-route"></i>
           {{ 'destinations.detail.planTrip' | translate }}
         </button>
+
         <div class="weather-box">
-          <i class="fa-solid fa-sun weather-icon"></i>
-          <span class="weather-temp">--°C</span>
+          @if (weatherLoading()) {
+            <div class="weather-skeleton"></div>
+          } @else if (todayWeather(); as w) {
+            <div class="weather-card-inner">
+              <span class="weather-title">{{ 'weather.today' | translate }}</span>
+              <div class="weather-main-row">
+                <i [class]="w.weatherCode.icon + ' weather-icon'"></i>
+                <span class="weather-temp">{{ w.maxTemp }}°C</span>
+              </div>
+              <span class="weather-desc">{{ w.weatherCode.label }}</span>
+              <button class="forecast-link" type="button" (click)="openWeather()">
+                {{ 'weather.seeForecast' | translate }}
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
+            </div>
+          } @else {
+            <div class="weather-unavailable">
+              <i class="fa-light fa-cloud weather-icon"></i>
+              <span class="weather-temp">--°C</span>
+            </div>
+          }
         </div>
       </div>
     </div>

@@ -100,3 +100,35 @@
 ::ng-deep .dest-drawer .p-drawer-content {
     overflow-y: auto;
 }
+
+/* Weather drawer header */
+.weather-drawer-header {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    gap: 0.15rem;
+}
+
+.weather-drawer-top-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 0.25rem;
+}
+
+.weather-location-name {
+    margin: 0;
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--navy-900);
+    line-height: 1.1;
+}
+
+.weather-forecast-label {
+    font-size: 0.65rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    color: var(--gray-400);
+    text-transform: uppercase;
+}
