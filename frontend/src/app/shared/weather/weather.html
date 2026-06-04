@@ -1,0 +1,124 @@
+@if (loading()) {
+  <div class="weather-loading">
+    <div class="skeleton skeleton-today"></div>
+    <div class="skeleton skeleton-stats"></div>
+    <div class="skeleton skeleton-overview"></div>
+  </div>
+}
+
+@if (error()) {
+  <div class="weather-error">
+    <i class="fa-light fa-cloud-exclamation"></i>
+    <p>Unable to load weather data.</p>
+  </div>
+}
+
+@if (!loading() && forecast(); as fc) {
+  <div class="weather-page">
+
+    <!-- TODAY CARD -->
+    <div class="today-card">
+      <div class="today-label">TODAY</div>
+      <div class="today-main">
+        <div class="today-left">
+          <div class="today-temps">
+            <span class="today-max">{{ fc.days[0].maxTemp }}°</span>
+            <span class="today-min">{{ fc.days[0].minTemp }}°</span>
+          </div>
+          <div class="today-sub">{{ fc.days[0].weatherCode.label }}</div>
+        </div>
+        <i [class]="fc.days[0].weatherCode.icon + ' today-icon'"></i>
+      </div>
+
+      <div class="stats-row">
+        <div class="stat">
+          <i class="fa-light fa-droplet stat-icon"></i>
+          <span class="stat-value">{{ todayMaxPrecipProb() }}%</span>
+          <span class="stat-label">Precip. chance</span>
+        </div>
+        <div class="stat">
+          <i class="fa-light fa-wind stat-icon"></i>
+          <span class="stat-value">{{ todayAvgWind() }} km/h</span>
+          <span class="stat-label">Avg. wind</span>
+        </div>
+        <div class="stat">
+          <i class="fa-light fa-sun stat-icon"></i>
+          <span class="stat-value">{{ fc.days[0].uvIndex }}</span>
+          <span class="stat-label">UV Index</span>
+        </div>
+        <div class="stat">
+          <i class="fa-light fa-cloud-rain stat-icon"></i>
+          <span class="stat-value">{{ fc.days[0].precipitationMm }} mm</span>
+          <span class="stat-label">Precipitation</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 7-DAY OVERVIEW -->
+    <div class="overview-section">
+      <h3 class="section-title">7-DAY OVERVIEW</h3>
+
+      @for (day of fc.days; track day.date; let i = $index) {
+        <div class="day-row" [class.day-row--today]="i === 0">
+          <div class="day-row-left">
+            <span class="day-name">{{ i === 0 ? 'Today' : formatDayName(day.date) }}</span>
+            <span class="day-sub">{{ day.weatherCode.label }}</span>
+          </div>
+          <span class="day-precip">{{ dayMaxPrecipProb(day) }}%</span>
+          <i [class]="day.weatherCode.icon + ' day-icon'"></i>
+          <div class="temp-bar-wrap">
+            <span class="bar-min">{{ day.minTemp }}°</span>
+            <div class="temp-bar">
+              <div
+                class="temp-bar-fill"
+                [style.left.%]="tempBarLeft(day)"
+                [style.width.%]="tempBarWidth(day)">
+              </div>
+            </div>
+            <span class="bar-max">{{ day.maxTemp }}°</span>
+          </div>
+        </div>
+      }
+    </div>
+
+    <!-- DAY DETAIL CARDS -->
+    <div class="day-cards-grid">
+      @for (day of fc.days; track day.date; let i = $index) {
+        @if (i > 0) {
+        <div class="day-card">
+          <div class="day-card-header">
+            <div>
+              <span class="day-card-label">{{ formatFullDate(day.date) }}</span>
+              <span class="day-card-condition">{{ day.weatherCode.label }}</span>
+            </div>
+            <i [class]="day.weatherCode.icon + ' day-card-icon'"></i>
+          </div>
+          <div class="day-card-temps">
+            <span class="card-max">{{ day.maxTemp }}°</span>
+            <span class="card-min">{{ day.minTemp }}°</span>
+          </div>
+          <div class="day-card-stats">
+            <div class="card-stat">
+              <span class="card-stat-label">Rain</span>
+              <span class="card-stat-value">{{ day.precipitationMm }} mm</span>
+            </div>
+            <div class="card-stat">
+              <span class="card-stat-label">Wind</span>
+              <span class="card-stat-value">{{ dayAvgWind(day) }} km/h</span>
+            </div>
+            <div class="card-stat">
+              <span class="card-stat-label">UV</span>
+              <span class="card-stat-value">{{ day.uvIndex }}</span>
+            </div>
+          </div>
+          <div class="day-card-daylight">
+            <span class="card-stat-label">Daylight</span>
+            <span class="card-stat-value">{{ formatDaylight(day.daylightDuration) }}</span>
+          </div>
+        </div>
+        }
+      }
+    </div>
+
+  </div>
+}

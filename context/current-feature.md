@@ -1,7 +1,6 @@
 # Current Feature
 
 ## Status
-Completed
 
 ## Goals
 
@@ -10,6 +9,16 @@ Completed
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-06-04 — Weather Feature Completed
+- `WeatherService` created at `@shared/services/weather.ts`; `getWeather(lat, lon)` HTTP GET to `http://localhost:3000/api/v1/weather`, maps response through `buildForecastViewModel`
+- `WeatherPayload` model updated to include optional `destination: Destination` for back-navigation; `ForecastViewModel` extended with `WeatherMeta` (elevation, timezoneAbbreviation); `buildForecastViewModel` now populates meta
+- `Weather` component (`@shared/weather`) fetches on drawer payload change via `Subject` + `switchMap`; computes `todayMaxPrecipProb`, `todayAvgWind`, `globalTempMin/Max`, temp bar geometry (`tempBarLeft`, `tempBarWidth`), day formatting helpers
+- Weather drawer UI: blue-gradient today card (condition, max/min temps, precip/wind/UV/precipitation stats row); 7-day overview list with precip%, icon, and proportional temp bar (CSS gradient blue→amber→red); day detail cards (2-up on ≥480px, single column on mobile) showing rain/wind/UV/daylight — today's card skipped as it duplicates the today summary
+- `DestinationDetail` fetches weather on destination load via `WeatherService`; `.weather-box` shows today's condition label, icon, max temp, and "7 day forecast" link with shimmer skeleton while loading; clicking the link closes the destination drawer and opens the weather drawer
+- DrawerHost: `Weather` component added; weather drawer uses `fa-solid fa-xmark` close icon, full-width on mobile (`min(600px, 100vw)`), header shows "Back to destination" + city name + "7-DAY FORECAST" label in a single left-aligned column; `onWeatherBack()` closes weather and reopens destination-detail using the destination stored in the payload
+- `weather.*` i18n keys added to all four locale files (en, de, fr, it)
+- Removed deprecated `{ allowSignalWrites: true }` option from `effect()` in `AllAttractions`
 
 ### 2026-06-03 — Attraction Detail Completed
 - `AttractionDetail` fetches the full attraction via `AttractionsService.getAttraction(id, lang)` triggered by an effect on the drawer payload; `loading` signal shows a `p-skeleton` while in-flight

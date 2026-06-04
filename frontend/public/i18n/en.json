@@ -108,6 +108,20 @@
       "price": "Price information"
     }
   },
+  "weather": {
+    "today": "Today's weather",
+    "seeForecast": "7 day forecast",
+    "backToDestination": "Back to destination",
+    "precipChance": "Precip. chance",
+    "avgWind": "Avg. wind",
+    "uvIndex": "UV Index",
+    "precipitation": "Precipitation",
+    "overview": "7-DAY OVERVIEW",
+    "daylight": "Daylight",
+    "rain": "Rain",
+    "wind": "Wind",
+    "uv": "UV"
+  },
   "hero": {
     "badge": "Switzerland's finest experiences",
     "title": "Welcome to Switzerland",

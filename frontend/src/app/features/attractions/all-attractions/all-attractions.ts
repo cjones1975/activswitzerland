@@ -50,7 +50,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       if (dest.identifier === this.currentDestId) return;
       this.currentDestId = dest.identifier;
       untracked(() => this.reset());
-    }, { allowSignalWrites: true });
+    });
   }
 
   ngAfterViewInit(): void {

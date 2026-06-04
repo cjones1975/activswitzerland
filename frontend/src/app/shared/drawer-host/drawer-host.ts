@@ -12,12 +12,14 @@ import { ForgotPassword } from '../../features/auth/forgot-password/forgot-passw
 import { DestinationDetail } from '../../features/destinations/destination-detail/destination-detail';
 import { AllAttractions } from '../../features/attractions/all-attractions/all-attractions';
 import { AttractionDetail, AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
+import { Weather } from '../weather/weather';
 import { Destination } from '../../models/destination';
+import { WeatherPayload } from '../../models/weather';
 
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -60,5 +62,18 @@ export class DrawerHost {
     const { destination } = this.svc.getPayload<AttractionDetailPayload>('attraction-detail')!;
     this.svc.close('attraction-detail');
     this.svc.open('all-attractions', destination);
+  }
+
+  weatherLocationName = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<WeatherPayload>('weather')?.locationName ?? '';
+  });
+
+  onWeatherBack() {
+    const payload = this.svc.getPayload<WeatherPayload>('weather');
+    this.svc.close('weather');
+    if (payload?.destination) {
+      this.svc.open('destination-detail', payload.destination);
+    }
   }
 }

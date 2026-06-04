@@ -132,6 +132,36 @@
     <app-attraction-detail></app-attraction-detail>
 </p-drawer>
 
+<!-- WEATHER -->
+<p-drawer
+    [visible]="svc.isOpen('weather')"
+    [closable]="false"
+    [dismissible]="false"
+    [closeOnEscape]="false"
+    (visibleChange)="onVisibleChange('weather', $event)"
+    position="left"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('weather')"
+    [style]="{ width: 'min(600px, 100vw)' }"
+    styleClass="dest-drawer">
+    <ng-template #header>
+        <div class="weather-drawer-header">
+            <div class="weather-drawer-top-row">
+                <button class="dest-back" type="button" (click)="onWeatherBack()">
+                    <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
+                    {{ 'weather.backToDestination' | translate }}
+                </button>
+                <button class="menu-close" type="button" (click)="onDrawerClose('weather')">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+            <h2 class="weather-location-name">{{ weatherLocationName() }}</h2>
+            <span class="weather-forecast-label">7-DAY FORECAST</span>
+        </div>
+    </ng-template>
+    <app-weather></app-weather>
+</p-drawer>
+
 <!-- DESTINATION DETAIL -->
 <p-drawer
     [visible]="svc.isOpen('destination-detail')"

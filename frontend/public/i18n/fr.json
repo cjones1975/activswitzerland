@@ -108,6 +108,20 @@
       "price": "Informations tarifaires"
     }
   },
+  "weather": {
+    "today": "Météo du jour",
+    "seeForecast": "Prévisions 7 jours",
+    "backToDestination": "Retour à la destination",
+    "precipChance": "Chance de précip.",
+    "avgWind": "Vent moy.",
+    "uvIndex": "Indice UV",
+    "precipitation": "Précipitations",
+    "overview": "APERÇU 7 JOURS",
+    "daylight": "Ensoleillement",
+    "rain": "Pluie",
+    "wind": "Vent",
+    "uv": "UV"
+  },
   "hero": {
     "badge": "Le meilleur de la Suisse",
     "title": "Bienvenue en Suisse",

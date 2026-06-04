@@ -108,6 +108,20 @@
       "price": "Preisinformation"
     }
   },
+  "weather": {
+    "today": "Heutiges Wetter",
+    "seeForecast": "7-Tage-Vorhersage",
+    "backToDestination": "Zurück zum Reiseziel",
+    "precipChance": "Niederschlagswahrsch.",
+    "avgWind": "Ø Wind",
+    "uvIndex": "UV-Index",
+    "precipitation": "Niederschlag",
+    "overview": "7-TAGE-ÜBERSICHT",
+    "daylight": "Tageslicht",
+    "rain": "Regen",
+    "wind": "Wind",
+    "uv": "UV"
+  },
   "hero": {
     "badge": "Das Beste der Schweiz",
     "title": "Willkommen in der Schweiz",
