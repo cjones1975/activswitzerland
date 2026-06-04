@@ -1,5 +1,7 @@
 # Current Feature
 
+## Feature
+
 ## Status
 
 ## Goals
@@ -9,6 +11,16 @@
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-06-04 — Attractions List Search Completed
+- Search bar added to top of `AllAttractions` drawer: PrimeNG `InputText` with `type="search"`, full-height `<button>` icon (proper mobile touch target), triggers on `keydown.enter`, `(search)` event (mobile keyboard), and icon click
+- Search strategy: (1) filter existing loaded records by name/abstract; (2) if none found, call `GET /api/v1/myswitzerland/searchattractions` with params `language`, `page=0`, `search`, `hitsPerPage=50`, `placeId`, `expand=false`, `translate=true`, `stripHtml=false`, `top=true`; (3) if still none, show "I'm sorry…" message
+- `AttractionsService.searchAttractions()` added; backend route and controller already existed
+- "Back to all attractions" button shown below results in search mode; clears query, exits search mode, and restores the full paginated list
+- Search mode disables infinite-scroll sentinel; language change and destination change both reset search state
+- `LangService` extracted to `@shared/services/lang.ts` — owns `app-lang` localStorage key and `translate.use()`; replaces 8 raw `localStorage.getItem('app-lang')` calls across 7 components
+- Angular environment files created (`environment.ts` / `environment.prod.ts`); all 8 hardcoded `http://localhost:3000` URLs replaced with `${environment.apiUrl}/...`; `fileReplacements` wired into `angular.json` production config; `tokenInterceptor` updated to use `environment.apiUrl || '/api/'`
+- `attractions.search.*` i18n keys (`placeholder`, `backToAll`, `noResults`) added to all four locale files (en, de, fr, it)
 
 ### 2026-06-04 — Weather Feature Completed
 - `WeatherService` created at `@shared/services/weather.ts`; `getWeather(lat, lon)` HTTP GET to `http://localhost:3000/api/v1/weather`, maps response through `buildForecastViewModel`

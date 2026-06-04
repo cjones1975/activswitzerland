@@ -1,23 +1,68 @@
 <div class="all-attractions-panel">
-  <div class="card-list">
-    @for (attraction of attractions; track attraction.identifier) {
-      <div class="attraction-card" (click)="onAttractionClick(attraction)">
-        <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
-        <div class="card-text">
-          <h3 class="card-name">{{ attraction.name }}</h3>
-          <p class="card-abstract">{{ attraction.abstract }}</p>
-        </div>
-      </div>
-    }
+  <div class="search-section">
+    <div class="input-wrap">
+      <button type="button" class="search-btn" (click)="onSearch()" aria-label="Search">
+        <i class="fa-regular fa-magnifying-glass"></i>
+      </button>
+      <input
+        pInputText
+        class="search-input"
+        type="search"
+        [(ngModel)]="searchQuery"
+        (keydown.enter)="onSearch()"
+        (search)="onSearch()"
+        [placeholder]="'attractions.search.placeholder' | translate"
+      />
+    </div>
+  </div>
 
-    @if (loading()) {
-      @for (s of skeletons; track $index) {
-        <div class="skeleton-card">
-          <p-skeleton width="100%" height="100%" borderRadius="10px" />
+  <div class="card-list">
+    @if (isSearchMode()) {
+      @if (searching()) {
+        @for (s of skeletons; track $index) {
+          <div class="skeleton-card">
+            <p-skeleton width="100%" height="100%" borderRadius="10px" />
+          </div>
+        }
+      } @else if (noResults()) {
+        <p class="no-results">{{ 'attractions.search.noResults' | translate }}</p>
+      } @else {
+        @for (attraction of searchResults; track attraction.identifier) {
+          <div class="attraction-card" (click)="onAttractionClick(attraction)">
+            <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
+            <div class="card-text">
+              <h3 class="card-name">{{ attraction.name }}</h3>
+              <p class="card-abstract">{{ attraction.abstract }}</p>
+            </div>
+          </div>
+        }
+      }
+      <div class="back-all-wrapper">
+        <button class="back-all-btn" (click)="clearSearch()">
+          <i class="fa-regular fa-arrow-left"></i>
+          {{ 'attractions.search.backToAll' | translate }}
+        </button>
+      </div>
+    } @else {
+      @for (attraction of attractions; track attraction.identifier) {
+        <div class="attraction-card" (click)="onAttractionClick(attraction)">
+          <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
+          <div class="card-text">
+            <h3 class="card-name">{{ attraction.name }}</h3>
+            <p class="card-abstract">{{ attraction.abstract }}</p>
+          </div>
         </div>
       }
-    }
 
-    <div #sentinel class="sentinel"></div>
+      @if (loading()) {
+        @for (s of skeletons; track $index) {
+          <div class="skeleton-card">
+            <p-skeleton width="100%" height="100%" borderRadius="10px" />
+          </div>
+        }
+      }
+
+      <div #sentinel class="sentinel"></div>
+    }
   </div>
 </div>

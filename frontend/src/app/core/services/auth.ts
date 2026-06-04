@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
+import { environment } from '../../../environments/environment';
 import { Toast } from './toast';
 
 interface AuthResponse {
@@ -40,7 +41,7 @@ export class Auth {
   async login(email: string, password: string): Promise<void> {
     try {
       const res = await firstValueFrom(
-        this.http.post<AuthResponse>('http://localhost:3000/api/v1/auth/login', { email, password })
+        this.http.post<AuthResponse>(`${environment.apiUrl}/api/v1/auth/login`, { email, password })
       );
       this.storeToken(res.token);
       this.toast.success(this.t('auth.toast.login_success'), this.t('auth.toast.login_welcome'), 3000, 'toast-success');
@@ -61,7 +62,7 @@ export class Auth {
   async register(payload: RegisterPayload): Promise<void> {
     try {
       const res = await firstValueFrom(
-        this.http.post<AuthResponse>('http://localhost:3000/api/v1/auth/register', payload)
+        this.http.post<AuthResponse>(`${environment.apiUrl}/api/v1/auth/register`, payload)
       );
       this.storeToken(res.token);
       this.toast.success(this.t('auth.toast.register_success'), this.t('auth.toast.register_welcome'), 3000, 'toast-success');
@@ -76,7 +77,7 @@ export class Auth {
   async forgotPassword(email: string): Promise<void> {
     try {
       await firstValueFrom(
-        this.http.post('http://localhost:3000/api/v1/auth/forgotPassword', { email })
+        this.http.post(`${environment.apiUrl}/api/v1/auth/forgotPassword`, { email })
       );
       this.toast.success(this.t('auth.toast.forgot_success'), this.t('auth.toast.forgot_success_detail'), 4000, 'toast-success');
     } catch (err: any) {

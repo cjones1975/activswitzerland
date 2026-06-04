@@ -6,6 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { AttractionsService } from '../../../shared/services/attractions';
 import { AttractionMarkersService, hasValidGeo } from '../../../shared/services/attraction-markers';
 import { Drawer } from '../../../shared/services/drawer';
+import { LangService } from '../../../shared/services/lang';
 import { Attraction } from '../../../models/attraction';
 import { Destination } from '../../../models/destination';
 
@@ -23,6 +24,7 @@ export class AttractionVerticalList implements OnInit {
   private attractionMarkers = inject(AttractionMarkersService);
   private drawerSvc = inject(Drawer);
   private translate = inject(TranslateService);
+  private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
 
   attractions: Attraction[] = [];
@@ -32,7 +34,7 @@ export class AttractionVerticalList implements OnInit {
 
   ngOnInit(): void {
     this.translate.onLangChange.pipe(
-      startWith({ lang: localStorage.getItem('app-lang') || 'en' }),
+      startWith({ lang: this.langSvc.current }),
       tap(() => this.loading.set(true)),
       switchMap(event => {
         const base = {

@@ -1,6 +1,9 @@
 import { Component, AfterViewInit, DestroyRef, ElementRef, OnDestroy, ViewChild, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { TranslateService } from '@ngx-translate/core';
+import { FormsModule } from '@angular/forms';
+import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { LangService } from '../../../shared/services/lang';
+import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Drawer } from '../../../shared/services/drawer';
 import { AttractionsService } from '../../../shared/services/attractions';
@@ -11,7 +14,7 @@ import { Destination } from '../../../models/destination';
 @Component({
   selector: 'app-all-attractions',
   standalone: true,
-  imports: [SkeletonModule],
+  imports: [FormsModule, InputTextModule, SkeletonModule, TranslatePipe],
   templateUrl: './all-attractions.html',
   styleUrl: './all-attractions.css',
 })
@@ -22,6 +25,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
   private attractionsService = inject(AttractionsService);
   private attractionMarkers = inject(AttractionMarkersService);
   private translate = inject(TranslateService);
+  private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
 
   destination = computed(() => {
@@ -34,28 +38,34 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
   hasMore = signal(true);
   skeletons = Array(6);
 
+  searchQuery = '';
+  isSearchMode = signal(false);
+  searching = signal(false);
+  searchResults: Attraction[] = [];
+  noResults = signal(false);
+
   private page = 0;
   private totalElements = 0;
   private observer?: IntersectionObserver;
-  private lang = localStorage.getItem('app-lang') || 'en';
+  private lang = this.langSvc.current;
   private currentDestId: string | null = null;
 
   constructor() {
-    // Reload from scratch whenever the destination changes.
-    // The component is never destroyed between drawer opens (PrimeNG keeps it alive),
-    // so ngOnInit cannot be relied upon for re-initialisation.
     effect(() => {
       const dest = this.destination();
       if (!dest) { this.currentDestId = null; return; }
       if (dest.identifier === this.currentDestId) return;
       this.currentDestId = dest.identifier;
-      untracked(() => this.reset());
+      untracked(() => {
+        this.clearSearch();
+        this.reset();
+      });
     });
   }
 
   ngAfterViewInit(): void {
     this.observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && !this.loading() && this.hasMore()) {
+      if (entries[0].isIntersecting && !this.loading() && this.hasMore() && !this.isSearchMode()) {
         this.loadMore();
       }
     }, { threshold: 0.1 });
@@ -63,7 +73,10 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
 
     this.translate.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(e => {
       this.lang = e.lang;
-      if (this.currentDestId) this.reset();
+      if (this.currentDestId) {
+        this.clearSearch();
+        this.reset();
+      }
     });
   }
 
@@ -98,6 +111,64 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       );
       this.loading.set(false);
     });
+  }
+
+  onSearch(): void {
+    const query = this.searchQuery.trim().toLowerCase();
+    if (!query) return;
+
+    this.isSearchMode.set(true);
+    this.noResults.set(false);
+    this.searchResults = [];
+
+    // Step 1: filter existing loaded records
+    const local = this.attractions.filter(a =>
+      a.name?.toLowerCase().includes(query) || a.abstract?.toLowerCase().includes(query)
+    );
+
+    if (local.length > 0) {
+      this.searchResults = local;
+      return;
+    }
+
+    // Step 2: call the API
+    const dest = this.destination();
+    if (!dest) { this.noResults.set(true); return; }
+
+    this.searching.set(true);
+    this.attractionsService.searchAttractions({
+      language: this.lang,
+      page: 0,
+      search: this.searchQuery.trim(),
+      hitsPerPage: 50,
+      placeId: dest.identifier,
+      expand: false,
+      translate: true,
+      stripHtml: false,
+      top: true,
+    }).subscribe({
+      next: ({ attractions }) => {
+        if (attractions.length > 0) {
+          this.searchResults = attractions;
+        } else {
+          // Step 3: no results found
+          this.noResults.set(true);
+        }
+        this.searching.set(false);
+      },
+      error: () => {
+        this.noResults.set(true);
+        this.searching.set(false);
+      },
+    });
+  }
+
+  clearSearch(): void {
+    this.searchQuery = '';
+    this.isSearchMode.set(false);
+    this.searchResults = [];
+    this.noResults.set(false);
+    this.searching.set(false);
   }
 
   onAttractionClick(attraction: Attraction): void {

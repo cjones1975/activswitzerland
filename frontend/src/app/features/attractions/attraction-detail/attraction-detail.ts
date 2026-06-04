@@ -7,6 +7,7 @@ import { Subject, switchMap } from 'rxjs';
 import { Drawer } from '../../../shared/services/drawer';
 import { AttractionsService } from '../../../shared/services/attractions';
 import { AttractionMarkersService } from '../../../shared/services/attraction-markers';
+import { LangService } from '../../../shared/services/lang';
 import { Attraction } from '../../../models/attraction';
 import { Destination } from '../../../models/destination';
 
@@ -34,6 +35,7 @@ export class AttractionDetail implements OnDestroy {
   private drawerSvc = inject(Drawer);
   private attractionsService = inject(AttractionsService);
   private attractionMarkers = inject(AttractionMarkersService);
+  private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
 
   payload = computed(() => {
@@ -98,7 +100,7 @@ export class AttractionDetail implements OnDestroy {
     effect(() => {
       const p = this.payload();
       if (!p) { this.fullAttraction.set(null); return; }
-      const lang = localStorage.getItem('app-lang') || 'en';
+      const lang = this.langSvc.current;
       untracked(() => {
         this.fetchTrigger$.next({ id: p.attraction.identifier, lang });
         this.attractionMarkers.setSelected(p.attraction.identifier);

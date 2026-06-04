@@ -1,8 +1,9 @@
 import { Component, inject } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { TranslateService, TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { Drawer } from '../../shared/services/drawer';
+import { LangService } from '../../shared/services/lang';
 
 @Component({
   standalone: true,
@@ -12,7 +13,7 @@ import { Drawer } from '../../shared/services/drawer';
   styleUrl: './menu-nav.css',
 })
 export class MenuNav {
-  private translate = inject(TranslateService);
+  private langSvc = inject(LangService);
   private drawer = inject(Drawer);
 
   languages = [
@@ -22,15 +23,14 @@ export class MenuNav {
     { label: 'Italiano', value: 'it' },
   ];
 
-  selectedLang = localStorage.getItem('app-lang') || 'en';
+  selectedLang = this.langSvc.current;
 
   constructor() {
-    this.translate.use(this.selectedLang);
+    this.langSvc.set(this.selectedLang);
   }
 
   changeLanguage(lang: string): void {
-    this.translate.use(lang);
-    localStorage.setItem('app-lang', lang);
+    this.langSvc.set(lang);
   }
 
   openAuth(): void {
