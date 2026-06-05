@@ -43,7 +43,39 @@
       "ai": "Laisser l'IA créer votre itinéraire"
     }
   },
+  "trip": {
+    "planner": {
+      "title": "Planifier un voyage",
+      "typeRoad": "Road trip",
+      "typeRail": "Voyage en train",
+      "from": "Depuis",
+      "to": "Vers",
+      "via": "Via",
+      "addStop": "Ajouter un arrêt",
+      "findConnections": "Trouver des connexions",
+      "date": "Date",
+      "time": "Heure",
+      "connections": "Connexions",
+      "transfers": "correspondances",
+      "select": "Sélectionner",
+      "attractionsAlongRoute": "Attractions sur la route",
+      "noAttractions": "Aucune attraction trouvée sur cet itinéraire.",
+      "tripName": "Nom du voyage",
+      "tripNamePlaceholder": "Suggestion",
+      "save": "Enregistrer le voyage",
+      "saveHint": "Connectez-vous pour sauvegarder vos voyages",
+      "savedSuccess": "Voyage enregistré !",
+      "deleteConfirm": "Voulez-vous vraiment supprimer ce voyage ?",
+      "noTrips": "Aucun voyage enregistré.",
+      "planFirst": "Planifier votre premier voyage"
+    }
+  },
   "profile": {
+    "savedTrips": {
+      "title": "Voyages enregistrés",
+      "view": "Voir",
+      "empty": "Vous n'avez pas encore enregistré de voyages."
+    },
     "stats": {
       "trips": "Voyages enregistrés",
       "reviews": "Avis rédigés",

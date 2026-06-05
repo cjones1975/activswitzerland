@@ -10,6 +10,7 @@ export type DrawerKey =
   | 'weather'
   | 'language'
   | 'profile'
+  | 'trip-planner'
 
 
 const DRAWER_BASE_Z = 4000;

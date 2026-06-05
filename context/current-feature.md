@@ -2,15 +2,50 @@
 
 ## Feature
 
+Trip Planner — full-screen drawer for planning road and rail journeys through Switzerland, with stop search, route rendering on the map, attraction discovery along the route, and saved trips in the user profile.
+
 ## Status
+
+In progress — spec completed, implementation not started.
+
+Backend transport proxy endpoints (`/api/v1/transport/locations`, `/api/v1/transport/connections`) completed by user. Remaining work: backend Trip model + CRUD, all frontend.
 
 ## Goals
 
+- Users can select Road Trip or Rail Trip mode and build a multi-stop journey using the Swiss transport network (transport.opendata.ch) as the location source
+- Road trips display an actual road route on the map via the OSRM public API; rail trips display straight-line routes between station coordinates
+- Rail trips optionally show real timetable connections when the user provides a date and time
+- Attractions within 10km of each stop are discovered and displayed in the drawer using `geo.dist` on the MySwitzerland API
+- Users can name and save a trip (requires login); the Save button opens the auth drawer if not logged in to encourage sign-up
+- Saved trips are listed on the profile page with View and Delete actions; viewing a saved trip reloads the route on the map
+
 ## Notes
+
+- Full spec: `@context/features/trip-planner-spec.md`
+- Division of labor: user builds transport proxy backend endpoints; Claude builds everything else
+- OSRM calls go directly from frontend — no backend proxy needed
+- Rail route on map uses straight lines between station coordinates (not actual track geometry) for the initial implementation
+- Drawer key: `'trip-planner'`, left position, width `min(480px, calc(100vw - 20px))`
+- `TripPlannerService` holds in-progress trip state as RxJS BehaviorSubjects; `DestinationsLayout` subscribes to `routeCoordinates$` to pass the GeoJSON line to the map component
+- Trip stop markers: green (`#1a6b3c`), numbered sequentially; route line: green, dashed for road, solid for rail
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-06-05 — Trip Planner Specced
+
+- Feature brainstormed and fully specced in `context/features/trip-planner-spec.md`
+- Trip type: Road Trip (OSRM routing) or Rail Trip (straight-line + optional timetable connections)
+- Stop search: `p-autoComplete` with `[minLength]="3"` backed by `TransportService.searchLocations()` → `GET /api/v1/transport/locations`
+- Rail connections: optional date/time picker triggers `GET /api/v1/transport/connections`; returns timetable displayed as selectable rows with `p-chip` product labels, `p-tag` transfer count, and `p-button` select action
+- Attraction discovery: `geo.dist=lat,lon,10000` per stop via MySwitzerland API, deduplicated by `identifier`; displayed as horizontal thumbnail cards; clicking opens existing `attraction-detail` drawer
+- Map: new `[tripRoute]` and `[tripType]` inputs on `MapComponent`; GeoJSON `LineString` layer in green (`#1a6b3c`), dashed for road, solid for rail; numbered stop markers
+- Save gate: `p-message` sign-in hint + auth drawer redirect when not logged in; `p-toast` success when logged in
+- Trip name: user-editable `pInputText` with `p-floatLabel`; suggested name auto-computed as `{first} → {last}` via computed signal
+- Profile: `TripsService.getTrips()` populates saved trips count and new Saved Trips section; 2-column grid on desktop, 1-column on mobile; `ConfirmationService` delete dialog
+- PrimeNG components used throughout: `SelectButton`, `AutoComplete`, `DatePicker`, `InputText`, `FloatLabel`, `Button`, `Tag`, `Chip`, `Skeleton`, `Divider`, `Toast`, `ConfirmDialog`, `Message`
+- Backend transport proxy endpoints already completed by user; all other backend and frontend work pending
 
 ### 2026-06-04 — Attractions List Search Completed
 - Search bar added to top of `AllAttractions` drawer: PrimeNG `InputText` with `type="search"`, full-height `<button>` icon (proper mobile touch target), triggers on `keydown.enter`, `(search)` event (mobile keyboard), and icon click

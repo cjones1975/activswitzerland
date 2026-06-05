@@ -13,13 +13,14 @@ import { DestinationDetail } from '../../features/destinations/destination-detai
 import { AllAttractions } from '../../features/attractions/all-attractions/all-attractions';
 import { AttractionDetail, AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
 import { Weather } from '../weather/weather';
+import { TripPlanner } from '../../features/trip-planner/trip-planner';
 import { Destination } from '../../models/destination';
 import { WeatherPayload } from '../../models/weather';
 
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, TripPlanner],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })

@@ -33,7 +33,7 @@
       <p class="abstract" [innerHTML]="dest.abstract"></p>
 
       <div class="action-grid">
-        <button class="plan-btn" type="button">
+        <button class="plan-btn" type="button" (click)="openTripPlanner()">
           <i class="fa-solid fa-route"></i>
           {{ 'destinations.detail.planTrip' | translate }}
         </button>

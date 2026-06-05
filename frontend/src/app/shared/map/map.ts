@@ -38,6 +38,8 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() center?: [number, number];
   @Input() style = 'https://tiles.openfreemap.org/styles/bright';
   @Input() activeMarker?: { lng: number; lat: number };
+  @Input() tripRoute: [number, number][] | null = null;
+  @Input() tripType: 'road' | 'rail' | null = null;
 
   @Output() markerClick = new EventEmitter<MapMarker>();
 
@@ -62,6 +64,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.map?.resize();
       this.mapLoaded = true;
       this.syncMarkers();
+      this.syncTripRoute();
       if (this.center) {
         this.map?.flyTo({ center: this.center, zoom: this.zoom, duration: 800 });
       }
@@ -77,6 +80,9 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     if (changes['activeMarker'] && this.mapLoaded && this.activeMarker) {
       this.activateMarker(this.activeMarker);
+    }
+    if ((changes['tripRoute'] || changes['tripType']) && this.mapLoaded) {
+      this.syncTripRoute();
     }
   }
 
@@ -153,6 +159,72 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         popup.setLngLat([target.lng, target.lat]).addTo(this.map!);
       });
     }
+  }
+
+  private tripStopMarkers: Marker[] = [];
+
+  private syncTripRoute(): void {
+    if (!this.map) return;
+
+    // Remove existing route layer/source
+    if (this.map.getLayer('trip-route-line')) this.map.removeLayer('trip-route-line');
+    if (this.map.getSource('trip-route')) this.map.removeSource('trip-route');
+
+    // Remove trip stop markers
+    this.tripStopMarkers.forEach(m => m.remove());
+    this.tripStopMarkers = [];
+
+    const coords = this.tripRoute;
+    if (!coords || coords.length < 2) return;
+
+    // Add GeoJSON source
+    this.map.addSource('trip-route', {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        geometry: { type: 'LineString', coordinates: coords },
+        properties: {},
+      },
+    });
+
+    const paint: any = {
+      'line-color': '#1a6b3c',
+      'line-width': 3,
+      'line-cap': 'round',
+      'line-join': 'round',
+    };
+    if (this.tripType === 'road') {
+      paint['line-dasharray'] = [2, 1.5];
+    }
+
+    this.map.addLayer({ id: 'trip-route-line', type: 'line', source: 'trip-route', paint });
+
+    // Add numbered stop markers at the route endpoints
+    const uniqueStops: [number, number][] = [];
+    if (coords.length >= 2) {
+      uniqueStops.push(coords[0], coords[coords.length - 1]);
+    }
+    uniqueStops.forEach((coord, i) => {
+      const el = document.createElement('div');
+      el.className = 'trip-stop-marker';
+      el.innerHTML = `<span>${i + 1}</span>`;
+      el.style.background = '#1a6b3c';
+      el.style.color = '#fff';
+      el.style.borderRadius = '50%';
+      el.style.width = '22px';
+      el.style.height = '22px';
+      el.style.display = 'flex';
+      el.style.alignItems = 'center';
+      el.style.justifyContent = 'center';
+      el.style.fontSize = '12px';
+      el.style.fontWeight = '700';
+      el.style.border = '2px solid #fff';
+      el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.3)';
+      const marker = new maplibregl.Marker({ element: el })
+        .setLngLat(coord)
+        .addTo(this.map!);
+      this.tripStopMarkers.push(marker);
+    });
   }
 
   ngOnDestroy(): void {

@@ -43,7 +43,39 @@
       "ai": "Lascia che l'AI costruisca il tuo itinerario"
     }
   },
+  "trip": {
+    "planner": {
+      "title": "Pianifica un viaggio",
+      "typeRoad": "Viaggio in auto",
+      "typeRail": "Viaggio in treno",
+      "from": "Da",
+      "to": "A",
+      "via": "Via",
+      "addStop": "Aggiungi tappa",
+      "findConnections": "Cerca connessioni",
+      "date": "Data",
+      "time": "Orario",
+      "connections": "Connessioni",
+      "transfers": "cambi",
+      "select": "Seleziona",
+      "attractionsAlongRoute": "Attrazioni lungo il percorso",
+      "noAttractions": "Nessuna attrazione trovata lungo questo percorso.",
+      "tripName": "Nome del viaggio",
+      "tripNamePlaceholder": "Suggerimento",
+      "save": "Salva viaggio",
+      "saveHint": "Accedi per salvare i tuoi viaggi",
+      "savedSuccess": "Viaggio salvato!",
+      "deleteConfirm": "Sei sicuro di voler eliminare questo viaggio?",
+      "noTrips": "Nessun viaggio salvato.",
+      "planFirst": "Pianifica il tuo primo viaggio"
+    }
+  },
   "profile": {
+    "savedTrips": {
+      "title": "Viaggi salvati",
+      "view": "Visualizza",
+      "empty": "Non hai ancora salvato nessun viaggio."
+    },
     "stats": {
       "trips": "Viaggi salvati",
       "reviews": "Recensioni scritte",

@@ -56,6 +56,18 @@ export class DestinationDetail {
     });
   }
 
+  openTripPlanner() {
+    const dest = this.destination();
+    if (!dest) return;
+    const stop = {
+      stationId: dest.identifier,
+      name: dest.name,
+      lat: dest.geo.latitude,
+      lon: dest.geo.longitude,
+    };
+    this.drawerSvc.open('trip-planner', stop);
+  }
+
   openWeather() {
     const dest = this.destination();
     if (!dest) return;

@@ -43,7 +43,39 @@
       "ai": "Let AI build an itinerary"
     }
   },
+  "trip": {
+    "planner": {
+      "title": "Plan a Trip",
+      "typeRoad": "Road Trip",
+      "typeRail": "Rail Trip",
+      "from": "From",
+      "to": "To",
+      "via": "Via",
+      "addStop": "Add stop",
+      "findConnections": "Find connections",
+      "date": "Date",
+      "time": "Time",
+      "connections": "Connections",
+      "transfers": "transfers",
+      "select": "Select",
+      "attractionsAlongRoute": "Attractions along route",
+      "noAttractions": "No attractions found along this route.",
+      "tripName": "Trip name",
+      "tripNamePlaceholder": "Suggested",
+      "save": "Save Trip",
+      "saveHint": "Sign in to save your trips",
+      "savedSuccess": "Trip saved!",
+      "deleteConfirm": "Are you sure you want to delete this trip?",
+      "noTrips": "No trips saved yet.",
+      "planFirst": "Plan your first trip"
+    }
+  },
   "profile": {
+    "savedTrips": {
+      "title": "Saved trips",
+      "view": "View",
+      "empty": "You haven't saved any trips yet."
+    },
     "stats": {
       "trips": "Saved trips",
       "reviews": "Reviews written",

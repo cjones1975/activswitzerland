@@ -1,5 +1,5 @@
 <div class="map-wrapper">
-  <app-map [markers]="displayMarkers()" [zoom]="12" [center]="center()" [activeMarker]="selectedMarker()" (markerClick)="onMarkerClick($event)"></app-map>
+  <app-map [markers]="displayMarkers()" [zoom]="12" [center]="center()" [activeMarker]="selectedMarker()" [tripRoute]="tripRoute()" [tripType]="tripType()" (markerClick)="onMarkerClick($event)"></app-map>
 </div>
 
 <div class="reopen-btns">

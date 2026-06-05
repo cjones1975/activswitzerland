@@ -1,3 +1,5 @@
+<p-toast position="bottom-center" />
+<p-confirmDialog />
 <app-header-nav></app-header-nav>
 
 <div class="profile-page">
@@ -13,17 +15,17 @@
     <div class="stat-row">
         <div class="stat-card">
             <i class="fa-light fa-bookmark stat-icon" style="color: var(--navy-900)"></i>
-            <span class="stat-count">{{ stats.savedTrips }}</span>
+            <span class="stat-count">{{ stats().savedTrips }}</span>
             <span class="stat-label">{{ 'profile.stats.trips' | translate }}</span>
         </div>
         <div class="stat-card">
             <i class="fa-light fa-comment stat-icon" style="color: var(--color-green)"></i>
-            <span class="stat-count">{{ stats.reviewsWritten }}</span>
+            <span class="stat-count">{{ stats().reviewsWritten }}</span>
             <span class="stat-label">{{ 'profile.stats.reviews' | translate }}</span>
         </div>
         <div class="stat-card">
             <i class="fa-light fa-thumbs-up stat-icon" style="color: var(--amber-700)"></i>
-            <span class="stat-count">{{ stats.reviewsLiked }}</span>
+            <span class="stat-count">{{ stats().reviewsLiked }}</span>
             <span class="stat-label">{{ 'profile.stats.likes' | translate }}</span>
         </div>
     </div>
@@ -117,6 +119,52 @@
                 }
             </div>
         </div>
+    </div>
+
+    <!-- Saved trips -->
+    <div class="saved-trips-section">
+        <div class="saved-trips-header">
+            <i class="fa-light fa-route"></i>
+            <span>{{ 'profile.savedTrips.title' | translate }}</span>
+        </div>
+
+        @if (savedTrips().length === 0) {
+            <p class="saved-trips-empty">{{ 'profile.savedTrips.empty' | translate }}</p>
+            <p-button
+                [label]="'trip.planner.planFirst' | translate"
+                [link]="true"
+                icon="fa-light fa-route"
+                (onClick)="openTripPlanner()" />
+        } @else {
+            <div class="trips-grid">
+                @for (trip of savedTrips(); track trip._id) {
+                    <div class="trip-card">
+                        <div class="trip-card-header">
+                            <span class="trip-card-name">{{ trip.name }}</span>
+                            <p-tag
+                                [value]="trip.type === 'road' ? ('trip.planner.typeRoad' | translate) : ('trip.planner.typeRail' | translate)"
+                                [severity]="trip.type === 'road' ? 'success' : 'info'" />
+                        </div>
+                        <p class="trip-card-stops">{{ tripStopSummary(trip) }}</p>
+                        <p class="trip-card-date">{{ formatDate(trip.createdAt) }}</p>
+                        <div class="trip-card-actions">
+                            <p-button
+                                [label]="'profile.savedTrips.view' | translate"
+                                [outlined]="true"
+                                severity="secondary"
+                                size="small"
+                                (onClick)="viewTrip(trip)" />
+                            <p-button
+                                icon="fa-light fa-trash"
+                                [text]="true"
+                                severity="danger"
+                                size="small"
+                                (onClick)="confirmDeleteTrip(trip)" />
+                        </div>
+                    </div>
+                }
+            </div>
+        }
     </div>
 
     <!-- Sign out -->

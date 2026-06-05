@@ -43,7 +43,39 @@
       "ai": "KI erstellt Ihre Reiseroute"
     }
   },
+  "trip": {
+    "planner": {
+      "title": "Reise planen",
+      "typeRoad": "Autoreise",
+      "typeRail": "Bahnreise",
+      "from": "Von",
+      "to": "Nach",
+      "via": "Über",
+      "addStop": "Halt hinzufügen",
+      "findConnections": "Verbindungen suchen",
+      "date": "Datum",
+      "time": "Uhrzeit",
+      "connections": "Verbindungen",
+      "transfers": "Umstiege",
+      "select": "Auswählen",
+      "attractionsAlongRoute": "Attraktionen entlang der Route",
+      "noAttractions": "Keine Attraktionen entlang dieser Route gefunden.",
+      "tripName": "Reisename",
+      "tripNamePlaceholder": "Vorschlag",
+      "save": "Reise speichern",
+      "saveHint": "Melden Sie sich an, um Ihre Reisen zu speichern",
+      "savedSuccess": "Reise gespeichert!",
+      "deleteConfirm": "Möchten Sie diese Reise wirklich löschen?",
+      "noTrips": "Noch keine Reisen gespeichert.",
+      "planFirst": "Erste Reise planen"
+    }
+  },
   "profile": {
+    "savedTrips": {
+      "title": "Gespeicherte Reisen",
+      "view": "Anzeigen",
+      "empty": "Sie haben noch keine Reisen gespeichert."
+    },
     "stats": {
       "trips": "Gespeicherte Reisen",
       "reviews": "Geschriebene Bewertungen",

@@ -1,0 +1,313 @@
+:host {
+  display: block;
+  height: 100%;
+  overflow-y: auto;
+}
+
+.trip-planner {
+  padding: 0 0 2rem;
+}
+
+/* ── Section wrapper ────────────────────────────────────────────── */
+.tp-section {
+  padding: 0 1rem;
+}
+
+.tp-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--navy-900);
+  margin: 0 0 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Trip type toggle ───────────────────────────────────────────── */
+:host ::ng-deep p-selectButton.trip-type-toggle .p-selectbutton,
+:host ::ng-deep .trip-type-toggle.p-selectbutton {
+  display: flex;
+  width: 100%;
+}
+
+:host ::ng-deep .trip-type-toggle .p-togglebutton {
+  flex: 1;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+/* ── Stop builder ───────────────────────────────────────────────── */
+.stop-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.stop-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.stop-indicator {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  padding-top: 0.6rem;
+  width: 28px;
+}
+
+.stop-icon {
+  font-size: 1rem;
+  color: var(--navy-900);
+  flex-shrink: 0;
+}
+
+.stop-icon--start { color: #1a6b3c; }
+.stop-icon--end   { color: #e53e3e; }
+
+.stop-icon--mid {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--navy-900);
+  color: #fff;
+  font-size: 0.65rem;
+  font-weight: 700;
+}
+
+.stop-line {
+  flex: 1;
+  width: 2px;
+  min-height: 18px;
+  background: repeating-linear-gradient(
+    to bottom,
+    var(--navy-500, #6b90b8) 0,
+    var(--navy-500, #6b90b8) 4px,
+    transparent 4px,
+    transparent 8px
+  );
+  margin: 3px 0;
+}
+
+:host ::ng-deep .stop-input {
+  flex: 1;
+  margin-bottom: 0.5rem;
+}
+
+:host ::ng-deep .stop-input input {
+  width: 100%;
+  font-size: 0.9rem;
+}
+
+.stop-remove {
+  padding-top: 0.3rem;
+  flex-shrink: 0;
+}
+
+.add-stop-btn {
+  margin-top: 0.25rem;
+}
+
+/* ── Rail connections ───────────────────────────────────────────── */
+.connections-form {
+  display: flex;
+  gap: 0.5rem;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  margin-bottom: 1rem;
+}
+
+.conn-date  { flex: 2; min-width: 0; }
+.conn-time  { flex: 1; min-width: 0; }
+
+.conn-find-btn {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+@media (max-width: 767px) {
+  .connections-form { flex-direction: column; }
+  .conn-date,
+  .conn-time,
+  .conn-find-btn { width: 100%; flex: unset; }
+}
+
+.connections-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  max-height: 280px;
+  overflow-y: auto;
+}
+
+.conn-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #fff;
+  transition: background 0.15s;
+}
+
+.conn-row--selected {
+  border-color: #1a6b3c;
+  background: #f0faf4;
+}
+
+.conn-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.conn-times {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.conn-time {
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--navy-900);
+}
+
+.conn-arrow {
+  color: #94a3b8;
+  font-size: 0.75rem;
+}
+
+.conn-duration {
+  font-size: 0.8rem;
+  color: #64748b;
+  margin-left: 0.25rem;
+}
+
+.conn-tags {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+:host ::ng-deep .conn-transfers.p-tag {
+  font-size: 0.7rem;
+  padding: 0.1rem 0.4rem;
+}
+
+:host ::ng-deep .product-chip.p-chip {
+  font-size: 0.7rem;
+  padding: 0.15rem 0.45rem;
+  height: auto;
+  background: #dbeafe;
+  color: var(--navy-900);
+}
+
+.conn-select-btn {
+  flex-shrink: 0;
+}
+
+/* ── Attractions ────────────────────────────────────────────────── */
+.attraction-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.attraction-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.attraction-row:hover {
+  background: #f8fafc;
+}
+
+.attraction-thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  flex-shrink: 0;
+  background: #e2e8f0;
+}
+
+.attraction-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.attraction-name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--navy-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:host ::ng-deep .attraction-tag.p-tag {
+  font-size: 0.68rem;
+  padding: 0.1rem 0.4rem;
+  align-self: flex-start;
+}
+
+.attraction-arrow {
+  color: #94a3b8;
+  font-size: 0.8rem;
+  flex-shrink: 0;
+}
+
+.tp-empty {
+  font-size: 0.85rem;
+  color: #94a3b8;
+  text-align: center;
+  padding: 1rem 0;
+}
+
+/* ── Save section ───────────────────────────────────────────────── */
+.tp-save {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.trip-name-suggestion {
+  font-size: 0.78rem;
+  color: #94a3b8;
+}
+
+:host ::ng-deep .save-trip-btn {
+  width: 100%;
+  justify-content: center;
+}
+
+/* ── Divider spacing ────────────────────────────────────────────── */
+:host ::ng-deep .p-divider {
+  margin: 1rem 0;
+}
+
+/* ── Float labels full width ────────────────────────────────────── */
+:host ::ng-deep p-floatLabel,
+:host ::ng-deep .p-floatlabel {
+  width: 100%;
+  display: block;
+}
