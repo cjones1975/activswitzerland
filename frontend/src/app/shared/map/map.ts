@@ -190,16 +190,35 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     const paint: any = {
       'line-color': '#1a6b3c',
       'line-width': 3,
-      'line-cap': 'round',
-      'line-join': 'round',
     };
     if (this.tripType === 'road') {
       paint['line-dasharray'] = [2, 1.5];
     }
 
-    this.map.addLayer({ id: 'trip-route-line', type: 'line', source: 'trip-route', paint });
+    this.map.addLayer({
+      id: 'trip-route-line',
+      type: 'line',
+      source: 'trip-route',
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint,
+    });
 
-    // Add numbered stop markers at the route endpoints
+    if (this.tripType === 'rail') {
+      coords.forEach(coord => {
+        const el = document.createElement('i');
+        el.className = 'fa-sharp fa-light fa-train-stop';
+        el.style.color = '#d97706';
+        el.style.fontSize = '16px';
+        el.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.4))';
+        const marker = new maplibregl.Marker({ element: el })
+          .setLngLat(coord)
+          .addTo(this.map!);
+        this.tripStopMarkers.push(marker);
+      });
+      return;
+    }
+
+    // Road: numbered start/end markers
     const uniqueStops: [number, number][] = [];
     if (coords.length >= 2) {
       uniqueStops.push(coords[0], coords[coords.length - 1]);

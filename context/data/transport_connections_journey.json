@@ -1,0 +1,479 @@
+{
+    "connections": [
+        {
+            "sections": [
+                {
+                    "journey": {
+                        "passList": [
+                            {
+                                "station": {
+                                    "id": "8501120",
+                                    "name": "Lausanne",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.516795,
+                                        "y": 6.629087
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8501118",
+                                    "name": "Renens VD",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.537046,
+                                        "y": 6.57892
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504200",
+                                    "name": "Yverdon-les-Bains",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.78155,
+                                        "y": 6.640943
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504221",
+                                    "name": "Neuchâtel",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.996727,
+                                        "y": 6.9357
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504300",
+                                    "name": "Biel/Bienne",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.132893,
+                                        "y": 7.242918
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8500207",
+                                    "name": "Solothurn",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.204189,
+                                        "y": 7.542692
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "0000132",
+                                    "name": "Bahn-2000-Strecke",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.196371,
+                                        "y": 7.689354
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8500218",
+                                    "name": "Olten",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.351927,
+                                        "y": 7.907693
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8502113",
+                                    "name": "Aarau",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.391352,
+                                        "y": 8.05127
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8503000",
+                                    "name": "Zürich HB",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.377847,
+                                        "y": 8.540502
+                                    },
+                                    "distance": null
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "sections": [
+                {
+                    "journey": {
+                        "passList": [
+                            {
+                                "station": {
+                                    "id": "8501120",
+                                    "name": "Lausanne",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.516795,
+                                        "y": 6.629087
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504014",
+                                    "name": "Palézieux",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.542766,
+                                        "y": 6.83786
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504023",
+                                    "name": "Romont FR",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.693505,
+                                        "y": 6.911801
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504100",
+                                    "name": "Fribourg/Freiburg",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.803142,
+                                        "y": 7.151039
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8507000",
+                                    "name": "Bern",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.948823,
+                                        "y": 7.439123
+                                    },
+                                    "distance": null
+                                }
+                            }
+                        ]
+                    }
+                },
+                {
+                    "journey": {
+                        "passList": [
+                            {
+                                "station": {
+                                    "id": "8507000",
+                                    "name": "Bern",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.948823,
+                                        "y": 7.439123
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "0000132",
+                                    "name": "Bahn-2000-Strecke",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.196371,
+                                        "y": 7.689354
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8503000",
+                                    "name": "Zürich HB",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.377847,
+                                        "y": 8.540502
+                                    },
+                                    "distance": null
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "sections": [
+                {
+                    "journey": {
+                        "passList": [
+                            {
+                                "station": {
+                                    "id": "8501120",
+                                    "name": "Lausanne",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.516795,
+                                        "y": 6.629087
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504100",
+                                    "name": "Fribourg/Freiburg",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.803142,
+                                        "y": 7.151039
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8507000",
+                                    "name": "Bern",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.948823,
+                                        "y": 7.439123
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "0000132",
+                                    "name": "Bahn-2000-Strecke",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.196371,
+                                        "y": 7.689354
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8503000",
+                                    "name": "Zürich HB",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.377847,
+                                        "y": 8.540502
+                                    },
+                                    "distance": null
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        {
+            "sections": [
+                {
+                    "journey": {
+                        "passList": [
+                            {
+                                "station": {
+                                    "id": "8501120",
+                                    "name": "Lausanne",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.516795,
+                                        "y": 6.629087
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8501118",
+                                    "name": "Renens VD",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.537046,
+                                        "y": 6.57892
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504200",
+                                    "name": "Yverdon-les-Bains",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.78155,
+                                        "y": 6.640943
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504221",
+                                    "name": "Neuchâtel",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 46.996727,
+                                        "y": 6.9357
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8504300",
+                                    "name": "Biel/Bienne",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.132893,
+                                        "y": 7.242918
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8500207",
+                                    "name": "Solothurn",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.204189,
+                                        "y": 7.542692
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "0000132",
+                                    "name": "Bahn-2000-Strecke",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.196371,
+                                        "y": 7.689354
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8500218",
+                                    "name": "Olten",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.351927,
+                                        "y": 7.907693
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8502113",
+                                    "name": "Aarau",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.391352,
+                                        "y": 8.05127
+                                    },
+                                    "distance": null
+                                }
+                            },
+                            {
+                                "station": {
+                                    "id": "8503000",
+                                    "name": "Zürich HB",
+                                    "score": null,
+                                    "coordinate": {
+                                        "type": "WGS84",
+                                        "x": 47.377847,
+                                        "y": 8.540502
+                                    },
+                                    "distance": null
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -161,45 +161,6 @@
     </div>
   }
 
-  <!-- ── Section 3b: Attractions along route ───────────────────────────── -->
-  @if (showAttractions()) {
-    <p-divider />
-    <div class="tp-section">
-      <h4 class="tp-section-title">
-        <i class="fa-light fa-map-pin"></i>
-        {{ 'trip.planner.attractionsAlongRoute' | translate }}
-      </h4>
-
-      @if (attractionsLoading()) {
-        <p-skeleton height="72px" borderRadius="8px" class="mb-2" />
-        <p-skeleton height="72px" borderRadius="8px" class="mb-2" />
-        <p-skeleton height="72px" borderRadius="8px" class="mb-2" />
-        <p-skeleton height="72px" borderRadius="8px" />
-      } @else if (attractions().length > 0) {
-        <div class="attraction-list">
-          @for (a of attractions(); track a.identifier) {
-            <div class="attraction-row" (click)="openAttraction(a)">
-              <img
-                class="attraction-thumb"
-                [src]="a.photo"
-                [alt]="a.name"
-                loading="lazy" />
-              <div class="attraction-info">
-                <span class="attraction-name">{{ a.name }}</span>
-                @if (getAttractionTag(a)) {
-                  <p-tag [value]="getAttractionTag(a)" severity="secondary" class="attraction-tag" />
-                }
-              </div>
-              <i class="fa-light fa-chevron-right attraction-arrow"></i>
-            </div>
-          }
-        </div>
-      } @else {
-        <p class="tp-empty">{{ 'trip.planner.noAttractions' | translate }}</p>
-      }
-    </div>
-  }
-
   <!-- ── Section 4: Save trip ───────────────────────────────────────────── -->
   <p-divider />
   <div class="tp-section tp-save">
@@ -228,10 +189,9 @@
       (onClick)="onSave()" />
 
     @if (!isLoggedIn()) {
-      <p-message
-        severity="info"
-        class="w-full mt-2"
-        [text]="'trip.planner.saveHint' | translate" />
+      <p-message severity="info" class="w-full mt-2">
+        {{ 'trip.planner.saveHint' | translate }}
+      </p-message>
     }
   </div>
 

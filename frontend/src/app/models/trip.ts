@@ -15,6 +15,7 @@ export interface TripConnection {
   duration: string;
   transfers: number;
   products: string[];
+  routeCoordinates: [number, number][];
 }
 
 export interface PlannedTrip {

@@ -1,7 +1,8 @@
 import {
-  Component, DestroyRef, OnInit, computed, inject, signal,
+  Component, DestroyRef, computed, effect, inject, signal, untracked,
 } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { forkJoin } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
@@ -23,11 +24,8 @@ import { Drawer } from '../../shared/services/drawer';
 import { TransportService } from '../../shared/services/transport';
 import { TripPlannerService } from '../../shared/services/trip-planner';
 import { TripsService } from '../../shared/services/trips';
-import { AttractionsService } from '../../shared/services/attractions';
-import { LangService } from '../../shared/services/lang';
 import { Auth } from '../../core/services/auth';
 import { TripStop, TripConnection, SavedTrip } from '../../models/trip';
-import { Attraction } from '../../models/attraction';
 
 @Component({
   selector: 'app-trip-planner',
@@ -42,16 +40,14 @@ import { Attraction } from '../../models/attraction';
   templateUrl: './trip-planner.html',
   styleUrl: './trip-planner.css',
 })
-export class TripPlanner implements OnInit {
-  private drawerSvc       = inject(Drawer);
-  private transportSvc    = inject(TransportService);
-  private plannerSvc      = inject(TripPlannerService);
-  private tripsSvc        = inject(TripsService);
-  private attractionsSvc  = inject(AttractionsService);
-  private langSvc         = inject(LangService);
-  private auth            = inject(Auth);
-  private messageSvc      = inject(MessageService);
-  private destroyRef      = inject(DestroyRef);
+export class TripPlanner {
+  private drawerSvc    = inject(Drawer);
+  private transportSvc = inject(TransportService);
+  private plannerSvc   = inject(TripPlannerService);
+  private tripsSvc     = inject(TripsService);
+  private auth         = inject(Auth);
+  private messageSvc   = inject(MessageService);
+  private destroyRef   = inject(DestroyRef);
 
   // ── Trip type toggle ──────────────────────────────────────────────────────
   tripTypes = [
@@ -71,10 +67,6 @@ export class TripPlanner implements OnInit {
   selectedConnection = signal<TripConnection | null>(null);
   connectionsLoading = signal(false);
   today = new Date();
-
-  // ── Attractions ───────────────────────────────────────────────────────────
-  attractions = signal<Attraction[]>([]);
-  attractionsLoading = signal(false);
 
   // ── Route ─────────────────────────────────────────────────────────────────
   routeLoading = signal(false);
@@ -100,18 +92,25 @@ export class TripPlanner implements OnInit {
     this.selectedType() === 'rail' && this.validStops().length >= 2
   );
 
-  readonly showAttractions = computed(() =>
-    this.plannerSvc.snapshot.routeCoordinates?.length ?? 0 > 0
-  );
+  private readonly prefillName = computed(() => {
+    this.drawerSvc.list();
+    const payload = this.drawerSvc.getPayload<unknown>('trip-planner');
+    return typeof payload === 'string' ? payload : null;
+  });
 
-  ngOnInit(): void {
-    // Pre-fill first stop from drawer payload (e.g. opened from destination-detail)
-    const payload = this.drawerSvc.getPayload<TripStop>('trip-planner');
-    if (payload?.stationId) {
-      const stops = [payload, null] as Array<TripStop | null>;
-      this.stops.set(stops);
-      this.stopSuggestions.set([[], []]);
-    }
+  constructor() {
+    effect(() => {
+      const name = this.prefillName();
+      if (!name) return;
+      untracked(() => {
+        this.transportSvc.searchLocations(name, this.selectedType())
+          .pipe(takeUntilDestroyed(this.destroyRef))
+          .subscribe(results => {
+            const match = results[0];
+            if (match) this.stops.set([null, match]);
+          });
+      });
+    });
   }
 
   // ── Type toggle ───────────────────────────────────────────────────────────
@@ -122,13 +121,12 @@ export class TripPlanner implements OnInit {
     this.stopSuggestions.set([[], []]);
     this.connections.set([]);
     this.selectedConnection.set(null);
-    this.attractions.set([]);
   }
 
   // ── Stop search ───────────────────────────────────────────────────────────
   searchStop(event: { query: string }, index: number): void {
     if (event.query.length < 3) return;
-    this.transportSvc.searchLocations(event.query)
+    this.transportSvc.searchLocations(event.query, this.selectedType())
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(results => {
         const all = [...this.stopSuggestions()];
@@ -150,7 +148,6 @@ export class TripPlanner implements OnInit {
     updated[index] = null;
     this.stops.set(updated);
     this.plannerSvc.setRouteCoordinates([]);
-    this.attractions.set([]);
   }
 
   addStop(): void {
@@ -181,13 +178,9 @@ export class TripPlanner implements OnInit {
         .subscribe(coords => {
           this.plannerSvc.setRouteCoordinates(coords);
           this.routeLoading.set(false);
-          this.loadAttractions(valid);
         });
     } else {
-      // Rail: draw straight line immediately, let user find connections separately
-      const coords = this.plannerSvc.buildRailRoute(valid);
-      this.plannerSvc.setRouteCoordinates(coords);
-      this.loadAttractions(valid);
+      this.plannerSvc.setRouteCoordinates([]);
     }
   }
 
@@ -202,11 +195,17 @@ export class TripPlanner implements OnInit {
       : '';
 
     this.connectionsLoading.set(true);
-    this.transportSvc.getConnections(valid, dateStr, this.connTime())
-      .pipe(takeUntilDestroyed(this.destroyRef))
+    forkJoin({
+      connections: this.transportSvc.getConnections(valid, dateStr, this.connTime()),
+      journeys:    this.transportSvc.getConnectionJourneys(valid, dateStr, this.connTime()),
+    }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
-        next: conns => {
-          this.connections.set(conns);
+        next: ({ connections, journeys }) => {
+          const merged = connections.map((conn, i) => ({
+            ...conn,
+            routeCoordinates: journeys[i]?.length >= 2 ? journeys[i] : conn.routeCoordinates,
+          }));
+          this.connections.set(merged);
           this.connectionsLoading.set(false);
         },
         error: () => this.connectionsLoading.set(false),
@@ -216,6 +215,9 @@ export class TripPlanner implements OnInit {
   selectConnection(conn: TripConnection): void {
     this.selectedConnection.set(conn);
     this.plannerSvc.selectConnection(conn);
+    if (conn.routeCoordinates.length >= 2) {
+      this.plannerSvc.setRouteCoordinates(conn.routeCoordinates);
+    }
   }
 
   formatTime(iso: string): string {
@@ -238,69 +240,6 @@ export class TripPlanner implements OnInit {
     return !!sel && sel.departure === conn.departure && sel.from === conn.from;
   }
 
-  // ── Attractions ───────────────────────────────────────────────────────────
-  private loadAttractions(stops: TripStop[]): void {
-    this.attractionsLoading.set(true);
-    const lang = this.langSvc.current;
-    const seen = new Set<string>();
-    const all: Attraction[] = [];
-    let pending = stops.length;
-
-    stops.forEach(stop => {
-      this.attractionsSvc.searchAttractions({
-        language: lang,
-        page: 0,
-        search: '',
-        hitsPerPage: 6,
-        placeId: '',
-        expand: false,
-        translate: true,
-        stripHtml: false,
-        top: true,
-      }).pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe({
-          next: page => {
-            page.attractions.forEach(a => {
-              if (!seen.has(a.identifier) && a.geo?.latitude && a.geo?.longitude) {
-                const dist = this.haversine(stop.lat, stop.lon, a.geo.latitude, a.geo.longitude);
-                if (dist <= 10000) {
-                  seen.add(a.identifier);
-                  all.push(a);
-                }
-              }
-            });
-            pending--;
-            if (pending === 0) {
-              this.attractions.set(all);
-              this.plannerSvc.setAttractions(all);
-              this.attractionsLoading.set(false);
-            }
-          },
-          error: () => {
-            pending--;
-            if (pending === 0) this.attractionsLoading.set(false);
-          },
-        });
-    });
-  }
-
-  private haversine(lat1: number, lon1: number, lat2: number, lon2: number): number {
-    const R = 6371000;
-    const dLat = (lat2 - lat1) * Math.PI / 180;
-    const dLon = (lon2 - lon1) * Math.PI / 180;
-    const a = Math.sin(dLat / 2) ** 2 +
-      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) * Math.sin(dLon / 2) ** 2;
-    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  }
-
-  openAttraction(attraction: Attraction): void {
-    this.drawerSvc.open('attraction-detail', { attraction, source: 'trip-planner' });
-  }
-
-  getAttractionTag(a: Attraction): string {
-    return a.classification?.[0]?.values?.[0]?.title ?? '';
-  }
-
   // ── Save ──────────────────────────────────────────────────────────────────
   onSave(): void {
     if (!this.isLoggedIn()) {
@@ -315,7 +254,7 @@ export class TripPlanner implements OnInit {
       name,
       type: this.selectedType(),
       stops: valid,
-      attractionIds: this.attractions().map(a => a.identifier),
+      attractionIds: [],
       routeCoordinates: this.plannerSvc.snapshot.routeCoordinates ?? [],
     };
 

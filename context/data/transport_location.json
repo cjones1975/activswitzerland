@@ -1,0 +1,127 @@
+{
+    "success": true,
+    "data": {
+        "stations": [
+            {
+                "id": "8505000",
+                "name": "Luzern",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.050165,
+                    "y": 8.310172
+                },
+                "distance": null,
+                "icon": "train"
+            },
+            {
+                "id": "8508450",
+                "name": "Luzern, Bahnhof",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.05074,
+                    "y": 8.310247
+                },
+                "distance": null,
+                "icon": "bus"
+            },
+            {
+                "id": "8589801",
+                "name": "Luzern, Kantonalbank",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.048855,
+                    "y": 8.306229
+                },
+                "distance": null,
+                "icon": "bus"
+            },
+            {
+                "id": "8573022",
+                "name": "Luzern, Pilatusplatz",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.047765,
+                    "y": 8.303961
+                },
+                "distance": null,
+                "icon": "bus"
+            },
+            {
+                "id": "8573054",
+                "name": "Luzern, Schwanenplatz",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.053242,
+                    "y": 8.308893
+                },
+                "distance": null,
+                "icon": "bus"
+            },
+            {
+                "id": "8508321",
+                "name": "Luzern Allmend/Messe",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.03506,
+                    "y": 8.303229
+                },
+                "distance": null,
+                "icon": "train"
+            },
+            {
+                "id": "8573055",
+                "name": "Luzern, Luzernerhof",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.05471,
+                    "y": 8.312233
+                },
+                "distance": null,
+                "icon": "bus"
+            },
+            {
+                "id": "8573024",
+                "name": "Luzern, Kasernenplatz",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.051924,
+                    "y": 8.299987
+                },
+                "distance": null,
+                "icon": "bus"
+            },
+            {
+                "id": "8589775",
+                "name": "Luzern, Bundesplatz",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.046437,
+                    "y": 8.308335
+                },
+                "distance": null,
+                "icon": "bus"
+            },
+            {
+                "id": "8573043",
+                "name": "Luzern, Eichhof",
+                "score": null,
+                "coordinate": {
+                    "type": "WGS84",
+                    "x": 47.040238,
+                    "y": 8.301313
+                },
+                "distance": null,
+                "icon": "bus"
+            }
+        ]
+    }
+}
