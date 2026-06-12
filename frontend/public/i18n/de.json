@@ -10,7 +10,10 @@
     "navigation": "NAVIGATION",
     "home": "Start",
     "explore": "Entdecken",
-    "mapplanner": "Kartenplaner"
+    "tripplanner": "Reiseplaner",
+    "profile": "Profil",
+    "login": "Anmelden",
+    "logout": "Abmelden"
   },
   "auth": {
     "toast": {

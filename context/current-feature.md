@@ -12,6 +12,17 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-06-12 — Nav Menu Fixes Completed
+
+- Header brand: `<span class="brand">` → `<a class="brand" routerLink="/">ActivSwitzerland</a>` in `header-nav`; `RouterLink` added to imports, `.brand` CSS gained `text-decoration: none` and `cursor: pointer`
+- `MenuNav`: new `closeMenu()` helper (`drawer.close('menu-nav')`), used by every nav item that now navigates, mirroring the existing `openAuth()` pattern
+- 'Home' nav item: added `routerLink="/"` + `(click)="closeMenu()"`
+- 'Map Planner' renamed to 'Trip Planner', `routerLink="/trip-planner"` + `closeMenu()`; i18n key `nav.mapplanner` renamed to `nav.tripplanner` in all four locale files
+- New conditional 'Profile' nav item (`pi-user`, `routerLink="/auth/profile"`, `closeMenu()`), shown only when `auth.isLoggedIn()`; `Auth` injected into `MenuNav` as `protected auth`; new `nav.profile` i18n key added to all four locale files
+- Log In / Log Out button: icon and label now switch on `auth.isLoggedIn()` (`pi-sign-in`/`pi-sign-out`, `nav.login`/`nav.logout`); `onAuthAction()` calls `auth.logout()` + `closeMenu()` + navigate to `/` when logged in, otherwise falls back to existing `openAuth()`; new `nav.login`/`nav.logout` i18n keys added to all four locale files (de/fr/it values match existing `auth.tabs.login`/`profile.signout` translations)
+- `changeLanguage()` now also calls `closeMenu()` so selecting a language closes the drawer
+- Verified with `tsc --noEmit` and `ng build --configuration development` — both pass
+
 ### 2026-06-12 — Trip Planner Layout Restructure Completed
 
 - New `TripPlannerLayout` shell (`frontend/src/app/shell/trip-planner-layout/`) hosts `<app-map>` full-screen, registered at `/trip-planner` and `/trip-planner/:id` in `app.routes.ts`

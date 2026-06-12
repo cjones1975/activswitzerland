@@ -1,7 +1,7 @@
 <section class="nav-section">
     <span class="nav-label">{{ 'nav.navigation' | translate }}</span>
     <ul class="nav-list">
-        <li class="nav-item">
+        <li class="nav-item" routerLink="/" (click)="closeMenu()">
             <div class="nav-icon-box"><i class="pi pi-home"></i></div>
             <span class="nav-item-label">{{ 'nav.home' | translate }}</span>
             <i class="pi pi-chevron-right nav-chevron"></i>
@@ -11,18 +11,25 @@
             <span class="nav-item-label">{{ 'nav.explore' | translate }}</span>
             <i class="pi pi-chevron-right nav-chevron"></i>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" routerLink="/trip-planner" (click)="closeMenu()">
             <div class="nav-icon-box"><i class="pi pi-map"></i></div>
-            <span class="nav-item-label">{{ 'nav.mapplanner' | translate }}</span>
+            <span class="nav-item-label">{{ 'nav.tripplanner' | translate }}</span>
             <i class="pi pi-chevron-right nav-chevron"></i>
         </li>
+        @if (auth.isLoggedIn()) {
+            <li class="nav-item" routerLink="/auth/profile" (click)="closeMenu()">
+                <div class="nav-icon-box"><i class="pi pi-user"></i></div>
+                <span class="nav-item-label">{{ 'nav.profile' | translate }}</span>
+                <i class="pi pi-chevron-right nav-chevron"></i>
+            </li>
+        }
     </ul>
 </section>
 
 <div class="nav-actions">
-    <button class="login-btn" type="button" (click)="openAuth()">
-        <i class="pi pi-sign-in"></i>
-        <span>Log In</span>
+    <button class="login-btn" type="button" (click)="onAuthAction()">
+        <i [class]="auth.isLoggedIn() ? 'pi pi-sign-out' : 'pi pi-sign-in'"></i>
+        <span>{{ (auth.isLoggedIn() ? 'nav.logout' : 'nav.login') | translate }}</span>
         <i class="pi pi-chevron-right"></i>
     </button>
 </div>

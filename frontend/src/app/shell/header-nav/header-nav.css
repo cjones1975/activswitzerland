@@ -46,4 +46,6 @@
   font-weight: 600;
   color: var(--color-white);
   letter-spacing: 0.01em;
+  text-decoration: none;
+  cursor: pointer;
 }
