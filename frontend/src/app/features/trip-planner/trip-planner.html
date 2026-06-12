@@ -169,7 +169,7 @@
         pInputText
         id="trip-name"
         [ngModel]="tripName()"
-        (ngModelChange)="tripName.set($event)"
+        (ngModelChange)="onTripNameChange($event)"
         class="w-full" />
       <label for="trip-name">{{ 'trip.planner.tripName' | translate }}</label>
     </p-floatLabel>

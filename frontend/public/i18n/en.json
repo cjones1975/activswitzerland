@@ -67,7 +67,8 @@
       "savedSuccess": "Trip saved!",
       "deleteConfirm": "Are you sure you want to delete this trip?",
       "noTrips": "No trips saved yet.",
-      "planFirst": "Plan your first trip"
+      "planFirst": "Plan your first trip",
+      "open": "Open trip planner"
     }
   },
   "profile": {

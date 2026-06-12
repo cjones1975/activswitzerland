@@ -14,7 +14,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { Auth } from '../../../core/services/auth';
 import { TripsService } from '../../../shared/services/trips';
-import { Drawer } from '../../../shared/services/drawer';
+import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { SavedTrip } from '../../../models/trip';
 import { HeaderNav } from '../../../shell/header-nav/header-nav';
 import { FooterNav } from '../../../shell/footer-nav/footer-nav';
@@ -32,7 +32,7 @@ export class Profile implements OnInit {
   private router = inject(Router);
   private fb = inject(FormBuilder);
   private tripsSvc = inject(TripsService);
-  private drawerSvc = inject(Drawer);
+  private tripPlannerSvc = inject(TripPlannerService);
   private confirmSvc = inject(ConfirmationService);
   private destroyRef = inject(DestroyRef);
 
@@ -97,11 +97,12 @@ export class Profile implements OnInit {
 
   // ── Saved trips ────────────────────────────────────────────────────────────
   openTripPlanner(): void {
-    this.drawerSvc.open('trip-planner');
+    this.router.navigate(['/trip-planner']);
   }
 
   viewTrip(trip: SavedTrip): void {
-    this.drawerSvc.open('trip-planner', trip);
+    this.tripPlannerSvc.loadSavedTrip(trip);
+    this.router.navigate(['/trip-planner']);
   }
 
   confirmDeleteTrip(trip: SavedTrip): void {

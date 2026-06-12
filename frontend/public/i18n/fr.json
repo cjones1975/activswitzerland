@@ -67,7 +67,8 @@
       "savedSuccess": "Voyage enregistré !",
       "deleteConfirm": "Voulez-vous vraiment supprimer ce voyage ?",
       "noTrips": "Aucun voyage enregistré.",
-      "planFirst": "Planifier votre premier voyage"
+      "planFirst": "Planifier votre premier voyage",
+      "open": "Ouvrir le planificateur de voyage"
     }
   },
   "profile": {

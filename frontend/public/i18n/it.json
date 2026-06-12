@@ -67,7 +67,8 @@
       "savedSuccess": "Viaggio salvato!",
       "deleteConfirm": "Sei sicuro di voler eliminare questo viaggio?",
       "noTrips": "Nessun viaggio salvato.",
-      "planFirst": "Pianifica il tuo primo viaggio"
+      "planFirst": "Pianifica il tuo primo viaggio",
+      "open": "Apri pianificatore di viaggio"
     }
   },
   "profile": {

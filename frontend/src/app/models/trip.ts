@@ -21,6 +21,7 @@ export interface TripConnection {
 export interface PlannedTrip {
   type: 'road' | 'rail';
   stops: TripStop[];
+  name?: string;
   connections?: TripConnection[];
   selectedConnection?: TripConnection;
   attractions?: Attraction[];

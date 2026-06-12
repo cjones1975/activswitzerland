@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, catchError, of } from 'rxjs';
-import { PlannedTrip, TripStop, TripConnection } from '../../models/trip';
+import { PlannedTrip, TripStop, TripConnection, SavedTrip } from '../../models/trip';
 import { Attraction } from '../../models/attraction';
 
 const EMPTY_TRIP: PlannedTrip = { type: 'road', stops: [] };
@@ -25,6 +25,20 @@ export class TripPlannerService {
 
   setStops(stops: TripStop[]): void {
     this._trip$.next({ ...this._trip$.value, stops });
+  }
+
+  setName(name: string): void {
+    this._trip$.next({ ...this._trip$.value, name });
+  }
+
+  loadSavedTrip(trip: SavedTrip): void {
+    this._trip$.next({
+      type: trip.type,
+      stops: trip.stops,
+      routeCoordinates: trip.routeCoordinates,
+      name: trip.name,
+    });
+    this._routeCoordinates$.next(trip.routeCoordinates);
   }
 
   setConnections(connections: TripConnection[]): void {

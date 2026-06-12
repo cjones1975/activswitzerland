@@ -67,7 +67,8 @@
       "savedSuccess": "Reise gespeichert!",
       "deleteConfirm": "Möchten Sie diese Reise wirklich löschen?",
       "noTrips": "Noch keine Reisen gespeichert.",
-      "planFirst": "Erste Reise planen"
+      "planFirst": "Erste Reise planen",
+      "open": "Reiseplaner öffnen"
     }
   },
   "profile": {

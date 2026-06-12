@@ -1,5 +1,6 @@
 import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GalleriaModule } from 'primeng/galleria';
 import { Subject, switchMap } from 'rxjs';
@@ -20,6 +21,7 @@ export class DestinationDetail {
   private drawerSvc = inject(Drawer);
   private weatherService = inject(WeatherService);
   private destroyRef = inject(DestroyRef);
+  private router = inject(Router);
 
   destination = computed(() => {
     this.drawerSvc.list();
@@ -59,7 +61,7 @@ export class DestinationDetail {
   openTripPlanner() {
     const dest = this.destination();
     if (!dest) return;
-    this.drawerSvc.open('trip-planner', dest.name);
+    this.router.navigate(['/trip-planner', dest.identifier]);
   }
 
   openWeather() {

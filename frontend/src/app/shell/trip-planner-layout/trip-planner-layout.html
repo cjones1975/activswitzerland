@@ -1,0 +1,18 @@
+<div class="map-wrapper">
+  <app-map [center]="center()" [zoom]="12" [tripRoute]="tripRoute()" [tripType]="tripType()"></app-map>
+</div>
+
+<div class="reopen-btns">
+  @if (destination()) {
+    <button class="reopen-btn" type="button" (click)="backToDestination()">
+      <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
+      {{ 'attractions.backToDestination' | translate }}
+    </button>
+  }
+  @if (!drawer.isOpen('trip-planner')) {
+    <button class="reopen-btn" type="button" (click)="reopenTripPlanner()">
+      <i class="fa-light fa-route"></i>
+      {{ 'trip.planner.open' | translate }}
+    </button>
+  }
+</div>

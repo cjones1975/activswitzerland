@@ -2,36 +2,33 @@
 
 ## Feature
 
-Trip Planner — full-screen drawer for planning road and rail journeys through Switzerland, with stop search, route rendering on the map, attraction discovery along the route, and saved trips in the user profile.
-
 ## Status
-
-In progress — spec completed, implementation not started.
-
-Backend transport proxy endpoints (`/api/v1/transport/locations`, `/api/v1/transport/connections`) completed by user. Remaining work: backend Trip model + CRUD, all frontend.
 
 ## Goals
 
-- Users can select Road Trip or Rail Trip mode and build a multi-stop journey using the Swiss transport network (transport.opendata.ch) as the location source
-- Road trips display an actual road route on the map via the OSRM public API; rail trips display straight-line routes between station coordinates
-- Rail trips optionally show real timetable connections when the user provides a date and time
-- Attractions within 10km of each stop are discovered and displayed in the drawer using `geo.dist` on the MySwitzerland API
-- Users can name and save a trip (requires login); the Save button opens the auth drawer if not logged in to encourage sign-up
-- Saved trips are listed on the profile page with View and Delete actions; viewing a saved trip reloads the route on the map
-
 ## Notes
-
-- Full spec: `@context/features/trip-planner-spec.md`
-- Division of labor: user builds transport proxy backend endpoints; Claude builds everything else
-- OSRM calls go directly from frontend — no backend proxy needed
-- Rail route on map uses straight lines between station coordinates (not actual track geometry) for the initial implementation
-- Drawer key: `'trip-planner'`, left position, width `min(480px, calc(100vw - 20px))`
-- `TripPlannerService` holds in-progress trip state as RxJS BehaviorSubjects; `DestinationsLayout` subscribes to `routeCoordinates$` to pass the GeoJSON line to the map component
-- Trip stop markers: green (`#1a6b3c`), numbered sequentially; route line: green, dashed for road, solid for rail
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-06-12 — Trip Planner Layout Restructure Completed
+
+- New `TripPlannerLayout` shell (`frontend/src/app/shell/trip-planner-layout/`) hosts `<app-map>` full-screen, registered at `/trip-planner` and `/trip-planner/:id` in `app.routes.ts`
+- `:id` present → fetches the destination, centers the map on it, and opens the `trip-planner` drawer with the destination name as payload; `:id` absent → opens the drawer with no payload, and centers on the route's bounding-box midpoint once `TripPlannerService.routeCoordinates$` first emits (covers loading a saved trip)
+- Map overlay buttons: "Back to destination" (`/destinations/:id`, shown only when `:id` was present) and "Open trip planner" (shown whenever the drawer is closed)
+- `Home.openTripPlanner()`, `DestinationDetail.openTripPlanner()`, and `Profile.openTripPlanner()`/`viewTrip()` now `router.navigate()` to `/trip-planner` or `/trip-planner/:id` instead of opening the drawer directly on pages with no map
+- `DestinationsLayout` stripped of all trip-planner concerns: removed `TripPlannerService` injection, `tripRoute`/`tripType` signals and subscriptions, `[tripRoute]`/`[tripType]` map bindings, and drawer/reset cleanup in `ngOnDestroy`
+- `TripPlannerService`: added `setName()` and `loadSavedTrip()` (restores type/stops/routeCoordinates/name from a `SavedTrip` and re-emits `routeCoordinates$`); `PlannedTrip` gained an optional `name` field
+- `TripPlanner` component now restores `selectedType`/`stops`/`stopSuggestions`/`tripName` from `plannerSvc.snapshot` on construction, and calls `setStops()`/`setName()` on every stop or trip-name change — so closing/reopening the drawer or loading a saved trip preserves in-progress state
+- `trip.planner.open` ("Open trip planner") i18n key added to all four locale files
+
+### 2026-06-11 — Trip Planner Layout Restructure Specced
+
+- Identified that `Home.openTripPlanner()` navigates to `/destinations` (no map) and `Profile`'s trip-planner CTAs have no map at all — both broken
+- Specced new `TripPlannerLayout` shell + `/trip-planner`, `/trip-planner/:id` routes; see Goals above for full decisions
+- Committed prior session's uncommitted rail-journey-routing WIP to `main` (`c2364f4`) before branching
+- Created `feature/trip-planner-layout` branch and `context/features/trip-planner-layout-spec.md`
 
 ### 2026-06-05 — Trip Planner Specced
 

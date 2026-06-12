@@ -99,6 +99,14 @@ export class TripPlanner {
   });
 
   constructor() {
+    const snapshot = this.plannerSvc.snapshot;
+    if (snapshot.stops.length > 0) {
+      this.selectedType.set(snapshot.type);
+      this.stops.set([...snapshot.stops]);
+      this.stopSuggestions.set(snapshot.stops.map(() => []));
+      this.tripName.set(snapshot.name ?? '');
+    }
+
     effect(() => {
       const name = this.prefillName();
       if (!name) return;
@@ -140,6 +148,7 @@ export class TripPlanner {
     const updated = [...this.stops()];
     updated[index] = stop;
     this.stops.set(updated);
+    this.plannerSvc.setStops(this.validStops());
     this.onStopsChanged();
   }
 
@@ -147,6 +156,7 @@ export class TripPlanner {
     const updated = [...this.stops()];
     updated[index] = null;
     this.stops.set(updated);
+    this.plannerSvc.setStops(this.validStops());
     this.plannerSvc.setRouteCoordinates([]);
   }
 
@@ -156,6 +166,7 @@ export class TripPlanner {
     updated.splice(updated.length - 1, 0, null);
     this.stops.set(updated);
     this.stopSuggestions.set([...this.stopSuggestions(), []]);
+    this.plannerSvc.setStops(this.validStops());
   }
 
   removeStop(index: number): void {
@@ -164,6 +175,7 @@ export class TripPlanner {
     this.stops.set(updated);
     const suggs = this.stopSuggestions().filter((_, i) => i !== index);
     this.stopSuggestions.set(suggs);
+    this.plannerSvc.setStops(this.validStops());
     this.onStopsChanged();
   }
 
@@ -268,6 +280,11 @@ export class TripPlanner {
         },
         error: () => this.saving.set(false),
       });
+  }
+
+  onTripNameChange(name: string): void {
+    this.tripName.set(name);
+    this.plannerSvc.setName(name);
   }
 
   trackByIndex(index: number): number { return index; }
