@@ -16,10 +16,10 @@
     }
   } @else {
     @for (dest of destinations; track dest.identifier) {
-      <div class="destination-card" [style.background-image]="'url(' + dest.photo + ')'">
+      <a class="destination-card" [routerLink]="['/destinations', dest.identifier]" [style.background-image]="'url(' + dest.photo + ')'">
         <span class="card-type">{{ cardTitle }}</span>
         <span class="card-name">{{ dest.name }}</span>
-      </div>
+      </a>
     }
   }
 </div>

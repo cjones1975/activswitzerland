@@ -110,7 +110,6 @@
   },
   "destinations": {
     "viewAll": "Alle anzeigen",
-    "letsVisit": "Jetzt besuchen",
     "allCities": {
       "title": "Alle Städte",
       "subtitle": "{{count}} Reiseziele"
@@ -123,14 +122,15 @@
       "back": "Zurück zu den Reisezielen",
       "visit": "Offizielle Seite besuchen",
       "planTrip": "Reise planen",
-      "open": "Reiseziel öffnen"
+      "planTripSubtitle": "Mit Auto oder Bahn",
+      "open": "Zurück zu {{name}}"
     }
   },
   "attractions": {
-    "title": "Top-Attraktionen",
+    "title": "Beliebte Attraktionen",
     "titleFallback": "Attraktionen",
     "seeAll": "Alle Attraktionen anzeigen",
-    "backToDestination": "Zurück zum Reiseziel",
+    "backToDestination": "Zurück zu {{name}}",
     "backToAttractions": "Zurück zu den Attraktionen",
     "openAll": "Attraktionen öffnen",
     "listAll": "Alle Attraktionen auflisten",

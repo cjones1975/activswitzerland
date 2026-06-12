@@ -33,7 +33,6 @@ export class DestinationVerticalList implements OnInit {
   loading = signal(true);
   skeletons = Array(6);
   mapMarkers = signal<MapMarker[]>([]);
-  activeMarker = signal<{ lng: number; lat: number } | undefined>(undefined);
 
   ngOnInit(): void {
     this.translate.onLangChange.pipe(
@@ -56,16 +55,5 @@ export class DestinationVerticalList implements OnInit {
       );
       this.loading.set(false);
     });
-  }
-
-  selectMarker(lat: number, lng: number): void {
-    this.activeMarker.set({ lng, lat });
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
-  formatCoords(lat: number, lng: number): string {
-    const latDir = lat >= 0 ? 'N' : 'S';
-    const lngDir = lng >= 0 ? 'E' : 'W';
-    return `${Math.abs(lat).toFixed(2)}°${latDir} ${Math.abs(lng).toFixed(2)}°${lngDir}`;
   }
 }

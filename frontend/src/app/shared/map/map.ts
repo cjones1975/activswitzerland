@@ -78,8 +78,12 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (changes['center'] && this.mapLoaded && this.center) {
       this.map?.flyTo({ center: this.center, zoom: this.zoom, duration: 800 });
     }
-    if (changes['activeMarker'] && this.mapLoaded && this.activeMarker) {
-      this.activateMarker(this.activeMarker);
+    if (changes['activeMarker'] && this.mapLoaded) {
+      if (this.activeMarker) {
+        this.activateMarker(this.activeMarker);
+      } else {
+        this.deactivateMarker();
+      }
     }
     if ((changes['tripRoute'] || changes['tripType']) && this.mapLoaded) {
       this.syncTripRoute();
@@ -144,7 +148,13 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
+  private previousView?: { center: maplibregl.LngLat; zoom: number };
+
   private activateMarker(target: { lng: number; lat: number }): void {
+    if (!this.previousView && this.map) {
+      this.previousView = { center: this.map.getCenter(), zoom: this.map.getZoom() };
+    }
+
     const key = `${target.lng},${target.lat}`;
     const popup = this.popupInstances.get(key);
 
@@ -159,6 +169,12 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         popup.setLngLat([target.lng, target.lat]).addTo(this.map!);
       });
     }
+  }
+
+  private deactivateMarker(): void {
+    if (!this.map || !this.previousView) return;
+    this.map.flyTo({ center: this.previousView.center, zoom: this.previousView.zoom, duration: 800 });
+    this.previousView = undefined;
   }
 
   private tripStopMarkers: Marker[] = [];

@@ -110,7 +110,6 @@
   },
   "destinations": {
     "viewAll": "Voir tout",
-    "letsVisit": "Allons-y",
     "allCities": {
       "title": "Toutes les villes",
       "subtitle": "{{count}} destinations"
@@ -123,14 +122,15 @@
       "back": "Retour aux destinations",
       "visit": "Visiter la page officielle",
       "planTrip": "Planifier un voyage",
-      "open": "Ouvrir la destination"
+      "planTripSubtitle": "En voiture ou en train",
+      "open": "Retour à {{name}}"
     }
   },
   "attractions": {
-    "title": "Meilleures attractions",
+    "title": "Attractions populaires",
     "titleFallback": "Attractions",
     "seeAll": "Voir toutes les attractions",
-    "backToDestination": "Retour à la destination",
+    "backToDestination": "Retour à {{name}}",
     "backToAttractions": "Retour aux attractions",
     "openAll": "Ouvrir les attractions",
     "listAll": "Lister toutes les attractions",

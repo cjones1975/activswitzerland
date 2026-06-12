@@ -2,6 +2,7 @@ import { Component, computed, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Drawer, DrawerKey } from '../services/drawer';
+import { AttractionMarkersService } from '../services/attraction-markers';
 import { DrawerModule } from 'primeng/drawer';
 import { TranslatePipe } from '@ngx-translate/core';
 
@@ -27,6 +28,7 @@ import { WeatherPayload } from '../../models/weather';
 export class DrawerHost {
   svc = inject(Drawer);
   private router = inject(Router);
+  private attractionMarkers = inject(AttractionMarkersService);
 
   onVisibleChange(key: DrawerKey, visible: boolean) {
     visible ? this.svc.open(key) : this.svc.close(key);
@@ -49,7 +51,13 @@ export class DrawerHost {
     const dest = this.svc.getPayload<Destination>('all-attractions');
     this.svc.close('all-attractions');
     this.svc.open('destination-detail', dest);
+    this.attractionMarkers.setSelected(null);
   }
+
+  allAttractionsDestinationName = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<Destination>('all-attractions')?.name ?? '';
+  });
 
   attractionDetailBackKey = computed(() => {
     this.svc.list();

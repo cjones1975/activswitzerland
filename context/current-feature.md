@@ -12,6 +12,22 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-06-12 — Destination & Attraction Fixes Completed
+
+- `DestinationHorizontalList` cards: `<div class="destination-card">` → `<a [routerLink]="['/destinations', dest.identifier]">`, with `text-decoration: none; color: inherit` added in CSS
+- `DestinationVerticalList` "view all" cards: removed the `.card-coords` button, `selectMarker()`/`formatCoords()`/`activeMarker` signal, and the `.visit-btn` ("Let's Visit") link; whole card is now `<a [routerLink]="['/destinations', dest.identifier]">`; `<app-map>` no longer takes `[activeMarker]`; `destinations.letsVisit` removed from all four locale files
+- `DestinationDetail`'s "Plan a Trip" button replaced with a `.plan-card` `<a [routerLink]="['/trip-planner', dest.identifier]">` matching `.weather-box` (12px radius, 80px min-height); `.action-grid` changed from a 2-column to a 1-column grid; new `destinations.detail.planTripSubtitle` ("By road or rail" / "Mit Auto oder Bahn" / "En voiture ou en train" / "In auto o in treno") shown below the title; removed `openTripPlanner()` and the unused `Router` injection
+- `attractions.title` renamed "Top attractions" → "Popular attractions" in all four locales (`titleFallback` unchanged)
+- `AttractionVerticalList.onAttractionClick()` and `AllAttractions.onAttractionClick()` now call `AttractionMarkersService.setSelected(attraction.identifier)` instead of opening `attraction-detail`; `AllAttractions` also collapses the `all-attractions` drawer so the map is visible behind it
+- `MapComponent` gained `previousView` (captured on the first `activateMarker()` call) and `deactivateMarker()` (flies back to `previousView`, then clears it); `ngOnChanges` now calls `deactivateMarker()` when `activeMarker` becomes falsy instead of doing nothing
+- `DrawerHost.onAllAttractionsBack()`, `DestinationsLayout.openDetail()`, and `DestinationsLayout.reopenAllAttractions()` all call `attractionMarkers.setSelected(null)`, clearing the selection and triggering the map's fly-back to `previousView`
+- Beyond spec: "Back to destination"/"Open destination" copy now includes the destination name — `attractions.backToDestination` → "Back to {{name}}" and `destinations.detail.open` → "Back to {{name}}" in all four locales, interpolated via a new `allAttractionsDestinationName()` computed in `DrawerHost` and the `dest` template variable in `destinations-layout.html`
+- Verified with `tsc --noEmit` and `ng build --configuration development` — both pass
+
+### 2026-06-12 — Destination & Attraction Fixes Specced
+
+- Specced six fixes in `context/features/destin-attrac-fixes-spec.md`: homepage destination cards route like the "view all" cards; "view all" cards drop the coordinates button + "Let's Visit" and route the whole card; `DestinationDetail`'s "Plan a Trip" button becomes a card matching `.weather-box` with a "By road or rail" subtitle; `attractions.title` renamed "Top attractions" → "Popular attractions"; clicking an attraction no longer opens `attraction-detail` (only the map marker's label does); clicking an attraction zooms the map to it via `AttractionMarkersService.setSelected`, with "Back to destination"/"Open destination"/"Open attractions" clearing the selection and restoring the previous map view via a new `MapComponent.previousView`/`deactivateMarker()` mechanism
+
 ### 2026-06-12 — Nav Menu Fixes Completed
 
 - Header brand: `<span class="brand">` → `<a class="brand" routerLink="/">ActivSwitzerland</a>` in `header-nav`; `RouterLink` added to imports, `.brand` CSS gained `text-decoration: none` and `cursor: pointer`

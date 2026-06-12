@@ -33,10 +33,13 @@
       <p class="abstract" [innerHTML]="dest.abstract"></p>
 
       <div class="action-grid">
-        <button class="plan-btn" type="button" (click)="openTripPlanner()">
-          <i class="fa-solid fa-route"></i>
-          {{ 'destinations.detail.planTrip' | translate }}
-        </button>
+        <a class="plan-card" [routerLink]="['/trip-planner', dest.identifier]">
+          <i class="fa-solid fa-route plan-card-icon"></i>
+          <div class="plan-card-text">
+            <span class="plan-card-title">{{ 'destinations.detail.planTrip' | translate }}</span>
+            <span class="plan-card-subtitle">{{ 'destinations.detail.planTripSubtitle' | translate }}</span>
+          </div>
+        </a>
 
         <div class="weather-box">
           @if (weatherLoading()) {

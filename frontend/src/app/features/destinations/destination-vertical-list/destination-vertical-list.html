@@ -1,6 +1,6 @@
 <div class="page-content">
   <div class="map-section" #mapSection>
-    <app-map [markers]="mapMarkers()" [zoom]="6" [activeMarker]="activeMarker()"></app-map>
+    <app-map [markers]="mapMarkers()" [zoom]="6"></app-map>
   </div>
 
   <div class="list-header">
@@ -17,23 +17,15 @@
       }
     } @else {
       @for (dest of destinations; track dest.identifier) {
-        <div class="destination-card">
+        <a class="destination-card" [routerLink]="['/destinations', dest.identifier]">
           <div class="card-photo" [style.background-image]="'url(' + dest.photo + ')'">
             <span class="card-type">{{ cardTitle }}</span>
-            @if (dest.geo.latitude && dest.geo.longitude) {
-              <button class="card-coords" (click)="selectMarker(dest.geo.latitude, dest.geo.longitude)">
-                {{ formatCoords(dest.geo.latitude, dest.geo.longitude) }}
-              </button>
-            }
             <span class="card-name">{{ dest.name }}</span>
           </div>
           <div class="card-text">
             <p class="card-abstract">{{ dest.abstract }}</p>
-            <a class="visit-btn" [routerLink]="['/destinations', dest.identifier]">
-              {{ 'destinations.letsVisit' | translate }} <i class="fa-sharp fa-solid fa-circle-arrow-right"></i>
-            </a>
           </div>
-        </div>
+        </a>
       }
     }
   </div>

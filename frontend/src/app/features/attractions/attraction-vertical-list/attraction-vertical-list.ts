@@ -82,8 +82,7 @@ export class AttractionVerticalList implements OnInit {
   }
 
   onAttractionClick(attraction: Attraction): void {
-    const dest = this.drawerSvc.getPayload<Destination>('destination-detail');
+    this.attractionMarkers.setSelected(attraction.identifier);
     this.drawerSvc.close('destination-detail');
-    this.drawerSvc.open('attraction-detail', { attraction, destination: dest, source: 'destination-detail' });
   }
 }

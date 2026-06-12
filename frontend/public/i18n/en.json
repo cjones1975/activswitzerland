@@ -110,7 +110,6 @@
   },
   "destinations": {
     "viewAll": "View all",
-    "letsVisit": "Let's Visit",
     "allCities": {
       "title": "All Cities",
       "subtitle": "{{count}} destinations"
@@ -123,14 +122,15 @@
       "back": "Back to destinations",
       "visit": "Visit official page",
       "planTrip": "Plan a Trip",
-      "open": "Open destination"
+      "planTripSubtitle": "By road or rail",
+      "open": "Back to {{name}}"
     }
   },
   "attractions": {
-    "title": "Top attractions",
+    "title": "Popular attractions",
     "titleFallback": "Attractions",
     "seeAll": "See all attractions",
-    "backToDestination": "Back to destination",
+    "backToDestination": "Back to {{name}}",
     "backToAttractions": "Back to attractions",
     "openAll": "Open attractions",
     "listAll": "List all attractions",

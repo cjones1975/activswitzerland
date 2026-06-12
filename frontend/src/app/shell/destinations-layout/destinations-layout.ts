@@ -68,6 +68,7 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   openDetail(): void {
     const dest = this.destination();
     if (dest) this.drawer.open('destination-detail', dest);
+    this.attractionMarkers.setSelected(null);
   }
 
   onMarkerClick(marker: MapMarker): void {
@@ -90,6 +91,7 @@ export class DestinationsLayout implements OnInit, OnDestroy {
 
   reopenAllAttractions(): void {
     this.drawer.open('all-attractions');
+    this.attractionMarkers.setSelected(null);
   }
 
 ngOnDestroy(): void {

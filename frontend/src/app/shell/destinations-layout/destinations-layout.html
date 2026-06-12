@@ -3,10 +3,10 @@
 </div>
 
 <div class="reopen-btns">
-  @if (!drawer.isOpen('destination-detail') && destination()) {
+  @if (!drawer.isOpen('destination-detail') && destination(); as dest) {
     <button class="reopen-btn" type="button" (click)="openDetail()">
       <i class="fa-solid fa-map-location-dot"></i>
-      {{ 'destinations.detail.open' | translate }}
+      {{ 'destinations.detail.open' | translate: { name: dest.name } }}
     </button>
   }
   @if (destination() && !drawer.isOpen('all-attractions') && !drawer.isCollapsed('all-attractions')) {

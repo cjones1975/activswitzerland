@@ -172,9 +172,8 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
   }
 
   onAttractionClick(attraction: Attraction): void {
-    const dest = this.destination();
-    this.drawerSvc.close('all-attractions');
-    this.drawerSvc.open('attraction-detail', { attraction, destination: dest, source: 'all-attractions' });
+    this.attractionMarkers.setSelected(attraction.identifier);
+    this.drawerSvc.collapse('all-attractions');
   }
 
   ngOnDestroy(): void {

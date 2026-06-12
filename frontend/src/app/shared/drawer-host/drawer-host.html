@@ -96,7 +96,7 @@
         <div class="dest-header">
             <button class="dest-back" type="button" (click)="onAllAttractionsBack()">
                 <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
-                {{ 'attractions.backToDestination' | translate }}
+                {{ 'attractions.backToDestination' | translate: { name: allAttractionsDestinationName() } }}
             </button>
             <button class="menu-close" type="button" (click)="onCollapse('all-attractions')">
                 <i class="fa-regular fa-map-location"></i>
