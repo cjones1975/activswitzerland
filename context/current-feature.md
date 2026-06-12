@@ -2,15 +2,32 @@
 
 ## Feature
 
+MySwitzerland Redis Cache (`context/features/myswitzerland-redis-cache-spec.md`)
+
 ## Status
 
+Specced — branch not yet created
+
 ## Goals
+
+- Shared Redis cache (24h TTL) in front of all 7 `/api/v1/myswitzerland/*` proxy endpoints
+- Cache key = `mys:` + full request URL (path + query string)
+- Fail open: if Redis is unreachable, behave exactly as today (direct MySwitzerland API call)
+- No frontend changes
 
 ## Notes
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-06-12 — MySwitzerland Redis Cache Specced
+
+- Specced a shared Redis cache for the `myswitzerland` proxy endpoints (destinations, destinations-by-geobox, destination by id, top attractions, attractions, attraction by id, search attractions)
+- Cache is shared across users (not per-session) since destination/attraction data is static reference content; 24h TTL agreed so upstream edits are picked up daily
+- New `backend/src/middleware/redis.js` (connection, fail-open on connect error — unlike `mongodb.js` it does not exit the process) and `backend/src/middleware/cache.js` (`cacheResponse(ttl = ONE_DAY_SECONDS)` middleware factory, key = `mys:` + `req.originalUrl`)
+- `infra/docker-compose.yml` gets a new `redis: redis:7-alpine` service (no persistent volume); `backend/config/.env` gets `REDIS_HOST=redis`/`REDIS_PORT=6379`
+- See spec for full details
 
 ### 2026-06-12 — Destination & Attraction Fixes Completed
 
