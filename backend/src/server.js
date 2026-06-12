@@ -5,6 +5,7 @@ import express from 'express';
 import errorHandler from './middleware/error.js';
 import corsHandler from './middleware/cors.js';
 import connectDB from './middleware/mongodb.js';
+import { connectRedis } from './middleware/redis.js';
 
 // Configure dotenv to load environment variables
 dotenv.config({ path: './config/.env' });
@@ -12,6 +13,7 @@ dotenv.config({ path: './config/.env' });
 // Connect to database
 if (process.env.NODE_ENV !== 'test') {
     connectDB();
+    connectRedis();
 }
 
 // Import Routes

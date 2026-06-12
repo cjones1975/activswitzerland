@@ -6,7 +6,7 @@ MySwitzerland Redis Cache (`context/features/myswitzerland-redis-cache-spec.md`)
 
 ## Status
 
-Specced — branch not yet created
+Completed
 
 ## Goals
 
@@ -20,6 +20,16 @@ Specced — branch not yet created
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-06-12 — MySwitzerland Redis Cache Completed
+
+- `backend/src/middleware/redis.js`: `redis` client (v4), `connectRedis()` (fail-open on connect error, doesn't exit process); socket config tuned with `connectTimeout: 1000`, `reconnectStrategy` capped at 30s, and `disableOfflineQueue: true` so cache calls fail fast (~0.3-1s, not 5-6s) while Redis is down
+- `backend/src/middleware/cache.js`: `cacheResponse(ttl = ONE_DAY_SECONDS)` middleware — key `mys:${req.originalUrl}`, caches `res.json()` bodies on 200 responses, skips entirely if `redisClient.isOpen` is false
+- Applied `cacheResponse()` to all 7 routes in `backend/src/routes/myswitzerland.js`
+- `connectRedis()` called from `server.js` alongside `connectDB()`
+- `infra/docker-compose.yml`: new `redis: redis:7-alpine` service (no volume), added to `backend`'s `depends_on`
+- `REDIS_HOST=redis`/`REDIS_PORT=6379` appended to `backend/config/.env` and `infra/.env` (both gitignored — not committed, needs manual setup in other environments)
+- Verified end-to-end: first request to `/destinations` ~1.5s (MySwitzerland API), repeat ~0.01s (Redis cache hit); `redis-cli TTL` confirms ~86400s; stopping the `redis` container falls back to direct API calls (~0.3-1s) without errors, and reconnects automatically once Redis is back
 
 ### 2026-06-12 — MySwitzerland Redis Cache Specced
 
