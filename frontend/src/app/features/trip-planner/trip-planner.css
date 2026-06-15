@@ -47,8 +47,41 @@
 
 .stop-row {
   display: flex;
+  align-items: stretch;
+  gap: 0.6rem;
+}
+
+.stop-main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.stop-input-row {
+  display: flex;
   align-items: flex-start;
   gap: 0.6rem;
+}
+
+.stop-things-row {
+  margin-top: 0.15rem;
+}
+
+.stop-things-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  color: var(--navy-500, #6b90b8);
+  background: none;
+  border: none;
+  padding: 0.15rem 0;
+  cursor: pointer;
+}
+
+.stop-things-link i {
+  font-size: 0.85rem;
 }
 
 .stop-indicator {
@@ -113,6 +146,10 @@
 
 .add-stop-btn {
   margin-top: 0.25rem;
+}
+
+:host ::ng-deep .view-trip-btn {
+  justify-content: center;
 }
 
 /* ── Rail connections ───────────────────────────────────────────── */
@@ -215,72 +252,6 @@
 
 .conn-select-btn {
   flex-shrink: 0;
-}
-
-/* ── Attractions ────────────────────────────────────────────────── */
-.attraction-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-}
-
-.attraction-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 0.5rem;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.attraction-row:hover {
-  background: #f8fafc;
-}
-
-.attraction-thumb {
-  width: 56px;
-  height: 56px;
-  object-fit: cover;
-  border-radius: 8px;
-  flex-shrink: 0;
-  background: #e2e8f0;
-}
-
-.attraction-info {
-  flex: 1;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.attraction-name {
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: var(--navy-900);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-:host ::ng-deep .attraction-tag.p-tag {
-  font-size: 0.68rem;
-  padding: 0.1rem 0.4rem;
-  align-self: flex-start;
-}
-
-.attraction-arrow {
-  color: #94a3b8;
-  font-size: 0.8rem;
-  flex-shrink: 0;
-}
-
-.tp-empty {
-  font-size: 0.85rem;
-  color: #94a3b8;
-  text-align: center;
-  padding: 1rem 0;
 }
 
 /* ── Save section ───────────────────────────────────────────────── */

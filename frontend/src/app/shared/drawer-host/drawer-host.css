@@ -101,6 +101,13 @@
     overflow-y: auto;
 }
 
+/* Trip planner & things-to-do drawers: full-width on mobile */
+@media (max-width: 767px) {
+    ::ng-deep .tp-drawer {
+        width: 100vw !important;
+    }
+}
+
 /* Weather drawer header */
 .weather-drawer-header {
     display: flex;

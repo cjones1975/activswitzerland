@@ -20,6 +20,7 @@ export interface MapMarker {
   label?: string;
   icon?: string;
   color?: string;
+  className?: string;
   id?: string;
   highlight?: boolean;
   clickable?: boolean;
@@ -40,6 +41,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() activeMarker?: { lng: number; lat: number };
   @Input() tripRoute: [number, number][] | null = null;
   @Input() tripType: 'road' | 'rail' | null = null;
+  @Input() fitBounds: [number, number][] | null = null;
 
   @Output() markerClick = new EventEmitter<MapMarker>();
 
@@ -65,7 +67,9 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.mapLoaded = true;
       this.syncMarkers();
       this.syncTripRoute();
-      if (this.center) {
+      if (this.fitBounds && this.fitBounds.length >= 2) {
+        this.applyFitBounds(this.fitBounds, false);
+      } else if (this.center) {
         this.map?.flyTo({ center: this.center, zoom: this.zoom, duration: 800 });
       }
     });
@@ -88,6 +92,17 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     if ((changes['tripRoute'] || changes['tripType']) && this.mapLoaded) {
       this.syncTripRoute();
     }
+    if (changes['fitBounds'] && this.mapLoaded && this.fitBounds && this.fitBounds.length >= 2) {
+      this.applyFitBounds(this.fitBounds, true);
+    }
+  }
+
+  private applyFitBounds(coords: [number, number][], animate: boolean): void {
+    const bounds = coords.reduce(
+      (b, c) => b.extend(c),
+      new maplibregl.LngLatBounds(coords[0], coords[0])
+    );
+    this.map?.fitBounds(bounds, { padding: 60, duration: animate ? 800 : 0 });
   }
 
   private calcCenter(): [number, number] {
@@ -108,7 +123,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     for (const marker of this.markers) {
       const el = document.createElement('i');
-      el.className = `${marker.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${marker.highlight ? ' marker-selected' : ''}`;
+      el.className = `${marker.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${marker.highlight ? ' marker-selected' : ''}${marker.className ? ' ' + marker.className : ''}`;
       if (marker.color) el.style.color = marker.color;
       if (marker.highlight) el.style.color = '#e53e3e';
 
@@ -222,9 +237,10 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     if (this.tripType === 'rail') {
       coords.forEach(coord => {
         const el = document.createElement('i');
-        el.className = 'fa-sharp fa-light fa-train-stop';
-        el.style.color = '#d97706';
-        el.style.fontSize = '16px';
+        el.className = 'fa-solid fa-circle';
+        el.style.color = '#1a6b3c';
+        el.style.fontSize = '10px';
+        el.style.fontWeight = 'bold';
         el.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.4))';
         const marker = new maplibregl.Marker({ element: el })
           .setLngLat(coord)

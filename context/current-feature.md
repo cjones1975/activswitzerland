@@ -2,24 +2,57 @@
 
 ## Feature
 
-MySwitzerland Redis Cache (`context/features/myswitzerland-redis-cache-spec.md`)
+Trip Planner — Things to Do Picker (`context/features/trip-things-to-do-spec.md`)
 
 ## Status
 
-Completed
+Implemented (pending nearby-attraction data source rework)
 
 ## Goals
 
-- Shared Redis cache (24h TTL) in front of all 7 `/api/v1/myswitzerland/*` proxy endpoints
-- Cache key = `mys:` + full request URL (path + query string)
-- Fail open: if Redis is unreachable, behave exactly as today (direct MySwitzerland API call)
-- No frontend changes
+- Per-stop `+ Add things to do` picker drawer, stacked above `trip-planner`
+- Checkbox rows (immediate commit) with accordion expand for a larger photo/description and a "View full details" link into `attraction-detail` (4th drawer level)
+- Selections flow into `SavedTrip.attractionIds` on save
+- Backend `getAttractions` gains optional `geo.dist` passthrough + optional `placeId`, frontend `AttractionsService.getAttractionsNearby()`
 
 ## Notes
+
+- Before this can be verified end-to-end, the nearby-attractions fetch needs rework: `geo.dist` isn't the right approach for this use case — attractions should be fetched via a query-string full-text search instead. User is writing that backend API. `ThingsToDo`/`AttractionsService.getAttractionsNearby()` will need to be repointed at it once ready.
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-06-15 — Things to Do Picker: Pagination & Search Completed
+
+- `ThingsToDo` now mirrors `AllAttractions`'s infinite-scroll: `IntersectionObserver` on a `#sentinel`, `hasMore`/`page`/`totalElements` tracking, `loadMore()` appends subsequent pages via `getAttractionsNearby(lat, lon, lang, page)`
+- `AttractionsService.getAttractionsNearby()` now takes a `page` param and returns `AttractionsPage` (was `Attraction[]`, page 0 only)
+- Added `AttractionsService.searchAttractionsNearby(lat, lon, language, search, page, hitsPerPage)` — calls `searchAttractions()` with `geo.dist` instead of `placeId`, `top: false`
+- `searchAttractions()` / backend `searchAttractions` controller: `placeId` now optional, new optional `geo.dist` passthrough (mirrors `getAttractions`)
+- `ThingsToDo` search bar added (same UX as `AllAttractions`): filters loaded attractions locally first, falls back to `searchAttractionsNearby()`, "no results" message, "Back to all" link restores the paginated list; search disables the infinite-scroll sentinel
+- Card markup (checkbox row + accordion expand) extracted into a shared `<ng-template #card>` reused for both the paginated list and search results
+- `translate.onLangChange` now resets the picker (clears search, refetches page 0) — previously language changes while the picker was open were not handled
+- New `trip.planner.thingsToDo.search.{placeholder,backToAll,noResults}` i18n keys added to all four locale files
+- Verified with `tsc --noEmit` and `ng build --configuration development` — both pass. Browser verification still pending — see Notes.
+
+### 2026-06-12 — Trip Planner Things to Do Picker Implemented (pending search API rework)
+
+- All pieces from the spec implemented: `PlannedTrip.attractionSelections`, `TripPlannerService` selection methods (`toggleAttraction`, `getSelections`, `allSelectedAttractionIds`, `hydrateSelections`), pruning in `setStops`, `pendingAttractionIds` stash in `loadSavedTrip`
+- `AttractionsService.getAttractions()` — `placeId` now optional, new optional `geoDist` param; added `getAttractionsNearby(lat, lon, lang)`
+- Backend `getAttractions` controller — `placeId` optional, new optional `geo.dist` passthrough
+- New `'things-to-do'` `DrawerKey`; new `ThingsToDo` component (`frontend/src/app/features/trip-planner/things-to-do/`) — checkbox rows, one-at-a-time accordion expand, "View full details" → `attraction-detail`, sticky "Done" footer
+- `AttractionDetailPayload`: `destination` now optional, added optional `stop`, `source` gained `'things-to-do'`
+- `DrawerHost`: registered `ThingsToDo`; replaced unused `attractionDetailBackKey` with `attractionDetailSource`; `onAttractionDetailBack()` now routes back to `things-to-do` (with the stop) when that was the source; new `things-to-do` drawer block + back-button label switch in `drawer-host.html`
+- `TripPlanner`: new `openThingsToDo()`/`selectionCount()`; `onSave()` now populates `attractionIds` via `allSelectedAttractionIds()`
+- `trip-planner.html`/`.css`: stop rows restructured into `.stop-main` (`.stop-input-row` + `.stop-things-row` with the `+ Add things to do` / `{{count}} things to do` link); `.stop-row` now `align-items: stretch` so `.stop-line` reaches full row height
+- Moved leftover Section-3b attraction-list styles from `trip-planner.css` to `things-to-do.css`
+- `trip.planner.thingsToDo.*` i18n keys added to all four locale files
+- Verified with `tsc --noEmit` and `ng build --configuration development` — both pass. Browser verification deferred — see Notes.
+
+### 2026-06-12 — Trip Planner Things to Do Picker Specced
+
+- Specced a per-stop "Add things to do" picker drawer for the Trip Planner: new `ThingsToDo` component/drawer key, `attractionSelections` state in `TripPlannerService`, `geo.dist`-based nearby-attraction search, and stop-row badge/link UI
+- Created `feature/trip-things-to-do` branch and `context/features/trip-things-to-do-spec.md`
 
 ### 2026-06-12 — MySwitzerland Redis Cache Completed
 

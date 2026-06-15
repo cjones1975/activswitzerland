@@ -26,6 +26,7 @@ export interface PlannedTrip {
   selectedConnection?: TripConnection;
   attractions?: Attraction[];
   routeCoordinates?: [number, number][];
+  attractionSelections?: Record<string, string[]>; // stationId -> selected attraction identifiers
 }
 
 export interface SavedTrip {

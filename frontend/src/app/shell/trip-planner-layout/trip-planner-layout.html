@@ -1,5 +1,11 @@
 <div class="map-wrapper">
-  <app-map [center]="center()" [zoom]="12" [tripRoute]="tripRoute()" [tripType]="tripType()"></app-map>
+  <app-map
+    [markers]="tripAttractionMarkers()"
+    [center]="center()"
+    [zoom]="12"
+    [tripRoute]="tripRoute()"
+    [tripType]="tripType()"
+    [fitBounds]="tripBounds()"></app-map>
 </div>
 
 <div class="reopen-btns">

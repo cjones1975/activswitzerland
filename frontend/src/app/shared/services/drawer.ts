@@ -11,6 +11,7 @@ export type DrawerKey =
   | 'language'
   | 'profile'
   | 'trip-planner'
+  | 'things-to-do'
 
 
 const DRAWER_BASE_Z = 4000;

@@ -10,11 +10,13 @@ import { AttractionMarkersService } from '../../../shared/services/attraction-ma
 import { LangService } from '../../../shared/services/lang';
 import { Attraction } from '../../../models/attraction';
 import { Destination } from '../../../models/destination';
+import { TripStop } from '../../../models/trip';
 
 export interface AttractionDetailPayload {
   attraction: Attraction;
-  destination: Destination;
-  source: 'destination-detail' | 'all-attractions';
+  destination?: Destination;
+  stop?: TripStop;
+  source: 'destination-detail' | 'all-attractions' | 'things-to-do';
 }
 
 const LANG_NAMES: Record<string, string> = {

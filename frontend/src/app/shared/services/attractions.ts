@@ -51,16 +51,18 @@ export class AttractionsService {
     language: string;
     page: number;
     hitsPerPage: number;
-    placeId: string;
+    placeId?: string;
+    geoDist?: string; // "lat,lon,radiusMeters"
   }): Observable<AttractionsPage> {
-    const httpParams = new HttpParams()
+    let httpParams = new HttpParams()
       .set('language', params.language)
       .set('page', params.page)
       .set('hitsPerPage', params.hitsPerPage)
-      .set('placeId', params.placeId)
       .set('expand', 'false')
       .set('translate', 'true')
       .set('stripHtml', 'false');
+    if (params.placeId) httpParams = httpParams.set('placeId', params.placeId);
+    if (params.geoDist) httpParams = httpParams.set('geo.dist', params.geoDist);
 
     return this.http
       .get<AttractionsResponse>(this.baseUrl + '/attractions', { params: httpParams })
@@ -70,27 +72,33 @@ export class AttractionsService {
       })));
   }
 
+  getAttractionsNearby(lat: number, lon: number, language: string, page = 0, hitsPerPage = 20): Observable<AttractionsPage> {
+    return this.getAttractions({ language, page, hitsPerPage, geoDist: `${lat},${lon},10000` });
+  }
+
   searchAttractions(params: {
     language: string;
     page: number;
     search: string;
     hitsPerPage: number;
-    placeId: string;
+    placeId?: string;
+    geoDist?: string; // "lat,lon,radiusMeters"
     expand: boolean;
     translate: boolean;
     stripHtml: boolean;
     top: boolean;
   }): Observable<AttractionsPage> {
-    const httpParams = new HttpParams()
+    let httpParams = new HttpParams()
       .set('language', params.language)
       .set('page', params.page)
       .set('search', params.search)
       .set('hitsPerPage', params.hitsPerPage)
-      .set('placeId', params.placeId)
       .set('expand', String(params.expand))
       .set('translate', String(params.translate))
       .set('stripHtml', String(params.stripHtml))
       .set('top', String(params.top));
+    if (params.placeId) httpParams = httpParams.set('placeId', params.placeId);
+    if (params.geoDist) httpParams = httpParams.set('geo.dist', params.geoDist);
 
     return this.http
       .get<AttractionsResponse>(this.baseUrl + '/searchattractions', { params: httpParams })
@@ -98,6 +106,20 @@ export class AttractionsService {
         attractions: res.data.data,
         totalElements: res.data.meta?.page?.totalElements ?? 0,
       })));
+  }
+
+  searchAttractionsNearby(lat: number, lon: number, language: string, search: string, page = 0, hitsPerPage = 20): Observable<AttractionsPage> {
+    return this.searchAttractions({
+      language,
+      page,
+      search,
+      hitsPerPage,
+      geoDist: `${lat},${lon},10000`,
+      expand: false,
+      translate: true,
+      stripHtml: false,
+      top: false,
+    });
   }
 
   getAttraction(id: string, language: string): Observable<Attraction> {

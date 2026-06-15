@@ -51,8 +51,8 @@ export class TripPlanner {
 
   // ── Trip type toggle ──────────────────────────────────────────────────────
   tripTypes = [
-    { label: 'trip.planner.typeRoad', value: 'road', icon: 'fa-light fa-car-side' },
-    { label: 'trip.planner.typeRail', value: 'rail', icon: 'fa-light fa-train' },
+    { label: 'trip.planner.typeRoad', value: 'road', icon: 'fa-regular fa-car' },
+    { label: 'trip.planner.typeRail', value: 'rail', icon: 'fa-regular fa-train' },
   ];
   selectedType = signal<'road' | 'rail'>('road');
 
@@ -192,7 +192,7 @@ export class TripPlanner {
           this.routeLoading.set(false);
         });
     } else {
-      this.plannerSvc.setRouteCoordinates([]);
+      this.plannerSvc.setRouteCoordinates(this.plannerSvc.buildRailRoute(valid));
     }
   }
 
@@ -252,6 +252,21 @@ export class TripPlanner {
     return !!sel && sel.departure === conn.departure && sel.from === conn.from;
   }
 
+  // ── Things to do ──────────────────────────────────────────────────────────
+  openThingsToDo(stop: TripStop): void {
+    this.drawerSvc.open('things-to-do', { stop });
+  }
+
+  // ── View trip on map ─────────────────────────────────────────────────────
+  onViewTrip(): void {
+    if (this.validStops().length < 2) return;
+    this.drawerSvc.collapse('trip-planner');
+  }
+
+  selectionCount(stationId: string): number {
+    return this.plannerSvc.getSelections(stationId).length;
+  }
+
   // ── Save ──────────────────────────────────────────────────────────────────
   onSave(): void {
     if (!this.isLoggedIn()) {
@@ -266,7 +281,7 @@ export class TripPlanner {
       name,
       type: this.selectedType(),
       stops: valid,
-      attractionIds: [],
+      attractionIds: this.plannerSvc.allSelectedAttractionIds(),
       routeCoordinates: this.plannerSvc.snapshot.routeCoordinates ?? [],
     };
 

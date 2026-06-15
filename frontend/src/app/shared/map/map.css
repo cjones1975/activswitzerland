@@ -22,6 +22,12 @@
   filter: drop-shadow(0 2px 4px rgba(229, 62, 62, 0.5));
 }
 
+.map-marker-icon.trip-attraction-marker {
+  font-size: 2.2rem;
+  font-weight: bold;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+}
+
 /* Popup content — scoped to map container so it doesn't leak globally */
 :host ::ng-deep .maplibregl-popup-content {
   padding: 6px 10px;

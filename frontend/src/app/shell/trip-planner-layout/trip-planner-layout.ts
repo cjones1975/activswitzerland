@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnDestroy, OnInit, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { of, startWith, switchMap } from 'rxjs';
@@ -7,8 +7,11 @@ import { DestinationsService } from '../../shared/services/destinations';
 import { LangService } from '../../shared/services/lang';
 import { Destination } from '../../models/destination';
 import { MapComponent } from '../../shared/map/map';
+import type { MapMarker } from '../../shared/map/map';
 import { Drawer } from '../../shared/services/drawer';
 import { TripPlannerService } from '../../shared/services/trip-planner';
+import { hasValidGeo } from '../../shared/services/attraction-markers';
+import { PlannedTrip } from '../../models/trip';
 
 @Component({
   selector: 'app-trip-planner-layout',
@@ -32,6 +35,40 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
 
   tripRoute = signal<[number, number][] | null>(null);
   tripType = signal<'road' | 'rail' | null>(null);
+  trip = signal<PlannedTrip | null>(null);
+
+  /** Attraction pins for stops' selected "things to do", reactive to selection and cache changes. */
+  tripAttractionMarkers = computed<MapMarker[]>(() => {
+    const selections = this.trip()?.attractionSelections;
+    this.tripPlanner.attractionCacheVersion();
+    if (!selections) return [];
+
+    const ids = new Set(Object.values(selections).flat());
+    const markers: MapMarker[] = [];
+    for (const id of ids) {
+      const attraction = this.tripPlanner.getAttraction(id);
+      if (attraction && hasValidGeo(attraction)) {
+        markers.push({
+          lng: attraction.geo.longitude,
+          lat: attraction.geo.latitude,
+          icon: 'fa-solid fa-map-pin',
+          color: '#dc0015',
+          className: 'trip-attraction-marker',
+          label: attraction.name,
+          id: attraction.identifier,
+        });
+      }
+    }
+    return markers;
+  });
+
+  /** Start/end of the route, recomputed whenever the trip-planner drawer collapses so the map can zoom out to fit them. */
+  tripBounds = computed<[number, number][] | null>(() => {
+    const collapsed = !this.drawer.isOpen('trip-planner');
+    const route = this.tripRoute();
+    if (!collapsed || !route || route.length < 2) return null;
+    return [route[0], route[route.length - 1]];
+  });
 
   private firstRouteEmission = true;
 
@@ -56,7 +93,10 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
 
     this.tripPlanner.trip$
       .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe(trip => this.tripType.set(trip.type ?? null));
+      .subscribe(trip => {
+        this.tripType.set(trip.type ?? null);
+        this.trip.set(trip);
+      });
 
     this.route.paramMap.pipe(
       switchMap(params => {

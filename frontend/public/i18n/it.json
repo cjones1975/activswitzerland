@@ -55,6 +55,7 @@
       "to": "A",
       "via": "Via",
       "addStop": "Aggiungi tappa",
+      "viewTrip": "Visualizza viaggio",
       "findConnections": "Cerca connessioni",
       "date": "Data",
       "time": "Orario",
@@ -71,7 +72,20 @@
       "deleteConfirm": "Sei sicuro di voler eliminare questo viaggio?",
       "noTrips": "Nessun viaggio salvato.",
       "planFirst": "Pianifica il tuo primo viaggio",
-      "open": "Apri pianificatore di viaggio"
+      "open": "Apri pianificatore di viaggio",
+      "thingsToDo": {
+        "add": "Aggiungi attività",
+        "countLabel": "{{count}} attività",
+        "empty": "Nessuna attrazione trovata nelle vicinanze",
+        "viewDetails": "Vedi tutti i dettagli",
+        "backToList": "Torna alle attività",
+        "done": "Fine",
+        "search": {
+          "placeholder": "Cerca attrazioni nelle vicinanze...",
+          "backToAll": "Torna all'elenco",
+          "noResults": "Siamo spiacenti, non abbiamo trovato attrazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave."
+        }
+      }
     }
   },
   "profile": {

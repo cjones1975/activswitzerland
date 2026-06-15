@@ -122,7 +122,11 @@
         <div class="dest-header">
             <button class="dest-back" type="button" (click)="onAttractionDetailBack()">
                 <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
-                {{ 'attractions.backToAttractions' | translate }}
+                @if (attractionDetailSource() === 'things-to-do') {
+                    {{ 'trip.planner.thingsToDo.backToList' | translate }}
+                } @else {
+                    {{ 'attractions.backToAttractions' | translate }}
+                }
             </button>
             <button class="menu-close" type="button" (click)="onCollapse('attraction-detail')">
                 <i class="fa-regular fa-map-location"></i>
@@ -130,6 +134,32 @@
         </div>
     </ng-template>
     <app-attraction-detail></app-attraction-detail>
+</p-drawer>
+
+<!-- THINGS TO DO -->
+<p-drawer
+    [visible]="svc.isOpen('things-to-do')"
+    [closable]="false"
+    [dismissible]="false"
+    [closeOnEscape]="false"
+    (visibleChange)="onVisibleChange('things-to-do', $event)"
+    position="left"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('things-to-do')"
+    [style]="{ width: 'min(480px, calc(100vw - 20px))' }"
+    styleClass="dest-drawer tp-drawer">
+    <ng-template #header>
+        <div class="dest-header">
+            <div class="menu-brand-text">
+                <i class="fa-light fa-map-pin"></i>
+                <span class="menu-brand-name">{{ thingsToDoTitle() }}</span>
+            </div>
+            <button class="menu-close" type="button" (click)="onDrawerClose('things-to-do')">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+    </ng-template>
+    <app-things-to-do></app-things-to-do>
 </p-drawer>
 
 <!-- WEATHER -->
@@ -173,7 +203,7 @@
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('trip-planner')"
     [style]="{ width: 'min(480px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer tp-drawer">
     <ng-template #header>
         <div class="dest-header">
             <div class="menu-brand-text">

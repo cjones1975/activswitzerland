@@ -55,6 +55,7 @@
       "to": "Nach",
       "via": "Über",
       "addStop": "Halt hinzufügen",
+      "viewTrip": "Reise anzeigen",
       "findConnections": "Verbindungen suchen",
       "date": "Datum",
       "time": "Uhrzeit",
@@ -71,7 +72,20 @@
       "deleteConfirm": "Möchten Sie diese Reise wirklich löschen?",
       "noTrips": "Noch keine Reisen gespeichert.",
       "planFirst": "Erste Reise planen",
-      "open": "Reiseplaner öffnen"
+      "open": "Reiseplaner öffnen",
+      "thingsToDo": {
+        "add": "Dinge zum Erleben hinzufügen",
+        "countLabel": "{{count}} Dinge zum Erleben",
+        "empty": "Keine Attraktionen in der Nähe gefunden",
+        "viewDetails": "Vollständige Details anzeigen",
+        "backToList": "Zurück zu den Aktivitäten",
+        "done": "Fertig",
+        "search": {
+          "placeholder": "Attraktionen in der Nähe suchen...",
+          "backToAll": "Zurück zur Übersicht",
+          "noResults": "Es tut uns leid, wir konnten keine Attraktionen finden, die Ihrer Suchanfrage entsprechen. Bitte versuchen Sie ein anderes Stichwort."
+        }
+      }
     }
   },
   "profile": {

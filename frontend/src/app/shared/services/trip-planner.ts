@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, catchError, of } from 'rxjs';
 import { PlannedTrip, TripStop, TripConnection, SavedTrip } from '../../models/trip';
@@ -12,6 +12,11 @@ export class TripPlannerService {
 
   private _trip$ = new BehaviorSubject<PlannedTrip>({ ...EMPTY_TRIP });
   private _routeCoordinates$ = new BehaviorSubject<[number, number][]>([]);
+  private pendingAttractionIds = new Set<string>();
+  private attractionCache = new Map<string, Attraction>();
+
+  /** Bumped whenever new attractions are cached, so consumers can react without storing full objects in state. */
+  readonly attractionCacheVersion = signal(0);
 
   readonly trip$: Observable<PlannedTrip> = this._trip$.asObservable();
   readonly routeCoordinates$: Observable<[number, number][]> = this._routeCoordinates$.asObservable();
@@ -24,7 +29,10 @@ export class TripPlannerService {
   }
 
   setStops(stops: TripStop[]): void {
-    this._trip$.next({ ...this._trip$.value, stops });
+    const ids = new Set(stops.map(s => s.stationId));
+    const current = this._trip$.value.attractionSelections ?? {};
+    const pruned = Object.fromEntries(Object.entries(current).filter(([k]) => ids.has(k)));
+    this._trip$.next({ ...this._trip$.value, stops, attractionSelections: pruned });
   }
 
   setName(name: string): void {
@@ -39,6 +47,7 @@ export class TripPlannerService {
       name: trip.name,
     });
     this._routeCoordinates$.next(trip.routeCoordinates);
+    this.pendingAttractionIds = new Set(trip.attractionIds ?? []);
   }
 
   setConnections(connections: TripConnection[]): void {
@@ -58,6 +67,39 @@ export class TripPlannerService {
     this._trip$.next({ ...this._trip$.value, routeCoordinates: coords });
   }
 
+  toggleAttraction(stationId: string, attractionId: string): void {
+    const current = this._trip$.value.attractionSelections ?? {};
+    const selected = new Set(current[stationId] ?? []);
+    selected.has(attractionId) ? selected.delete(attractionId) : selected.add(attractionId);
+    this._trip$.next({
+      ...this._trip$.value,
+      attractionSelections: { ...current, [stationId]: [...selected] },
+    });
+  }
+
+  getSelections(stationId: string): string[] {
+    return this._trip$.value.attractionSelections?.[stationId] ?? [];
+  }
+
+  allSelectedAttractionIds(): string[] {
+    const sel = this._trip$.value.attractionSelections ?? {};
+    return [...new Set(Object.values(sel).flat())];
+  }
+
+  hydrateSelections(stationId: string, nearbyAttractionIds: string[]): void {
+    if (this.pendingAttractionIds.size === 0) return;
+    const matched = nearbyAttractionIds.filter(id => this.pendingAttractionIds.has(id));
+    if (matched.length === 0) return;
+    const current = this._trip$.value.attractionSelections ?? {};
+    this._trip$.next({
+      ...this._trip$.value,
+      attractionSelections: {
+        ...current,
+        [stationId]: [...new Set([...(current[stationId] ?? []), ...matched])],
+      },
+    });
+  }
+
   buildRoadRoute(stops: TripStop[]): Observable<[number, number][]> {
     if (stops.length < 2) return of([]);
     const coords = stops.map(s => `${s.lon},${s.lat}`).join(';');
@@ -72,8 +114,25 @@ export class TripPlannerService {
     return stops.map(s => [s.lon, s.lat]);
   }
 
+  cacheAttractions(attractions: Attraction[]): void {
+    let changed = false;
+    for (const attraction of attractions) {
+      if (!this.attractionCache.has(attraction.identifier)) {
+        this.attractionCache.set(attraction.identifier, attraction);
+        changed = true;
+      }
+    }
+    if (changed) this.attractionCacheVersion.update(v => v + 1);
+  }
+
+  getAttraction(id: string): Attraction | undefined {
+    return this.attractionCache.get(id);
+  }
+
   reset(): void {
     this._trip$.next({ ...EMPTY_TRIP });
     this._routeCoordinates$.next([]);
+    this.attractionCache.clear();
+    this.attractionCacheVersion.set(0);
   }
 }

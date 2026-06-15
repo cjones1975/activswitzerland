@@ -40,33 +40,52 @@
             }
           </div>
 
-          <!-- Autocomplete input -->
-          <p-autoComplete
-            [ngModel]="stop"
-            (onSelect)="onStopSelect($event, $index)"
-            (onClear)="onStopClear($index)"
-            [suggestions]="stopSuggestions()[$index] || []"
-            (completeMethod)="searchStop($event, $index)"
-            optionLabel="name"
-            [minLength]="3"
-            [delay]="300"
-            [forceSelection]="true"
-            [showEmptyMessage]="true"
-            emptyMessage="No locations found"
-            class="stop-input"
-            [inputStyle]="{'width':'100%'}"
-            [placeholder]="($index === 0 ? 'trip.planner.from' : $index === stops().length - 1 ? 'trip.planner.to' : 'trip.planner.via') | translate">
-          </p-autoComplete>
+          <div class="stop-main">
+            <div class="stop-input-row">
+              <!-- Autocomplete input -->
+              <p-autoComplete
+                [ngModel]="stop"
+                (onSelect)="onStopSelect($event, $index)"
+                (onClear)="onStopClear($index)"
+                [suggestions]="stopSuggestions()[$index] || []"
+                (completeMethod)="searchStop($event, $index)"
+                optionLabel="name"
+                [minLength]="3"
+                [delay]="300"
+                [forceSelection]="true"
+                [showEmptyMessage]="true"
+                emptyMessage="No locations found"
+                class="stop-input"
+                [inputStyle]="{'width':'100%'}"
+                [placeholder]="($index === 0 ? 'trip.planner.from' : $index === stops().length - 1 ? 'trip.planner.to' : 'trip.planner.via') | translate">
+              </p-autoComplete>
 
-          <!-- Remove button (hidden when only 2 stops) -->
-          @if (stops().length > 2) {
-            <p-button
-              icon="fa-light fa-xmark"
-              variant="text"
-              severity="secondary"
-              class="stop-remove"
-              (onClick)="removeStop($index)" />
-          }
+              <!-- Remove button (hidden when only 2 stops) -->
+              @if (stops().length > 2) {
+                <p-button
+                  icon="fa-light fa-xmark"
+                  variant="text"
+                  severity="secondary"
+                  class="stop-remove"
+                  (onClick)="removeStop($index)" />
+              }
+            </div>
+
+            <!-- Things to do link (only for filled stops) -->
+            @if (stop) {
+              <div class="stop-things-row">
+                <button type="button" class="stop-things-link" (click)="openThingsToDo(stop)">
+                  @if (selectionCount(stop.stationId) > 0) {
+                    <i class="fa-solid fa-circle-check"></i>
+                    <span>{{ 'trip.planner.thingsToDo.countLabel' | translate: { count: selectionCount(stop.stationId) } }}</span>
+                  } @else {
+                    <i class="fa-light fa-map-pin"></i>
+                    <span>{{ 'trip.planner.thingsToDo.add' | translate }}</span>
+                  }
+                </button>
+              </div>
+            }
+          </div>
 
         </div>
       }
@@ -86,6 +105,15 @@
     @if (routeLoading()) {
       <p-skeleton height="8px" borderRadius="4px" class="mt-3" />
     }
+
+    <!-- View trip on map -->
+    <p-button
+      [label]="'trip.planner.viewTrip' | translate"
+      icon="fa-regular fa-route"
+      [outlined]="true"
+      class="view-trip-btn w-full mt-3"
+      [disabled]="validStops().length < 2"
+      (onClick)="onViewTrip()" />
   </div>
 
   <!-- ── Section 3a: Rail connections ──────────────────────────────────── -->
