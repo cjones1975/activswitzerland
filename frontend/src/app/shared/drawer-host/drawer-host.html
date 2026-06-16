@@ -150,7 +150,7 @@
     styleClass="dest-drawer tp-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <div class="menu-brand-text">
+            <div class="menu-brand-text tp-header-brand">
                 <i class="fa-light fa-map-pin"></i>
                 <span class="menu-brand-name">{{ thingsToDoTitle() }}</span>
             </div>
@@ -206,8 +206,7 @@
     styleClass="dest-drawer tp-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <div class="menu-brand-text">
-                <i class="fa-light fa-route"></i>
+            <div class="menu-brand-text tp-header-brand">
                 <span class="menu-brand-name">{{ 'trip.planner.title' | translate }}</span>
             </div>
             <button class="menu-close" type="button" (click)="onDrawerClose('trip-planner')">

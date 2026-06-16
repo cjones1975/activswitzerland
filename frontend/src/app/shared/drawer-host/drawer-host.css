@@ -29,6 +29,12 @@
     flex-direction: column;
 }
 
+.tp-header-brand {
+    flex-direction: row;
+    align-items: center;
+    gap: 0.5rem;
+}
+
 .menu-brand-name {
     font-size: 1rem;
     font-weight: 700;
@@ -106,6 +112,13 @@
     ::ng-deep .tp-drawer {
         width: 100vw !important;
     }
+}
+
+/* Trip planner manages its own scroll via flex layout */
+::ng-deep .tp-drawer .p-drawer-content {
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Weather drawer header */

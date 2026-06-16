@@ -3,257 +3,262 @@
 
 <div class="trip-planner">
 
-  @switch (currentStep()) {
+  <!-- Scrollable step content -->
+  <div class="tp-content">
+    @switch (currentStep()) {
 
-    <!-- ── Step: Stops ────────────────────────────────────────────────────── -->
-    @case ('stops') {
-      <div class="tp-section">
-        <div class="tp-section-title">
-          <i class="fa-light fa-route"></i>
-          <span>{{ 'trip.planner.steps.stops' | translate }}</span>
+      <!-- ── Step: Stops ────────────────────────────────────────────────────── -->
+      @case ('stops') {
+        <div class="tp-section">
+          <div class="tp-section-title">
+            <i class="fa-light fa-route"></i>
+            <span>{{ 'trip.planner.steps.stops' | translate }}</span>
+          </div>
+          <p-selectButton
+            [options]="tripTypes"
+            [ngModel]="selectedType()"
+            (ngModelChange)="onTypeChange($event)"
+            [allowEmpty]="false"
+            class="trip-type-toggle w-full">
+            <ng-template #item let-opt>
+              <i [class]="opt.icon"></i>
+              <span>{{ opt.label | translate }}</span>
+            </ng-template>
+          </p-selectButton>
         </div>
-        <p-selectButton
-          [options]="tripTypes"
-          [ngModel]="selectedType()"
-          (ngModelChange)="onTypeChange($event)"
-          [allowEmpty]="false"
-          class="trip-type-toggle w-full">
-          <ng-template #item let-opt>
-            <i [class]="opt.icon"></i>
-            <span>{{ opt.label | translate }}</span>
-          </ng-template>
-        </p-selectButton>
-      </div>
 
-      <p-divider />
+        <p-divider />
 
-      <div class="tp-section">
-        <div class="stop-list">
-          @for (stop of stops(); track trackByIndex($index)) {
-            <div class="stop-row">
+        <div class="tp-section">
+          <div class="stop-list">
+            @for (stop of stops(); track trackByIndex($index)) {
+              <div class="stop-row">
 
-              <!-- Sequence indicator -->
-              <div class="stop-indicator">
-                @if ($index === 0) {
-                  <i class="fa-light fa-circle-dot stop-icon stop-icon--start"></i>
-                } @else if ($index === stops().length - 1) {
-                  <i class="fa-light fa-location-dot stop-icon stop-icon--end"></i>
-                } @else {
-                  <span class="stop-icon stop-icon--mid">{{ $index + 1 }}</span>
-                }
-                @if ($index < stops().length - 1) {
-                  <span class="stop-line"></span>
-                }
-              </div>
-
-              <div class="stop-main">
-                <div class="stop-input-row">
-                  <!-- Autocomplete input -->
-                  <p-autoComplete
-                    [ngModel]="stop"
-                    (onSelect)="onStopSelect($event, $index)"
-                    (onClear)="onStopClear($index)"
-                    [suggestions]="stopSuggestions()[$index] || []"
-                    (completeMethod)="searchStop($event, $index)"
-                    optionLabel="name"
-                    [minLength]="3"
-                    [delay]="300"
-                    [forceSelection]="true"
-                    [showEmptyMessage]="true"
-                    emptyMessage="No locations found"
-                    class="stop-input"
-                    [inputStyle]="{'width':'100%'}"
-                    [placeholder]="($index === 0 ? 'trip.planner.from' : $index === stops().length - 1 ? 'trip.planner.to' : 'trip.planner.via') | translate">
-                  </p-autoComplete>
-
-                  <!-- Remove button (hidden when only 2 stops) -->
-                  @if (stops().length > 2) {
-                    <p-button
-                      icon="fa-light fa-xmark"
-                      variant="text"
-                      severity="secondary"
-                      class="stop-remove"
-                      (onClick)="removeStop($index)" />
+                <!-- Sequence indicator -->
+                <div class="stop-indicator">
+                  @if ($index === 0) {
+                    <i class="fa-light fa-circle-dot stop-icon stop-icon--start"></i>
+                  } @else if ($index === stops().length - 1) {
+                    <i class="fa-light fa-location-dot stop-icon stop-icon--end"></i>
+                  } @else {
+                    <span class="stop-icon stop-icon--mid">{{ $index + 1 }}</span>
+                  }
+                  @if ($index < stops().length - 1) {
+                    <span class="stop-line"></span>
                   }
                 </div>
 
-                <!-- Things to do link (only for filled stops) -->
-                @if (stop) {
-                  <div class="stop-things-row">
-                    <button type="button" class="stop-things-link" (click)="openThingsToDo(stop)">
-                      @if (selectionCount(stop.stationId) > 0) {
-                        <i class="fa-solid fa-circle-check"></i>
-                        <span>{{ 'trip.planner.thingsToDo.countLabel' | translate: { count: selectionCount(stop.stationId) } }}</span>
-                      } @else {
-                        <i class="fa-light fa-map-pin"></i>
-                        <span>{{ 'trip.planner.thingsToDo.add' | translate }}</span>
-                      }
-                    </button>
-                  </div>
-                }
-              </div>
+                <div class="stop-main">
+                  <div class="stop-input-row">
+                    <!-- Autocomplete input -->
+                    <p-autoComplete
+                      [ngModel]="stop"
+                      (onSelect)="onStopSelect($event, $index)"
+                      (onClear)="onStopClear($index)"
+                      [suggestions]="stopSuggestions()[$index] || []"
+                      (completeMethod)="searchStop($event, $index)"
+                      optionLabel="name"
+                      [minLength]="3"
+                      [delay]="300"
+                      [forceSelection]="true"
+                      [showEmptyMessage]="true"
+                      emptyMessage="No locations found"
+                      class="stop-input"
+                      [inputStyle]="{'width':'100%'}"
+                      [disabled]="isRoundTrip() && $index === stops().length - 1"
+                      [placeholder]="($index === 0 ? 'trip.planner.from' : $index === stops().length - 1 ? 'trip.planner.to' : 'trip.planner.via') | translate">
+                    </p-autoComplete>
 
-            </div>
-          }
-        </div>
-
-        <!-- Add stop -->
-        @if (stops().length < 8) {
-          <p-button
-            [label]="'trip.planner.addStop' | translate"
-            icon="fa-light fa-plus"
-            [link]="true"
-            class="add-stop-btn"
-            (onClick)="addStop()" />
-        }
-
-        <!-- Road route loading skeleton -->
-        @if (routeLoading()) {
-          <p-skeleton height="8px" borderRadius="4px" class="mt-3" />
-        }
-      </div>
-    }
-
-    <!-- ── Step: Date & time (rail) ─────────────────────────────────────────── -->
-    @case ('schedule') {
-      <div class="tp-section">
-        <div class="tp-section-title">
-          <i class="fa-light fa-calendar"></i>
-          <span>{{ 'trip.planner.steps.schedule' | translate }}</span>
-        </div>
-
-        <div class="connections-form">
-          <p-floatLabel class="conn-date">
-            <p-datePicker
-              inputId="conn-date"
-              [ngModel]="connDate()"
-              (ngModelChange)="connDate.set($event)"
-              dateFormat="dd/mm/yy"
-              [minDate]="today"
-              [showIcon]="true"
-              class="w-full" />
-            <label for="conn-date">{{ 'trip.planner.date' | translate }}</label>
-          </p-floatLabel>
-
-          <p-floatLabel class="conn-time">
-            <input
-              pInputText
-              id="conn-time"
-              [ngModel]="connTime()"
-              (ngModelChange)="connTime.set($event)"
-              placeholder="HH:MM"
-              class="w-full" />
-            <label for="conn-time">{{ 'trip.planner.time' | translate }}</label>
-          </p-floatLabel>
-
-          <p-button
-            [label]="'trip.planner.findConnections' | translate"
-            icon="fa-light fa-magnifying-glass"
-            class="conn-find-btn"
-            (onClick)="findConnections()" />
-        </div>
-
-        @if (connectionsLoading()) {
-          <p-skeleton height="60px" borderRadius="8px" class="mb-2" />
-          <p-skeleton height="60px" borderRadius="8px" class="mb-2" />
-          <p-skeleton height="60px" borderRadius="8px" />
-        } @else if (searchedConnections() && connections().length === 0) {
-          <p-message severity="info" class="w-full">
-            {{ 'trip.planner.noConnections' | translate }}
-          </p-message>
-        }
-      </div>
-    }
-
-    <!-- ── Step: Choose connection (rail) ───────────────────────────────────── -->
-    @case ('connection') {
-      <div class="tp-section">
-        <div class="tp-section-title">
-          <i class="fa-light fa-train"></i>
-          <span>{{ 'trip.planner.steps.connection' | translate }}</span>
-        </div>
-
-        @if (connections().length > 0) {
-          <div class="connections-list">
-            @for (conn of connections(); track conn.departure) {
-              <div
-                class="conn-row"
-                [class.conn-row--selected]="isSelectedConnection(conn)">
-                <div class="conn-main">
-                  <div class="conn-times">
-                    <span class="conn-time">{{ formatTime(conn.departure) }}</span>
-                    <i class="fa-light fa-arrow-right conn-arrow"></i>
-                    <span class="conn-time">{{ formatTime(conn.arrival) }}</span>
-                    <span class="conn-duration">{{ formatDuration(conn.duration) }}</span>
-                  </div>
-                  <div class="conn-tags">
-                    <p-tag [value]="conn.transfers + ' x'" severity="secondary" class="conn-transfers" />
-                    @for (product of conn.products; track product) {
-                      <p-chip [label]="product" class="product-chip" />
+                    <!-- Remove button (hidden for first/last stop or when round trip locks the end) -->
+                    @if (stops().length > 2 && $index > 0 && !($index === stops().length - 1 && isRoundTrip())) {
+                      <p-button
+                        icon="fa-light fa-xmark"
+                        variant="text"
+                        severity="secondary"
+                        class="stop-remove"
+                        (onClick)="removeStop($index)" />
                     }
                   </div>
+
+                  <!-- Things to do link (only for filled stops) -->
+                  @if (stop) {
+                    <div class="stop-things-row">
+                      <button type="button" class="stop-things-link" (click)="openThingsToDo(stop)">
+                        @if (selectionCount(stop.stationId) > 0) {
+                          <i class="fa-solid fa-circle-check"></i>
+                          <span>{{ 'trip.planner.thingsToDo.countLabel' | translate: { count: selectionCount(stop.stationId) } }}</span>
+                        } @else {
+                          <i class="fa-light fa-plus"></i>
+                          <span>{{ 'trip.planner.thingsToDo.add' | translate }}</span>
+                        }
+                      </button>
+                    </div>
+                  }
                 </div>
-                <p-button
-                  [label]="'trip.planner.select' | translate"
-                  [outlined]="true"
-                  severity="secondary"
-                  class="conn-select-btn"
-                  (onClick)="selectConnection(conn)" />
+
               </div>
             }
           </div>
-        }
-      </div>
-    }
 
-    <!-- ── Step: Save trip ───────────────────────────────────────────────────── -->
-    @case ('finish') {
-      <div class="tp-section tp-save">
-        <div class="tp-section-title">
-          <i class="fa-light fa-floppy-disk"></i>
-          <span>{{ 'trip.planner.steps.finish' | translate }}</span>
+          <!-- Round trip toggle -->
+          <div class="round-trip-row">
+            <button type="button" class="round-trip-btn" [class.round-trip-btn--active]="isRoundTrip()" (click)="toggleRoundTrip()">
+              <i class="fa-light fa-rotate"></i>
+              <span>{{ 'trip.planner.roundTrip' | translate }}</span>
+            </button>
+          </div>
+
+          <!-- Add stop -->
+          @if (stops().length < 8) {
+            <p-button
+              [label]="'trip.planner.addStop' | translate"
+              icon="fa-light fa-plus"
+              [link]="true"
+              class="add-stop-btn"
+              (onClick)="addStop()" />
+          }
+
+          <!-- Road route loading skeleton -->
+          @if (routeLoading()) {
+            <p-skeleton height="8px" borderRadius="4px" class="mt-3" />
+          }
         </div>
+      }
 
-        <p-floatLabel>
-          <input
-            pInputText
-            id="trip-name"
-            [ngModel]="tripName()"
-            (ngModelChange)="onTripNameChange($event)"
-            class="w-full" />
-          <label for="trip-name">{{ 'trip.planner.tripName' | translate }}</label>
-        </p-floatLabel>
+      <!-- ── Step: Date & time (rail) ─────────────────────────────────────────── -->
+      @case ('schedule') {
+        <div class="tp-section">
+          <div class="tp-section-title">
+            <i class="fa-light fa-calendar"></i>
+            <span>{{ 'trip.planner.steps.schedule' | translate }}</span>
+          </div>
 
-        @if (suggestedName()) {
-          <span class="trip-name-suggestion">
-            {{ 'trip.planner.tripNamePlaceholder' | translate }}: {{ suggestedName() }}
-          </span>
-        }
+          <div class="connections-form">
+            <div class="conn-field conn-date">
+              <label for="conn-date">{{ 'trip.planner.date' | translate }}</label>
+              <p-datePicker
+                inputId="conn-date"
+                [ngModel]="connDate()"
+                (ngModelChange)="connDate.set($event)"
+                dateFormat="dd/mm/yy"
+                [minDate]="today"
+                [showIcon]="true"
+                class="w-full" />
+            </div>
 
-        <p-button
-          [label]="'trip.planner.save' | translate"
-          icon="fa-light fa-floppy-disk"
-          class="w-full save-trip-btn mt-3"
-          [loading]="saving()"
-          [disabled]="validStops().length < 2"
-          (onClick)="onSave()" />
+            <div class="conn-field conn-time">
+              <label for="conn-time">{{ 'trip.planner.time' | translate }}</label>
+              <p-datePicker
+                inputId="conn-time"
+                [ngModel]="connTime()"
+                (ngModelChange)="connTime.set($event)"
+                [timeOnly]="true"
+                class="w-full" />
+            </div>
+          </div>
 
-        <p-button
-          [label]="'trip.planner.viewTrip' | translate"
-          icon="fa-regular fa-route"
-          [outlined]="true"
-          class="view-trip-btn w-full"
-          [disabled]="validStops().length < 2"
-          (onClick)="onViewTrip()" />
+          @if (connectionsLoading()) {
+            <p-skeleton height="60px" borderRadius="8px" class="mb-2" />
+            <p-skeleton height="60px" borderRadius="8px" class="mb-2" />
+            <p-skeleton height="60px" borderRadius="8px" />
+          } @else if (searchedConnections() && connections().length === 0) {
+            <p-message severity="info" class="w-full">
+              {{ 'trip.planner.noConnections' | translate }}
+            </p-message>
+          }
+        </div>
+      }
 
-        @if (!isLoggedIn()) {
-          <p-message severity="info" class="w-full mt-2">
-            {{ 'trip.planner.saveHint' | translate }}
-          </p-message>
-        }
-      </div>
+      <!-- ── Step: Choose connection (rail) ───────────────────────────────────── -->
+      @case ('connection') {
+        <div class="tp-section--fill">
+          <div class="tp-section-title">
+            <i class="fa-light fa-train"></i>
+            <span>{{ 'trip.planner.steps.connection' | translate }}</span>
+          </div>
+
+          @if (connections().length > 0) {
+            <div class="connections-list">
+              @for (conn of connections(); track conn.departure) {
+                <div
+                  class="conn-row"
+                  [class.conn-row--selected]="isSelectedConnection(conn)">
+                  <div class="conn-main">
+                    <div class="conn-times">
+                      <span class="conn-time">{{ formatTime(conn.departure) }}</span>
+                      <i class="fa-light fa-arrow-right conn-arrow"></i>
+                      <span class="conn-time">{{ formatTime(conn.arrival) }}</span>
+                      <span class="conn-duration">{{ formatDuration(conn.duration) }}</span>
+                    </div>
+                    <div class="conn-tags">
+                      <p-tag [value]="conn.transfers + ' x'" severity="secondary" class="conn-transfers" />
+                      @for (product of conn.products; track product) {
+                        <p-chip [label]="product" class="product-chip" />
+                      }
+                    </div>
+                  </div>
+                  <p-button
+                    [label]="'trip.planner.select' | translate"
+                    [outlined]="true"
+                    severity="secondary"
+                    class="conn-select-btn"
+                    (onClick)="selectConnection(conn)" />
+                </div>
+              }
+            </div>
+          }
+        </div>
+      }
+
+      <!-- ── Step: Save trip ───────────────────────────────────────────────────── -->
+      @case ('finish') {
+        <div class="tp-section tp-save">
+          <div class="tp-section-title">
+            <i class="fa-light fa-floppy-disk"></i>
+            <span>{{ 'trip.planner.steps.finish' | translate }}</span>
+          </div>
+
+          <p-floatLabel>
+            <input
+              pInputText
+              id="trip-name"
+              [ngModel]="tripName()"
+              (ngModelChange)="onTripNameChange($event)"
+              class="w-full" />
+            <label for="trip-name">{{ 'trip.planner.tripName' | translate }}</label>
+          </p-floatLabel>
+
+          @if (suggestedName()) {
+            <span class="trip-name-suggestion">
+              {{ 'trip.planner.tripNamePlaceholder' | translate }}: {{ suggestedName() }}
+            </span>
+          }
+
+          <div class="save-actions-row">
+            <p-button
+              [label]="'trip.planner.save' | translate"
+              icon="fa-light fa-floppy-disk"
+              [loading]="saving()"
+              [disabled]="validStops().length < 2"
+              (onClick)="onSave()" />
+
+            <p-button
+              [label]="'trip.planner.viewTrip' | translate"
+              icon="fa-regular fa-route"
+              [outlined]="true"
+              [disabled]="validStops().length < 2"
+              (onClick)="onViewTrip()" />
+          </div>
+
+          @if (!isLoggedIn()) {
+            <p-message severity="info" class="w-full mt-2">
+              {{ 'trip.planner.saveHint' | translate }}
+            </p-message>
+          }
+        </div>
+      }
     }
-  }
+  </div>
 
   <!-- ── Wizard navigation ──────────────────────────────────────────────────── -->
   <div class="tp-step-nav">
@@ -263,13 +268,17 @@
       </p-message>
     }
     <div class="tp-step-nav-row">
-      <p-button
-        [label]="'trip.planner.back' | translate"
-        icon="fa-light fa-arrow-left"
-        [outlined]="true"
-        severity="secondary"
-        [disabled]="step() === 0"
-        (onClick)="goBack()" />
+
+      @if (step() > 0) {
+        <p-button
+          [label]="'trip.planner.back' | translate"
+          icon="fa-light fa-arrow-left"
+          [outlined]="true"
+          severity="secondary"
+          (onClick)="goBack()" />
+      } @else {
+        <span class="tp-step-nav-spacer"></span>
+      }
 
       <div class="tp-step-dots">
         @for (s of steps(); track $index) {
@@ -286,6 +295,7 @@
           icon="fa-light fa-arrow-right"
           iconPos="right"
           [disabled]="!canGoNext()"
+          [loading]="currentStep() === 'schedule' && connectionsLoading()"
           (onClick)="goNext()" />
       } @else {
         <span class="tp-step-nav-spacer"></span>

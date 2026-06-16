@@ -55,6 +55,7 @@
       "to": "To",
       "via": "Via",
       "addStop": "Add stop",
+      "roundTrip": "Round trip",
       "viewTrip": "View trip",
       "findConnections": "Find connections",
       "date": "Date",

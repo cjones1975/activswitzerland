@@ -1,11 +1,22 @@
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   height: 100%;
-  overflow-y: auto;
 }
 
 .trip-planner {
-  padding: 0 0 2rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* Scrollable content area for all steps except connection (which self-fills) */
+.tp-content {
+  flex: 1;
+  overflow-y: auto;
+  min-height: 0;
+  padding-bottom: 1rem;
 }
 
 /* ── Section wrapper ────────────────────────────────────────────── */
@@ -38,6 +49,7 @@
   gap: 0.4rem;
 }
 
+
 /* ── Stop builder ───────────────────────────────────────────────── */
 .stop-list {
   display: flex;
@@ -65,19 +77,29 @@
 }
 
 .stop-things-row {
-  margin-top: 0.15rem;
+  margin-top: 0.25rem;
+  margin-bottom: 0.25rem;
 }
 
 .stop-things-link {
   display: inline-flex;
   align-items: center;
-  gap: 0.35rem;
-  font-size: 0.78rem;
-  color: var(--navy-500, #6b90b8);
-  background: none;
-  border: none;
-  padding: 0.15rem 0;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #285278;
+  background: #e8f0f8;
+  border: 1px solid #285278;
+  border-radius: 6px;
+  padding: 0.3rem 0.65rem;
   cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  text-decoration: none;
+}
+
+.stop-things-link:hover {
+  background: #285278;
+  color: #fff;
 }
 
 .stop-things-link i {
@@ -144,44 +166,90 @@
   flex-shrink: 0;
 }
 
+.round-trip-row {
+  margin: 0.4rem 0 0.1rem;
+}
+
+.round-trip-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--navy-500, #6b90b8);
+  background: none;
+  border: 1px solid #e2e8f0;
+  border-radius: 6px;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.round-trip-btn:hover {
+  border-color: #285278;
+  color: #285278;
+}
+
+.round-trip-btn--active {
+  background: #285278;
+  border-color: #285278;
+  color: #fff;
+}
+
+.round-trip-btn--active:hover {
+  background: #1e3f5a;
+  border-color: #1e3f5a;
+  color: #fff;
+}
+
 .add-stop-btn {
   margin-top: 0.25rem;
 }
 
-:host ::ng-deep .view-trip-btn {
-  justify-content: center;
-}
-
-/* ── Rail connections ───────────────────────────────────────────── */
+/* ── Rail connections form ──────────────────────────────────────── */
 .connections-form {
-  display: flex;
-  gap: 0.5rem;
-  align-items: flex-end;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 0.75rem;
   margin-bottom: 1rem;
 }
 
-.conn-date  { flex: 2; min-width: 0; }
-.conn-time  { flex: 1; min-width: 0; }
+.conn-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
 
-.conn-find-btn {
-  flex-shrink: 0;
-  white-space: nowrap;
+.conn-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--navy-700, #3a5a7a);
 }
 
 @media (max-width: 767px) {
-  .connections-form { flex-direction: column; }
-  .conn-date,
-  .conn-time,
-  .conn-find-btn { width: 100%; flex: unset; }
+  .connections-form { grid-template-columns: 1fr; }
+}
+
+/* ── Choose connection step — fills available height ────────────── */
+.tp-section--fill {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0 1rem;
+}
+
+.tp-section--fill .connections-list {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+  overflow-y: auto;
 }
 
 .connections-list {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-  max-height: 280px;
-  overflow-y: auto;
 }
 
 .conn-row {
@@ -210,7 +278,7 @@
   align-items: center;
   gap: 0.4rem;
   margin-bottom: 0.35rem;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
 }
 
 .conn-time {
@@ -266,8 +334,15 @@
   color: #94a3b8;
 }
 
-:host ::ng-deep .save-trip-btn {
-  width: 100%;
+.save-actions-row {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+  margin-top: 0.75rem;
+}
+
+:host ::ng-deep .save-actions-row .p-button {
+  flex: 1;
   justify-content: center;
 }
 
@@ -276,7 +351,7 @@
   margin: 1rem 0;
 }
 
-/* ── Float labels full width ────────────────────────────────────── */
+/* ── Float labels full width (trip name field) ──────────────────── */
 :host ::ng-deep p-floatLabel,
 :host ::ng-deep .p-floatlabel {
   width: 100%;
@@ -285,11 +360,9 @@
 
 /* ── Wizard step navigation ─────────────────────────────────────── */
 .tp-step-nav {
-  position: sticky;
-  bottom: 0;
+  flex-shrink: 0;
   background: #fff;
   border-top: 1px solid #e2e8f0;
-  margin-top: 1rem;
   padding: 0.75rem 1rem;
 }
 
@@ -334,10 +407,5 @@
 
 .tp-step-nav-spacer {
   display: inline-block;
-}
-
-/* ── View trip button spacing (now stacked with Save in finish step) ── */
-:host ::ng-deep .tp-save .view-trip-btn {
-  justify-content: center;
-  margin-top: 0.5rem;
+  width: 1px;
 }

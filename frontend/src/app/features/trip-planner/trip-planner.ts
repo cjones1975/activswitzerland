@@ -29,6 +29,16 @@ import { TripStop, TripConnection, SavedTrip } from '../../models/trip';
 
 type TripStep = 'stops' | 'schedule' | 'connection' | 'finish';
 
+function swissNow(): Date {
+  const parts = new Intl.DateTimeFormat('en', {
+    timeZone: 'Europe/Zurich',
+    year: 'numeric', month: 'numeric', day: 'numeric',
+    hour: 'numeric', minute: 'numeric', hour12: false,
+  }).formatToParts(new Date());
+  const get = (t: string) => parseInt(parts.find(p => p.type === t)!.value);
+  return new Date(get('year'), get('month') - 1, get('day'), get('hour'), get('minute'));
+}
+
 @Component({
   selector: 'app-trip-planner',
   standalone: true,
@@ -73,14 +83,15 @@ export class TripPlanner {
   // ── Stops ─────────────────────────────────────────────────────────────────
   stops = signal<Array<TripStop | null>>([null, null]);
   stopSuggestions = signal<TripStop[][]>([[], []]);
+  isRoundTrip = signal(false);
 
   // ── Rail connections ──────────────────────────────────────────────────────
-  connDate = signal<Date | null>(null);
-  connTime = signal('');
+  connDate = signal<Date | null>(swissNow());
+  connTime = signal<Date | null>(swissNow());
   connections = signal<TripConnection[]>([]);
   selectedConnection = signal<TripConnection | null>(null);
   connectionsLoading = signal(false);
-  today = new Date();
+  today = swissNow();
 
   // ── Route ─────────────────────────────────────────────────────────────────
   routeLoading = signal(false);
@@ -105,7 +116,7 @@ export class TripPlanner {
   readonly canGoNext = computed(() => {
     switch (this.currentStep()) {
       case 'stops':      return this.validStops().length >= 2;
-      case 'schedule':   return this.connections().length > 0;
+      case 'schedule':   return !this.connectionsLoading();
       case 'connection': return this.selectedConnection() !== null;
       default:           return false;
     }
@@ -115,7 +126,6 @@ export class TripPlanner {
     if (this.canGoNext()) return null;
     switch (this.currentStep()) {
       case 'stops':      return 'trip.planner.hints.selectStops';
-      case 'schedule':   return 'trip.planner.hints.findConnections';
       case 'connection': return 'trip.planner.hints.selectConnection';
       default:           return null;
     }
@@ -160,11 +170,29 @@ export class TripPlanner {
     this.selectedConnection.set(null);
     this.step.set(0);
     this.searchedConnections.set(false);
+    this.isRoundTrip.set(false);
+  }
+
+  // ── Round trip ────────────────────────────────────────────────────────────
+  toggleRoundTrip(): void {
+    const enabling = !this.isRoundTrip();
+    this.isRoundTrip.set(enabling);
+    if (enabling) {
+      const updated = [...this.stops()];
+      updated[updated.length - 1] = updated[0];
+      this.stops.set(updated);
+      this.plannerSvc.setStops(this.validStops());
+      this.onStopsChanged();
+    }
   }
 
   // ── Wizard navigation ────────────────────────────────────────────────────
   goNext(): void {
     if (!this.canGoNext()) return;
+    if (this.currentStep() === 'schedule') {
+      this.findConnections();
+      return;
+    }
     this.step.update(s => Math.min(s + 1, this.steps().length - 1));
   }
 
@@ -188,6 +216,9 @@ export class TripPlanner {
     const stop = event.value as TripStop;
     const updated = [...this.stops()];
     updated[index] = stop;
+    if (this.isRoundTrip() && index === 0) {
+      updated[updated.length - 1] = stop;
+    }
     this.stops.set(updated);
     this.plannerSvc.setStops(this.validStops());
     this.onStopsChanged();
@@ -196,6 +227,9 @@ export class TripPlanner {
   onStopClear(index: number): void {
     const updated = [...this.stops()];
     updated[index] = null;
+    if (this.isRoundTrip() && index === 0) {
+      updated[updated.length - 1] = null;
+    }
     this.stops.set(updated);
     this.plannerSvc.setStops(this.validStops());
     this.plannerSvc.setRouteCoordinates([]);
@@ -247,10 +281,15 @@ export class TripPlanner {
       ? `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
       : '';
 
+    const time = this.connTime();
+    const timeStr = time
+      ? `${String(time.getHours()).padStart(2, '0')}:${String(time.getMinutes()).padStart(2, '0')}`
+      : '';
+
     this.connectionsLoading.set(true);
     forkJoin({
-      connections: this.transportSvc.getConnections(valid, dateStr, this.connTime()),
-      journeys:    this.transportSvc.getConnectionJourneys(valid, dateStr, this.connTime()),
+      connections: this.transportSvc.getConnections(valid, dateStr, timeStr),
+      journeys:    this.transportSvc.getConnectionJourneys(valid, dateStr, timeStr),
     }).pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: ({ connections, journeys }) => {
@@ -261,6 +300,9 @@ export class TripPlanner {
           this.connections.set(merged);
           this.connectionsLoading.set(false);
           this.searchedConnections.set(true);
+          if (merged.length > 0) {
+            this.step.update(s => Math.min(s + 1, this.steps().length - 1));
+          }
         },
         error: () => {
           this.connectionsLoading.set(false);
