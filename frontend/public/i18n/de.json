@@ -73,6 +73,20 @@
       "noTrips": "Noch keine Reisen gespeichert.",
       "planFirst": "Erste Reise planen",
       "open": "Reiseplaner öffnen",
+      "back": "Zurück",
+      "next": "Weiter",
+      "steps": {
+        "stops": "Route planen",
+        "schedule": "Datum & Uhrzeit",
+        "connection": "Verbindung wählen",
+        "finish": "Reise speichern"
+      },
+      "hints": {
+        "selectStops": "Wählen Sie mindestens 2 Haltepunkte aus, um fortzufahren",
+        "findConnections": "Suchen Sie eine Verbindung, um fortzufahren",
+        "selectConnection": "Wählen Sie eine Verbindung aus, um fortzufahren"
+      },
+      "noConnections": "Für dieses Datum und diese Uhrzeit wurden keine Verbindungen gefunden. Versuchen Sie eine andere Suche.",
       "thingsToDo": {
         "add": "Dinge zum Erleben hinzufügen",
         "countLabel": "{{count}} Dinge zum Erleben",

@@ -73,6 +73,20 @@
       "noTrips": "Aucun voyage enregistré.",
       "planFirst": "Planifier votre premier voyage",
       "open": "Ouvrir le planificateur de voyage",
+      "back": "Retour",
+      "next": "Suivant",
+      "steps": {
+        "stops": "Planifiez votre itinéraire",
+        "schedule": "Date et heure",
+        "connection": "Choisir une connexion",
+        "finish": "Enregistrer votre voyage"
+      },
+      "hints": {
+        "selectStops": "Sélectionnez au moins 2 arrêts pour continuer",
+        "findConnections": "Trouvez une connexion pour continuer",
+        "selectConnection": "Sélectionnez une connexion pour continuer"
+      },
+      "noConnections": "Aucune connexion trouvée pour cette date et cette heure. Essayez une autre recherche.",
       "thingsToDo": {
         "add": "Ajouter des activités",
         "countLabel": "{{count}} activités",

@@ -73,6 +73,20 @@
       "noTrips": "No trips saved yet.",
       "planFirst": "Plan your first trip",
       "open": "Open trip planner",
+      "back": "Back",
+      "next": "Next",
+      "steps": {
+        "stops": "Plan your route",
+        "schedule": "Date & time",
+        "connection": "Choose a connection",
+        "finish": "Save your trip"
+      },
+      "hints": {
+        "selectStops": "Select at least 2 stops to continue",
+        "findConnections": "Find a connection to continue",
+        "selectConnection": "Select a connection to continue"
+      },
+      "noConnections": "No connections found for this date and time. Try a different search.",
       "thingsToDo": {
         "add": "Add things to do",
         "countLabel": "{{count}} things to do",

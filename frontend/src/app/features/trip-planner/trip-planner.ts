@@ -27,6 +27,8 @@ import { TripsService } from '../../shared/services/trips';
 import { Auth } from '../../core/services/auth';
 import { TripStop, TripConnection, SavedTrip } from '../../models/trip';
 
+type TripStep = 'stops' | 'schedule' | 'connection' | 'finish';
+
 @Component({
   selector: 'app-trip-planner',
   standalone: true,
@@ -55,6 +57,18 @@ export class TripPlanner {
     { label: 'trip.planner.typeRail', value: 'rail', icon: 'fa-regular fa-train' },
   ];
   selectedType = signal<'road' | 'rail'>('road');
+
+  // ── Wizard steps ──────────────────────────────────────────────────────────
+  step = signal(0);
+  searchedConnections = signal(false);
+
+  readonly steps = computed<TripStep[]>(() =>
+    this.selectedType() === 'rail'
+      ? ['stops', 'schedule', 'connection', 'finish']
+      : ['stops', 'finish']
+  );
+
+  readonly currentStep = computed<TripStep>(() => this.steps()[this.step()]);
 
   // ── Stops ─────────────────────────────────────────────────────────────────
   stops = signal<Array<TripStop | null>>([null, null]);
@@ -88,9 +102,24 @@ export class TripPlanner {
     this.stops().filter((s): s is TripStop => s !== null)
   );
 
-  readonly showConnections = computed(() =>
-    this.selectedType() === 'rail' && this.validStops().length >= 2
-  );
+  readonly canGoNext = computed(() => {
+    switch (this.currentStep()) {
+      case 'stops':      return this.validStops().length >= 2;
+      case 'schedule':   return this.connections().length > 0;
+      case 'connection': return this.selectedConnection() !== null;
+      default:           return false;
+    }
+  });
+
+  readonly nextHint = computed<string | null>(() => {
+    if (this.canGoNext()) return null;
+    switch (this.currentStep()) {
+      case 'stops':      return 'trip.planner.hints.selectStops';
+      case 'schedule':   return 'trip.planner.hints.findConnections';
+      case 'connection': return 'trip.planner.hints.selectConnection';
+      default:           return null;
+    }
+  });
 
   private readonly prefillName = computed(() => {
     this.drawerSvc.list();
@@ -129,6 +158,18 @@ export class TripPlanner {
     this.stopSuggestions.set([[], []]);
     this.connections.set([]);
     this.selectedConnection.set(null);
+    this.step.set(0);
+    this.searchedConnections.set(false);
+  }
+
+  // ── Wizard navigation ────────────────────────────────────────────────────
+  goNext(): void {
+    if (!this.canGoNext()) return;
+    this.step.update(s => Math.min(s + 1, this.steps().length - 1));
+  }
+
+  goBack(): void {
+    this.step.update(s => Math.max(s - 1, 0));
   }
 
   // ── Stop search ───────────────────────────────────────────────────────────
@@ -219,8 +260,12 @@ export class TripPlanner {
           }));
           this.connections.set(merged);
           this.connectionsLoading.set(false);
+          this.searchedConnections.set(true);
         },
-        error: () => this.connectionsLoading.set(false),
+        error: () => {
+          this.connectionsLoading.set(false);
+          this.searchedConnections.set(true);
+        },
       });
   }
 
@@ -292,6 +337,7 @@ export class TripPlanner {
         next: () => {
           this.saving.set(false);
           this.messageSvc.add({ severity: 'success', summary: 'trip.planner.savedSuccess', life: 3000 });
+          this.drawerSvc.collapse('trip-planner');
         },
         error: () => this.saving.set(false),
       });

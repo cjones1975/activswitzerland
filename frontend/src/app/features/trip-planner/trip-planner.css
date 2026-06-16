@@ -282,3 +282,62 @@
   width: 100%;
   display: block;
 }
+
+/* ── Wizard step navigation ─────────────────────────────────────── */
+.tp-step-nav {
+  position: sticky;
+  bottom: 0;
+  background: #fff;
+  border-top: 1px solid #e2e8f0;
+  margin-top: 1rem;
+  padding: 0.75rem 1rem;
+}
+
+:host ::ng-deep .tp-step-hint .p-message-text {
+  font-size: 0.8rem;
+}
+
+:host ::ng-deep .tp-step-hint {
+  margin-bottom: 0.6rem;
+}
+
+.tp-step-nav-row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.tp-step-dots {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.tp-step-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #e2e8f0;
+  transition: background 0.15s, width 0.15s;
+}
+
+.tp-step-dot--active {
+  width: 20px;
+  border-radius: 4px;
+  background: var(--navy-900);
+}
+
+.tp-step-dot--done {
+  background: var(--navy-500, #6b90b8);
+}
+
+.tp-step-nav-spacer {
+  display: inline-block;
+}
+
+/* ── View trip button spacing (now stacked with Save in finish step) ── */
+:host ::ng-deep .tp-save .view-trip-btn {
+  justify-content: center;
+  margin-top: 0.5rem;
+}
