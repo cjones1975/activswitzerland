@@ -6,6 +6,7 @@ import { forkJoin } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
+import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
 import { SelectButton } from 'primeng/selectbutton';
 import { AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { DatePicker } from 'primeng/datepicker';
@@ -44,6 +45,7 @@ function swissNow(): Date {
   standalone: true,
   imports: [
     CommonModule, FormsModule, TranslatePipe,
+    DragDropModule,
     SelectButton, AutoCompleteModule, DatePicker, InputText,
     Button, Divider, Skeleton, Tag, Chip,
     Toast, ConfirmDialog, FloatLabel, Message,
@@ -249,6 +251,21 @@ export class TripPlanner {
     const updated = this.stops().filter((_, i) => i !== index);
     this.stops.set(updated);
     const suggs = this.stopSuggestions().filter((_, i) => i !== index);
+    this.stopSuggestions.set(suggs);
+    this.plannerSvc.setStops(this.validStops());
+    this.onStopsChanged();
+  }
+
+  reorderStop(event: CdkDragDrop<(TripStop | null)[]>): void {
+    const n = this.stops().length;
+    const from = event.previousIndex;
+    const to = Math.max(1, Math.min(event.currentIndex, n - 2));
+    if (from === to) return;
+    const stops = [...this.stops()];
+    const suggs = [...this.stopSuggestions()];
+    moveItemInArray(stops, from, to);
+    moveItemInArray(suggs, from, to);
+    this.stops.set(stops);
     this.stopSuggestions.set(suggs);
     this.plannerSvc.setStops(this.validStops());
     this.onStopsChanged();

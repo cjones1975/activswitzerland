@@ -2,30 +2,13 @@
 
 ## Feature
 
-Trip Planner Fixes — UX polish and bug fixes for the trip planner wizard.
-
 ## Status
 
-Implemented on `feature/trip-planner-fixes`. Build passing.
+Completed. Branch: `feature/trip-planner-reordering`.
 
 ## Goals
 
-1. Place 'Plan a Trip' title text on the same row as the icon.
-2. Selected `tripType` button gets background color `#285278`.
-3. Make 'Add things to do' link more prominent (button style, icon, accent color).
-4. Hide the Back button on the first wizard step.
-5. Enforce linear step progression — Next is disabled until the current step is valid.
-6. On the 'Save your trip' step, show 'View Trip' and 'Save Trip' side by side (100% width on mobile, 10px gap).
-7. Remove `floatLabel` from the connections form.
-8. Replace the connections time input with `p-datepicker [timeOnly]="true"` (supports both typing and picker).
-9. Remove the 'Find Connections' button; Next button on that step triggers the search and advances.
-10. On 'Choose a Connection', connections list fills the full screen height; Back/Next stay pinned at the bottom.
-11. Connection card shows start → end time on a single row (e.g. `03:36 → 04:59`).
-
 ## Notes
-
-- Full route expansion on the connection card is out of scope for this feature (future spec).
-- Spec: `context/features/trip-planner-fixes-spec.md`
 
 ## History
 
@@ -61,3 +44,29 @@ Implemented on `feature/trip-planner-fixes`. Build passing.
 - `trip-planner.css`: restructured to flex-column host layout; added `.tp-content` scrollable area; `.tp-section--fill` for full-height connections step; `#285278` selected button color; prominent `.stop-things-link` (border + bg); `.save-actions-row` for side-by-side save buttons; `flex-wrap: nowrap` on `.conn-times`
 - `trip-planner.html`: `.tp-content` wrapper around `@switch`; Back button hidden on step 0 (spacer keeps grid); `p-floatLabel` replaced with plain labels on connections form; time input replaced with `p-datePicker [timeOnly]="true"`; Find Connections button removed; Next button shows `[loading]` while searching; connection step uses `.tp-section--fill`; save/view buttons wrapped in `.save-actions-row`
 - `trip-planner.ts`: `connTime` signal changed to `signal<Date | null>(null)`; `canGoNext` for 'schedule' returns `!connectionsLoading()`; 'schedule' hint removed from `nextHint`; `goNext()` calls `findConnections()` when on schedule step; `findConnections()` extracts HH:MM from Date and auto-advances to connection step on success
+
+### 2026-06-16 — Round Trip & Reordering Spec Added
+
+- Round trip toggle implemented on the stops step: mirrors last stop to origin, keeps them in sync on origin change, locks end stop input and hides its remove button; resets on type change
+- `swissNow()` helper added (uses `Intl.DateTimeFormat` with `Europe/Zurich`); `connDate`, `connTime`, and `today` now default to Swiss CET/CEST
+- i18n key `trip.planner.roundTrip` added across en/de/fr/it
+- Branch committed as `b475193`
+- Created `context/features/trip-planner-reordering-spec.md` for next feature (Angular CDK drag-drop on via stops only; connections list explicitly out of scope)
+
+### 2026-06-16 — Map View Fixes
+
+- `trip-planner-layout.ts`: `tripBounds` now passes the full route polyline to `applyFitBounds` (instead of just first/last point) so round trips zoom to show the full route; added `tripStopPoints` computed signal mapping `trip().stops` → `[lon, lat][]`
+- `trip-planner-layout.html`: passes `[tripStopPoints]` to `app-map`
+- `map.ts`: added `@Input() tripStopPoints`; road trip markers now use `fa-circle-dot` (green) for origin, `fa-location-dot` (red) for destination, and navy numbered circles for via stops
+
+### 2026-06-17 — Stop Reordering Completed
+
+- Feature reviewed and accepted; branch `feature/trip-planner-reordering` marked complete
+
+### 2026-06-16 — Stop Reordering Implemented
+
+- Branch: `feature/trip-planner-reordering`
+- `@angular/cdk@21` installed
+- `trip-planner.ts`: imported `DragDropModule`, `CdkDragDrop`, `moveItemInArray`; added `reorderStop(event)` handler — clamps drop index to via-stop range (1..n-2), moves both `stops` and `stopSuggestions` in sync, then calls `onStopsChanged()`
+- `trip-planner.html`: `cdkDropList` + `(cdkDropListDropped)` on `.stop-list`; `cdkDrag` + `[cdkDragDisabled]` (disabled for origin, destination, and while loading) on each row; `cdkDragHandle` grip icon shown only for via stops; `*cdkDragPreview` shows stop name with grip icon; `*cdkDragPlaceholder` renders dashed empty slot
+- `trip-planner.css`: `.stop-drag-handle` (grab cursor, right-aligned); `.stop-drag-preview` (white card + box-shadow); `.stop-drag-placeholder` (dashed border); CDK animation transitions

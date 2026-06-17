@@ -41,6 +41,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() activeMarker?: { lng: number; lat: number };
   @Input() tripRoute: [number, number][] | null = null;
   @Input() tripType: 'road' | 'rail' | null = null;
+  @Input() tripStopPoints: [number, number][] = [];
   @Input() fitBounds: [number, number][] | null = null;
 
   @Output() markerClick = new EventEmitter<MapMarker>();
@@ -89,7 +90,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.deactivateMarker();
       }
     }
-    if ((changes['tripRoute'] || changes['tripType']) && this.mapLoaded) {
+    if ((changes['tripRoute'] || changes['tripType'] || changes['tripStopPoints']) && this.mapLoaded) {
       this.syncTripRoute();
     }
     if (changes['fitBounds'] && this.mapLoaded && this.fitBounds && this.fitBounds.length >= 2) {
@@ -250,27 +251,35 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       return;
     }
 
-    // Road: numbered start/end markers
-    const uniqueStops: [number, number][] = [];
-    if (coords.length >= 2) {
-      uniqueStops.push(coords[0], coords[coords.length - 1]);
-    }
-    uniqueStops.forEach((coord, i) => {
-      const el = document.createElement('div');
-      el.className = 'trip-stop-marker';
-      el.innerHTML = `<span>${i + 1}</span>`;
-      el.style.background = '#1a6b3c';
-      el.style.color = '#fff';
-      el.style.borderRadius = '50%';
-      el.style.width = '22px';
-      el.style.height = '22px';
-      el.style.display = 'flex';
-      el.style.alignItems = 'center';
-      el.style.justifyContent = 'center';
-      el.style.fontSize = '12px';
-      el.style.fontWeight = '700';
-      el.style.border = '2px solid #fff';
-      el.style.boxShadow = '0 1px 4px rgba(0,0,0,0.3)';
+    // Road: start icon, numbered via stops, end icon
+    const stops: [number, number][] = this.tripStopPoints.length >= 2
+      ? this.tripStopPoints
+      : (coords.length >= 2 ? [coords[0], coords[coords.length - 1]] : []);
+
+    stops.forEach((coord, i) => {
+      const isStart = i === 0;
+      const isEnd = i === stops.length - 1;
+      let el: HTMLElement;
+
+      if (isStart || isEnd) {
+        el = document.createElement('i');
+        el.className = isStart ? 'fa-light fa-circle-dot' : 'fa-light fa-location-dot';
+        el.style.color = isStart ? '#1a6b3c' : '#e53e3e';
+        el.style.fontSize = '22px';
+        el.style.filter = 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))';
+      } else {
+        el = document.createElement('div');
+        el.className = 'trip-stop-marker';
+        el.innerHTML = `<span>${i}</span>`;
+        Object.assign(el.style, {
+          background: '#285278', color: '#fff', borderRadius: '50%',
+          width: '22px', height: '22px', display: 'flex',
+          alignItems: 'center', justifyContent: 'center',
+          fontSize: '12px', fontWeight: '700',
+          border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+        });
+      }
+
       const marker = new maplibregl.Marker({ element: el })
         .setLngLat(coord)
         .addTo(this.map!);

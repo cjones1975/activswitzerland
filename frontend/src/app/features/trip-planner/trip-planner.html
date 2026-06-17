@@ -30,9 +30,10 @@
         <p-divider />
 
         <div class="tp-section">
-          <div class="stop-list">
+          <div class="stop-list" cdkDropList (cdkDropListDropped)="reorderStop($event)">
             @for (stop of stops(); track trackByIndex($index)) {
-              <div class="stop-row">
+              <div class="stop-row" cdkDrag
+                   [cdkDragDisabled]="$index === 0 || $index === stops().length - 1 || connectionsLoading()">
 
                 <!-- Sequence indicator -->
                 <div class="stop-indicator">
@@ -69,15 +70,20 @@
                       [placeholder]="($index === 0 ? 'trip.planner.from' : $index === stops().length - 1 ? 'trip.planner.to' : 'trip.planner.via') | translate">
                     </p-autoComplete>
 
-                    <!-- Remove button (hidden for first/last stop or when round trip locks the end) -->
-                    @if (stops().length > 2 && $index > 0 && !($index === stops().length - 1 && isRoundTrip())) {
+                    <!-- Always-rendered action buttons keep autocomplete width consistent across all rows -->
+                    <div class="stop-actions">
                       <p-button
                         icon="fa-light fa-xmark"
                         variant="text"
                         severity="secondary"
                         class="stop-remove"
+                        [class.stop-action--hidden]="!(stops().length > 2 && $index > 0 && !($index === stops().length - 1 && isRoundTrip()))"
                         (onClick)="removeStop($index)" />
-                    }
+                      <button type="button" class="stop-drag-handle" cdkDragHandle
+                              [class.stop-action--hidden]="!($index > 0 && $index < stops().length - 1)">
+                        <i class="fa-light fa-grip-dots-vertical"></i>
+                      </button>
+                    </div>
                   </div>
 
                   <!-- Things to do link (only for filled stops) -->
@@ -96,27 +102,40 @@
                   }
                 </div>
 
+                <!-- Drag preview -->
+                <ng-template cdkDragPreview>
+                  <div class="stop-drag-preview">
+                    <i class="fa-light fa-grip-dots-vertical"></i>
+                    <span>{{ stop?.name || ('trip.planner.via' | translate) }}</span>
+                  </div>
+                </ng-template>
+
+                <!-- Drag placeholder -->
+                <ng-template cdkDragPlaceholder>
+                  <div class="stop-drag-placeholder"></div>
+                </ng-template>
+
               </div>
             }
           </div>
 
-          <!-- Round trip toggle -->
-          <div class="round-trip-row">
+          <!-- Add stop + Round trip -->
+          <div class="stop-footer-row">
+            @if (stops().length < 8) {
+              <p-button
+                [label]="'trip.planner.addStop' | translate"
+                icon="fa-light fa-plus"
+                [link]="true"
+                class="add-stop-btn"
+                (onClick)="addStop()" />
+            } @else {
+              <span></span>
+            }
             <button type="button" class="round-trip-btn" [class.round-trip-btn--active]="isRoundTrip()" (click)="toggleRoundTrip()">
               <i class="fa-light fa-rotate"></i>
               <span>{{ 'trip.planner.roundTrip' | translate }}</span>
             </button>
           </div>
-
-          <!-- Add stop -->
-          @if (stops().length < 8) {
-            <p-button
-              [label]="'trip.planner.addStop' | translate"
-              icon="fa-light fa-plus"
-              [link]="true"
-              class="add-stop-btn"
-              (onClick)="addStop()" />
-          }
 
           <!-- Road route loading skeleton -->
           @if (routeLoading()) {
