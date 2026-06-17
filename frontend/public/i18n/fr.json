@@ -55,6 +55,7 @@
       "to": "Vers",
       "via": "Via",
       "addStop": "Ajouter un arrêt",
+      "roundTrip": "Aller-retour",
       "viewTrip": "Voir le voyage",
       "findConnections": "Trouver des connexions",
       "date": "Date",

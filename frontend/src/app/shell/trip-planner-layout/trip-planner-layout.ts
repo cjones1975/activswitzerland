@@ -62,12 +62,17 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
     return markers;
   });
 
-  /** Start/end of the route, recomputed whenever the trip-planner drawer collapses so the map can zoom out to fit them. */
+  /** Ordered [lon, lat] pairs for each planned stop, passed to the map for marker rendering. */
+  tripStopPoints = computed<[number, number][]>(() =>
+    this.trip()?.stops.map(s => [s.lon, s.lat] as [number, number]) ?? []
+  );
+
+  /** Full route coordinates when the drawer collapses so the map can fit the entire route, including round trips. */
   tripBounds = computed<[number, number][] | null>(() => {
     const collapsed = !this.drawer.isOpen('trip-planner');
     const route = this.tripRoute();
     if (!collapsed || !route || route.length < 2) return null;
-    return [route[0], route[route.length - 1]];
+    return route;
   });
 
   private firstRouteEmission = true;
