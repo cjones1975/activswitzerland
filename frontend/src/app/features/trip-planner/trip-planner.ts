@@ -14,8 +14,6 @@ import { InputText } from 'primeng/inputtext';
 import { Button } from 'primeng/button';
 import { Divider } from 'primeng/divider';
 import { Skeleton } from 'primeng/skeleton';
-import { Tag } from 'primeng/tag';
-import { Chip } from 'primeng/chip';
 import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { FloatLabel } from 'primeng/floatlabel';
@@ -47,7 +45,7 @@ function swissNow(): Date {
     CommonModule, FormsModule, TranslatePipe,
     DragDropModule,
     SelectButton, AutoCompleteModule, DatePicker, InputText,
-    Button, Divider, Skeleton, Tag, Chip,
+    Button, Divider, Skeleton,
     Toast, ConfirmDialog, FloatLabel, Message,
   ],
   providers: [MessageService, ConfirmationService],
@@ -93,6 +91,7 @@ export class TripPlanner {
   connections = signal<TripConnection[]>([]);
   selectedConnection = signal<TripConnection | null>(null);
   connectionsLoading = signal(false);
+  expandedConnectionIndex = signal<number | null>(null);
   today = swissNow();
 
   // ── Route ─────────────────────────────────────────────────────────────────
@@ -170,6 +169,7 @@ export class TripPlanner {
     this.stopSuggestions.set([[], []]);
     this.connections.set([]);
     this.selectedConnection.set(null);
+    this.expandedConnectionIndex.set(null);
     this.step.set(0);
     this.searchedConnections.set(false);
     this.isRoundTrip.set(false);
@@ -315,6 +315,7 @@ export class TripPlanner {
             routeCoordinates: journeys[i]?.length >= 2 ? journeys[i] : conn.routeCoordinates,
           }));
           this.connections.set(merged);
+          this.expandedConnectionIndex.set(null);
           this.connectionsLoading.set(false);
           this.searchedConnections.set(true);
           if (merged.length > 0) {
@@ -354,6 +355,44 @@ export class TripPlanner {
   isSelectedConnection(conn: TripConnection): boolean {
     const sel = this.selectedConnection();
     return !!sel && sel.departure === conn.departure && sel.from === conn.from;
+  }
+
+  toggleDetail(index: number, event: Event): void {
+    event.stopPropagation();
+    this.expandedConnectionIndex.update(i => (i === index ? null : index));
+  }
+
+  formatPlatform(platform?: string): string {
+    return platform ? `Pl. ${platform}` : '';
+  }
+
+  formatWalk(seconds?: number): string {
+    if (!seconds || seconds < 60) return '';
+    return `${Math.floor(seconds / 60)} min`;
+  }
+
+  firstTrainDeparture(conn: TripConnection): string {
+    const first = conn.sections?.find(s => s.type === 'journey');
+    return first?.departure?.time ?? conn.departure;
+  }
+
+  lastTrainArrival(conn: TripConnection): string {
+    const journeys = conn.sections?.filter(s => s.type === 'journey') ?? [];
+    const last = journeys[journeys.length - 1];
+    return last?.arrival?.time ?? conn.arrival;
+  }
+
+  trainColor(category: string): string {
+    const longDistance = ['IC', 'ICN', 'IR', 'EC', 'EN', 'TGV', 'RJX'];
+    return longDistance.includes(category?.toUpperCase()) ? '#dc2626' : '#0079c3';
+  }
+
+  categoryLabel(category: string): string {
+    const labels: Record<string, string> = {
+      IC: 'Intercity', ICN: 'Intercity-Neigezug', IR: 'InterRegio',
+      EC: 'EuroCity',  RE: 'RegioExpress',         S: 'S-Bahn',
+    };
+    return labels[category?.toUpperCase()] ?? category;
   }
 
   // ── Things to do ──────────────────────────────────────────────────────────

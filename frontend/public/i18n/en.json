@@ -61,6 +61,7 @@
       "date": "Date",
       "time": "Time",
       "connections": "Connections",
+      "transfer": "transfer",
       "transfers": "transfers",
       "select": "Select",
       "attractionsAlongRoute": "Attractions along route",
@@ -88,6 +89,10 @@
         "selectConnection": "Select a connection to continue"
       },
       "noConnections": "No connections found for this date and time. Try a different search.",
+      "connection": {
+        "direction": "Direction",
+        "walk": "Walk"
+      },
       "thingsToDo": {
         "add": "Add things to do",
         "countLabel": "{{count}} things to do",

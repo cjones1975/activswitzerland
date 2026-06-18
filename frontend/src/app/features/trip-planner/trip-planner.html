@@ -198,30 +198,103 @@
 
           @if (connections().length > 0) {
             <div class="connections-list">
-              @for (conn of connections(); track conn.departure) {
+              @for (conn of connections(); track conn.departure; let idx = $index) {
                 <div
-                  class="conn-row"
-                  [class.conn-row--selected]="isSelectedConnection(conn)">
-                  <div class="conn-main">
-                    <div class="conn-times">
-                      <span class="conn-time">{{ formatTime(conn.departure) }}</span>
-                      <i class="fa-light fa-arrow-right conn-arrow"></i>
-                      <span class="conn-time">{{ formatTime(conn.arrival) }}</span>
-                      <span class="conn-duration">{{ formatDuration(conn.duration) }}</span>
+                  class="conn-card"
+                  [class.conn-card--selected]="isSelectedConnection(conn)"
+                  (click)="selectConnection(conn)">
+
+                  <!-- Row 1: route + chevron -->
+                  <div class="conn-header">
+                    <span class="conn-route">{{ conn.from }} → {{ conn.to }}</span>
+                    <button class="conn-expand-btn" type="button" (click)="toggleDetail(idx, $event)">
+                      <i [class]="expandedConnectionIndex() === idx ? 'fa-light fa-chevron-up' : 'fa-light fa-chevron-down'"></i>
+                    </button>
+                  </div>
+
+                  <!-- Row 2: transfers + duration -->
+                  <div class="conn-meta">
+                    <span class="conn-meta-item">
+                      <i class="fa-light fa-arrows-repeat"></i>
+                      {{ conn.transfers }} {{ (conn.transfers === 1 ? 'trip.planner.transfer' : 'trip.planner.transfers') | translate }}
+                    </span>
+                    <span class="conn-meta-item">
+                      <i class="fa-light fa-clock"></i>
+                      {{ formatDuration(conn.duration) }}
+                    </span>
+                  </div>
+
+                  <!-- Row 3: timeline bar -->
+                  <div class="conn-timeline">
+                    <span class="conn-timeline-time">{{ formatTime(firstTrainDeparture(conn)) }}</span>
+                    <div class="conn-timeline-bar">
+                      <span class="conn-timeline-dot"></span>
+                      <span class="conn-timeline-line"></span>
+                      <span class="conn-timeline-dot"></span>
                     </div>
-                    <div class="conn-tags">
-                      <p-tag [value]="conn.transfers + ' x'" severity="secondary" class="conn-transfers" />
-                      @for (product of conn.products; track product) {
-                        <p-chip [label]="product" class="product-chip" />
+                    <span class="conn-timeline-time">{{ formatTime(lastTrainArrival(conn)) }}</span>
+                  </div>
+
+                  <!-- Expandable detail -->
+                  @if (expandedConnectionIndex() === idx && conn.sections?.length) {
+                    <div class="conn-detail">
+                      @for (section of conn.sections!; track $index) {
+
+                        @if (section.type === 'journey') {
+
+                          <!-- Departure stop -->
+                          <div class="conn-stop">
+                            <span class="conn-stop-dot"></span>
+                            <span class="conn-stop-time">{{ formatTime(section.departure!.time) }}</span>
+                            <span class="conn-stop-station">{{ section.departure!.station }}</span>
+                            @if (section.departure!.platform) {
+                              <span class="conn-platform-badge">{{ formatPlatform(section.departure!.platform) }}</span>
+                            }
+                          </div>
+
+                          <!-- Train leg -->
+                          <div class="conn-leg">
+                            <span class="conn-leg-line"></span>
+                            <div class="conn-leg-body">
+                              <span class="conn-train" [style.color]="trainColor(section.journey!.category)">
+                                <i class="fa-regular fa-train"></i>
+                                {{ section.journey!.category }} {{ section.journey!.number }}
+                                <span class="conn-train-type">({{ categoryLabel(section.journey!.category) }})</span>
+                              </span>
+                              <span class="conn-leg-direction">
+                                {{ 'trip.planner.connection.direction' | translate }}: {{ section.journey!.direction }}
+                              </span>
+                            </div>
+                          </div>
+
+                          <!-- Arrival stop -->
+                          <div class="conn-stop">
+                            <span class="conn-stop-dot"></span>
+                            <span class="conn-stop-time">{{ formatTime(section.arrival!.time) }}</span>
+                            <span class="conn-stop-station">{{ section.arrival!.station }}</span>
+                            @if (section.arrival!.platform) {
+                              <span class="conn-platform-badge">{{ formatPlatform(section.arrival!.platform) }}</span>
+                            }
+                          </div>
+
+                        } @else if (section.type === 'walk') {
+
+                          <!-- Walk connector -->
+                          <div class="conn-walk">
+                            <span class="conn-leg-line conn-leg-line--walk"></span>
+                            <span class="conn-walk-label">
+                              <i class="fa-light fa-person-walking"></i>
+                              {{ 'trip.planner.connection.walk' | translate }}
+                              @if (formatWalk(section.walkDuration); as walkDur) { · {{ walkDur }} }
+                            </span>
+                          </div>
+
+                        }
+
                       }
                     </div>
-                  </div>
-                  <p-button
-                    [label]="'trip.planner.select' | translate"
-                    [outlined]="true"
-                    severity="secondary"
-                    class="conn-select-btn"
-                    (onClick)="selectConnection(conn)" />
+                  }
+
                 </div>
               }
             </div>

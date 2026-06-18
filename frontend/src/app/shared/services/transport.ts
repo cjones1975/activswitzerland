@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { TripStop, TripConnection } from '../../models/trip';
+import { TripStop, TripConnection, TripSection } from '../../models/trip';
 
 interface LocationResult {
   id: string;
@@ -21,13 +21,39 @@ interface PassListStation {
   coordinate?: { x: number; y: number };
 }
 
+interface SectionStop {
+  station:    { name: string };
+  departure?: string;
+  arrival?:   string;
+  platform?:  string;
+}
+
+interface SectionJourney {
+  name:      string;
+  category:  string;
+  number:    string;
+  to:        string;
+  passList?: { station: PassListStation }[];
+}
+
+interface SectionWalk {
+  duration: number;
+}
+
+interface ConnectionSection {
+  departure?: SectionStop;
+  arrival?:   SectionStop;
+  journey?:   SectionJourney;
+  walk?:      SectionWalk;
+}
+
 interface ConnectionResult {
   from:      { departure: string; station: { name: string } };
   to:        { arrival: string;   station: { name: string } };
   duration:  string;
   transfers: number;
   products:  string[];
-  sections:  { journey?: { passList?: { station: PassListStation }[] } }[];
+  sections:  ConnectionSection[];
 }
 
 interface ConnectionsResponse {
@@ -39,7 +65,7 @@ interface JourneysResponse {
   success: boolean;
   data: {
     connections: {
-      sections: { journey?: { passList?: { station: PassListStation }[] } }[];
+      sections: ConnectionSection[];
     }[];
   };
 }
@@ -67,6 +93,7 @@ export class TransportService {
 
   getConnections(stops: TripStop[], date: string, time: string): Observable<TripConnection[]> {
     let params = new HttpParams()
+      .set('limit', 6)
       .set('from', stops[0].name)
       .set('to', stops[stops.length - 1].name);
 
@@ -86,6 +113,7 @@ export class TransportService {
         transfers: c.transfers,
         products:  c.products ?? [],
         routeCoordinates: this.extractPassListCoords(c.sections),
+        sections:  this.mapSections(c.sections ?? []),
       })))
     );
   }
@@ -109,8 +137,37 @@ export class TransportService {
     );
   }
 
+  private mapSections(sections: ConnectionSection[]): TripSection[] {
+    return sections
+      .filter(s => s.journey || s.walk)
+      .map(s => {
+        if (s.walk) {
+          return { type: 'walk' as const, walkDuration: s.walk.duration };
+        }
+        return {
+          type: 'journey' as const,
+          departure: {
+            time:     s.departure?.departure ?? '',
+            station:  s.departure?.station.name ?? '',
+            platform: s.departure?.platform,
+          },
+          arrival: {
+            time:     s.arrival?.arrival ?? '',
+            station:  s.arrival?.station.name ?? '',
+            platform: s.arrival?.platform,
+          },
+          journey: {
+            name:      s.journey!.name,
+            category:  s.journey!.category,
+            number:    s.journey!.number,
+            direction: s.journey!.to,
+          },
+        };
+      });
+  }
+
   private extractPassListCoords(
-    sections: ConnectionResult['sections']
+    sections: ConnectionSection[]
   ): [number, number][] {
     const coords: [number, number][] = [];
     for (let i = 0; i < sections.length; i++) {

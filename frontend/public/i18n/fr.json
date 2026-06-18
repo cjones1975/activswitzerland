@@ -61,6 +61,7 @@
       "date": "Date",
       "time": "Heure",
       "connections": "Connexions",
+      "transfer": "correspondance",
       "transfers": "correspondances",
       "select": "Sélectionner",
       "attractionsAlongRoute": "Attractions sur la route",
@@ -88,6 +89,10 @@
         "selectConnection": "Sélectionnez une connexion pour continuer"
       },
       "noConnections": "Aucune connexion trouvée pour cette date et cette heure. Essayez une autre recherche.",
+      "connection": {
+        "direction": "Direction",
+        "walk": "À pied"
+      },
       "thingsToDo": {
         "add": "Ajouter des activités",
         "countLabel": "{{count}} activités",

@@ -7,15 +7,37 @@ export interface TripStop {
   lon: number;
 }
 
+export interface TripSectionStop {
+  time:      string;
+  station:   string;
+  platform?: string;
+}
+
+export interface TripSectionJourney {
+  name:      string;
+  category:  string;
+  number:    string;
+  direction: string;
+}
+
+export interface TripSection {
+  type:          'journey' | 'walk';
+  departure?:    TripSectionStop;
+  arrival?:      TripSectionStop;
+  journey?:      TripSectionJourney;
+  walkDuration?: number;
+}
+
 export interface TripConnection {
-  from: string;
-  to: string;
-  departure: string;
-  arrival: string;
-  duration: string;
-  transfers: number;
-  products: string[];
+  from:             string;
+  to:               string;
+  departure:        string;
+  arrival:          string;
+  duration:         string;
+  transfers:        number;
+  products:         string[];
   routeCoordinates: [number, number][];
+  sections?:        TripSection[];
 }
 
 export interface PlannedTrip {

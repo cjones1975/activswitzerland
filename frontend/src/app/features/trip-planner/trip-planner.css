@@ -318,74 +318,214 @@
   gap: 0.5rem;
 }
 
-.conn-row {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+/* ── Connection card ────────────────────────────────────────────── */
+.conn-card {
   padding: 0.75rem;
   border: 1px solid #e2e8f0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: #fff;
-  transition: background 0.15s;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
 }
 
-.conn-row--selected {
+.conn-card:hover {
+  border-color: #94a3b8;
+}
+
+.conn-card--selected {
   border-color: #1a6b3c;
   background: #f0faf4;
 }
 
-.conn-main {
-  flex: 1;
-  min-width: 0;
-}
-
-.conn-times {
+.conn-header {
   display: flex;
   align-items: center;
-  gap: 0.4rem;
-  margin-bottom: 0.35rem;
-  flex-wrap: nowrap;
+  justify-content: space-between;
+  margin-bottom: 0.3rem;
 }
 
-.conn-time {
-  font-weight: 700;
+.conn-route {
   font-size: 0.95rem;
+  font-weight: 600;
   color: var(--navy-900);
 }
 
-.conn-arrow {
+.conn-expand-btn {
+  background: none;
+  border: none;
+  padding: 0.2rem;
   color: #94a3b8;
-  font-size: 0.75rem;
+  cursor: pointer;
+  line-height: 1;
+  flex-shrink: 0;
 }
 
-.conn-duration {
+.conn-expand-btn:hover { color: var(--navy-900); }
+
+.conn-meta {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 0.5rem;
+}
+
+.conn-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 0.8rem;
   color: #64748b;
-  margin-left: 0.25rem;
 }
 
-.conn-tags {
+.conn-meta-item i { font-size: 0.8rem; }
+
+/* Timeline bar */
+.conn-timeline {
   display: flex;
   align-items: center;
-  gap: 0.35rem;
-  flex-wrap: wrap;
+  gap: 0.5rem;
 }
 
-:host ::ng-deep .conn-transfers.p-tag {
-  font-size: 0.7rem;
-  padding: 0.1rem 0.4rem;
-}
-
-:host ::ng-deep .product-chip.p-chip {
-  font-size: 0.7rem;
-  padding: 0.15rem 0.45rem;
-  height: auto;
-  background: #dbeafe;
+.conn-timeline-time {
+  font-size: 0.9rem;
+  font-weight: 700;
   color: var(--navy-900);
+  flex-shrink: 0;
 }
 
-.conn-select-btn {
+.conn-timeline-bar {
+  flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+.conn-timeline-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0079c3;
   flex-shrink: 0;
+}
+
+.conn-timeline-line {
+  flex: 1;
+  height: 2px;
+  background: #0079c3;
+}
+
+/* Expanded detail */
+.conn-detail {
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #e2e8f0;
+  display: flex;
+  flex-direction: column;
+}
+
+.conn-stop {
+  display: grid;
+  grid-template-columns: 14px auto 1fr auto;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.1rem 0;
+}
+
+.conn-stop-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #0079c3;
+  border: 2px solid #fff;
+  outline: 2px solid #0079c3;
+  flex-shrink: 0;
+}
+
+.conn-stop-time {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  white-space: nowrap;
+}
+
+.conn-stop-station {
+  font-size: 0.85rem;
+  color: var(--navy-900);
+  text-align: right;
+}
+
+.conn-platform-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  background: #f1f5f9;
+  border: 1px solid #e2e8f0;
+  border-radius: 4px;
+  padding: 0.1rem 0.35rem;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.conn-leg {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.25rem 0;
+}
+
+.conn-leg-line {
+  width: 2px;
+  background: #0079c3;
+  margin-left: 6px;
+  flex-shrink: 0;
+  align-self: stretch;
+  min-height: 36px;
+}
+
+.conn-leg-line--walk {
+  background: repeating-linear-gradient(
+    to bottom,
+    #94a3b8 0, #94a3b8 4px,
+    transparent 4px, transparent 8px
+  );
+}
+
+.conn-leg-body {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.conn-train {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+}
+
+.conn-train i { font-size: 0.85rem; }
+
+.conn-train-type {
+  font-weight: 400;
+  color: #64748b;
+}
+
+.conn-leg-direction {
+  font-size: 0.78rem;
+  color: #64748b;
+}
+
+.conn-walk {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.2rem 0;
+}
+
+.conn-walk-label {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.8rem;
+  color: #64748b;
 }
 
 /* ── Save section ───────────────────────────────────────────────── */

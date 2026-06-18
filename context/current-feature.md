@@ -4,8 +4,6 @@
 
 ## Status
 
-Completed. Branch: `feature/trip-planner-reordering`.
-
 ## Goals
 
 ## Notes
@@ -62,6 +60,31 @@ Completed. Branch: `feature/trip-planner-reordering`.
 ### 2026-06-17 — Stop Reordering Completed
 
 - Feature reviewed and accepted; branch `feature/trip-planner-reordering` marked complete
+
+### 2026-06-17 — Transport Connection Detail Specced
+
+- Specced redesigned connection cards for the rail trip planner connection step
+- Created `feature/transport-connection-detail` branch and `context/features/transport-connection-detail-spec.md`
+- Key decisions: section data mapped from existing `/connections` API (no backend changes); `TripConnection.sections` is optional for backwards compatibility; card click = select, chevron click = expand/collapse detail; walk sections shown as connectors between journey legs
+
+### 2026-06-17 — Transport Connection Detail Implemented
+
+- `models/trip.ts`: added `TripSectionStop`, `TripSectionJourney`, `TripSection` interfaces; `TripConnection` extended with optional `sections?: TripSection[]`
+- `transport.ts`: added `SectionStop`, `SectionJourney`, `SectionWalk`, `ConnectionSection` interfaces; replaced broad `sections` type on `ConnectionResult`; added `mapSections()` private method; `getConnections` mapping now includes `sections`; `extractPassListCoords` parameter updated to `ConnectionSection[]`
+- `trip-planner.ts`: removed `Tag`/`Chip` imports (no longer used); added `expandedConnectionIndex` signal; `onTypeChange` and `findConnections` both reset it; added `toggleDetail()`, `formatPlatform()`, `trainColor()`, `categoryLabel()` methods
+- `trip-planner.html`: connection step `@for` block fully replaced — new `.conn-card` (clickable, selectable), header row (route + chevron), meta row (transfers + duration), timeline bar, expandable `.conn-detail` with per-section journey stops/train/walk rendering
+- `trip-planner.css`: old `.conn-row`/`.conn-main`/`.conn-times`/tags styles replaced with new card, header, meta, timeline, stop, leg, walk, and platform-badge rules
+- `en/de/fr/it.json`: added `trip.planner.transfer` (singular) and `trip.planner.connection.direction`/`connection.walk` keys in all four locales
+
+### 2026-06-18 — Transport Connection Detail Fixes
+
+- Walk duration: API returns seconds; `formatWalk()` converts to minutes (`Math.floor(s/60)`), returns `''` for null/undefined/under 60s; template renders "Walk" alone or "Walk · X min" with duration appended — `{{duration}} min` parameter removed from all four i18n `walk` keys
+- Timeline times: `firstTrainDeparture()` and `lastTrainArrival()` helpers find the first/last journey section's times, skipping any leading/trailing walk sections that were inflating the displayed range
+- Train label: changed from `section.journey.name` (API combined field) to `section.journey.category + section.journey.number` so the display is built from discrete fields as intended
+
+### 2026-06-18 — Transport Connection Detail Completed
+
+- Feature reviewed and accepted; branch `feature/transport-connection-detail` marked complete
 
 ### 2026-06-16 — Stop Reordering Implemented
 

@@ -61,6 +61,7 @@
       "date": "Datum",
       "time": "Uhrzeit",
       "connections": "Verbindungen",
+      "transfer": "Umstieg",
       "transfers": "Umstiege",
       "select": "Auswählen",
       "attractionsAlongRoute": "Attraktionen entlang der Route",
@@ -88,6 +89,10 @@
         "selectConnection": "Wählen Sie eine Verbindung aus, um fortzufahren"
       },
       "noConnections": "Für dieses Datum und diese Uhrzeit wurden keine Verbindungen gefunden. Versuchen Sie eine andere Suche.",
+      "connection": {
+        "direction": "Richtung",
+        "walk": "Fussweg"
+      },
       "thingsToDo": {
         "add": "Dinge zum Erleben hinzufügen",
         "countLabel": "{{count}} Dinge zum Erleben",
