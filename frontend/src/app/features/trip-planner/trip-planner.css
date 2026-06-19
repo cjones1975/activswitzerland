@@ -36,6 +36,10 @@
   gap: 0.4rem;
 }
 
+.tp-step-hint {
+  background: var(--navy-100);
+}
+
 /* ── Trip type toggle ───────────────────────────────────────────── */
 :host ::ng-deep p-selectButton.trip-type-toggle .p-selectbutton,
 :host ::ng-deep .trip-type-toggle.p-selectbutton {
@@ -70,10 +74,9 @@
   flex-direction: column;
 }
 
-.stop-input-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 0.25rem;
+.stop-input-group {
+  width: 100%;
+  margin-bottom: 0.5rem;
 }
 
 .stop-things-row {
@@ -153,19 +156,23 @@
 
 :host ::ng-deep .stop-input {
   flex: 1;
-  margin-bottom: 0.5rem;
+  min-width: 0;
 }
 
 :host ::ng-deep .stop-input input {
   width: 100%;
   font-size: 0.9rem;
+  border-right: none;
+  border-radius: 6px 0 0 6px;
 }
 
-.stop-actions {
-  display: flex;
-  align-items: center;
-  flex-shrink: 0;
-  gap: 0;
+:host ::ng-deep .stop-input input:hover,
+:host ::ng-deep .stop-input input:focus,
+:host ::ng-deep .stop-input.p-autocomplete:hover .p-inputtext,
+:host ::ng-deep .stop-input.p-autocomplete.p-focus .p-inputtext {
+  border-color: var(--p-inputtext-border-color, #d1d5db);
+  box-shadow: none;
+  outline: none;
 }
 
 .stop-action--hidden {
@@ -173,12 +180,37 @@
   pointer-events: none;
 }
 
-:host ::ng-deep .stop-remove.p-button {
-  width: 1.5rem;
-  height: 1.5rem;
+/* Addon styling — strip default padding, make icons compact */
+:host ::ng-deep .stop-addon.p-inputgroup-addon {
   padding: 0;
-  flex-shrink: 0;
+  min-width: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--p-inputtext-background, #fff);
+  border-color: var(--p-inputtext-border-color, #d1d5db);
+  cursor: pointer;
 }
+
+:host ::ng-deep .stop-addon.p-inputgroup-addon:last-child {
+  border-radius: 0 6px 6px 0;
+}
+
+.stop-icon-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  padding: 0 0.4rem;
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 0.85rem;
+}
+
+.stop-icon-btn:hover { color: #e53e3e; }
 
 .stop-footer-row {
   display: flex;
@@ -224,23 +256,15 @@
 }
 
 /* ── Drag & drop ────────────────────────────────────────────────── */
-.stop-drag-handle {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.5rem;
-  height: 1.5rem;
-  flex-shrink: 0;
-  background: none;
-  border: none;
-  color: #94a3b8;
+:host ::ng-deep .stop-addon[cdkDragHandle].p-inputgroup-addon {
   cursor: grab;
   touch-action: none;
-  padding: 0;
+  color: #94a3b8;
+  font-size: 0.9rem;
 }
 
-.stop-drag-handle:hover { color: #285278; }
-.stop-drag-handle:active { cursor: grabbing; }
+:host ::ng-deep .stop-addon[cdkDragHandle].p-inputgroup-addon:hover { color: #285278; }
+:host ::ng-deep .stop-addon[cdkDragHandle].p-inputgroup-addon:active { cursor: grabbing; }
 
 .stop-drag-preview {
   display: flex;

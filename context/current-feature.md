@@ -7,7 +7,6 @@
 ## Goals
 
 ## Notes
-
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
@@ -85,6 +84,24 @@
 ### 2026-06-18 — Transport Connection Detail Completed
 
 - Feature reviewed and accepted; branch `feature/transport-connection-detail` marked complete
+
+
+### 2026-06-19 — Misc Fixes 1 Implemented
+
+- Branch: `feature/misc-fixes-1`
+- `trip-planner.html`: wrapped Round Trip button in `@if (selectedType() !== 'rail')` to hide it for rail trips; replaced `.stop-input-row` + `.stop-actions` structure with `p-inputGroup` containing two `p-inputGroupAddon` slots (remove × and drag ⠿ icons inline in the input); moved `[class.stop-action--hidden]` to the inner icon/button so addon borders always render and every row looks the same width
+- `trip-planner.ts`: imported `InputGroup` and `InputGroupAddon` from PrimeNG
+- `trip-planner.css`: replaced old `.stop-input-row`/`.stop-actions`/`.stop-remove` rules with `.stop-input-group`, `.stop-addon`, `.stop-icon-btn`, and drag-addon styles; suppressed focus/hover border-color and box-shadow on autocomplete input inside the group
+- `trip-planner-layout.ts`: added `displayedTripRoute` and `displayedTripStopPoints` computed signals that return `null`/`[]` while the trip-planner drawer is open, deferring route display on the map until Save/View Trip collapses the drawer; added `clickable: true` to `tripAttractionMarkers`; injected `AttractionMarkersService`; added `onAttractionMarkerClick()` to open `attraction-detail` drawer with `source: 'trip-planner'`; default `center` set to Switzerland `[8.2275, 46.8182]`; added `mapZoom` signal (default 7, set to 12 on destination load, 10 on stored route center)
+- `trip-planner-layout.html`: switched `[tripRoute]`/`[tripStopPoints]` to `displayedTripRoute()`/`displayedTripStopPoints()`; wired `(markerClick)="onAttractionMarkerClick($event)"`; changed `[zoom]` to `[mapZoom()]`
+- `attraction-detail.ts`: added `'trip-planner'` to `AttractionDetailPayload.source` union type
+- `drawer-host.html`: added `@else if (attractionDetailSource() === 'trip-planner')` branch for the attraction-detail back button label
+- `drawer-host.ts`: `onAttractionDetailBack()` now handles `source === 'trip-planner'` — closes attraction-detail and reopens trip-planner
+- `map.css`: removed `max-width` on popup to fix tooltip truncation; moved `maplibregl-ctrl-bottom-right` bottom offset from mobile-only media query to unconditional (footer-nav is now visible at all widths)
+- `footer-nav.css`: changed desktop media query (`≥600px`) to hide `.footer-btn` only, leaving the nav bar itself visible
+- `header-nav.css`: added `border-bottom: none; box-shadow: none` to p-menubar to eliminate white visual gap below the header
+- `trip-planner-layout.css` / `destinations-layout.css`: added `background: var(--navy-800)` to host as defensive fallback against any gap between header and map
+- `en/de/fr/it.json`: added `trip.planner.backToPlanner` key in all four locales
 
 ### 2026-06-16 — Stop Reordering Implemented
 

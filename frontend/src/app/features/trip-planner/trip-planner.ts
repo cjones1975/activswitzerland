@@ -11,6 +11,8 @@ import { SelectButton } from 'primeng/selectbutton';
 import { AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { DatePicker } from 'primeng/datepicker';
 import { InputText } from 'primeng/inputtext';
+import { InputGroup } from 'primeng/inputgroup';
+import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { Button } from 'primeng/button';
 import { Divider } from 'primeng/divider';
 import { Skeleton } from 'primeng/skeleton';
@@ -44,7 +46,7 @@ function swissNow(): Date {
   imports: [
     CommonModule, FormsModule, TranslatePipe,
     DragDropModule,
-    SelectButton, AutoCompleteModule, DatePicker, InputText,
+    SelectButton, AutoCompleteModule, DatePicker, InputText, InputGroup, InputGroupAddon,
     Button, Divider, Skeleton,
     Toast, ConfirmDialog, FloatLabel, Message,
   ],

@@ -75,6 +75,7 @@
       "noTrips": "Aucun voyage enregistré.",
       "planFirst": "Planifier votre premier voyage",
       "open": "Ouvrir le planificateur de voyage",
+      "backToPlanner": "Retour au planificateur",
       "back": "Retour",
       "next": "Suivant",
       "steps": {

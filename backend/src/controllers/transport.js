@@ -33,7 +33,7 @@ export const getLocations = asyncHandler(async (req, res, next) => {
 // @access  Public
 export const getConnections = asyncHandler(async (req, res, next) => {
   const vias = req.query.via ? (Array.isArray(req.query.via) ? req.query.via : [req.query.via]) : [];
-  const params = { from: req.query.from, to: req.query.to, isArrivalTime: req.query.isArrivalTime || 'false' };
+  const params = { limit: req.query.limit, from: req.query.from, to: req.query.to, isArrivalTime: req.query.isArrivalTime || 'false' };
   if (req.query.date) params.date = req.query.date;
   if (req.query.time) params.time = req.query.time;
   vias.forEach((v, i) => { params[`via[${i}]`] = v; });

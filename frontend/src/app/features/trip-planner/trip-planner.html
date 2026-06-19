@@ -11,7 +11,6 @@
       @case ('stops') {
         <div class="tp-section">
           <div class="tp-section-title">
-            <i class="fa-light fa-route"></i>
             <span>{{ 'trip.planner.steps.stops' | translate }}</span>
           </div>
           <p-selectButton
@@ -50,8 +49,7 @@
                 </div>
 
                 <div class="stop-main">
-                  <div class="stop-input-row">
-                    <!-- Autocomplete input -->
+                  <p-inputGroup class="stop-input-group">
                     <p-autoComplete
                       [ngModel]="stop"
                       (onSelect)="onStopSelect($event, $index)"
@@ -65,26 +63,21 @@
                       [showEmptyMessage]="true"
                       emptyMessage="No locations found"
                       class="stop-input"
-                      [inputStyle]="{'width':'100%'}"
                       [disabled]="isRoundTrip() && $index === stops().length - 1"
                       [placeholder]="($index === 0 ? 'trip.planner.from' : $index === stops().length - 1 ? 'trip.planner.to' : 'trip.planner.via') | translate">
                     </p-autoComplete>
-
-                    <!-- Always-rendered action buttons keep autocomplete width consistent across all rows -->
-                    <div class="stop-actions">
-                      <p-button
-                        icon="fa-light fa-xmark"
-                        variant="text"
-                        severity="secondary"
-                        class="stop-remove"
-                        [class.stop-action--hidden]="!(stops().length > 2 && $index > 0 && !($index === stops().length - 1 && isRoundTrip()))"
-                        (onClick)="removeStop($index)" />
-                      <button type="button" class="stop-drag-handle" cdkDragHandle
-                              [class.stop-action--hidden]="!($index > 0 && $index < stops().length - 1)">
-                        <i class="fa-light fa-grip-dots-vertical"></i>
+                    <p-inputGroupAddon class="stop-addon">
+                      <button type="button" class="stop-icon-btn"
+                              [class.stop-action--hidden]="!(stops().length > 2 && $index > 0 && !($index === stops().length - 1 && isRoundTrip()))"
+                              (click)="removeStop($index)">
+                        <i class="fa-light fa-xmark"></i>
                       </button>
-                    </div>
-                  </div>
+                    </p-inputGroupAddon>
+                    <p-inputGroupAddon class="stop-addon" cdkDragHandle>
+                      <i class="fa-light fa-grip-dots-vertical"
+                         [class.stop-action--hidden]="!($index > 0 && $index < stops().length - 1)"></i>
+                    </p-inputGroupAddon>
+                  </p-inputGroup>
 
                   <!-- Things to do link (only for filled stops) -->
                   @if (stop) {
@@ -131,10 +124,12 @@
             } @else {
               <span></span>
             }
-            <button type="button" class="round-trip-btn" [class.round-trip-btn--active]="isRoundTrip()" (click)="toggleRoundTrip()">
-              <i class="fa-light fa-rotate"></i>
-              <span>{{ 'trip.planner.roundTrip' | translate }}</span>
-            </button>
+            @if (selectedType() !== 'rail') {
+              <button type="button" class="round-trip-btn" [class.round-trip-btn--active]="isRoundTrip()" (click)="toggleRoundTrip()">
+                <i class="fa-light fa-rotate"></i>
+                <span>{{ 'trip.planner.roundTrip' | translate }}</span>
+              </button>
+            }
           </div>
 
           <!-- Road route loading skeleton -->
@@ -364,7 +359,7 @@
       @if (step() > 0) {
         <p-button
           [label]="'trip.planner.back' | translate"
-          icon="fa-light fa-arrow-left"
+          icon="fa-solid fa-circle-arrow-left"
           [outlined]="true"
           severity="secondary"
           (onClick)="goBack()" />
@@ -384,7 +379,7 @@
       @if (currentStep() !== 'finish') {
         <p-button
           [label]="'trip.planner.next' | translate"
-          icon="fa-light fa-arrow-right"
+          icon="fa-solid fa-circle-arrow-right"
           iconPos="right"
           [disabled]="!canGoNext()"
           [loading]="currentStep() === 'schedule' && connectionsLoading()"

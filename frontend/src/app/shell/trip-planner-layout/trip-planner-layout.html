@@ -2,11 +2,12 @@
   <app-map
     [markers]="tripAttractionMarkers()"
     [center]="center()"
-    [zoom]="12"
-    [tripRoute]="tripRoute()"
+    [zoom]="mapZoom()"
+    [tripRoute]="displayedTripRoute()"
     [tripType]="tripType()"
-    [tripStopPoints]="tripStopPoints()"
-    [fitBounds]="tripBounds()"></app-map>
+    [tripStopPoints]="displayedTripStopPoints()"
+    [fitBounds]="tripBounds()"
+    (markerClick)="onAttractionMarkerClick($event)"></app-map>
 </div>
 
 <div class="reopen-btns">
