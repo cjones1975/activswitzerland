@@ -11,6 +11,10 @@
           <p-skeleton width="100%" height="100%" borderRadius="10px" />
         </div>
       }
+    } @else if (loadError()) {
+      <p-message severity="warn" class="w-full">
+        {{ 'attractions.loadError' | translate }}
+      </p-message>
     } @else {
       @for (attraction of attractions; track attraction.identifier) {
         <div class="attraction-card" (click)="onAttractionClick(attraction)">

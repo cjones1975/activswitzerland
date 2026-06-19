@@ -7,6 +7,7 @@
 ## Goals
 
 ## Notes
+
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
@@ -85,6 +86,27 @@
 
 - Feature reviewed and accepted; branch `feature/transport-connection-detail` marked complete
 
+
+### 2026-06-19 — Map Marker Anchor Fix
+
+- All MapLibre custom markers now wrap the Font Awesome `<i>` icon in a 28×28px `.map-marker-container` flex div; MapLibre measures the container for its `anchor: 'center'` calculation, giving precise coordinate alignment at all zoom levels
+- Without the wrapper, MapLibre measured the `<i>` element's unreliable inline font-metric bounding box, producing a fixed CSS-pixel offset that appeared as large geographic drift at low zoom and shrank on zoom-in
+
+### 2026-06-19 — Misc Fixes 2 Implemented
+
+- Branch: `feature/misc-fixes-2`
+- `trip-planner.ts` (service): added `DRAFT_KEY` constant; constructor restores draft from `localStorage` on app load; `_trip$` subscription with `debounceTime(300)` + `skip(1)` auto-saves stops/type/name/routeCoordinates; added `clearDraft()` method; removed `catchError` from `buildRoadRoute()` so errors propagate
+- `trip-planner.ts` (component): added `routeError` signal; `onStopsChanged()` now catches route errors and sets `routeError`; calls `plannerSvc.clearDraft()` on type change and on successful save; added `moveStopUp()`/`moveStopDown()` methods; added `getStopSelections()`/`getAttractionName()` helpers for finish summary; imported `Panel`
+- `trip-planner.html`: route error `p-message` below stop list skeleton; keyboard move-up/down buttons on via-stop rows (`.stop-kbd-btns`); `aria-label` on each `p-autoComplete` (From/To/Via N), remove button, and drag handle; finish step trip summary (`trip-summary` block with `stop-indicator` + `p-panel` per stop with attractions)
+- `trip-planner.css`: `.stop-kbd-btns` hidden by default, shown on `.stop-row:focus-within`; `.stop-kbd-btn` styles; full finish-step summary styles (`.trip-summary`, `.summary-stop-row`, `.summary-panel`, `.summary-attraction-row`)
+- `attraction-vertical-list.ts/html`: added `loadError` signal; `catchError` in pipe returns null sentinel; template shows `p-message severity="warn"` instead of skeleton on error
+- `all-attractions.ts/html`: added `loadError` signal; `loadMore()` error handler sets it; template shows `p-message` in the non-search list branch
+- `things-to-do.ts/html`: added `loadError` signal; `catchError` on `fetchTrigger$` inner observable; reset clears error; template shows `p-message` between skeleton and empty states
+- `attraction-detail.ts/html`: added `loadError` signal; `catchError` in `fetchTrigger$` pipeline; error resets on payload clear; template shows `p-message` above the gallery skeleton
+- `map.ts`: replaced `markerInstances: Marker[]` with `Map<string, { marker, el }>`; added `markerKey()`/`buildMarkerEl()`/`addMarker()` helpers; `syncMarkers()` now diffs by key — removes stale, updates `className`/`color` in-place, adds only new; `ngOnDestroy` iterates the Map
+- `footer-nav.ts`: injected `Router`; `showNav` signal via `toSignal` on `NavigationEnd` events — true only for `/destinations/:id` and `/trip-planner[/:id]`; host binding `[style.display]` hides nav on all other routes
+- `drawer-host.html`: `[attr.aria-label]` added to all `menu-close` buttons (close or show-on-map) using `nav.close` / `nav.showOnMap` keys
+- `en/de/fr/it.json`: added `trip.planner.routeError`, `removeStop`, `dragStop`, `moveStopUp`, `moveStopDown`, `attraction`, `attractions`; added `attractions.loadError` and `attractions.detail.loadError`; added new `nav.close` / `nav.showOnMap` section
 
 ### 2026-06-19 — Misc Fixes 1 Implemented
 

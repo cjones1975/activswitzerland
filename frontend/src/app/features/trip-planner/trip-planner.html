@@ -64,20 +64,41 @@
                       emptyMessage="No locations found"
                       class="stop-input"
                       [disabled]="isRoundTrip() && $index === stops().length - 1"
-                      [placeholder]="($index === 0 ? 'trip.planner.from' : $index === stops().length - 1 ? 'trip.planner.to' : 'trip.planner.via') | translate">
+                      [placeholder]="($index === 0 ? 'trip.planner.from' : $index === stops().length - 1 ? 'trip.planner.to' : 'trip.planner.via') | translate"
+                      [attr.aria-label]="$index === 0 ? ('trip.planner.from' | translate) : $index === stops().length - 1 ? ('trip.planner.to' | translate) : ('trip.planner.via' | translate) + ' ' + $index">
                     </p-autoComplete>
                     <p-inputGroupAddon class="stop-addon">
                       <button type="button" class="stop-icon-btn"
                               [class.stop-action--hidden]="!(stops().length > 2 && $index > 0 && !($index === stops().length - 1 && isRoundTrip()))"
+                              [attr.aria-label]="'trip.planner.removeStop' | translate"
                               (click)="removeStop($index)">
                         <i class="fa-light fa-xmark"></i>
                       </button>
                     </p-inputGroupAddon>
-                    <p-inputGroupAddon class="stop-addon" cdkDragHandle>
+                    <p-inputGroupAddon class="stop-addon" cdkDragHandle
+                                       [attr.aria-label]="'trip.planner.dragStop' | translate">
                       <i class="fa-light fa-grip-dots-vertical"
                          [class.stop-action--hidden]="!($index > 0 && $index < stops().length - 1)"></i>
                     </p-inputGroupAddon>
                   </p-inputGroup>
+
+                  <!-- Keyboard reorder buttons (via stops only, shown on focus) -->
+                  @if ($index > 0 && $index < stops().length - 1) {
+                    <div class="stop-kbd-btns">
+                      <button type="button" class="stop-kbd-btn"
+                              [attr.aria-label]="'trip.planner.moveStopUp' | translate"
+                              [disabled]="$index <= 1"
+                              (click)="moveStopUp($index)">
+                        <i class="fa-solid fa-arrow-up"></i>
+                      </button>
+                      <button type="button" class="stop-kbd-btn"
+                              [attr.aria-label]="'trip.planner.moveStopDown' | translate"
+                              [disabled]="$index >= stops().length - 2"
+                              (click)="moveStopDown($index)">
+                        <i class="fa-solid fa-arrow-down"></i>
+                      </button>
+                    </div>
+                  }
 
                   <!-- Things to do link (only for filled stops) -->
                   @if (stop) {
@@ -132,9 +153,13 @@
             }
           </div>
 
-          <!-- Road route loading skeleton -->
+          <!-- Road route loading skeleton / error -->
           @if (routeLoading()) {
             <p-skeleton height="8px" borderRadius="4px" class="mt-3" />
+          } @else if (routeError()) {
+            <p-message severity="warn" class="w-full mt-2">
+              {{ 'trip.planner.routeError' | translate }}
+            </p-message>
           }
         </div>
       }
@@ -304,6 +329,47 @@
             <i class="fa-light fa-floppy-disk"></i>
             <span>{{ 'trip.planner.steps.finish' | translate }}</span>
           </div>
+
+          <!-- Trip summary -->
+          @if (validStops().length >= 2) {
+            <div class="trip-summary">
+              @for (stop of validStops(); track stop.stationId; let idx = $index; let last = $last) {
+                <div class="summary-stop-row">
+                  <div class="stop-indicator">
+                    @if (idx === 0) {
+                      <i class="fa-light fa-circle-dot stop-icon stop-icon--start"></i>
+                    } @else if (last) {
+                      <i class="fa-light fa-location-dot stop-icon stop-icon--end"></i>
+                    } @else {
+                      <span class="stop-icon stop-icon--mid">{{ idx + 1 }}</span>
+                    }
+                    @if (!last) {
+                      <span class="stop-line summary-stop-line"></span>
+                    }
+                  </div>
+                  <div class="summary-stop-content">
+                    <span class="summary-stop-name">{{ stop.name }}</span>
+                    @if (getStopSelections(stop.stationId).length > 0) {
+                      <p-panel [toggleable]="true" [collapsed]="true" styleClass="summary-panel">
+                        <ng-template #header>
+                          <span class="summary-panel-header">
+                            {{ getStopSelections(stop.stationId).length }}
+                            {{ (getStopSelections(stop.stationId).length === 1 ? 'trip.planner.attraction' : 'trip.planner.attractions') | translate }}
+                          </span>
+                        </ng-template>
+                        @for (id of getStopSelections(stop.stationId); track id) {
+                          <div class="summary-attraction-row">
+                            <i class="fa-solid fa-location-dot"></i>
+                            <span>{{ getAttractionName(id) }}</span>
+                          </div>
+                        }
+                      </p-panel>
+                    }
+                  </div>
+                </div>
+              }
+            </div>
+          }
 
           <p-floatLabel>
             <input

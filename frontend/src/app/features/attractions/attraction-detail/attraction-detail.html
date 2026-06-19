@@ -5,7 +5,11 @@
 
     <p class="abstract" [innerHTML]="p.attraction.abstract"></p>
 
-    @if (loading()) {
+    @if (loadError()) {
+      <p-message severity="warn" class="w-full mt-2">
+        {{ 'attractions.detail.loadError' | translate }}
+      </p-message>
+    } @else if (loading()) {
       <div class="galleria-wrap skeleton-wrap">
         <p-skeleton height="240px" borderRadius="10px" />
       </div>

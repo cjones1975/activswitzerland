@@ -79,6 +79,44 @@
   margin-bottom: 0.5rem;
 }
 
+.stop-kbd-btns {
+  display: flex;
+  gap: 0.25rem;
+  margin-bottom: 0.25rem;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+
+.stop-row:focus-within .stop-kbd-btns {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.stop-kbd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.75rem;
+  height: 1.75rem;
+  border: 1px solid var(--navy-300);
+  border-radius: 4px;
+  background: var(--navy-100);
+  color: var(--navy-700);
+  font-size: 0.65rem;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.stop-kbd-btn:hover:not(:disabled) {
+  background: var(--navy-200);
+}
+
+.stop-kbd-btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
 .stop-things-row {
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
@@ -557,6 +595,77 @@
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+}
+
+/* ── Finish step: trip summary ──────────────────────────────────── */
+.trip-summary {
+  margin-bottom: 1.25rem;
+}
+
+.summary-stop-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+}
+
+.summary-stop-content {
+  flex: 1;
+  min-width: 0;
+  padding-bottom: 0.5rem;
+}
+
+.summary-stop-name {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--navy-900);
+  padding-top: 0.35rem;
+  margin-bottom: 0.4rem;
+}
+
+.summary-stop-line {
+  flex: 1;
+  min-height: 1rem;
+}
+
+:host ::ng-deep .summary-panel .p-panel-header {
+  padding: 0.35rem 0.6rem;
+  background: var(--navy-100);
+  border-radius: 6px;
+  font-size: 0.8rem;
+}
+
+:host ::ng-deep .summary-panel .p-panel-content {
+  padding: 0.5rem 0.6rem;
+  background: var(--navy-50, #f8fafc);
+  border-radius: 0 0 6px 6px;
+}
+
+:host ::ng-deep .summary-panel {
+  margin-bottom: 0.5rem;
+  border: 1px solid var(--navy-200);
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.summary-panel-header {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--navy-700);
+}
+
+.summary-attraction-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.8rem;
+  color: var(--navy-800);
+  padding: 0.2rem 0;
+}
+
+.summary-attraction-row i {
+  color: var(--navy-500);
+  font-size: 0.75rem;
 }
 
 .trip-name-suggestion {

@@ -43,6 +43,10 @@
           {{ 'attractions.search.backToAll' | translate }}
         </button>
       </div>
+    } @else if (loadError()) {
+      <p-message severity="warn" class="w-full">
+        {{ 'attractions.loadError' | translate }}
+      </p-message>
     } @else {
       @for (attraction of attractions; track attraction.identifier) {
         <div class="attraction-card" (click)="onAttractionClick(attraction)">
