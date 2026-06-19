@@ -41,6 +41,10 @@
       @for (s of skeletons; track $index) {
         <p-skeleton height="72px" borderRadius="8px" styleClass="mb-2" />
       }
+    } @else if (loadError()) {
+      <p-message severity="warn" class="w-full">
+        {{ 'attractions.loadError' | translate }}
+      </p-message>
     } @else if (attractions().length === 0) {
       <p class="tp-empty">{{ 'trip.planner.thingsToDo.empty' | translate }}</p>
     } @else {

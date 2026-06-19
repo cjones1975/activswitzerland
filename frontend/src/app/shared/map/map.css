@@ -9,6 +9,14 @@
   height: 100%;
 }
 
+.map-marker-container {
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .map-marker-icon {
   font-size: 1.5rem;
   color: #d97706;

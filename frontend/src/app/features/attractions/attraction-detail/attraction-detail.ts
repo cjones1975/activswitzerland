@@ -3,7 +3,8 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GalleriaModule } from 'primeng/galleria';
 import { SkeletonModule } from 'primeng/skeleton';
-import { Subject, switchMap } from 'rxjs';
+import { Message } from 'primeng/message';
+import { Subject, switchMap, catchError, of } from 'rxjs';
 import { Drawer } from '../../../shared/services/drawer';
 import { AttractionsService } from '../../../shared/services/attractions';
 import { AttractionMarkersService } from '../../../shared/services/attraction-markers';
@@ -29,7 +30,7 @@ const LANG_NAMES: Record<string, string> = {
 @Component({
   selector: 'app-attraction-detail',
   standalone: true,
-  imports: [TranslatePipe, GalleriaModule, SkeletonModule],
+  imports: [TranslatePipe, GalleriaModule, SkeletonModule, Message],
   templateUrl: './attraction-detail.html',
   styleUrl: './attraction-detail.css',
 })
@@ -47,6 +48,7 @@ export class AttractionDetail implements OnDestroy {
 
   fullAttraction = signal<Attraction | null>(null);
   loading = signal(false);
+  loadError = signal(false);
 
   private fetchTrigger$ = new Subject<{ id: string; lang: string }>();
 
@@ -91,17 +93,25 @@ export class AttractionDetail implements OnDestroy {
     this.fetchTrigger$.pipe(
       switchMap(({ id, lang }) => {
         this.loading.set(true);
-        return this.attractionsService.getAttraction(id, lang);
+        this.loadError.set(false);
+        return this.attractionsService.getAttraction(id, lang).pipe(
+          catchError(() => of(null)),
+        );
       }),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(attraction => {
+      if (!attraction) {
+        this.loading.set(false);
+        this.loadError.set(true);
+        return;
+      }
       this.fullAttraction.set(attraction);
       this.loading.set(false);
     });
 
     effect(() => {
       const p = this.payload();
-      if (!p) { this.fullAttraction.set(null); return; }
+      if (!p) { this.fullAttraction.set(null); this.loadError.set(false); return; }
       const lang = this.langSvc.current;
       untracked(() => {
         this.fetchTrigger$.next({ id: p.attraction.identifier, lang });

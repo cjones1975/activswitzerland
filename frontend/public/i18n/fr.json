@@ -90,6 +90,13 @@
         "selectConnection": "Sélectionnez une connexion pour continuer"
       },
       "noConnections": "Aucune connexion trouvée pour cette date et cette heure. Essayez une autre recherche.",
+      "routeError": "Impossible de calculer l'itinéraire.",
+      "removeStop": "Supprimer l'arrêt",
+      "dragStop": "Glisser pour réorganiser",
+      "moveStopUp": "Déplacer vers le haut",
+      "moveStopDown": "Déplacer vers le bas",
+      "attraction": "attraction",
+      "attractions": "attractions",
       "connection": {
         "direction": "Direction",
         "walk": "À pied"
@@ -161,6 +168,10 @@
       "open": "Retour à {{name}}"
     }
   },
+  "nav": {
+    "close": "Fermer",
+    "showOnMap": "Afficher sur la carte"
+  },
   "attractions": {
     "title": "Attractions populaires",
     "titleFallback": "Attractions",
@@ -169,6 +180,7 @@
     "backToAttractions": "Retour aux attractions",
     "openAll": "Ouvrir les attractions",
     "listAll": "Lister toutes les attractions",
+    "loadError": "Impossible de charger les attractions.",
     "detail": {
       "neededTime": "Temps requis pour cette activité",
       "wheelchair": "Accessible en fauteuil roulant",
@@ -176,7 +188,8 @@
       "groupSize": "Taille du groupe",
       "groupMin": "Minimum",
       "groupMax": "Maximum",
-      "price": "Informations tarifaires"
+      "price": "Informations tarifaires",
+      "loadError": "Impossible de charger les détails de l'attraction."
     },
     "search": {
       "placeholder": "Rechercher des attractions...",

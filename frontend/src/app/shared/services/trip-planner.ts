@@ -1,10 +1,11 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, map, catchError, of } from 'rxjs';
+import { BehaviorSubject, Observable, map, of, debounceTime, skip } from 'rxjs';
 import { PlannedTrip, TripStop, TripConnection, SavedTrip } from '../../models/trip';
 import { Attraction } from '../../models/attraction';
 
 const EMPTY_TRIP: PlannedTrip = { type: 'road', stops: [] };
+const DRAFT_KEY = 'activ_trip_draft';
 
 @Injectable({ providedIn: 'root' })
 export class TripPlannerService {
@@ -22,6 +23,36 @@ export class TripPlannerService {
   readonly routeCoordinates$: Observable<[number, number][]> = this._routeCoordinates$.asObservable();
 
   get snapshot(): PlannedTrip { return this._trip$.value; }
+
+  constructor() {
+    try {
+      const saved = localStorage.getItem(DRAFT_KEY);
+      if (saved) {
+        const draft = JSON.parse(saved) as { type: 'road' | 'rail'; stops: TripStop[]; name?: string; routeCoordinates?: [number, number][] };
+        if (draft.stops?.length > 0) {
+          this._trip$.next({ type: draft.type ?? 'road', stops: draft.stops, name: draft.name, routeCoordinates: draft.routeCoordinates });
+          if (draft.routeCoordinates?.length) {
+            this._routeCoordinates$.next(draft.routeCoordinates);
+          }
+        }
+      }
+    } catch {}
+
+    this._trip$.pipe(debounceTime(300), skip(1)).subscribe(trip => {
+      if (trip.stops.length > 0) {
+        localStorage.setItem(DRAFT_KEY, JSON.stringify({
+          type: trip.type,
+          stops: trip.stops,
+          name: trip.name,
+          routeCoordinates: trip.routeCoordinates,
+        }));
+      }
+    });
+  }
+
+  clearDraft(): void {
+    localStorage.removeItem(DRAFT_KEY);
+  }
 
   setType(type: 'road' | 'rail'): void {
     this._trip$.next({ type, stops: [] });
@@ -106,7 +137,6 @@ export class TripPlannerService {
     const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
     return this.http.get<any>(url).pipe(
       map(res => res.routes?.[0]?.geometry?.coordinates ?? []),
-      catchError(() => of(stops.map(s => [s.lon, s.lat] as [number, number])))
     );
   }
 

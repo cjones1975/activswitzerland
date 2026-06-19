@@ -15,6 +15,7 @@ import { InputGroup } from 'primeng/inputgroup';
 import { InputGroupAddon } from 'primeng/inputgroupaddon';
 import { Button } from 'primeng/button';
 import { Divider } from 'primeng/divider';
+import { Panel } from 'primeng/panel';
 import { Skeleton } from 'primeng/skeleton';
 import { Toast } from 'primeng/toast';
 import { ConfirmDialog } from 'primeng/confirmdialog';
@@ -47,7 +48,7 @@ function swissNow(): Date {
     CommonModule, FormsModule, TranslatePipe,
     DragDropModule,
     SelectButton, AutoCompleteModule, DatePicker, InputText, InputGroup, InputGroupAddon,
-    Button, Divider, Skeleton,
+    Button, Divider, Panel, Skeleton,
     Toast, ConfirmDialog, FloatLabel, Message,
   ],
   providers: [MessageService, ConfirmationService],
@@ -98,6 +99,7 @@ export class TripPlanner {
 
   // ── Route ─────────────────────────────────────────────────────────────────
   routeLoading = signal(false);
+  routeError = signal(false);
 
   // ── Save ──────────────────────────────────────────────────────────────────
   tripName = signal('');
@@ -167,6 +169,7 @@ export class TripPlanner {
   onTypeChange(type: 'road' | 'rail'): void {
     this.selectedType.set(type);
     this.plannerSvc.setType(type);
+    this.plannerSvc.clearDraft();
     this.stops.set([null, null]);
     this.stopSuggestions.set([[], []]);
     this.connections.set([]);
@@ -258,6 +261,31 @@ export class TripPlanner {
     this.onStopsChanged();
   }
 
+  moveStopUp(index: number): void {
+    if (index <= 1) return;
+    const stops = [...this.stops()];
+    const suggs = [...this.stopSuggestions()];
+    [stops[index], stops[index - 1]] = [stops[index - 1], stops[index]];
+    [suggs[index], suggs[index - 1]] = [suggs[index - 1], suggs[index]];
+    this.stops.set(stops);
+    this.stopSuggestions.set(suggs);
+    this.plannerSvc.setStops(this.validStops());
+    this.onStopsChanged();
+  }
+
+  moveStopDown(index: number): void {
+    const n = this.stops().length;
+    if (index >= n - 2) return;
+    const stops = [...this.stops()];
+    const suggs = [...this.stopSuggestions()];
+    [stops[index], stops[index + 1]] = [stops[index + 1], stops[index]];
+    [suggs[index], suggs[index + 1]] = [suggs[index + 1], suggs[index]];
+    this.stops.set(stops);
+    this.stopSuggestions.set(suggs);
+    this.plannerSvc.setStops(this.validStops());
+    this.onStopsChanged();
+  }
+
   reorderStop(event: CdkDragDrop<(TripStop | null)[]>): void {
     const n = this.stops().length;
     const from = event.previousIndex;
@@ -279,11 +307,19 @@ export class TripPlanner {
 
     if (this.selectedType() === 'road') {
       this.routeLoading.set(true);
+      this.routeError.set(false);
       this.plannerSvc.buildRoadRoute(valid)
         .pipe(takeUntilDestroyed(this.destroyRef))
-        .subscribe(coords => {
-          this.plannerSvc.setRouteCoordinates(coords);
-          this.routeLoading.set(false);
+        .subscribe({
+          next: coords => {
+            this.plannerSvc.setRouteCoordinates(coords);
+            this.routeLoading.set(false);
+          },
+          error: () => {
+            this.plannerSvc.setRouteCoordinates([]);
+            this.routeLoading.set(false);
+            this.routeError.set(true);
+          },
         });
     } else {
       this.plannerSvc.setRouteCoordinates(this.plannerSvc.buildRailRoute(valid));
@@ -412,6 +448,14 @@ export class TripPlanner {
     return this.plannerSvc.getSelections(stationId).length;
   }
 
+  getStopSelections(stationId: string): string[] {
+    return this.plannerSvc.getSelections(stationId);
+  }
+
+  getAttractionName(id: string): string {
+    return this.plannerSvc.getAttraction(id)?.name ?? '';
+  }
+
   // ── Save ──────────────────────────────────────────────────────────────────
   onSave(): void {
     if (!this.isLoggedIn()) {
@@ -436,6 +480,7 @@ export class TripPlanner {
       .subscribe({
         next: () => {
           this.saving.set(false);
+          this.plannerSvc.clearDraft();
           this.messageSvc.add({ severity: 'success', summary: 'trip.planner.savedSuccess', life: 3000 });
           this.drawerSvc.collapse('trip-planner');
         },

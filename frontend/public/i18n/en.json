@@ -90,6 +90,13 @@
         "selectConnection": "Select a connection to continue"
       },
       "noConnections": "No connections found for this date and time. Try a different search.",
+      "routeError": "Could not calculate the route.",
+      "removeStop": "Remove stop",
+      "dragStop": "Drag to reorder",
+      "moveStopUp": "Move up",
+      "moveStopDown": "Move down",
+      "attraction": "attraction",
+      "attractions": "attractions",
       "connection": {
         "direction": "Direction",
         "walk": "Walk"
@@ -169,6 +176,7 @@
     "backToAttractions": "Back to attractions",
     "openAll": "Open attractions",
     "listAll": "List all attractions",
+    "loadError": "Could not load attractions.",
     "detail": {
       "neededTime": "Required time for this activity",
       "wheelchair": "Wheelchair accessible",
@@ -176,13 +184,18 @@
       "groupSize": "Group size",
       "groupMin": "Minimum",
       "groupMax": "Maximum",
-      "price": "Price information"
+      "price": "Price information",
+      "loadError": "Could not load attraction details."
     },
     "search": {
       "placeholder": "Search attractions...",
       "backToAll": "Back to all attractions",
       "noResults": "I'm sorry, we couldn't find any attractions matching your search query. Please try another keyword."
     }
+  },
+  "nav": {
+    "close": "Close",
+    "showOnMap": "Show on map"
   },
   "weather": {
     "today": "Today's weather",

@@ -5,6 +5,7 @@ import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { LangService } from '../../../shared/services/lang';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
+import { Message } from 'primeng/message';
 import { Drawer } from '../../../shared/services/drawer';
 import { AttractionsService } from '../../../shared/services/attractions';
 import { AttractionMarkersService, hasValidGeo } from '../../../shared/services/attraction-markers';
@@ -14,7 +15,7 @@ import { Destination } from '../../../models/destination';
 @Component({
   selector: 'app-all-attractions',
   standalone: true,
-  imports: [FormsModule, InputTextModule, SkeletonModule, TranslatePipe],
+  imports: [FormsModule, InputTextModule, SkeletonModule, TranslatePipe, Message],
   templateUrl: './all-attractions.html',
   styleUrl: './all-attractions.css',
 })
@@ -35,6 +36,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
 
   attractions: Attraction[] = [];
   loading = signal(false);
+  loadError = signal(false);
   hasMore = signal(true);
   skeletons = Array(6);
 
@@ -86,6 +88,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
     this.totalElements = 0;
     this.hasMore.set(true);
     this.loading.set(false);
+    this.loadError.set(false);
     this.loadMore();
   }
 
@@ -99,17 +102,23 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       page: this.page,
       hitsPerPage: 30,
       placeId: dest.identifier,
-    }).subscribe(({ attractions, totalElements }) => {
-      this.attractions = [...this.attractions, ...attractions];
-      this.totalElements = totalElements;
-      this.page++;
-      this.hasMore.set(this.attractions.length < this.totalElements);
-      const geoAttractions = this.attractions.filter(hasValidGeo);
-      this.attractionMarkers.set(
-        geoAttractions.map(a => ({ id: a.identifier, lng: Number(a.geo.longitude), lat: Number(a.geo.latitude), label: a.name, icon: 'fa-solid fa-location-dot', color: '#1a2f4a', clickable: true })),
-        geoAttractions
-      );
-      this.loading.set(false);
+    }).subscribe({
+      next: ({ attractions, totalElements }) => {
+        this.attractions = [...this.attractions, ...attractions];
+        this.totalElements = totalElements;
+        this.page++;
+        this.hasMore.set(this.attractions.length < this.totalElements);
+        const geoAttractions = this.attractions.filter(hasValidGeo);
+        this.attractionMarkers.set(
+          geoAttractions.map(a => ({ id: a.identifier, lng: Number(a.geo.longitude), lat: Number(a.geo.latitude), label: a.name, icon: 'fa-solid fa-location-dot', color: '#1a2f4a', clickable: true })),
+          geoAttractions
+        );
+        this.loading.set(false);
+      },
+      error: () => {
+        this.loading.set(false);
+        this.loadError.set(true);
+      },
     });
   }
 

@@ -2,13 +2,14 @@ import { Component, AfterViewInit, DestroyRef, ElementRef, OnDestroy, ViewChild,
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Subject, switchMap, map } from 'rxjs';
+import { Subject, switchMap, map, catchError, of } from 'rxjs';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { Checkbox } from 'primeng/checkbox';
 import { Tag } from 'primeng/tag';
 import { Button } from 'primeng/button';
 import { Skeleton } from 'primeng/skeleton';
 import { InputTextModule } from 'primeng/inputtext';
+import { Message } from 'primeng/message';
 import { Drawer } from '../../../shared/services/drawer';
 import { AttractionsService } from '../../../shared/services/attractions';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
@@ -19,7 +20,7 @@ import { TripStop } from '../../../models/trip';
 @Component({
   selector: 'app-things-to-do',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, Checkbox, Tag, Button, Skeleton, InputTextModule],
+  imports: [CommonModule, FormsModule, TranslatePipe, Checkbox, Tag, Button, Skeleton, InputTextModule, Message],
   templateUrl: './things-to-do.html',
   styleUrl: './things-to-do.css',
 })
@@ -40,6 +41,7 @@ export class ThingsToDo implements AfterViewInit, OnDestroy {
 
   attractions = signal<Attraction[]>([]);
   loading = signal(false);
+  loadError = signal(false);
   hasMore = signal(true);
   expandedId = signal<string | null>(null);
   skeletons = Array(4);
@@ -62,10 +64,18 @@ export class ThingsToDo implements AfterViewInit, OnDestroy {
       switchMap(({ stop, lang }) =>
         this.attractionsSvc.getAttractionsNearby(stop.lat, stop.lon, lang, 0).pipe(
           map(result => ({ stop, result })),
+          catchError(() => of(null)),
         )
       ),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ stop, result }) => {
+    ).subscribe(data => {
+      if (!data) {
+        this.loading.set(false);
+        this.loadError.set(true);
+        return;
+      }
+      const { stop, result } = data;
+      this.loadError.set(false);
       this.attractions.set(result.attractions);
       this.totalElements = result.totalElements;
       this.page = 1;
@@ -111,6 +121,7 @@ export class ThingsToDo implements AfterViewInit, OnDestroy {
     this.page = 0;
     this.totalElements = 0;
     this.hasMore.set(true);
+    this.loadError.set(false);
     this.loading.set(true);
     this.fetchTrigger$.next({ stop, lang });
   }

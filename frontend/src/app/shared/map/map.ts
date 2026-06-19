@@ -50,7 +50,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private ngZone = inject(NgZone);
   private map?: MapLibreMap;
-  private markerInstances: Marker[] = [];
+  private markerInstances = new Map<string, { marker: Marker; el: HTMLElement }>();
   private popupInstances = new Map<string, Popup>();
   private mapLoaded = false;
 
@@ -124,51 +124,76 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     ];
   }
 
-  private syncMarkers(): void {
-    this.markerInstances.forEach(m => m.remove());
-    this.markerInstances = [];
-    this.popupInstances.forEach(p => p.remove());
-    this.popupInstances.clear();
+  private markerKey(m: MapMarker): string {
+    return m.id ?? `${m.lng},${m.lat}`;
+  }
 
-    for (const marker of this.markers) {
-      const el = document.createElement('i');
-      el.className = `${marker.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${marker.highlight ? ' marker-selected' : ''}${marker.className ? ' ' + marker.className : ''}`;
-      if (marker.color) el.style.color = marker.color;
-      if (marker.highlight) el.style.color = '#e53e3e';
+  private buildMarkerEl(marker: MapMarker): HTMLElement {
+    const el = document.createElement('i');
+    el.className = `${marker.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${marker.highlight ? ' marker-selected' : ''}${marker.className ? ' ' + marker.className : ''}`;
+    el.style.color = marker.highlight ? '#e53e3e' : (marker.color ?? '');
+    return el;
+  }
 
-      const instance = new maplibregl.Marker({ element: el })
-        .setLngLat([marker.lng, marker.lat]);
+  private addMarker(marker: MapMarker): void {
+    const key = this.markerKey(marker);
+    const el = this.buildMarkerEl(marker);
 
-      if (marker.label) {
-        const popupHtml = marker.clickable
-          ? `<button class="popup-btn" type="button"><span class="popup-name">${marker.label}</span><i class="fa-solid fa-circle-arrow-right popup-arrow"></i></button>`
-          : `<span class="popup-name">${marker.label}</span>`;
+    const container = document.createElement('div');
+    container.className = 'map-marker-container';
+    container.appendChild(el);
 
-        const popup = new maplibregl.Popup({
-          closeButton: false,
-          closeOnClick: true,
-          offset: 20,
-        }).setHTML(popupHtml);
+    const instance = new maplibregl.Marker({ element: container, anchor: 'center' }).setLngLat([marker.lng, marker.lat]);
 
-        if (marker.clickable) {
-          popup.on('open', () => {
-            const btn = popup.getElement()?.querySelector('.popup-btn') as HTMLElement | null;
-            if (btn) {
-              btn.addEventListener('click', () => {
-                popup.remove();
-                this.ngZone.run(() => this.markerClick.emit(marker));
-              });
-            }
-          });
-        }
+    if (marker.label) {
+      const popupHtml = marker.clickable
+        ? `<button class="popup-btn" type="button"><span class="popup-name">${marker.label}</span><i class="fa-solid fa-circle-arrow-right popup-arrow"></i></button>`
+        : `<span class="popup-name">${marker.label}</span>`;
 
-        const key = `${marker.lng},${marker.lat}`;
-        this.popupInstances.set(key, popup);
-        instance.setPopup(popup);
+      const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: true, offset: 20 }).setHTML(popupHtml);
+
+      if (marker.clickable) {
+        popup.on('open', () => {
+          const btn = popup.getElement()?.querySelector('.popup-btn') as HTMLElement | null;
+          if (btn) {
+            btn.addEventListener('click', () => {
+              popup.remove();
+              this.ngZone.run(() => this.markerClick.emit(marker));
+            });
+          }
+        });
       }
 
-      instance.addTo(this.map!);
-      this.markerInstances.push(instance);
+      this.popupInstances.set(key, popup);
+      instance.setPopup(popup);
+    }
+
+    instance.addTo(this.map!);
+    this.markerInstances.set(key, { marker: instance, el });
+  }
+
+  private syncMarkers(): void {
+    const incoming = new Map(this.markers.map(m => [this.markerKey(m), m]));
+
+    // Remove stale markers
+    for (const [key, { marker }] of this.markerInstances) {
+      if (!incoming.has(key)) {
+        marker.remove();
+        this.popupInstances.get(key)?.remove();
+        this.popupInstances.delete(key);
+        this.markerInstances.delete(key);
+      }
+    }
+
+    // Update existing or add new
+    for (const [key, m] of incoming) {
+      if (this.markerInstances.has(key)) {
+        const { el } = this.markerInstances.get(key)!;
+        el.className = `${m.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${m.highlight ? ' marker-selected' : ''}${m.className ? ' ' + m.className : ''}`;
+        el.style.color = m.highlight ? '#e53e3e' : (m.color ?? '');
+      } else {
+        this.addMarker(m);
+      }
     }
   }
 
@@ -245,13 +270,15 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     if (this.tripType === 'rail') {
       coords.forEach(coord => {
-        const el = document.createElement('i');
-        el.className = 'fa-solid fa-circle';
-        el.style.color = '#1a6b3c';
-        el.style.fontSize = '10px';
-        el.style.fontWeight = 'bold';
-        el.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.4))';
-        const marker = new maplibregl.Marker({ element: el })
+        const icon = document.createElement('i');
+        icon.className = 'fa-solid fa-circle';
+        icon.style.color = '#1a6b3c';
+        icon.style.fontSize = '10px';
+        icon.style.filter = 'drop-shadow(0 1px 2px rgba(0,0,0,0.4))';
+        const el = document.createElement('div');
+        el.className = 'map-marker-container';
+        el.appendChild(icon);
+        const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
           .setLngLat(coord)
           .addTo(this.map!);
         this.tripStopMarkers.push(marker);
@@ -270,11 +297,14 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       let el: HTMLElement;
 
       if (isStart || isEnd) {
-        el = document.createElement('i');
-        el.className = isStart ? 'fa-light fa-circle-dot' : 'fa-light fa-location-dot';
-        el.style.color = isStart ? '#1a6b3c' : '#e53e3e';
-        el.style.fontSize = '22px';
-        el.style.filter = 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))';
+        const icon = document.createElement('i');
+        icon.className = isStart ? 'fa-light fa-circle-dot' : 'fa-light fa-location-dot';
+        icon.style.color = isStart ? '#1a6b3c' : '#e53e3e';
+        icon.style.fontSize = '22px';
+        icon.style.filter = 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))';
+        el = document.createElement('div');
+        el.className = 'map-marker-container';
+        el.appendChild(icon);
       } else {
         el = document.createElement('div');
         el.className = 'trip-stop-marker';
@@ -288,7 +318,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         });
       }
 
-      const marker = new maplibregl.Marker({ element: el })
+      const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
         .setLngLat(coord)
         .addTo(this.map!);
       this.tripStopMarkers.push(marker);
@@ -296,6 +326,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.markerInstances.forEach(({ marker }) => marker.remove());
     this.map?.remove();
   }
 }

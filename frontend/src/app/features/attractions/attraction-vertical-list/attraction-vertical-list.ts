@@ -1,8 +1,9 @@
 import { Component, DestroyRef, Input, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { of, startWith, switchMap, tap, map } from 'rxjs';
+import { of, startWith, switchMap, tap, map, catchError } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
+import { Message } from 'primeng/message';
 import { AttractionsService } from '../../../shared/services/attractions';
 import { AttractionMarkersService, hasValidGeo } from '../../../shared/services/attraction-markers';
 import { Drawer } from '../../../shared/services/drawer';
@@ -13,7 +14,7 @@ import { Destination } from '../../../models/destination';
 @Component({
   selector: 'app-attraction-vertical-list',
   standalone: true,
-  imports: [TranslatePipe, SkeletonModule],
+  imports: [TranslatePipe, SkeletonModule, Message],
   templateUrl: './attraction-vertical-list.html',
   styleUrl: './attraction-vertical-list.css',
 })
@@ -29,6 +30,7 @@ export class AttractionVerticalList implements OnInit {
 
   attractions: Attraction[] = [];
   loading = signal(true);
+  loadError = signal(false);
   isTop = signal(true);
   skeletons = Array(6);
 
@@ -51,14 +53,21 @@ export class AttractionVerticalList implements OnInit {
             : this.attractionsService.getTopAttractions({ ...base, hitsPerPage: 3, top: false }).pipe(
                 map(hits => ({ attractions: hits, isTop: false }))
               )
-          )
+          ),
+          catchError(() => of(null)),
         );
       }),
       takeUntilDestroyed(this.destroyRef),
-    ).subscribe(({ attractions, isTop }) => {
-      this.attractions = attractions;
-      this.isTop.set(isTop);
-      const geoAttractions = attractions.filter(hasValidGeo);
+    ).subscribe(result => {
+      if (!result) {
+        this.loading.set(false);
+        this.loadError.set(true);
+        return;
+      }
+      this.loadError.set(false);
+      this.attractions = result.attractions;
+      this.isTop.set(result.isTop);
+      const geoAttractions = result.attractions.filter(hasValidGeo);
       this.attractionMarkers.set(
         geoAttractions.map((a: Attraction) => ({
           id: a.identifier,
