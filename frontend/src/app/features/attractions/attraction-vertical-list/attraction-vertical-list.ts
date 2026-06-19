@@ -65,7 +65,7 @@ export class AttractionVerticalList implements OnInit {
           lng: Number(a.geo.longitude),
           lat: Number(a.geo.latitude),
           label: a.name,
-          icon: 'fa-solid fa-circle-info',
+          icon: 'fa-solid fa-location-dot',
           color: '#1a2f4a',
           clickable: true,
         })),

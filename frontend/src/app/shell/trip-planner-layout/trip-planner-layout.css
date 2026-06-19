@@ -4,6 +4,7 @@
   inset: 0;
   overflow: hidden;
   z-index: 101;
+  background: var(--navy-800);
 }
 
 .map-wrapper {

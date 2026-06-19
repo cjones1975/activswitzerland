@@ -106,7 +106,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       this.hasMore.set(this.attractions.length < this.totalElements);
       const geoAttractions = this.attractions.filter(hasValidGeo);
       this.attractionMarkers.set(
-        geoAttractions.map(a => ({ id: a.identifier, lng: Number(a.geo.longitude), lat: Number(a.geo.latitude), label: a.name, icon: 'fa-solid fa-circle-info', color: '#1a2f4a', clickable: true })),
+        geoAttractions.map(a => ({ id: a.identifier, lng: Number(a.geo.longitude), lat: Number(a.geo.latitude), label: a.name, icon: 'fa-solid fa-location-dot', color: '#1a2f4a', clickable: true })),
         geoAttractions
       );
       this.loading.set(false);

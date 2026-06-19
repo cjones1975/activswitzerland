@@ -10,7 +10,9 @@
 :host ::ng-deep .header-nav.p-menubar {
   background: var(--navy-800);
   border: none;
+  border-bottom: none;
   border-radius: 0;
+  box-shadow: none;
   padding: 0.50rem 1rem;
   display: flex;
   align-items: center;

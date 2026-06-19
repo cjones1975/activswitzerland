@@ -130,7 +130,7 @@
 }
 
 .weather-box {
-  background: linear-gradient(135deg, #dbeafe 0%, #e0f2fe 100%);
+  background: var(--navy-100);
   border-radius: 12px;
   border: 1px solid #bfdbfe;
   overflow: hidden;

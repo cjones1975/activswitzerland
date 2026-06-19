@@ -73,6 +73,10 @@ export class DrawerHost {
       this.svc.open('things-to-do', { stop: payload.stop });
       return;
     }
+    if (payload.source === 'trip-planner') {
+      this.svc.open('trip-planner');
+      return;
+    }
     this.svc.open('all-attractions', payload.destination);
   }
 

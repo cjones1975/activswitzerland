@@ -34,6 +34,12 @@
   border-radius: 8px;
   background: #1a2f4a;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  max-width: none;
+  width: max-content;
+}
+
+:host ::ng-deep .maplibregl-popup {
+  max-width: none !important;
 }
 
 :host ::ng-deep .popup-btn {
@@ -65,4 +71,8 @@
 
 :host ::ng-deep .maplibregl-popup-tip {
   border-top-color: #1a2f4a;
+}
+
+:host ::ng-deep .maplibregl-ctrl-bottom-right {
+  bottom: 64px;
 }

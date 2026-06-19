@@ -103,6 +103,7 @@
             </button>
         </div>
     </ng-template>
+    <hr class="header-divider" />
     <app-all-attractions></app-all-attractions>
 </p-drawer>
 
@@ -124,6 +125,8 @@
                 <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
                 @if (attractionDetailSource() === 'things-to-do') {
                     {{ 'trip.planner.thingsToDo.backToList' | translate }}
+                } @else if (attractionDetailSource() === 'trip-planner') {
+                    {{ 'trip.planner.backToPlanner' | translate }}
                 } @else {
                     {{ 'attractions.backToAttractions' | translate }}
                 }
@@ -133,6 +136,7 @@
             </button>
         </div>
     </ng-template>
+    <hr class="header-divider" />
     <app-attraction-detail></app-attraction-detail>
 </p-drawer>
 
@@ -159,6 +163,7 @@
             </button>
         </div>
     </ng-template>
+    <hr class="header-divider" />
     <app-things-to-do></app-things-to-do>
 </p-drawer>
 
@@ -177,18 +182,19 @@
     <ng-template #header>
         <div class="weather-drawer-header">
             <div class="weather-drawer-top-row">
-                <button class="dest-back" type="button" (click)="onWeatherBack()">
+                <button class="menu-close" type="button" (click)="onWeatherBack()">
+                    <i class="fa-regular fa-chevron-left"></i>
+                </button>
+                <!-- <button class="dest-back" type="button" (click)="onWeatherBack()">
                     <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
                     {{ 'weather.backToDestination' | translate }}
-                </button>
-                <button class="menu-close" type="button" (click)="onDrawerClose('weather')">
-                    <i class="fa-solid fa-xmark"></i>
-                </button>
+                </button>    -->
             </div>
             <h2 class="weather-location-name">{{ weatherLocationName() }}</h2>
             <span class="weather-forecast-label">7-DAY FORECAST</span>
         </div>
     </ng-template>
+    <hr class="header-divider" />
     <app-weather></app-weather>
 </p-drawer>
 
@@ -206,14 +212,16 @@
     styleClass="dest-drawer tp-drawer">
     <ng-template #header>
         <div class="dest-header">
+            <button class="menu-close" type="button" (click)="onDrawerClose('trip-planner')">
+                <i class="fa-regular fa-chevron-left"></i>
+            </button>
             <div class="menu-brand-text tp-header-brand">
+                <i class="fa-light fa-route"></i>
                 <span class="menu-brand-name">{{ 'trip.planner.title' | translate }}</span>
             </div>
-            <button class="menu-close" type="button" (click)="onDrawerClose('trip-planner')">
-                <i class="fa-solid fa-xmark"></i>
-            </button>
         </div>
     </ng-template>
+    <hr class="header-divider" />
     <app-trip-planner></app-trip-planner>
 </p-drawer>
 
@@ -238,5 +246,6 @@
             </button>
         </div>
     </ng-template>
+    <hr class="header-divider" />
     <app-destination-detail></app-destination-detail>
 </p-drawer>

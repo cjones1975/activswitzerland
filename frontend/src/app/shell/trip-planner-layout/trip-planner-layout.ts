@@ -8,6 +8,7 @@ import { LangService } from '../../shared/services/lang';
 import { Destination } from '../../models/destination';
 import { MapComponent } from '../../shared/map/map';
 import type { MapMarker } from '../../shared/map/map';
+import { AttractionMarkersService } from '../../shared/services/attraction-markers';
 import { Drawer } from '../../shared/services/drawer';
 import { TripPlannerService } from '../../shared/services/trip-planner';
 import { hasValidGeo } from '../../shared/services/attraction-markers';
@@ -29,8 +30,10 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   protected drawer = inject(Drawer);
   private destroyRef = inject(DestroyRef);
   private tripPlanner = inject(TripPlannerService);
+  private attractionMarkers = inject(AttractionMarkersService);
 
-  center = signal<[number, number] | undefined>(undefined);
+  center = signal<[number, number] | undefined>([8.2275, 46.8182]);
+  mapZoom = signal(7);
   destination = signal<Destination | null>(null);
 
   tripRoute = signal<[number, number][] | null>(null);
@@ -51,11 +54,13 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
         markers.push({
           lng: attraction.geo.longitude,
           lat: attraction.geo.latitude,
-          icon: 'fa-solid fa-map-pin',
-          color: '#dc0015',
+          // icon: 'fa-solid fa-map-pin',
+          icon: 'fa-solid fa-location-dot',
+          color: '#1a2f4a',
           className: 'trip-attraction-marker',
           label: attraction.name,
           id: attraction.identifier,
+          clickable: true,
         });
       }
     }
@@ -65,6 +70,16 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   /** Ordered [lon, lat] pairs for each planned stop, passed to the map for marker rendering. */
   tripStopPoints = computed<[number, number][]>(() =>
     this.trip()?.stops.map(s => [s.lon, s.lat] as [number, number]) ?? []
+  );
+
+  /** Route shown on the map — hidden while the trip-planner drawer is open (only revealed on Save/View). */
+  displayedTripRoute = computed<[number, number][] | null>(() =>
+    this.drawer.isOpen('trip-planner') ? null : this.tripRoute()
+  );
+
+  /** Stop markers shown on the map — hidden while the trip-planner drawer is open. */
+  displayedTripStopPoints = computed<[number, number][]>(() =>
+    this.drawer.isOpen('trip-planner') ? [] : this.tripStopPoints()
   );
 
   /** Full route coordinates when the drawer collapses so the map can fit the entire route, including round trips. */
@@ -88,6 +103,7 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
           if (!this.route.snapshot.paramMap.get('id') && coords.length) {
             const lons = coords.map(c => c[0]);
             const lats = coords.map(c => c[1]);
+            this.mapZoom.set(10);
             this.center.set([
               (Math.min(...lons) + Math.max(...lons)) / 2,
               (Math.min(...lats) + Math.max(...lats)) / 2,
@@ -117,6 +133,7 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
       this.destination.set(dest);
       if (dest) {
         if (dest.geo?.latitude && dest.geo?.longitude) {
+          this.mapZoom.set(12);
           this.center.set([dest.geo.longitude, dest.geo.latitude]);
         }
         this.drawer.open('trip-planner', dest.name);
@@ -124,6 +141,14 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
         this.drawer.open('trip-planner');
       }
     });
+  }
+
+  onAttractionMarkerClick(marker: MapMarker): void {
+    if (!marker.id) return;
+    const attraction = this.tripPlanner.getAttraction(marker.id);
+    if (!attraction) return;
+    this.drawer.close('trip-planner');
+    this.drawer.open('attraction-detail', { attraction, source: 'trip-planner' });
   }
 
   backToDestination(): void {

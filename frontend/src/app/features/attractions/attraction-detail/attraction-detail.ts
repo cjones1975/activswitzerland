@@ -16,7 +16,7 @@ export interface AttractionDetailPayload {
   attraction: Attraction;
   destination?: Destination;
   stop?: TripStop;
-  source: 'destination-detail' | 'all-attractions' | 'things-to-do';
+  source: 'destination-detail' | 'all-attractions' | 'things-to-do' | 'trip-planner';
 }
 
 const LANG_NAMES: Record<string, string> = {

@@ -60,8 +60,16 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       style: this.style,
       center: this.center ?? this.calcCenter(),
       zoom: this.zoom,
+      // rollEnabled: true,
       attributionControl: false,
     });
+
+    this.map.addControl(new maplibregl.NavigationControl({
+    visualizePitch: true,
+    //visualizeRoll: true,
+    showZoom: true,
+    showCompass: true
+}), 'bottom-right');
 
     this.map.on('load', () => {
       this.map?.resize();
