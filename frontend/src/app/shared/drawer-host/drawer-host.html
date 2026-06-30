@@ -95,7 +95,7 @@
     <ng-template #header>
         <div class="dest-header">
             <button class="dest-back" type="button" (click)="onAllAttractionsBack()">
-                <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
+                <i class="fa-regular fa-chevron-left"></i>
                 {{ 'attractions.backToDestination' | translate: { name: allAttractionsDestinationName() } }}
             </button>
             <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('all-attractions')">
@@ -122,7 +122,7 @@
     <ng-template #header>
         <div class="dest-header">
             <button class="dest-back" type="button" (click)="onAttractionDetailBack()">
-                <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
+                <i class="fa-regular fa-chevron-left"></i>
                 @if (attractionDetailSource() === 'things-to-do') {
                     {{ 'trip.planner.thingsToDo.backToList' | translate }}
                 } @else if (attractionDetailSource() === 'trip-planner') {
@@ -238,7 +238,7 @@
     <ng-template #header>
         <div class="dest-header">
             <button class="dest-back" type="button" (click)="onDestinationBack()">
-                <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
+                <i class="fa-regular fa-chevron-left"></i>
                 {{ 'destinations.detail.back' | translate }}
             </button>
             <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onDrawerClose('destination-detail')">

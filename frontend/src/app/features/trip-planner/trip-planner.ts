@@ -66,8 +66,8 @@ export class TripPlanner {
 
   // ── Trip type toggle ──────────────────────────────────────────────────────
   tripTypes = [
-    { label: 'trip.planner.typeRoad', value: 'road', icon: 'fa-regular fa-car' },
-    { label: 'trip.planner.typeRail', value: 'rail', icon: 'fa-regular fa-train' },
+    { label: 'trip.planner.typeRoad', value: 'road', icon: 'fa-regular fa-road' },
+    { label: 'trip.planner.typeRail', value: 'rail', icon: 'fa-regular fa-train-track' },
   ];
   selectedType = signal<'road' | 'rail'>('road');
 

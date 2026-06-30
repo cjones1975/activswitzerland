@@ -13,7 +13,9 @@
     "tripplanner": "Reiseplaner",
     "profile": "Profil",
     "login": "Anmelden",
-    "logout": "Abmelden"
+    "logout": "Abmelden",
+    "close": "Schliessen",
+    "showOnMap": "Auf Karte anzeigen"
   },
   "auth": {
     "toast": {
@@ -49,6 +51,7 @@
   "trip": {
     "planner": {
       "title": "Reise planen",
+      "subtitle": "Planen Sie eine Route per Bahn oder Auto, finden Sie Verbindungen und entdecken Sie Aktivitäten an jedem Ziel.",
       "typeRoad": "Autoreise",
       "typeRail": "Bahnreise",
       "from": "Von",
@@ -168,10 +171,6 @@
       "open": "Zurück zu {{name}}"
     }
   },
-  "nav": {
-    "close": "Schliessen",
-    "showOnMap": "Auf Karte anzeigen"
-  },
   "attractions": {
     "title": "Beliebte Attraktionen",
     "titleFallback": "Attraktionen",
@@ -214,7 +213,7 @@
   "hero": {
     "badge": "Das Beste der Schweiz",
     "title": "Willkommen in der Schweiz",
-    "subtitle": "Entdecken Sie Tagesausflüge, Wahrzeichen und versteckte Juwelen — von Ihrem Standort aus.",
+    "subtitle": "Entdecken Sie Tagesausflüge, Wahrzeichen und versteckte Juwelen.",
     "cta": "Reise planen",
     "stats": {
       "attractions": "Attraktionen",

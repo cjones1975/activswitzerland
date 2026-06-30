@@ -13,7 +13,9 @@
     "tripplanner": "Trip Planner",
     "profile": "Profile",
     "login": "Log In",
-    "logout": "Log out"
+    "logout": "Log out",
+    "close": "Close",
+    "showOnMap": "Show on map"
   },
   "auth": {
     "toast": {
@@ -49,6 +51,7 @@
   "trip": {
     "planner": {
       "title": "Plan a Trip",
+      "subtitle": "Plan a route by rail or road, find connections, and discover things to do at each destination.",
       "typeRoad": "Road Trip",
       "typeRail": "Rail Trip",
       "from": "From",
@@ -193,10 +196,6 @@
       "noResults": "I'm sorry, we couldn't find any attractions matching your search query. Please try another keyword."
     }
   },
-  "nav": {
-    "close": "Close",
-    "showOnMap": "Show on map"
-  },
   "weather": {
     "today": "Today's weather",
     "seeForecast": "7 day forecast",
@@ -214,7 +213,7 @@
   "hero": {
     "badge": "Switzerland's finest experiences",
     "title": "Welcome to Switzerland",
-    "subtitle": "Discover day trips, iconic landmarks, and hidden gems — all from where you are.",
+    "subtitle": "Discover day trips, iconic landmarks, and hidden gems.",
     "cta": "Plan a trip",
     "stats": {
       "attractions": "Attractions",

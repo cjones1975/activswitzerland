@@ -36,6 +36,13 @@
   gap: 0.4rem;
 }
 
+.tp-subtitle {
+  font-size: 0.85rem;
+  color: var(--navy-600);
+  margin: -0.25rem 0 1rem;
+  line-height: 1.5;
+}
+
 .tp-step-hint {
   background: var(--navy-100);
 }

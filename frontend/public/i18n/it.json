@@ -13,7 +13,9 @@
     "tripplanner": "Pianificatore di viaggio",
     "profile": "Profilo",
     "login": "Accedi",
-    "logout": "Esci"
+    "logout": "Esci",
+    "close": "Chiudi",
+    "showOnMap": "Mostra sulla mappa"
   },
   "auth": {
     "toast": {
@@ -49,6 +51,7 @@
   "trip": {
     "planner": {
       "title": "Pianifica un viaggio",
+      "subtitle": "Pianifica un percorso in treno o in auto, trova coincidenze e scopri cosa fare in ogni destinazione.",
       "typeRoad": "Viaggio in auto",
       "typeRail": "Viaggio in treno",
       "from": "Da",
@@ -168,10 +171,6 @@
       "open": "Torna a {{name}}"
     }
   },
-  "nav": {
-    "close": "Chiudi",
-    "showOnMap": "Mostra sulla mappa"
-  },
   "attractions": {
     "title": "Attrazioni popolari",
     "titleFallback": "Attrazioni",
@@ -214,7 +213,7 @@
   "hero": {
     "badge": "Il meglio della Svizzera",
     "title": "Benvenuto in Svizzera",
-    "subtitle": "Scopri gite giornaliere, luoghi iconici e gemme nascoste — da dove sei.",
+    "subtitle": "Scopri gite giornaliere, luoghi iconici e gemme nascoste.",
     "cta": "Pianifica un viaggio",
     "stats": {
       "attractions": "Attrazioni",

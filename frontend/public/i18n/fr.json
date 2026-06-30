@@ -13,7 +13,9 @@
     "tripplanner": "Planificateur de voyage",
     "profile": "Profil",
     "login": "Connexion",
-    "logout": "Se déconnecter"
+    "logout": "Se déconnecter",
+    "close": "Fermer",
+    "showOnMap": "Afficher sur la carte"
   },
   "auth": {
     "toast": {
@@ -49,6 +51,7 @@
   "trip": {
     "planner": {
       "title": "Planifier un voyage",
+      "subtitle": "Planifiez un itinéraire en train ou en voiture, trouvez des correspondances et découvrez des activités à chaque destination.",
       "typeRoad": "Road trip",
       "typeRail": "Voyage en train",
       "from": "Depuis",
@@ -168,10 +171,6 @@
       "open": "Retour à {{name}}"
     }
   },
-  "nav": {
-    "close": "Fermer",
-    "showOnMap": "Afficher sur la carte"
-  },
   "attractions": {
     "title": "Attractions populaires",
     "titleFallback": "Attractions",
@@ -214,7 +213,7 @@
   "hero": {
     "badge": "Le meilleur de la Suisse",
     "title": "Bienvenue en Suisse",
-    "subtitle": "Découvrez des excursions, des sites incontournables et des trésors cachés — depuis votre point de départ.",
+    "subtitle": "Découvrez des excursions, des sites incontournables et des trésors cachés.",
     "cta": "Planifier un voyage",
     "stats": {
       "attractions": "Attractions",
