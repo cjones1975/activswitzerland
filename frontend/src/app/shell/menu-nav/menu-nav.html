@@ -6,9 +6,9 @@
             <span class="nav-item-label">{{ 'nav.home' | translate }}</span>
             <i class="pi pi-chevron-right nav-chevron"></i>
         </li>
-        <li class="nav-item">
+        <li class="nav-item" routerLink="/explore-trips" (click)="closeMenu()">
             <div class="nav-icon-box"><i class="pi pi-compass"></i></div>
-            <span class="nav-item-label">{{ 'nav.explore' | translate }}</span>
+            <span class="nav-item-label">{{ 'nav.exploreTrips' | translate }}</span>
             <i class="pi pi-chevron-right nav-chevron"></i>
         </li>
         <li class="nav-item" routerLink="/trip-planner" (click)="closeMenu()">

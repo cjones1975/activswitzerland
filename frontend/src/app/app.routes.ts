@@ -5,6 +5,7 @@ import { DestinationVerticalList } from './features/destinations/destination-ver
 import { DestinationsLayout } from './shell/destinations-layout/destinations-layout';
 import { TripPlannerLayout } from './shell/trip-planner-layout/trip-planner-layout';
 import { Profile } from './features/auth/profile/profile';
+import { ExploreTrips } from './features/explore-trips/explore-trips';
 import { authGuard } from './core/guards/auth';
 
 export const routes: Routes = [
@@ -17,6 +18,7 @@ export const routes: Routes = [
       { path: 'destinations/:id', component: DestinationsLayout },
       { path: 'trip-planner', component: TripPlannerLayout },
       { path: 'trip-planner/:id', component: TripPlannerLayout },
+      { path: 'explore-trips', component: ExploreTrips },
     ]
   },
   { path: 'auth', redirectTo: '', pathMatch: 'full' },

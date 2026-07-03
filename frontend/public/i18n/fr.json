@@ -9,7 +9,7 @@
   "nav": {
     "navigation": "NAVIGATION",
     "home": "Accueil",
-    "explore": "Explorer",
+    "exploreTrips": "Explorer les voyages",
     "tripplanner": "Planificateur de voyage",
     "profile": "Profil",
     "login": "Connexion",
