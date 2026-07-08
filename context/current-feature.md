@@ -2,11 +2,26 @@
 
 ## Feature
 
+Destination Detail Fixes (2)
+
 ## Status
+
+Specced — `context/features/dest-detail-fixes2-spec.md` created; no feature branch yet.
 
 ## Goals
 
+1. Hide all attraction UI (top-attractions list, "see all" link, map reopen buttons) on `destination-detail` when a destination has zero attractions.
+2. Destination-detail map shows only a single red, larger "destination" pin; attraction pins only render while the user is actually browsing the all-attractions list (open, collapsed-to-map, or viewing an attraction reached from that list).
+3. `.action-grid`'s "Plan a Trip" and weather boxes go side by side (equal height, driven by the taller weather box) instead of stacked.
+4. "Back to destinations" returns to the category (cities / mountains-lakes / nature-parks) the user came from, via a `?category=` query param carried through destination-card links, instead of always defaulting to City Breaks.
+5. "Plan a Trip" → road trips seed the 'to' stop directly from the destination's own coordinates (bypassing the address search), so mountain/lake/glacier destinations without a matching street address still prefill — OSRM's driving router snaps to the nearest reachable road on its own. Rail (nearest-station lookup) is deferred.
+
 ## Notes
+
+- Prompted by adding Mountains, Lakes & Glaciers and Nature Parks categories to the homepage (`context/features/home-categories-spec.md`).
+- Item 2 design choice: rather than clearing `AttractionMarkersService` when leaving all-attractions (which would break its lazy-reload-skip-if-same-destination logic), marker *visibility* is gated in `DestinationsLayout.displayMarkers`/`showAttractionMarkers` — the underlying service data is left alone.
+- Item 4 needs no new state: `category` just rides along in the URL from category-list → destination-detail → back; `DrawerHost.onDestinationBack()` reads it via `Router.parseUrl(this.router.url)` rather than injecting `ActivatedRoute` (avoids DI-scope ambiguity since `DrawerHost` isn't inside the router-outlet tree).
+- Item 5 scoped to road only per user request; rail nearest-station lookup explicitly deferred, to be revisited later.
 
 ## History
 
@@ -146,3 +161,8 @@
 - `destination-horizontal-list.ts/html`: added `viewAllQueryParams` input, bound alongside `routerLink` on the "View all" link
 - `destination-vertical-list.ts/html`: now reads `?category=` via `ActivatedRoute`, resolves `CategoryConfig` from `DESTINATION_CATEGORIES` (defaults to `cities`), holds it in a signal, re-fetches on category/language change, and drives title/subtitle/card badge/map icon from the config; removed the now-unused static `@Input()`s
 - `en/de/fr/it.json`: added `destinations.mountains` and `destinations.natureParks` keys (title/subtitle/count) in all four locales
+
+### 2026-07-08 — Destination Detail Fixes 2 Specced
+
+- Specced 5 fixes to `destination-detail`/map/drawer/trip-planner chrome, prompted by the new home-page categories: (1) hide attraction UI when a destination has 0 attractions; (2) destination-detail map shows only a red/bigger destination pin, attraction pins gated to the all-attractions context; (3) Plan Trip/weather boxes side by side via a two-column `.action-grid`; (4) dynamic "back to destinations" via a `?category=` query param carried through destination links; (5) road-trip prefill seeded from the destination's own `dest.geo` instead of an address search (fixes mountain/lake/glacier destinations with no street address) — rail nearest-station lookup deferred
+- Created `context/features/dest-detail-fixes2-spec.md`; no feature branch created yet
