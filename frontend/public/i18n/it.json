@@ -163,6 +163,16 @@
       "title": "Soggiorni in città",
       "subtitle": "Scopri la Svizzera una città alla volta"
     },
+    "mountains": {
+      "title": "Montagne, Laghi & Ghiacciai",
+      "subtitle": "Scopri i paesaggi alpini della Svizzera",
+      "count": "{{count}} destinazioni"
+    },
+    "natureParks": {
+      "title": "Parchi naturali",
+      "subtitle": "Esplora gli habitat naturali protetti della Svizzera",
+      "count": "{{count}} destinazioni"
+    },
     "detail": {
       "back": "Torna alle destinazioni",
       "visit": "Visita la pagina ufficiale",

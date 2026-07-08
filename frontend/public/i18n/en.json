@@ -163,6 +163,16 @@
       "title": "City Breaks",
       "subtitle": "Discover Switzerland one city at a time"
     },
+    "mountains": {
+      "title": "Mountains, Lakes & Glaciers",
+      "subtitle": "Discover Switzerland's alpine landscapes",
+      "count": "{{count}} destinations"
+    },
+    "natureParks": {
+      "title": "Nature Parks",
+      "subtitle": "Explore Switzerland's protected natural habitats",
+      "count": "{{count}} destinations"
+    },
     "detail": {
       "back": "Back to destinations",
       "visit": "Visit official page",

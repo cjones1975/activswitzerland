@@ -2,7 +2,7 @@
   <div class="list-header-top">
     <h2 class="list-title">{{ title | translate }}</h2>
     @if (viewAllRoute) {
-      <a class="view-all" [routerLink]="viewAllRoute">{{ 'destinations.viewAll' | translate }}</a>
+      <a class="view-all" [routerLink]="viewAllRoute" [queryParams]="viewAllQueryParams">{{ 'destinations.viewAll' | translate }}</a>
     }
   </div>
   <p class="list-subtitle">{{ subTitle | translate }}</p>

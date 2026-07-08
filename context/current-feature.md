@@ -132,3 +132,17 @@
 - `trip-planner.ts`: imported `DragDropModule`, `CdkDragDrop`, `moveItemInArray`; added `reorderStop(event)` handler — clamps drop index to via-stop range (1..n-2), moves both `stops` and `stopSuggestions` in sync, then calls `onStopsChanged()`
 - `trip-planner.html`: `cdkDropList` + `(cdkDropListDropped)` on `.stop-list`; `cdkDrag` + `[cdkDragDisabled]` (disabled for origin, destination, and while loading) on each row; `cdkDragHandle` grip icon shown only for via stops; `*cdkDragPreview` shows stop name with grip icon; `*cdkDragPlaceholder` renders dashed empty slot
 - `trip-planner.css`: `.stop-drag-handle` (grab cursor, right-aligned); `.stop-drag-preview` (white card + box-shadow); `.stop-drag-placeholder` (dashed border); CDK animation transitions
+
+### 2026-07-03 — Home Categories Specced
+
+- Specced two new home page destination sections (Mountains, Lakes & Glaciers; Nature Parks) alongside the existing City Breaks section, all sharing `DestinationHorizontalList`
+- New `destination-category.ts` model (`CategoryKey`/`CategoryConfig`/`DESTINATION_CATEGORIES`) to centralize per-category facets, copy keys, and map icon; `DestinationVerticalList` to become dynamic via `?category=` query param instead of static `@Input()`s
+- Created `context/features/home-categories-spec.md`; no feature branch created yet
+
+### 2026-07-08 — Home Categories Implemented
+
+- `models/destination-category.ts`: new model with `CategoryKey` type, `CategoryConfig` interface, and `DESTINATION_CATEGORIES` record (`cities`/`mountains-lakes`/`nature-parks`) centralizing facets, title/subtitle/pageSubtitle copy keys, card title, and map icon per category
+- `home.html`/`home.css`: replaced `.destinations-section` with banded `.home-section`/`.section-inner` layout; three `DestinationHorizontalList` sections (City Breaks, Mountains/Lakes/Glaciers, Nature Parks) with alternating white/`#f5f6f7` backgrounds and `viewAllQueryParams` carrying `?category=`
+- `destination-horizontal-list.ts/html`: added `viewAllQueryParams` input, bound alongside `routerLink` on the "View all" link
+- `destination-vertical-list.ts/html`: now reads `?category=` via `ActivatedRoute`, resolves `CategoryConfig` from `DESTINATION_CATEGORIES` (defaults to `cities`), holds it in a signal, re-fetches on category/language change, and drives title/subtitle/card badge/map icon from the config; removed the now-unused static `@Input()`s
+- `en/de/fr/it.json`: added `destinations.mountains` and `destinations.natureParks` keys (title/subtitle/count) in all four locales

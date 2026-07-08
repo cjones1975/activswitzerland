@@ -31,12 +31,39 @@
         </div>
     </div>
 </section>
-<div class="destinations-section">
-  <app-destination-horizontal-list
-    cardTitle="City"
-    title="destinations.cityBreaks.title"
-    subTitle="destinations.cityBreaks.subtitle"
-    facet="placetypes:cities"
-    viewAllRoute="/destinations">
-  </app-destination-horizontal-list>
+<div class="home-section">
+  <div class="section-inner">
+    <app-destination-horizontal-list
+      cardTitle="City"
+      title="destinations.cityBreaks.title"
+      subTitle="destinations.cityBreaks.subtitle"
+      facet="placetypes:cities"
+      viewAllRoute="/destinations"
+      [viewAllQueryParams]="{ category: 'cities' }">
+    </app-destination-horizontal-list>
+  </div>
+</div>
+<div class="home-section home-section--gray">
+  <div class="section-inner">
+    <app-destination-horizontal-list
+      cardTitle="Mountain"
+      title="destinations.mountains.title"
+      subTitle="destinations.mountains.subtitle"
+      facet="[placetypes:mountains,placetypes:mountainpasses,placetypes:glaciers,placetypes:mountainlakes,placetypes:smalllakes,placetypes:biglakes,placetypes:lakes]"
+      viewAllRoute="/destinations"
+      [viewAllQueryParams]="{ category: 'mountains-lakes' }">
+    </app-destination-horizontal-list>
+  </div>
+</div>
+<div class="home-section">
+  <div class="section-inner">
+    <app-destination-horizontal-list
+      cardTitle="Nature Park"
+      title="destinations.natureParks.title"
+      subTitle="destinations.natureParks.subtitle"
+      facet="[placetypes:natureparks,placetypes:wildlifeparks]"
+      viewAllRoute="/destinations"
+      [viewAllQueryParams]="{ category: 'nature-parks' }">
+    </app-destination-horizontal-list>
+  </div>
 </div>

@@ -4,8 +4,8 @@
   </div>
 
   <div class="list-header">
-    <h1 class="list-title">{{ title | translate }}</h1>
-    <p class="list-subtitle">{{ subTitle | translate: { count: destinations.length } }}</p>
+    <h1 class="list-title">{{ config().title | translate }}</h1>
+    <p class="list-subtitle">{{ config().pageSubtitle | translate: { count: destinations.length } }}</p>
   </div>
 
   <div class="card-list">
@@ -19,7 +19,7 @@
       @for (dest of destinations; track dest.identifier) {
         <a class="destination-card" [routerLink]="['/destinations', dest.identifier]">
           <div class="card-photo" [style.background-image]="'url(' + dest.photo + ')'">
-            <span class="card-type">{{ cardTitle }}</span>
+            <span class="card-type">{{ config().cardTitle }}</span>
             <span class="card-name">{{ dest.name }}</span>
           </div>
           <div class="card-text">

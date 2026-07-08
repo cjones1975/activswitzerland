@@ -163,6 +163,16 @@
       "title": "Séjours en ville",
       "subtitle": "Découvrez la Suisse une ville à la fois"
     },
+    "mountains": {
+      "title": "Montagnes, Lacs & Glaciers",
+      "subtitle": "Découvrez les paysages alpins de la Suisse",
+      "count": "{{count}} destinations"
+    },
+    "natureParks": {
+      "title": "Parcs naturels",
+      "subtitle": "Explorez les habitats naturels protégés de la Suisse",
+      "count": "{{count}} destinations"
+    },
     "detail": {
       "back": "Retour aux destinations",
       "visit": "Visiter la page officielle",

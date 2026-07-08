@@ -146,7 +146,15 @@
     }
 }
 
-.destinations-section {
+.home-section {
+    background: #ffffff;
+}
+
+.home-section--gray {
+    background: #f5f6f7;
+}
+
+.section-inner {
     max-width: 2000px;
     margin: 0 auto;
     padding: 2rem 1.5rem 2.5rem;

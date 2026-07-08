@@ -21,6 +21,7 @@ export class DestinationHorizontalList implements OnInit {
   @Input() subTitle = '';
   @Input() facet = '';
   @Input() viewAllRoute = '';
+  @Input() viewAllQueryParams: Record<string, string> = {};
 
   private destinationsService = inject(DestinationsService);
   private translate = inject(TranslateService);

@@ -163,6 +163,16 @@
       "title": "Städtereisen",
       "subtitle": "Entdecken Sie die Schweiz Stadt für Stadt"
     },
+    "mountains": {
+      "title": "Berge, Seen & Gletscher",
+      "subtitle": "Entdecken Sie die alpinen Landschaften der Schweiz",
+      "count": "{{count}} Reiseziele"
+    },
+    "natureParks": {
+      "title": "Naturparks",
+      "subtitle": "Erkunden Sie die geschützten Naturgebiete der Schweiz",
+      "count": "{{count}} Reiseziele"
+    },
     "detail": {
       "back": "Zurück zu den Reisezielen",
       "visit": "Offizielle Seite besuchen",

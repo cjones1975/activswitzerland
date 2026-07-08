@@ -1,13 +1,14 @@
-import { Component, DestroyRef, ElementRef, Input, OnInit, ViewChild, inject, signal } from '@angular/core';
+import { Component, DestroyRef, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { startWith, switchMap, tap } from 'rxjs';
+import { combineLatest, startWith, switchMap, tap } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { DestinationsService } from '../../../shared/services/destinations';
 import { LangService } from '../../../shared/services/lang';
 import { Destination } from '../../../models/destination';
 import { MapComponent, MapMarker } from '../../../shared/map/map';
+import { CategoryConfig, CategoryKey, DESTINATION_CATEGORIES } from '../../../models/destination-category';
 
 @Component({
   selector: 'app-destination-vertical-list',
@@ -17,13 +18,9 @@ import { MapComponent, MapMarker } from '../../../shared/map/map';
   styleUrl: './destination-vertical-list.css',
 })
 export class DestinationVerticalList implements OnInit {
-  @Input() cardTitle = 'City';
-  @Input() title = 'destinations.allCities.title';
-  @Input() subTitle = 'destinations.allCities.subtitle';
-  @Input() facet = 'placetypes:cities';
-
   @ViewChild('mapSection') mapSectionRef!: ElementRef<HTMLDivElement>;
 
+  private route = inject(ActivatedRoute);
   private destinationsService = inject(DestinationsService);
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
@@ -33,25 +30,34 @@ export class DestinationVerticalList implements OnInit {
   loading = signal(true);
   skeletons = Array(6);
   mapMarkers = signal<MapMarker[]>([]);
+  config = signal<CategoryConfig>(DESTINATION_CATEGORIES.cities);
 
   ngOnInit(): void {
-    this.translate.onLangChange.pipe(
-      startWith({ lang: this.langSvc.current }),
-      tap(() => this.loading.set(true)),
-      switchMap(event => this.destinationsService.getDestinations({
+    combineLatest([
+      this.route.queryParamMap,
+      this.translate.onLangChange.pipe(startWith({ lang: this.langSvc.current })),
+    ]).pipe(
+      tap(([params]) => {
+        const category = params.get('category') as CategoryKey | null;
+        const config = (category && DESTINATION_CATEGORIES[category]) || DESTINATION_CATEGORIES.cities;
+        this.config.set(config);
+        this.loading.set(true);
+      }),
+      switchMap(([, event]) => this.destinationsService.getDestinations({
         language: event.lang,
         page: 0,
         hitsPerPage: 50,
-        facets: this.facet,
+        facets: this.config().facets,
         expand: false,
       })),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(hits => {
       this.destinations = hits;
+      const icon = this.config().mapIcon;
       this.mapMarkers.set(
         hits
           .filter(d => d.geo?.latitude && d.geo?.longitude)
-          .map(d => ({ lng: d.geo.longitude, lat: d.geo.latitude, label: d.name }))
+          .map(d => ({ lng: d.geo.longitude, lat: d.geo.latitude, label: d.name, icon }))
       );
       this.loading.set(false);
     });
