@@ -16,7 +16,7 @@
     }
   } @else {
     @for (dest of destinations; track dest.identifier) {
-      <a class="destination-card" [routerLink]="['/destinations', dest.identifier]" [style.background-image]="'url(' + dest.photo + ')'">
+      <a class="destination-card" [routerLink]="['/destinations', dest.identifier]" [queryParams]="categoryKey ? { category: categoryKey } : {}" [style.background-image]="'url(' + dest.photo + ')'">
         <span class="card-type">{{ cardTitle }}</span>
         <span class="card-name">{{ dest.name }}</span>
       </a>

@@ -7,6 +7,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { DestinationsService } from '../../../shared/services/destinations';
 import { LangService } from '../../../shared/services/lang';
 import { Destination } from '../../../models/destination';
+import { CategoryKey } from '../../../models/destination-category';
 
 @Component({
   selector: 'app-destination-horizontal-list',
@@ -22,6 +23,7 @@ export class DestinationHorizontalList implements OnInit {
   @Input() facet = '';
   @Input() viewAllRoute = '';
   @Input() viewAllQueryParams: Record<string, string> = {};
+  @Input() categoryKey: CategoryKey | '' = '';
 
   private destinationsService = inject(DestinationsService);
   private translate = inject(TranslateService);

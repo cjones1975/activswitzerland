@@ -88,8 +88,14 @@
 /* Action grid: Plan a Trip (top), Weather (bottom) */
 .action-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: 1fr 1fr;
   gap: 0.875rem;
+}
+
+@media (max-width: 400px) {
+  .action-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 .plan-card {

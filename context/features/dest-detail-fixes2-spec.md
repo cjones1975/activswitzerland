@@ -2,13 +2,15 @@
 
 ## Overview
 
-Five fixes to `destination-detail` and its surrounding map/drawer/trip-planner chrome, prompted by adding the Mountains, Lakes & Glaciers and Nature Parks categories to the homepage:
+Seven fixes to `destination-detail` and its surrounding map/drawer/trip-planner chrome, prompted by adding the Mountains, Lakes & Glaciers and Nature Parks categories to the homepage:
 
 1. Hide all attraction UI (top-attractions list, "see all" link) when a destination has zero attractions.
 2. The destination-detail map should only ever show a single red, larger "destination" pin. Attraction pins are only added while the user is actually browsing the all-attractions list (open or collapsed-to-map).
 3. `.action-grid`'s "Plan a Trip" and weather boxes sit side by side instead of stacked, with equal height driven by the taller (weather) box.
 4. "Back to destinations" returns to the category (cities / mountains-lakes / nature-parks) the user actually came from, instead of always defaulting to City Breaks.
 5. "Plan a Trip" → road-trip seeds the 'to' stop directly from the destination's own coordinates instead of a live address search, so mountain/lake/glacier destinations (which usually have no matching street address) still prefill correctly — OSRM's road router snaps to the nearest reachable road on its own.
+6. If OSRM can't find a road close enough to that destination at all, show a clear message and block the user from proceeding past the stops step.
+7. The pre-filled 'to' stop from item 5 is now locked (non-editable, no remove button) — the user picked that destination deliberately, so clearing/retyping it would be a dead end (mountain/lake/glacier names aren't searchable).
 
 The **rail** half of item 5 (nearest-station lookup for destinations with no real station) is intentionally out of scope — still under discussion, no implementation direction agreed yet.
 
@@ -406,6 +408,125 @@ No changes to `TransportService`, `TripPlannerService`, or the rail path — `ge
 
 ---
 
+## 6. OSRM "no road close enough" blocks the stops step
+
+Today `TripPlannerService.buildRoadRoute()` silently resolves to `[]` when OSRM returns a non-`Ok` `code` (`NoRoute`, or `NoSegment` when a coordinate is outside OSRM's snap radius — the case a truly remote mountain/glacier coordinate can hit). The map just shows no route and the user can still proceed past the stops step. Fix: surface that as a distinct, blocking condition.
+
+`@frontend/src/app/shared/services/trip-planner.ts`:
+
+```typescript
+buildRoadRoute(stops: TripStop[]): Observable<[number, number][]> {
+  if (stops.length < 2) return of([]);
+  const coords = stops.map(s => `${s.lon},${s.lat}`).join(';');
+  const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
+  return this.http.get<any>(url).pipe(
+    map(res => {
+      if (res.code !== 'Ok' || !res.routes?.[0]) {
+        throw new Error('NO_ROAD_ROUTE');
+      }
+      return res.routes[0].geometry.coordinates;
+    }),
+  );
+}
+```
+
+`@frontend/src/app/features/trip-planner/trip-planner.ts`:
+
+- Add a `routeUnreachable` signal alongside the existing `routeError`, distinguish it in the road branch's error handler, and block `canGoNext`/surface it via `nextHint` on the stops step:
+
+```typescript
+routeUnreachable = signal(false);
+```
+
+```typescript
+if (this.selectedType() === 'road') {
+  this.routeLoading.set(true);
+  this.routeError.set(false);
+  this.routeUnreachable.set(false);
+  this.plannerSvc.buildRoadRoute(valid)
+    .pipe(takeUntilDestroyed(this.destroyRef))
+    .subscribe({
+      next: coords => {
+        this.plannerSvc.setRouteCoordinates(coords);
+        this.routeLoading.set(false);
+      },
+      error: (err) => {
+        this.plannerSvc.setRouteCoordinates([]);
+        this.routeLoading.set(false);
+        if (err instanceof Error && err.message === 'NO_ROAD_ROUTE') {
+          this.routeUnreachable.set(true);
+        } else {
+          this.routeError.set(true);
+        }
+      },
+    });
+```
+
+```typescript
+readonly canGoNext = computed(() => {
+  switch (this.currentStep()) {
+    case 'stops':      return this.validStops().length >= 2 && !this.routeUnreachable();
+    // ...unchanged
+  }
+});
+
+readonly nextHint = computed<string | null>(() => {
+  if (this.canGoNext()) return null;
+  switch (this.currentStep()) {
+    case 'stops':      return this.routeUnreachable() ? 'trip.planner.routeUnreachable' : 'trip.planner.hints.selectStops';
+    // ...unchanged
+  }
+});
+```
+
+- `onTypeChange()` also resets `routeError`/`routeUnreachable` to `false` (previously neither was reset there — stale from a prior road attempt could otherwise linger after switching to rail and back).
+
+`@frontend/src/app/features/trip-planner/trip-planner.html` — new branch alongside the existing `routeError` message, using `severity="error"` (stronger than the generic `warn`) since this one blocks progress:
+
+```html
+@if (routeLoading()) {
+  <p-skeleton height="8px" borderRadius="4px" class="mt-3" />
+} @else if (routeUnreachable()) {
+  <p-message severity="error" class="w-full mt-2">
+    {{ 'trip.planner.routeUnreachable' | translate }}
+  </p-message>
+} @else if (routeError()) {
+  <p-message severity="warn" class="w-full mt-2">
+    {{ 'trip.planner.routeError' | translate }}
+  </p-message>
+}
+```
+
+i18n — add `trip.planner.routeUnreachable` next to the existing `routeError` key in all four locales (en/de/fr/it), e.g. English: "We couldn't find a road close enough to this destination. Try a different stop."
+
+---
+
+## 7. Pre-filled 'to' stop (item 5) is locked
+
+The road-trip prefill from item 5 fills the 'to' `p-autoComplete` with a normal, editable `TripStop`. Since mountain/lake/glacier names aren't searchable (that's the whole reason item 5 exists), clearing or retyping that field is a dead end — the user can only recover it by leaving the planner and re-entering via "Plan a Trip". Lock it instead: the user already chose this destination by navigating there.
+
+`@frontend/src/app/features/trip-planner/trip-planner.ts`:
+
+```typescript
+destinationLocked = signal(false);
+```
+
+- Set `true` right after seeding the stop in the road-prefill branch of the constructor effect (see item 5); reset to `false` in `onTypeChange()` alongside the other stop-related resets (stops are cleared there anyway, so nothing stays locked across a type switch).
+
+`@frontend/src/app/features/trip-planner/trip-planner.html` — extend the existing `isRoundTrip()`-based disable/hide conditions (same pattern already used to lock the mirrored stop in round-trip mode) to also cover a locked destination:
+
+```html
+[disabled]="(isRoundTrip() || destinationLocked()) && $index === stops().length - 1"
+```
+
+```html
+[class.stop-action--hidden]="!(stops().length > 2 && $index > 0 && !($index === stops().length - 1 && (isRoundTrip() || destinationLocked())))"
+```
+
+This disables typing/clearing on the autocomplete and hides the remove-stop button for that row, while leaving it fully editable for the ordinary city-break flow (`destinationLocked` only ever becomes `true` via the item-5 prefill path).
+
+---
+
 ## Out of Scope
 
 - The rail half of item 5 (nearest-station lookup for destinations with no real station) — not implemented here, still being discussed.
@@ -433,8 +554,10 @@ No changes to `TransportService`, `TripPlannerService`, or the rail path — `ge
 - @frontend/src/app/models/destination-category.ts
 - @frontend/src/app/shell/trip-planner-layout/trip-planner-layout.ts
 - @frontend/src/app/features/trip-planner/trip-planner.ts
+- @frontend/src/app/features/trip-planner/trip-planner.html
 - @frontend/src/app/shared/services/trip-planner.ts
 - @frontend/src/app/shared/services/transport.ts
 - @frontend/src/app/models/trip.ts
+- @frontend/public/i18n/en.json (and de/fr/it)
 - @context/features/destin-attrac-fixes-spec.md
 - @context/features/home-categories-spec.md

@@ -9,13 +9,13 @@
       {{ 'destinations.detail.open' | translate: { name: dest.name } }}
     </button>
   }
-  @if (destination() && !drawer.isOpen('all-attractions') && !drawer.isCollapsed('all-attractions')) {
+  @if (destination() && attractionMarkers.hasAttractions() && !drawer.isOpen('all-attractions') && !drawer.isCollapsed('all-attractions')) {
     <button class="reopen-btn" type="button" (click)="listAllAttractions()">
       <i class="fa-solid fa-list"></i>
       {{ 'attractions.listAll' | translate }}
     </button>
   }
-  @if (drawer.isCollapsed('all-attractions')) {
+  @if (attractionMarkers.hasAttractions() && drawer.isCollapsed('all-attractions')) {
     <button class="reopen-btn" type="button" (click)="reopenAllAttractions()">
       <i class="fa-solid fa-list"></i>
       {{ 'attractions.openAll' | translate }}

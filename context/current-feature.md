@@ -2,26 +2,11 @@
 
 ## Feature
 
-Destination Detail Fixes (2)
-
 ## Status
-
-Specced — `context/features/dest-detail-fixes2-spec.md` created; no feature branch yet.
 
 ## Goals
 
-1. Hide all attraction UI (top-attractions list, "see all" link, map reopen buttons) on `destination-detail` when a destination has zero attractions.
-2. Destination-detail map shows only a single red, larger "destination" pin; attraction pins only render while the user is actually browsing the all-attractions list (open, collapsed-to-map, or viewing an attraction reached from that list).
-3. `.action-grid`'s "Plan a Trip" and weather boxes go side by side (equal height, driven by the taller weather box) instead of stacked.
-4. "Back to destinations" returns to the category (cities / mountains-lakes / nature-parks) the user came from, via a `?category=` query param carried through destination-card links, instead of always defaulting to City Breaks.
-5. "Plan a Trip" → road trips seed the 'to' stop directly from the destination's own coordinates (bypassing the address search), so mountain/lake/glacier destinations without a matching street address still prefill — OSRM's driving router snaps to the nearest reachable road on its own. Rail (nearest-station lookup) is deferred.
-
 ## Notes
-
-- Prompted by adding Mountains, Lakes & Glaciers and Nature Parks categories to the homepage (`context/features/home-categories-spec.md`).
-- Item 2 design choice: rather than clearing `AttractionMarkersService` when leaving all-attractions (which would break its lazy-reload-skip-if-same-destination logic), marker *visibility* is gated in `DestinationsLayout.displayMarkers`/`showAttractionMarkers` — the underlying service data is left alone.
-- Item 4 needs no new state: `category` just rides along in the URL from category-list → destination-detail → back; `DrawerHost.onDestinationBack()` reads it via `Router.parseUrl(this.router.url)` rather than injecting `ActivatedRoute` (avoids DI-scope ambiguity since `DrawerHost` isn't inside the router-outlet tree).
-- Item 5 scoped to road only per user request; rail nearest-station lookup explicitly deferred, to be revisited later.
 
 ## History
 
@@ -166,3 +151,19 @@ Specced — `context/features/dest-detail-fixes2-spec.md` created; no feature br
 
 - Specced 5 fixes to `destination-detail`/map/drawer/trip-planner chrome, prompted by the new home-page categories: (1) hide attraction UI when a destination has 0 attractions; (2) destination-detail map shows only a red/bigger destination pin, attraction pins gated to the all-attractions context; (3) Plan Trip/weather boxes side by side via a two-column `.action-grid`; (4) dynamic "back to destinations" via a `?category=` query param carried through destination links; (5) road-trip prefill seeded from the destination's own `dest.geo` instead of an address search (fixes mountain/lake/glacier destinations with no street address) — rail nearest-station lookup deferred
 - Created `context/features/dest-detail-fixes2-spec.md`; no feature branch created yet
+
+### 2026-07-10 — Destination Detail Fixes 2 Implemented
+
+- Branch: `feature/dest-detail-fixes-2`
+- `attraction-markers.ts`: added `hasAttractions` signal (default `true`) + `setHasAttractions()`, reset in `clear()`
+- `attraction-vertical-list.ts/html`: reports `hasAttractions` after load; stopped seeding map markers from the top-attractions list; `onAttractionClick` now opens `attraction-detail` directly with `source: 'destination-detail'`; whole section hidden once loaded with zero attractions
+- `destinations-layout.ts/html`: added `destinationMarker` (red, `.destination-marker` class, always shown) and `showAttractionMarkers`/`displayMarkers` gating so attraction pins only render while on the all-attractions list (open, collapsed, or an attraction-detail reached from it); reopen buttons gated on `attractionMarkers.hasAttractions()`
+- `drawer-host.ts/html`: `onAttractionDetailBack()` handles `source: 'destination-detail'`; `onDestinationBack()` reads `category` off the current URL (`Router.parseUrl`) and forwards it instead of always defaulting to `/destinations`
+- `map.css`: `.destination-marker` (2.2rem, red)
+- `destination-detail.css`: `.action-grid` → two columns (Plan Trip / Weather side by side, equal height via CSS Grid stretch), single column under 400px
+- `destination-horizontal-list.ts/html`, `destination-vertical-list.ts/html`, `home.html`: new `categoryKey` input carries `?category=` on every destination-card link
+- `trip-planner-layout.ts`: road-trip prefill payload changed from a bare name string to `{ name, lat, lon, identifier }` when geo is known
+- `trip-planner.ts`: prefill effect seeds the 'to' stop directly from destination coordinates for road trips (bypassing address search); `TripPlannerService.buildRoadRoute()` throws `NO_ROAD_ROUTE` when OSRM returns non-`Ok`, surfaced via new `routeUnreachable` signal that blocks `canGoNext`/shows a dedicated error message; pre-filled 'to' stop is locked (`destinationLocked`) — disabled input, hidden remove button
+- i18n: `trip.planner.routeUnreachable` added across en/de/fr/it
+- Follow-up fixes in the same branch: removed the round-trip feature entirely (`isRoundTrip`, `toggleRoundTrip()`, button, CSS, `roundTrip` i18n key); fixed a long-standing typo where PrimeNG's addon class is `p-inputgroupaddon` (no hyphen) not `p-inputgroup-addon` — every addon override rule (background, hover, drag cursor, and the new `.stop-addon--disabled` gray-out) was silently dead until corrected; `trip-planner-layout.ts/html` gained `displayedTripAttractionMarkers`, hiding "things to do" pins until the drawer collapses (Save/View Trip), mirroring the existing route/stop-marker gating; `map.ts/css` — attraction marker containers now carry their `className` via safe `classList` diffing (preserves MapLibre's own marker class) and get `z-index: 5` so they stay clickable over overlapping destination/route markers; road route line is now solid `#1a2f4a` (was dashed green), rail unchanged; `trip-planner.ts` prefill effect now detects a genuinely new destination (vs. resuming a restored draft for the same one) and calls `resetForNewDestination()` — wipes route/stops/attraction cache via `plannerSvc.reset()`, resets wizard step to 0, clears connections/trip name
+- Feature marked complete

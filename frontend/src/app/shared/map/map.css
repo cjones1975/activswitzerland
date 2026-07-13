@@ -17,6 +17,11 @@
   justify-content: center;
 }
 
+/* Attraction pins render above destination/route markers, so they stay clickable when coordinates overlap */
+.map-marker-container.trip-attraction-marker {
+  z-index: 5;
+}
+
 .map-marker-icon {
   font-size: 1.5rem;
   color: #d97706;
@@ -34,6 +39,11 @@
   font-size: 2.2rem;
   font-weight: bold;
   filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.4));
+}
+
+.map-marker-icon.destination-marker {
+  font-size: 2.2rem;
+  filter: drop-shadow(0 2px 4px rgba(229, 62, 62, 0.5));
 }
 
 /* Popup content — scoped to map container so it doesn't leak globally */

@@ -64,42 +64,24 @@
                       [showEmptyMessage]="true"
                       emptyMessage="No locations found"
                       class="stop-input"
-                      [disabled]="isRoundTrip() && $index === stops().length - 1"
+                      [disabled]="destinationLocked() && $index === stops().length - 1"
                       [placeholder]="($index === 0 ? 'trip.planner.from' : $index === stops().length - 1 ? 'trip.planner.to' : 'trip.planner.via') | translate"
                       [attr.aria-label]="$index === 0 ? ('trip.planner.from' | translate) : $index === stops().length - 1 ? ('trip.planner.to' | translate) : ('trip.planner.via' | translate) + ' ' + $index">
                     </p-autoComplete>
-                    <p-inputGroupAddon class="stop-addon">
+                    <p-inputGroupAddon class="stop-addon" [class.stop-addon--disabled]="destinationLocked() && $index === stops().length - 1">
                       <button type="button" class="stop-icon-btn"
-                              [class.stop-action--hidden]="!(stops().length > 2 && $index > 0 && !($index === stops().length - 1 && isRoundTrip()))"
+                              [class.stop-action--hidden]="!(stops().length > 2 && $index > 0 && !($index === stops().length - 1 && destinationLocked()))"
                               [attr.aria-label]="'trip.planner.removeStop' | translate"
                               (click)="removeStop($index)">
                         <i class="fa-light fa-xmark"></i>
                       </button>
                     </p-inputGroupAddon>
-                    <p-inputGroupAddon class="stop-addon" cdkDragHandle
+                    <p-inputGroupAddon class="stop-addon" [class.stop-addon--disabled]="destinationLocked() && $index === stops().length - 1" cdkDragHandle
                                        [attr.aria-label]="'trip.planner.dragStop' | translate">
                       <i class="fa-light fa-grip-dots-vertical"
                          [class.stop-action--hidden]="!($index > 0 && $index < stops().length - 1)"></i>
                     </p-inputGroupAddon>
                   </p-inputGroup>
-
-                  <!-- Keyboard reorder buttons (via stops only, shown on focus) -->
-                  @if ($index > 0 && $index < stops().length - 1) {
-                    <div class="stop-kbd-btns">
-                      <button type="button" class="stop-kbd-btn"
-                              [attr.aria-label]="'trip.planner.moveStopUp' | translate"
-                              [disabled]="$index <= 1"
-                              (click)="moveStopUp($index)">
-                        <i class="fa-solid fa-arrow-up"></i>
-                      </button>
-                      <button type="button" class="stop-kbd-btn"
-                              [attr.aria-label]="'trip.planner.moveStopDown' | translate"
-                              [disabled]="$index >= stops().length - 2"
-                              (click)="moveStopDown($index)">
-                        <i class="fa-solid fa-arrow-down"></i>
-                      </button>
-                    </div>
-                  }
 
                   <!-- Things to do link (only for filled stops) -->
                   @if (stop) {
@@ -134,29 +116,25 @@
             }
           </div>
 
-          <!-- Add stop + Round trip -->
-          <div class="stop-footer-row">
-            @if (stops().length < 8) {
+          <!-- Add stop -->
+          @if (stops().length < 8) {
+            <div class="stop-footer-row">
               <p-button
                 [label]="'trip.planner.addStop' | translate"
                 icon="fa-light fa-plus"
                 [link]="true"
                 class="add-stop-btn"
                 (onClick)="addStop()" />
-            } @else {
-              <span></span>
-            }
-            @if (selectedType() !== 'rail') {
-              <button type="button" class="round-trip-btn" [class.round-trip-btn--active]="isRoundTrip()" (click)="toggleRoundTrip()">
-                <i class="fa-light fa-rotate"></i>
-                <span>{{ 'trip.planner.roundTrip' | translate }}</span>
-              </button>
-            }
-          </div>
+            </div>
+          }
 
           <!-- Road route loading skeleton / error -->
           @if (routeLoading()) {
             <p-skeleton height="8px" borderRadius="4px" class="mt-3" />
+          } @else if (routeUnreachable()) {
+            <p-message severity="error" class="w-full mt-2">
+              {{ 'trip.planner.routeUnreachable' | translate }}
+            </p-message>
           } @else if (routeError()) {
             <p-message severity="warn" class="w-full mt-2">
               {{ 'trip.planner.routeError' | translate }}

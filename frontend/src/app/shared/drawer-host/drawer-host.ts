@@ -46,7 +46,8 @@ export class DrawerHost {
 
   onDestinationBack() {
     this.svc.close('destination-detail');
-    this.router.navigate(['/destinations']);
+    const category = this.router.parseUrl(this.router.url).queryParams['category'];
+    this.router.navigate(['/destinations'], category ? { queryParams: { category } } : {});
   }
 
   onAllAttractionsBack() {
@@ -77,8 +78,17 @@ export class DrawerHost {
       this.svc.open('trip-planner');
       return;
     }
+    if (payload.source === 'destination-detail') {
+      this.svc.open('destination-detail', payload.destination);
+      return;
+    }
     this.svc.open('all-attractions', payload.destination);
   }
+
+  attractionDetailDestinationName = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<AttractionDetailPayload>('attraction-detail')?.destination?.name ?? '';
+  });
 
   thingsToDoTitle = computed(() => {
     this.svc.list();

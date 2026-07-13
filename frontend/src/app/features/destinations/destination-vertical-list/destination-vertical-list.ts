@@ -31,6 +31,7 @@ export class DestinationVerticalList implements OnInit {
   skeletons = Array(6);
   mapMarkers = signal<MapMarker[]>([]);
   config = signal<CategoryConfig>(DESTINATION_CATEGORIES.cities);
+  categoryKey = signal<CategoryKey>('cities');
 
   ngOnInit(): void {
     combineLatest([
@@ -38,9 +39,10 @@ export class DestinationVerticalList implements OnInit {
       this.translate.onLangChange.pipe(startWith({ lang: this.langSvc.current })),
     ]).pipe(
       tap(([params]) => {
-        const category = params.get('category') as CategoryKey | null;
-        const config = (category && DESTINATION_CATEGORIES[category]) || DESTINATION_CATEGORIES.cities;
-        this.config.set(config);
+        const requested = params.get('category') as CategoryKey | null;
+        const resolved: CategoryKey = requested && DESTINATION_CATEGORIES[requested] ? requested : 'cities';
+        this.categoryKey.set(resolved);
+        this.config.set(DESTINATION_CATEGORIES[resolved]);
         this.loading.set(true);
       }),
       switchMap(([, event]) => this.destinationsService.getDestinations({

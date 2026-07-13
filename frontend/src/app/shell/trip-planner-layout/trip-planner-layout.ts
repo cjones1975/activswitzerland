@@ -77,6 +77,11 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
     this.drawer.isOpen('trip-planner') ? null : this.tripRoute()
   );
 
+  /** "Things to do" attraction pins — hidden while the trip-planner drawer is open (only revealed on Save/View). */
+  displayedTripAttractionMarkers = computed<MapMarker[]>(() =>
+    this.drawer.isOpen('trip-planner') ? [] : this.tripAttractionMarkers()
+  );
+
   /** Stop markers shown on the map — hidden while the trip-planner drawer is open. */
   displayedTripStopPoints = computed<[number, number][]>(() =>
     this.drawer.isOpen('trip-planner') ? [] : this.tripStopPoints()
@@ -132,11 +137,14 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
     ).subscribe(dest => {
       this.destination.set(dest);
       if (dest) {
-        if (dest.geo?.latitude && dest.geo?.longitude) {
+        const hasGeo = !!(dest.geo?.latitude && dest.geo?.longitude);
+        if (hasGeo) {
           this.mapZoom.set(12);
           this.center.set([dest.geo.longitude, dest.geo.latitude]);
         }
-        this.drawer.open('trip-planner', dest.name);
+        this.drawer.open('trip-planner', hasGeo
+          ? { name: dest.name, lat: dest.geo.latitude, lon: dest.geo.longitude, identifier: dest.identifier }
+          : dest.name);
       } else {
         this.drawer.open('trip-planner');
       }

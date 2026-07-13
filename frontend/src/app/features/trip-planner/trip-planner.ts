@@ -31,6 +31,13 @@ import { TripStop, TripConnection, SavedTrip } from '../../models/trip';
 
 type TripStep = 'stops' | 'schedule' | 'connection' | 'finish';
 
+interface TripPlannerPrefill {
+  name: string;
+  lat: number;
+  lon: number;
+  identifier: string;
+}
+
 function swissNow(): Date {
   const parts = new Intl.DateTimeFormat('en', {
     timeZone: 'Europe/Zurich',
@@ -86,7 +93,7 @@ export class TripPlanner {
   // ── Stops ─────────────────────────────────────────────────────────────────
   stops = signal<Array<TripStop | null>>([null, null]);
   stopSuggestions = signal<TripStop[][]>([[], []]);
-  isRoundTrip = signal(false);
+  destinationLocked = signal(false);
 
   // ── Rail connections ──────────────────────────────────────────────────────
   connDate = signal<Date | null>(swissNow());
@@ -100,6 +107,7 @@ export class TripPlanner {
   // ── Route ─────────────────────────────────────────────────────────────────
   routeLoading = signal(false);
   routeError = signal(false);
+  routeUnreachable = signal(false);
 
   // ── Save ──────────────────────────────────────────────────────────────────
   tripName = signal('');
@@ -120,7 +128,7 @@ export class TripPlanner {
 
   readonly canGoNext = computed(() => {
     switch (this.currentStep()) {
-      case 'stops':      return this.validStops().length >= 2;
+      case 'stops':      return this.validStops().length >= 2 && !this.routeUnreachable();
       case 'schedule':   return !this.connectionsLoading();
       case 'connection': return this.selectedConnection() !== null;
       default:           return false;
@@ -130,16 +138,15 @@ export class TripPlanner {
   readonly nextHint = computed<string | null>(() => {
     if (this.canGoNext()) return null;
     switch (this.currentStep()) {
-      case 'stops':      return 'trip.planner.hints.selectStops';
+      case 'stops':      return this.routeUnreachable() ? 'trip.planner.routeUnreachable' : 'trip.planner.hints.selectStops';
       case 'connection': return 'trip.planner.hints.selectConnection';
       default:           return null;
     }
   });
 
-  private readonly prefillName = computed(() => {
+  private readonly prefillPayload = computed(() => {
     this.drawerSvc.list();
-    const payload = this.drawerSvc.getPayload<unknown>('trip-planner');
-    return typeof payload === 'string' ? payload : null;
+    return this.drawerSvc.getPayload<string | TripPlannerPrefill>('trip-planner') ?? null;
   });
 
   constructor() {
@@ -152,9 +159,35 @@ export class TripPlanner {
     }
 
     effect(() => {
-      const name = this.prefillName();
-      if (!name) return;
+      const payload = this.prefillPayload();
+      if (!payload) return;
       untracked(() => {
+        if (typeof payload === 'object' && this.selectedType() === 'road') {
+          const stop: TripStop = {
+            stationId: `dest:${payload.identifier}`,
+            name: payload.name,
+            lat: payload.lat,
+            lon: payload.lon,
+          };
+          const alreadyLoaded = this.stops().some(s => s?.stationId === stop.stationId);
+          if (alreadyLoaded) {
+            // Resuming a restored draft for this same destination — leave stops/step/route as they were.
+            this.destinationLocked.set(true);
+            return;
+          }
+          this.resetForNewDestination();
+          this.stops.set([null, stop]);
+          this.stopSuggestions.set([[], []]);
+          this.destinationLocked.set(true);
+          this.plannerSvc.setStops(this.validStops());
+          this.onStopsChanged();
+          return;
+        }
+        const name = typeof payload === 'string' ? payload : payload.name;
+        const alreadyLoaded = this.stops().some(s => s?.name === name);
+        if (!alreadyLoaded) {
+          this.resetForNewDestination();
+        }
         this.transportSvc.searchLocations(name, this.selectedType())
           .pipe(takeUntilDestroyed(this.destroyRef))
           .subscribe(results => {
@@ -163,6 +196,20 @@ export class TripPlanner {
           });
       });
     });
+  }
+
+  /** Wipes any in-progress trip (route, stops, wizard step) when a new destination is picked from a different page. */
+  private resetForNewDestination(): void {
+    this.plannerSvc.reset();
+    this.connections.set([]);
+    this.selectedConnection.set(null);
+    this.expandedConnectionIndex.set(null);
+    this.step.set(0);
+    this.searchedConnections.set(false);
+    this.destinationLocked.set(false);
+    this.routeError.set(false);
+    this.routeUnreachable.set(false);
+    this.tripName.set('');
   }
 
   // ── Type toggle ───────────────────────────────────────────────────────────
@@ -177,20 +224,9 @@ export class TripPlanner {
     this.expandedConnectionIndex.set(null);
     this.step.set(0);
     this.searchedConnections.set(false);
-    this.isRoundTrip.set(false);
-  }
-
-  // ── Round trip ────────────────────────────────────────────────────────────
-  toggleRoundTrip(): void {
-    const enabling = !this.isRoundTrip();
-    this.isRoundTrip.set(enabling);
-    if (enabling) {
-      const updated = [...this.stops()];
-      updated[updated.length - 1] = updated[0];
-      this.stops.set(updated);
-      this.plannerSvc.setStops(this.validStops());
-      this.onStopsChanged();
-    }
+    this.destinationLocked.set(false);
+    this.routeError.set(false);
+    this.routeUnreachable.set(false);
   }
 
   // ── Wizard navigation ────────────────────────────────────────────────────
@@ -223,9 +259,6 @@ export class TripPlanner {
     const stop = event.value as TripStop;
     const updated = [...this.stops()];
     updated[index] = stop;
-    if (this.isRoundTrip() && index === 0) {
-      updated[updated.length - 1] = stop;
-    }
     this.stops.set(updated);
     this.plannerSvc.setStops(this.validStops());
     this.onStopsChanged();
@@ -234,9 +267,6 @@ export class TripPlanner {
   onStopClear(index: number): void {
     const updated = [...this.stops()];
     updated[index] = null;
-    if (this.isRoundTrip() && index === 0) {
-      updated[updated.length - 1] = null;
-    }
     this.stops.set(updated);
     this.plannerSvc.setStops(this.validStops());
     this.plannerSvc.setRouteCoordinates([]);
@@ -256,31 +286,6 @@ export class TripPlanner {
     const updated = this.stops().filter((_, i) => i !== index);
     this.stops.set(updated);
     const suggs = this.stopSuggestions().filter((_, i) => i !== index);
-    this.stopSuggestions.set(suggs);
-    this.plannerSvc.setStops(this.validStops());
-    this.onStopsChanged();
-  }
-
-  moveStopUp(index: number): void {
-    if (index <= 1) return;
-    const stops = [...this.stops()];
-    const suggs = [...this.stopSuggestions()];
-    [stops[index], stops[index - 1]] = [stops[index - 1], stops[index]];
-    [suggs[index], suggs[index - 1]] = [suggs[index - 1], suggs[index]];
-    this.stops.set(stops);
-    this.stopSuggestions.set(suggs);
-    this.plannerSvc.setStops(this.validStops());
-    this.onStopsChanged();
-  }
-
-  moveStopDown(index: number): void {
-    const n = this.stops().length;
-    if (index >= n - 2) return;
-    const stops = [...this.stops()];
-    const suggs = [...this.stopSuggestions()];
-    [stops[index], stops[index + 1]] = [stops[index + 1], stops[index]];
-    [suggs[index], suggs[index + 1]] = [suggs[index + 1], suggs[index]];
-    this.stops.set(stops);
     this.stopSuggestions.set(suggs);
     this.plannerSvc.setStops(this.validStops());
     this.onStopsChanged();
@@ -308,6 +313,7 @@ export class TripPlanner {
     if (this.selectedType() === 'road') {
       this.routeLoading.set(true);
       this.routeError.set(false);
+      this.routeUnreachable.set(false);
       this.plannerSvc.buildRoadRoute(valid)
         .pipe(takeUntilDestroyed(this.destroyRef))
         .subscribe({
@@ -315,10 +321,14 @@ export class TripPlanner {
             this.plannerSvc.setRouteCoordinates(coords);
             this.routeLoading.set(false);
           },
-          error: () => {
+          error: (err) => {
             this.plannerSvc.setRouteCoordinates([]);
             this.routeLoading.set(false);
-            this.routeError.set(true);
+            if (err instanceof Error && err.message === 'NO_ROAD_ROUTE') {
+              this.routeUnreachable.set(true);
+            } else {
+              this.routeError.set(true);
+            }
           },
         });
     } else {

@@ -141,6 +141,8 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     const container = document.createElement('div');
     container.className = 'map-marker-container';
+    if (marker.className) container.classList.add(...marker.className.split(' ').filter(Boolean));
+    container.dataset['customClass'] = marker.className ?? '';
     container.appendChild(el);
 
     const instance = new maplibregl.Marker({ element: container, anchor: 'center' }).setLngLat([marker.lng, marker.lat]);
@@ -188,9 +190,14 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     // Update existing or add new
     for (const [key, m] of incoming) {
       if (this.markerInstances.has(key)) {
-        const { el } = this.markerInstances.get(key)!;
+        const { marker, el } = this.markerInstances.get(key)!;
         el.className = `${m.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${m.highlight ? ' marker-selected' : ''}${m.className ? ' ' + m.className : ''}`;
         el.style.color = m.highlight ? '#e53e3e' : (m.color ?? '');
+        const container = marker.getElement();
+        const prevClass = container.dataset['customClass'] ?? '';
+        if (prevClass) container.classList.remove(...prevClass.split(' ').filter(Boolean));
+        if (m.className) container.classList.add(...m.className.split(' ').filter(Boolean));
+        container.dataset['customClass'] = m.className ?? '';
       } else {
         this.addMarker(m);
       }
@@ -253,12 +260,9 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     });
 
     const paint: any = {
-      'line-color': '#1a6b3c',
+      'line-color': this.tripType === 'road' ? '#1a2f4a' : '#1a6b3c',
       'line-width': 3,
     };
-    if (this.tripType === 'road') {
-      paint['line-dasharray'] = [2, 1.5];
-    }
 
     this.map.addLayer({
       id: 'trip-route-line',

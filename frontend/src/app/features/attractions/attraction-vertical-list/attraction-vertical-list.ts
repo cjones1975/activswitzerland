@@ -5,7 +5,7 @@ import { of, startWith, switchMap, tap, map, catchError } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Message } from 'primeng/message';
 import { AttractionsService } from '../../../shared/services/attractions';
-import { AttractionMarkersService, hasValidGeo } from '../../../shared/services/attraction-markers';
+import { AttractionMarkersService } from '../../../shared/services/attraction-markers';
 import { Drawer } from '../../../shared/services/drawer';
 import { LangService } from '../../../shared/services/lang';
 import { Attraction } from '../../../models/attraction';
@@ -67,19 +67,7 @@ export class AttractionVerticalList implements OnInit {
       this.loadError.set(false);
       this.attractions = result.attractions;
       this.isTop.set(result.isTop);
-      const geoAttractions = result.attractions.filter(hasValidGeo);
-      this.attractionMarkers.set(
-        geoAttractions.map((a: Attraction) => ({
-          id: a.identifier,
-          lng: Number(a.geo.longitude),
-          lat: Number(a.geo.latitude),
-          label: a.name,
-          icon: 'fa-solid fa-location-dot',
-          color: '#1a2f4a',
-          clickable: true,
-        })),
-        geoAttractions
-      );
+      this.attractionMarkers.setHasAttractions(result.attractions.length > 0);
       this.loading.set(false);
     });
   }
@@ -91,7 +79,8 @@ export class AttractionVerticalList implements OnInit {
   }
 
   onAttractionClick(attraction: Attraction): void {
-    this.attractionMarkers.setSelected(attraction.identifier);
+    const dest = this.drawerSvc.getPayload<Destination>('destination-detail');
     this.drawerSvc.close('destination-detail');
+    this.drawerSvc.open('attraction-detail', { attraction, destination: dest, source: 'destination-detail' });
   }
 }

@@ -136,7 +136,12 @@ export class TripPlannerService {
     const coords = stops.map(s => `${s.lon},${s.lat}`).join(';');
     const url = `https://router.project-osrm.org/route/v1/driving/${coords}?overview=full&geometries=geojson`;
     return this.http.get<any>(url).pipe(
-      map(res => res.routes?.[0]?.geometry?.coordinates ?? []),
+      map(res => {
+        if (res.code !== 'Ok' || !res.routes?.[0]) {
+          throw new Error('NO_ROAD_ROUTE');
+        }
+        return res.routes[0].geometry.coordinates;
+      }),
     );
   }
 

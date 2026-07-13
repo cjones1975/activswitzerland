@@ -13,6 +13,7 @@ export class AttractionMarkersService {
   readonly markers = signal<MapMarker[]>([]);
   readonly selectedId = signal<string | null>(null);
   readonly attractionMap = signal<Map<string, Attraction>>(new Map());
+  readonly hasAttractions = signal(true);
 
   set(markers: MapMarker[], attractions: Attraction[]): void {
     this.markers.set(markers);
@@ -23,9 +24,14 @@ export class AttractionMarkersService {
     this.selectedId.set(id);
   }
 
+  setHasAttractions(value: boolean): void {
+    this.hasAttractions.set(value);
+  }
+
   clear(): void {
     this.markers.set([]);
     this.selectedId.set(null);
     this.attractionMap.set(new Map());
+    this.hasAttractions.set(true);
   }
 }

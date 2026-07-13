@@ -10,6 +10,7 @@ import { MapComponent } from '../../shared/map/map';
 import type { MapMarker } from '../../shared/map/map';
 import { Drawer } from '../../shared/services/drawer';
 import { AttractionMarkersService } from '../../shared/services/attraction-markers';
+import { AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
 
 @Component({
   selector: 'app-destinations-layout',
@@ -25,16 +26,45 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   private langSvc = inject(LangService);
   protected drawer = inject(Drawer);
   private destroyRef = inject(DestroyRef);
-  private attractionMarkers = inject(AttractionMarkersService);
+  protected attractionMarkers = inject(AttractionMarkersService);
 
   center = signal<[number, number] | undefined>(undefined);
   destination = signal<Destination | null>(null);
 
+  private attractionDetailSource = computed(() => {
+    this.drawer.list();
+    return this.drawer.getPayload<AttractionDetailPayload>('attraction-detail')?.source;
+  });
+
+  private showAttractionMarkers = computed(() => {
+    this.drawer.list();
+    if (this.drawer.isOpen('all-attractions') || this.drawer.isCollapsed('all-attractions')) return true;
+    return this.drawer.isOpen('attraction-detail') && this.attractionDetailSource() === 'all-attractions';
+  });
+
+  destinationMarker = computed<MapMarker | null>(() => {
+    const dest = this.destination();
+    if (!dest?.geo?.latitude || !dest?.geo?.longitude) return null;
+    return {
+      id: 'destination-marker',
+      lng: dest.geo.longitude,
+      lat: dest.geo.latitude,
+      label: dest.name,
+      icon: 'fa-solid fa-location-dot',
+      color: '#e53e3e',
+      className: 'destination-marker',
+    };
+  });
+
   displayMarkers = computed(() => {
     const selectedId = this.attractionMarkers.selectedId();
-    return this.attractionMarkers.markers().map(m =>
-      selectedId && m.id === selectedId ? { ...m, highlight: true } : m
-    );
+    const attractionPins = this.showAttractionMarkers()
+      ? this.attractionMarkers.markers().map(m =>
+          selectedId && m.id === selectedId ? { ...m, highlight: true } : m
+        )
+      : [];
+    const destMarker = this.destinationMarker();
+    return destMarker ? [destMarker, ...attractionPins] : attractionPins;
   });
 
   selectedMarker = computed(() => {

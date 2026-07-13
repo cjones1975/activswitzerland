@@ -127,6 +127,8 @@
                     {{ 'trip.planner.thingsToDo.backToList' | translate }}
                 } @else if (attractionDetailSource() === 'trip-planner') {
                     {{ 'trip.planner.backToPlanner' | translate }}
+                } @else if (attractionDetailSource() === 'destination-detail') {
+                    {{ 'attractions.backToDestination' | translate: { name: attractionDetailDestinationName() } }}
                 } @else {
                     {{ 'attractions.backToAttractions' | translate }}
                 }

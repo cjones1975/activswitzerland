@@ -86,44 +86,6 @@
   margin-bottom: 0.5rem;
 }
 
-.stop-kbd-btns {
-  display: flex;
-  gap: 0.25rem;
-  margin-bottom: 0.25rem;
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.15s;
-}
-
-.stop-row:focus-within .stop-kbd-btns {
-  opacity: 1;
-  pointer-events: auto;
-}
-
-.stop-kbd-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 1.75rem;
-  height: 1.75rem;
-  border: 1px solid var(--navy-300);
-  border-radius: 4px;
-  background: var(--navy-100);
-  color: var(--navy-700);
-  font-size: 0.65rem;
-  cursor: pointer;
-  transition: background 0.15s;
-}
-
-.stop-kbd-btn:hover:not(:disabled) {
-  background: var(--navy-200);
-}
-
-.stop-kbd-btn:disabled {
-  opacity: 0.35;
-  cursor: default;
-}
-
 .stop-things-row {
   margin-top: 0.25rem;
   margin-bottom: 0.25rem;
@@ -226,7 +188,7 @@
 }
 
 /* Addon styling — strip default padding, make icons compact */
-:host ::ng-deep .stop-addon.p-inputgroup-addon {
+:host ::ng-deep .stop-addon.p-inputgroupaddon {
   padding: 0;
   min-width: 2rem;
   display: flex;
@@ -237,8 +199,13 @@
   cursor: pointer;
 }
 
-:host ::ng-deep .stop-addon.p-inputgroup-addon:last-child {
+:host ::ng-deep .stop-addon.p-inputgroupaddon:last-child {
   border-radius: 0 6px 6px 0;
+}
+
+:host ::ng-deep .stop-addon.p-inputgroupaddon.stop-addon--disabled {
+  background: var(--p-inputtext-disabled-background, #f1f5f9);
+  cursor: default;
 }
 
 .stop-icon-btn {
@@ -260,40 +227,7 @@
 .stop-footer-row {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   margin-top: 0.25rem;
-}
-
-.round-trip-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.8rem;
-  font-weight: 600;
-  color: var(--navy-500, #6b90b8);
-  background: none;
-  border: 1px solid #e2e8f0;
-  border-radius: 6px;
-  padding: 0.3rem 0.65rem;
-  cursor: pointer;
-  transition: background 0.15s, color 0.15s, border-color 0.15s;
-}
-
-.round-trip-btn:hover {
-  border-color: #285278;
-  color: #285278;
-}
-
-.round-trip-btn--active {
-  background: #285278;
-  border-color: #285278;
-  color: #fff;
-}
-
-.round-trip-btn--active:hover {
-  background: #1e3f5a;
-  border-color: #1e3f5a;
-  color: #fff;
 }
 
 .add-stop-btn {
@@ -301,15 +235,15 @@
 }
 
 /* ── Drag & drop ────────────────────────────────────────────────── */
-:host ::ng-deep .stop-addon[cdkDragHandle].p-inputgroup-addon {
+:host ::ng-deep .stop-addon[cdkDragHandle].p-inputgroupaddon {
   cursor: grab;
   touch-action: none;
   color: #94a3b8;
   font-size: 0.9rem;
 }
 
-:host ::ng-deep .stop-addon[cdkDragHandle].p-inputgroup-addon:hover { color: #285278; }
-:host ::ng-deep .stop-addon[cdkDragHandle].p-inputgroup-addon:active { cursor: grabbing; }
+:host ::ng-deep .stop-addon[cdkDragHandle].p-inputgroupaddon:hover { color: #285278; }
+:host ::ng-deep .stop-addon[cdkDragHandle].p-inputgroupaddon:active { cursor: grabbing; }
 
 .stop-drag-preview {
   display: flex;
