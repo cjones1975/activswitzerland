@@ -1,5 +1,12 @@
 <div class="map-wrapper">
-  <app-map [markers]="displayMarkers()" [zoom]="12" [center]="center()" [activeMarker]="selectedMarker()" (markerClick)="onMarkerClick($event)"></app-map>
+  <app-map
+    [markers]="displayMarkers()"
+    [zoom]="12"
+    [center]="center()"
+    [activeMarker]="selectedMarker()"
+    [trailRoute]="trailRoute()"
+    [trailColor]="trailColor()"
+    (markerClick)="onMarkerClick($event)"></app-map>
 </div>
 
 <div class="reopen-btns">
@@ -19,6 +26,30 @@
     <button class="reopen-btn" type="button" (click)="reopenAllAttractions()">
       <i class="fa-solid fa-list"></i>
       {{ 'attractions.openAll' | translate }}
+    </button>
+  }
+  @if (hikeMarkers.hasRoutes() && drawer.isCollapsed('hikes')) {
+    <button class="reopen-btn" type="button" (click)="reopenHikes()">
+      <i class="fa-solid fa-person-hiking"></i>
+      {{ 'hikes.reopen' | translate }}
+    </button>
+  }
+  @if (hikeMarkers.hasRoutes() && drawer.isCollapsed('hike-detail')) {
+    <button class="reopen-btn" type="button" (click)="reopenHikeDetail()">
+      <i class="fa-solid fa-route"></i>
+      {{ 'hikes.reopenDetail' | translate }}
+    </button>
+  }
+  @if (bikeMarkers.hasRoutes() && drawer.isCollapsed('bikes')) {
+    <button class="reopen-btn" type="button" (click)="reopenBikes()">
+      <i class="fa-solid fa-bicycle"></i>
+      {{ 'bikes.reopen' | translate }}
+    </button>
+  }
+  @if (bikeMarkers.hasRoutes() && drawer.isCollapsed('bike-detail')) {
+    <button class="reopen-btn" type="button" (click)="reopenBikeDetail()">
+      <i class="fa-solid fa-route"></i>
+      {{ 'bikes.reopenDetail' | translate }}
     </button>
   }
 </div>

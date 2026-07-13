@@ -1,6 +1,5 @@
 import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { GalleriaModule } from 'primeng/galleria';
 import { Subject, switchMap } from 'rxjs';
@@ -13,7 +12,7 @@ import { AttractionVerticalList } from '../../attractions/attraction-vertical-li
 @Component({
   selector: 'app-destination-detail',
   standalone: true,
-  imports: [TranslatePipe, GalleriaModule, RouterLink, AttractionVerticalList],
+  imports: [TranslatePipe, GalleriaModule, AttractionVerticalList],
   templateUrl: './destination-detail.html',
   styleUrl: './destination-detail.css',
 })
@@ -68,5 +67,26 @@ export class DestinationDetail {
     };
     this.drawerSvc.close('destination-detail');
     this.drawerSvc.open('weather', payload);
+  }
+
+  openHikes() {
+    const dest = this.destination();
+    if (!dest) return;
+    this.drawerSvc.close('destination-detail');
+    this.drawerSvc.open('hikes', dest);
+  }
+
+  openBikeRides() {
+    const dest = this.destination();
+    if (!dest) return;
+    this.drawerSvc.close('destination-detail');
+    this.drawerSvc.open('bikes', dest);
+  }
+
+  openHotels() {
+    const dest = this.destination();
+    if (!dest) return;
+    this.drawerSvc.close('destination-detail');
+    this.drawerSvc.open('hotels', dest);
   }
 }

@@ -2,26 +2,26 @@ import ErrorResponse from '../utils/errorResponse.js';
 import asyncHandler from '../middleware/async.js';
 import { fetchSchweizMobilRoutes, buildGpx } from '../utils/schweizMobilRoutes.js';
 
-// ch.astra.wanderland = official SchweizMobil hiking routes (Wanderland)
-const HIKING_LAYER = 'ch.astra.wanderland';
+// ch.astra.veloland = official SchweizMobil bike routes (Veloland)
+const BIKE_LAYER = 'ch.astra.veloland';
 
-// @desc    GET hiking routes near a point
-// @route   GET /api/v1/hikes
+// @desc    GET bike routes near a point
+// @route   GET /api/v1/bikes
 // @access  Public
-export const getHikes = asyncHandler(async (req, res, next) => {
+export const getBikes = asyncHandler(async (req, res, next) => {
     const { easting, northing } = req.lv95;
     const radiusMeters = parseInt(req.query.radius, 10) || 30000;
 
     try {
-        const hikes = await fetchSchweizMobilRoutes({
-            layer: HIKING_LAYER,
+        const bikes = await fetchSchweizMobilRoutes({
+            layer: BIKE_LAYER,
             easting,
             northing,
             radiusMeters,
             lang: req.query.lang,
         });
 
-        res.status(200).json({ success: true, count: hikes.length, radiusMeters, data: hikes });
+        res.status(200).json({ success: true, count: bikes.length, radiusMeters, data: bikes });
     } catch (error) {
         console.error(error);
         next(
@@ -30,10 +30,10 @@ export const getHikes = asyncHandler(async (req, res, next) => {
     }
 });
 
-// @desc    Export a hiking route as a GPX file
-// @route   POST /api/v1/hikes/gpx
+// @desc    Export a bike route as a GPX file
+// @route   POST /api/v1/bikes/gpx
 // @access  Public
-export const getHikesGpx = asyncHandler(async (req, res, next) => {
+export const getBikesGpx = asyncHandler(async (req, res, next) => {
     const { name, stages } = req.body;
 
     if (!Array.isArray(stages) || !stages.length) {

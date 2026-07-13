@@ -1,0 +1,125 @@
+.trail-list-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 100%;
+}
+
+.trail-filters {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem 0.25rem;
+}
+
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.filter-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-500);
+  flex-shrink: 0;
+}
+
+.radius-toggle,
+.category-toggle {
+  flex: 1;
+}
+
+::ng-deep .radius-toggle .p-togglebutton,
+::ng-deep .category-toggle .p-togglebutton {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.5rem;
+}
+
+.no-results {
+  margin: 1.5rem 1rem;
+  font-size: 0.82rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}
+
+.card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.625rem;
+  padding: 0.75rem 0 1.5rem;
+}
+
+.skeleton-card {
+  height: 90px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 1rem;
+}
+
+.trail-card {
+  display: flex;
+  height: 90px;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 0 1rem;
+  background: var(--gray-50);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.07);
+  cursor: pointer;
+  transition: box-shadow 0.15s;
+}
+
+.trail-card:hover {
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.trail-thumb-wrap {
+  width: 36%;
+  flex-shrink: 0;
+}
+
+.trail-card-text {
+  flex: 1;
+  padding: 0.6rem 0.75rem;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+.trail-name {
+  margin: 0;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.trail-meta-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.trail-category-badge {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  padding: 0.15rem 0.45rem;
+  border-radius: 999px;
+  color: var(--color-white);
+}
+
+.badge--national { background: #e53e3e; }
+.badge--regional { background: #2563eb; }
+.badge--local { background: #d97706; }
+
+.trail-distance {
+  font-size: 0.75rem;
+  color: var(--gray-600);
+}

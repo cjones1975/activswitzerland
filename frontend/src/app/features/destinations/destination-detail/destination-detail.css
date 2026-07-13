@@ -85,54 +85,48 @@
   color: var(--gray-700);
 }
 
-/* Action grid: Plan a Trip (top), Weather (bottom) */
-.action-grid {
+/* Activity cards: Hikes, Bike Rides, Hotels */
+.activity-cards {
   display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 0.875rem;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
 }
 
-@media (max-width: 400px) {
-  .action-grid {
+@media (max-width: 500px) {
+  .activity-cards {
     grid-template-columns: 1fr;
   }
 }
 
-.plan-card {
+.activity-card {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 0.6rem;
+  justify-content: center;
+  gap: 0.5rem;
   min-height: 80px;
   border-radius: 12px;
-  padding: 0.75rem 1rem;
+  padding: 1rem 0.5rem;
+  border: none;
   background: var(--navy-900);
   color: var(--color-white);
-  text-decoration: none;
+  font: inherit;
+  text-align: center;
+  cursor: pointer;
   transition: background 0.2s;
 }
 
-.plan-card:hover {
+.activity-card:hover {
   background: var(--navy-700);
 }
 
-.plan-card-icon {
+.activity-card-icon {
   font-size: 1.2rem;
 }
 
-.plan-card-text {
-  display: flex;
-  flex-direction: column;
-  gap: 0.2rem;
-}
-
-.plan-card-title {
-  font-size: 0.95rem;
+.activity-card-label {
+  font-size: 0.8rem;
   font-weight: 700;
-}
-
-.plan-card-subtitle {
-  font-size: 0.7rem;
-  opacity: 0.85;
 }
 
 .weather-box {

@@ -24,6 +24,7 @@ import weather from './routes/weather.js';
 import transport from './routes/transport.js';
 import trips from './routes/trips.js';
 import hikingRoutes from './routes/hikingRoutes.js';
+import bikeRoutes from './routes/bikeRoutes.js';
 
 // Create an instance of Express
 const app = express();
@@ -41,6 +42,7 @@ app.use('/api/v1/weather', weather);
 app.use('/api/v1/transport', transport);
 app.use('/api/v1/trips', trips);
 app.use('/api/v1/hikes', hikingRoutes);
+app.use('/api/v1/bikes', bikeRoutes);
 
 app.get('/', (req, res) => {
     res.send('Hello from ActivSwitzerland API');

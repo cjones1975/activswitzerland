@@ -174,10 +174,49 @@
     "detail": {
       "back": "Zurück zu den Reisezielen",
       "visit": "Offizielle Seite besuchen",
-      "planTrip": "Reise planen",
-      "planTripSubtitle": "Mit Auto oder Bahn",
-      "open": "Zurück zu {{name}}"
+      "open": "Zurück zu {{name}}",
+      "hikes": "Wanderungen",
+      "bikeRides": "Velotouren",
+      "hotels": "Hotels"
     }
+  },
+  "hikes": {
+    "loadError": "Wanderrouten konnten nicht geladen werden.",
+    "empty": "In der Nähe dieses Reiseziels wurden keine Wanderrouten gefunden.",
+    "noMatch": "Keine Wanderrouten entsprechen diesem Filter.",
+    "backToList": "Zurück zu den Wanderungen",
+    "reopen": "Wanderungen anzeigen",
+    "reopenDetail": "Route anzeigen",
+    "downloadGpx": "GPX herunterladen",
+    "distance": "Distanz",
+    "radius": "Umkreis",
+    "category": {
+      "all": "Alle",
+      "national": "National",
+      "regional": "Regional",
+      "local": "Lokal"
+    }
+  },
+  "bikes": {
+    "loadError": "Velotouren konnten nicht geladen werden.",
+    "empty": "In der Nähe dieses Reiseziels wurden keine Velotouren gefunden.",
+    "noMatch": "Keine Velotouren entsprechen diesem Filter.",
+    "backToList": "Zurück zu den Velotouren",
+    "reopen": "Velotouren anzeigen",
+    "reopenDetail": "Route anzeigen",
+    "downloadGpx": "GPX herunterladen",
+    "distance": "Distanz",
+    "radius": "Umkreis",
+    "category": {
+      "all": "Alle",
+      "national": "National",
+      "regional": "Regional",
+      "local": "Lokal"
+    }
+  },
+  "hotels": {
+    "comingSoon": "Demnächst verfügbar",
+    "comingSoonSubtitle": "Hotelsuche und -buchung werden in einem zukünftigen Update verfügbar sein."
   },
   "attractions": {
     "title": "Beliebte Attraktionen",

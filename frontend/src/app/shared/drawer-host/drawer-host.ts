@@ -16,6 +16,11 @@ import { AttractionDetail, AttractionDetailPayload } from '../../features/attrac
 import { Weather } from '../weather/weather';
 import { TripPlanner } from '../../features/trip-planner/trip-planner';
 import { ThingsToDo } from '../../features/trip-planner/things-to-do/things-to-do';
+import { HikesList } from '../../features/hikes/hikes-list/hikes-list';
+import { HikeDetail, HikeDetailPayload } from '../../features/hikes/hike-detail/hike-detail';
+import { BikesList } from '../../features/bikes/bikes-list/bikes-list';
+import { BikeDetail, BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
+import { HotelsStub } from '../../features/hotels/hotels-stub/hotels-stub';
 import { Destination } from '../../models/destination';
 import { WeatherPayload } from '../../models/weather';
 import { TripStop } from '../../models/trip';
@@ -23,7 +28,7 @@ import { TripStop } from '../../models/trip';
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, TripPlanner, ThingsToDo],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, TripPlanner, ThingsToDo, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -108,4 +113,49 @@ export class DrawerHost {
       this.svc.open('destination-detail', payload.destination);
     }
   }
+
+  onHikesBack() {
+    const dest = this.svc.getPayload<Destination>('hikes');
+    this.svc.close('hikes');
+    this.svc.open('destination-detail', dest);
+  }
+
+  hikesDestinationName = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<Destination>('hikes')?.name ?? '';
+  });
+
+  onHikeDetailBack() {
+    const payload = this.svc.getPayload<HikeDetailPayload>('hike-detail')!;
+    this.svc.close('hike-detail');
+    this.svc.open('hikes', payload.destination);
+  }
+
+  onBikesBack() {
+    const dest = this.svc.getPayload<Destination>('bikes');
+    this.svc.close('bikes');
+    this.svc.open('destination-detail', dest);
+  }
+
+  bikesDestinationName = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<Destination>('bikes')?.name ?? '';
+  });
+
+  onBikeDetailBack() {
+    const payload = this.svc.getPayload<BikeDetailPayload>('bike-detail')!;
+    this.svc.close('bike-detail');
+    this.svc.open('bikes', payload.destination);
+  }
+
+  onHotelsBack() {
+    const dest = this.svc.getPayload<Destination>('hotels');
+    this.svc.close('hotels');
+    this.svc.open('destination-detail', dest);
+  }
+
+  hotelsDestinationName = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<Destination>('hotels')?.name ?? '';
+  });
 }

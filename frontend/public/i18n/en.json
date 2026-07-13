@@ -174,10 +174,49 @@
     "detail": {
       "back": "Back to destinations",
       "visit": "Visit official page",
-      "planTrip": "Plan a Trip",
-      "planTripSubtitle": "By road or rail",
-      "open": "Back to {{name}}"
+      "open": "Back to {{name}}",
+      "hikes": "Hikes",
+      "bikeRides": "Bike Rides",
+      "hotels": "Hotels"
     }
+  },
+  "hikes": {
+    "loadError": "Could not load hiking routes.",
+    "empty": "No hiking routes found near this destination.",
+    "noMatch": "No hiking routes match this filter.",
+    "backToList": "Back to hikes",
+    "reopen": "Show hikes",
+    "reopenDetail": "Show route",
+    "downloadGpx": "Download GPX",
+    "distance": "Distance",
+    "radius": "Radius",
+    "category": {
+      "all": "All",
+      "national": "National",
+      "regional": "Regional",
+      "local": "Local"
+    }
+  },
+  "bikes": {
+    "loadError": "Could not load bike routes.",
+    "empty": "No bike routes found near this destination.",
+    "noMatch": "No bike routes match this filter.",
+    "backToList": "Back to bike rides",
+    "reopen": "Show bike rides",
+    "reopenDetail": "Show route",
+    "downloadGpx": "Download GPX",
+    "distance": "Distance",
+    "radius": "Radius",
+    "category": {
+      "all": "All",
+      "national": "National",
+      "regional": "Regional",
+      "local": "Local"
+    }
+  },
+  "hotels": {
+    "comingSoon": "Coming soon",
+    "comingSoonSubtitle": "Hotel browsing and booking will be available in a future update."
   },
   "attractions": {
     "title": "Popular attractions",

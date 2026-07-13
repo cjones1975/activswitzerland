@@ -12,6 +12,11 @@ export type DrawerKey =
   | 'profile'
   | 'trip-planner'
   | 'things-to-do'
+  | 'hikes'
+  | 'hike-detail'
+  | 'bikes'
+  | 'bike-detail'
+  | 'hotels'
 
 
 const DRAWER_BASE_Z = 4000;

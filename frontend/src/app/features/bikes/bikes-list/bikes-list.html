@@ -1,0 +1,66 @@
+<div class="trail-list-panel">
+
+  <div class="trail-filters">
+    <div class="filter-row">
+      <span class="filter-label">{{ 'bikes.radius' | translate }}</span>
+      <p-selectButton
+        [options]="radiusOptions"
+        [ngModel]="bikeMarkers.radiusKm()"
+        (ngModelChange)="onRadiusChange($event)"
+        [allowEmpty]="false"
+        class="radius-toggle">
+        <ng-template #item let-km>
+          <span>{{ km }} km</span>
+        </ng-template>
+      </p-selectButton>
+    </div>
+
+    <div class="filter-row">
+      <p-selectButton
+        [options]="categoryOptions"
+        optionLabel="label"
+        optionValue="value"
+        [ngModel]="bikeMarkers.selectedCategory()"
+        (ngModelChange)="bikeMarkers.selectedCategory.set($event)"
+        [allowEmpty]="false"
+        class="category-toggle">
+        <ng-template #item let-opt>
+          <span>{{ opt.label | translate }}</span>
+        </ng-template>
+      </p-selectButton>
+    </div>
+  </div>
+
+  @if (loadError()) {
+    <p-message severity="warn" class="w-full">{{ 'bikes.loadError' | translate }}</p-message>
+  } @else if (loading()) {
+    <div class="card-list">
+      @for (s of skeletons; track $index) {
+        <div class="skeleton-card"><p-skeleton width="100%" height="100%" borderRadius="10px" /></div>
+      }
+    </div>
+  } @else if (!routes().length) {
+    <p class="no-results">{{ 'bikes.empty' | translate }}</p>
+  } @else if (!filteredRoutes().length) {
+    <p class="no-results">{{ 'bikes.noMatch' | translate }}</p>
+  } @else {
+    <div class="card-list">
+      @for (route of filteredRoutes(); track route.routeNumber) {
+        <div class="trail-card" (click)="onRouteClick(route)">
+          <div class="trail-thumb-wrap">
+            <app-trail-thumbnail [stages]="route.stages" [category]="route.category" />
+          </div>
+          <div class="trail-card-text">
+            <h3 class="trail-name">{{ route.name }}</h3>
+            <div class="trail-meta-row">
+              <span class="trail-category-badge" [class]="'badge--' + route.category">
+                {{ ('bikes.category.' + route.category) | translate }}
+              </span>
+              <span class="trail-distance">{{ route.distanceKm | number:'1.0-1' }} km</span>
+            </div>
+          </div>
+        </div>
+      }
+    </div>
+  }
+</div>

@@ -2,31 +2,38 @@
 
 ## Feature
 
-Destination Activities + Trip Planner Rebuild — Phase 0: Destination Detail Hikes, Bike Rides, Hotels
-
 ## Status
-
-In progress — branch `feature/dest-detail-hikes-bikes-hotels`
 
 ## Goals
 
-First phase of a larger, 5-phase rebuild (full vision in `context/features/trip-planner-rebuild-spec.md`). This phase only:
-
-- Remove the "Plan a Trip" link from the destination-detail drawer.
-- Add three new destination-detail drawers: **Hikes** and **Bike Rides** (real data from geo.admin.ch, `ch.astra.wanderland`/`ch.astra.veloland`, view-only card list + detail map view + GPX download), and **Hotels** (empty "coming soon" stub, no backend).
-- Backend: factor hiking-route logic into a shared util, add distance calc + WGS84 reprojection + GPX export, and add a new bike-routes endpoint mirroring hikes with the veloland layer.
-- Hike/bike cards show name, category (national/regional/local), distance, and a generated route-shape thumbnail (no photos, no difficulty/duration/elevation — confirmed the geometry data has no elevation).
-
-Later phases (1–4, not started) rebuild the Trip Planner itself into a 5-step wizard (My Trip → Itinerary → Activities → Summary → Save Trip) — see the master spec for full detail.
-
 ## Notes
-
-- Old Trip Planner code/data model will be removed in Phase 1, not this phase.
-- See `context/features/trip-planner-rebuild-spec.md` for the full data model and all phase details.
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-07-13 — Destination Detail Hikes, Bike Rides, Hotels Implemented
+
+- Branch: `feature/dest-detail-hikes-bikes-hotels`
+- Backend: `utils/schweizMobilRoutes.js` — shared util factored out of `hikingRoutes.js` (identify call, stage-grouping, category calc), plus new distance calc (normalizes LineString/MultiLineString stage geometry to per-line arrays via `getLines()`, sums Euclidean distance per line), LV95→WGS84 reprojection (`geometryWgs84`, also normalized to `MultiLineString`), and GPX builder (`buildGpx()`, one `<trkseg>` per line)
+- `controllers/hikingRoutes.js` rewritten to use the shared util; added `getHikesGpx` (`POST /api/v1/hikes/gpx`)
+- New `controllers/bikeRoutes.js` + `routes/bikeRoutes.js` mirroring hikes with the `ch.astra.veloland` layer; mounted `/api/v1/bikes` in `server.js`
+- Frontend: `models/trail-route.ts` (`TrailRoute`/`TrailStage`/`TrailGeometry`, `trailCategoryColor()`), `shared/services/trail-routes.ts` (`TrailRoutesService`, parameterized by `kind: 'hike'|'bike'`), `shared/services/hike-markers.ts`/`bike-markers.ts` (marker state services, `providedIn: 'root'`)
+- `shared/trail-thumbnail/` — hand-rolled SVG route-shape thumbnail, one `<polyline>` per line segment (not merged into one path — a route's stages can be disconnected)
+- New `features/hikes/hikes-list`+`hike-detail`, `features/bikes/bikes-list`+`bike-detail`, `features/hotels/hotels-stub` components
+- `map.ts`: added independent `trailRoute`/`trailColor` second-line input (rendered as `MultiLineString`, separate from `tripRoute`/`tripType`); `activeMarker` input extended with optional `zoom` override
+- `drawer.ts`: extended `DrawerKey` with `hikes`/`hike-detail`/`bikes`/`bike-detail`/`hotels`; `drawer-host.ts/.html` wired with back-nav handlers for all five
+- `destination-detail.ts/.html`: removed "Plan a Trip" link/`RouterLink`; added Hikes/Bike Rides/Hotels activity cards (`.activity-cards`/`.activity-card`)
+- `destinations-layout.ts/.html`: marker-visibility gating for hike/bike pins (mirrors existing attraction gating); `onMarkerClick` opens hike-detail/bike-detail from map pins; reopen buttons for collapsed hikes/bikes/hike-detail/bike-detail
+- i18n: `hikes.*`/`bikes.*`/`hotels.*` added, `destinations.detail.planTrip*` removed, across en/de/fr/it
+- Follow-up fixes from UAT feedback in the same branch:
+  - Radius selector (5/10/20/30 km, default 30) and category filter (All/National/Regional/Local) added above each list, via `p-selectButton`
+  - Route click now only requires collapsing the detail drawer to see the map (auto-collapses the underlying list drawer too, instead of requiring two manual collapses)
+  - Local-category color changed `#eab308` → `#d97706` for better contrast
+  - Fixed a real bug: geo.admin.ch returns `MultiLineString` (not `LineString`) for routes with gaps/multiple stages; flattening all stages into one continuous line drew straight criss-crossing connectors across gaps. Map and thumbnail now render each line segment independently (`MultiLineString`/multiple `<polyline>`s) instead of one merged path — matches how the GPX export already worked (one `<trkseg>` per line)
+  - Fixed filter state (radius/category) persisting across destinations: moved `radiusKm`/`selectedCategory` off the list components (which PrimeNG can reuse across drawer open/close under fast interaction, per an animation-timing race in `onAfterLeave`) and onto `HikeMarkersService`/`BikeMarkersService` (true singletons), with `resetFiltersForDestination()` comparing destination object identity to decide whether to reset to defaults
+  - Selecting a hike/bike (from its card or its map pin) now flies the map to the midpoint of the route's start/end coordinates at zoom 10 (attractions still center on their own point at zoom 15)
+- Feature marked complete
 
 ### 2026-06-15 — Trip Planner Wizard Specced
 

@@ -38,11 +38,16 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() zoom = 10;
   @Input() center?: [number, number];
   @Input() style = 'https://tiles.openfreemap.org/styles/bright';
-  @Input() activeMarker?: { lng: number; lat: number };
+  @Input() activeMarker?: { lng: number; lat: number; zoom?: number };
   @Input() tripRoute: [number, number][] | null = null;
   @Input() tripType: 'road' | 'rail' | null = null;
   @Input() tripStopPoints: [number, number][] = [];
   @Input() fitBounds: [number, number][] | null = null;
+  // Array of separate line segments (not one continuous line) — a route can
+  // have gaps/discontinuities, and joining them end-to-end would draw a
+  // straight line across the gap.
+  @Input() trailRoute: [number, number][][] | null = null;
+  @Input() trailColor = '#d97706';
 
   @Output() markerClick = new EventEmitter<MapMarker>();
 
@@ -76,6 +81,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.mapLoaded = true;
       this.syncMarkers();
       this.syncTripRoute();
+      this.syncTrailRoute();
       if (this.fitBounds && this.fitBounds.length >= 2) {
         this.applyFitBounds(this.fitBounds, false);
       } else if (this.center) {
@@ -100,6 +106,9 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     if ((changes['tripRoute'] || changes['tripType'] || changes['tripStopPoints']) && this.mapLoaded) {
       this.syncTripRoute();
+    }
+    if ((changes['trailRoute'] || changes['trailColor']) && this.mapLoaded) {
+      this.syncTrailRoute();
     }
     if (changes['fitBounds'] && this.mapLoaded && this.fitBounds && this.fitBounds.length >= 2) {
       this.applyFitBounds(this.fitBounds, true);
@@ -206,7 +215,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private previousView?: { center: maplibregl.LngLat; zoom: number };
 
-  private activateMarker(target: { lng: number; lat: number }): void {
+  private activateMarker(target: { lng: number; lat: number; zoom?: number }): void {
     if (!this.previousView && this.map) {
       this.previousView = { center: this.map.getCenter(), zoom: this.map.getZoom() };
     }
@@ -216,7 +225,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     this.map?.flyTo({
       center: [target.lng, target.lat],
-      zoom: 15,
+      zoom: target.zoom ?? 15,
       duration: 800,
     });
 
@@ -326,6 +335,36 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         .setLngLat(coord)
         .addTo(this.map!);
       this.tripStopMarkers.push(marker);
+    });
+  }
+
+  private syncTrailRoute(): void {
+    if (!this.map) return;
+
+    if (this.map.getLayer('trail-route-line')) this.map.removeLayer('trail-route-line');
+    if (this.map.getSource('trail-route')) this.map.removeSource('trail-route');
+
+    const lines = this.trailRoute?.filter(line => line.length >= 2);
+    if (!lines || !lines.length) return;
+
+    this.map.addSource('trail-route', {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        geometry: { type: 'MultiLineString' as const, coordinates: lines },
+        properties: {},
+      },
+    });
+
+    this.map.addLayer({
+      id: 'trail-route-line',
+      type: 'line',
+      source: 'trail-route',
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: {
+        'line-color': this.trailColor,
+        'line-width': 4,
+      },
     });
   }
 

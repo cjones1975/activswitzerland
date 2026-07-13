@@ -1,0 +1,27 @@
+.hotels-stub-panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 0.75rem;
+  padding: 4rem 2rem;
+}
+
+.stub-icon {
+  font-size: 2.5rem;
+  color: var(--gray-400, #94a3b8);
+}
+
+.stub-title {
+  margin: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--navy-900);
+}
+
+.stub-subtitle {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--gray-600);
+  line-height: 1.6;
+}

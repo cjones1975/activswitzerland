@@ -32,38 +32,43 @@
     <div class="content">
       <p class="abstract" [innerHTML]="dest.abstract"></p>
 
-      <div class="action-grid">
-        <a class="plan-card" [routerLink]="['/trip-planner', dest.identifier]">
-          <i class="fa-solid fa-route plan-card-icon"></i>
-          <div class="plan-card-text">
-            <span class="plan-card-title">{{ 'destinations.detail.planTrip' | translate }}</span>
-            <span class="plan-card-subtitle">{{ 'destinations.detail.planTripSubtitle' | translate }}</span>
-          </div>
-        </a>
+      <div class="activity-cards">
+        <button class="activity-card" type="button" (click)="openHikes()">
+          <i class="fa-solid fa-person-hiking activity-card-icon"></i>
+          <span class="activity-card-label">{{ 'destinations.detail.hikes' | translate }}</span>
+        </button>
+        <button class="activity-card" type="button" (click)="openBikeRides()">
+          <i class="fa-solid fa-bicycle activity-card-icon"></i>
+          <span class="activity-card-label">{{ 'destinations.detail.bikeRides' | translate }}</span>
+        </button>
+        <button class="activity-card" type="button" (click)="openHotels()">
+          <i class="fa-solid fa-bed activity-card-icon"></i>
+          <span class="activity-card-label">{{ 'destinations.detail.hotels' | translate }}</span>
+        </button>
+      </div>
 
-        <div class="weather-box">
-          @if (weatherLoading()) {
-            <div class="weather-skeleton"></div>
-          } @else if (todayWeather(); as w) {
-            <div class="weather-card-inner">
-              <span class="weather-title">{{ 'weather.today' | translate }}</span>
-              <div class="weather-main-row">
-                <i [class]="w.weatherCode.icon + ' weather-icon'"></i>
-                <span class="weather-temp">{{ w.maxTemp }}°C</span>
-              </div>
-              <span class="weather-desc">{{ w.weatherCode.label }}</span>
-              <button class="forecast-link" type="button" (click)="openWeather()">
-                {{ 'weather.seeForecast' | translate }}
-                <i class="fa-solid fa-arrow-right"></i>
-              </button>
+      <div class="weather-box">
+        @if (weatherLoading()) {
+          <div class="weather-skeleton"></div>
+        } @else if (todayWeather(); as w) {
+          <div class="weather-card-inner">
+            <span class="weather-title">{{ 'weather.today' | translate }}</span>
+            <div class="weather-main-row">
+              <i [class]="w.weatherCode.icon + ' weather-icon'"></i>
+              <span class="weather-temp">{{ w.maxTemp }}°C</span>
             </div>
-          } @else {
-            <div class="weather-unavailable">
-              <i class="fa-light fa-cloud weather-icon"></i>
-              <span class="weather-temp">--°C</span>
-            </div>
-          }
-        </div>
+            <span class="weather-desc">{{ w.weatherCode.label }}</span>
+            <button class="forecast-link" type="button" (click)="openWeather()">
+              {{ 'weather.seeForecast' | translate }}
+              <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        } @else {
+          <div class="weather-unavailable">
+            <i class="fa-light fa-cloud weather-icon"></i>
+            <span class="weather-temp">--°C</span>
+          </div>
+        }
       </div>
     </div>
 

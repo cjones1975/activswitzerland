@@ -174,10 +174,49 @@
     "detail": {
       "back": "Torna alle destinazioni",
       "visit": "Visita la pagina ufficiale",
-      "planTrip": "Pianifica un viaggio",
-      "planTripSubtitle": "In auto o in treno",
-      "open": "Torna a {{name}}"
+      "open": "Torna a {{name}}",
+      "hikes": "Escursioni",
+      "bikeRides": "Percorsi in bici",
+      "hotels": "Hotel"
     }
+  },
+  "hikes": {
+    "loadError": "Impossibile caricare i percorsi escursionistici.",
+    "empty": "Nessun percorso escursionistico trovato vicino a questa destinazione.",
+    "noMatch": "Nessun percorso escursionistico corrisponde a questo filtro.",
+    "backToList": "Torna alle escursioni",
+    "reopen": "Mostra escursioni",
+    "reopenDetail": "Mostra percorso",
+    "downloadGpx": "Scarica GPX",
+    "distance": "Distanza",
+    "radius": "Raggio",
+    "category": {
+      "all": "Tutte",
+      "national": "Nazionale",
+      "regional": "Regionale",
+      "local": "Locale"
+    }
+  },
+  "bikes": {
+    "loadError": "Impossibile caricare i percorsi in bici.",
+    "empty": "Nessun percorso in bici trovato vicino a questa destinazione.",
+    "noMatch": "Nessun percorso in bici corrisponde a questo filtro.",
+    "backToList": "Torna ai percorsi in bici",
+    "reopen": "Mostra percorsi in bici",
+    "reopenDetail": "Mostra percorso",
+    "downloadGpx": "Scarica GPX",
+    "distance": "Distanza",
+    "radius": "Raggio",
+    "category": {
+      "all": "Tutte",
+      "national": "Nazionale",
+      "regional": "Regionale",
+      "local": "Locale"
+    }
+  },
+  "hotels": {
+    "comingSoon": "Prossimamente",
+    "comingSoonSubtitle": "La ricerca e la prenotazione di hotel saranno disponibili in un futuro aggiornamento."
   },
   "attractions": {
     "title": "Attrazioni popolari",

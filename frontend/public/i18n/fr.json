@@ -174,10 +174,49 @@
     "detail": {
       "back": "Retour aux destinations",
       "visit": "Visiter la page officielle",
-      "planTrip": "Planifier un voyage",
-      "planTripSubtitle": "En voiture ou en train",
-      "open": "Retour à {{name}}"
+      "open": "Retour à {{name}}",
+      "hikes": "Randonnées",
+      "bikeRides": "Balades à vélo",
+      "hotels": "Hôtels"
     }
+  },
+  "hikes": {
+    "loadError": "Impossible de charger les itinéraires de randonnée.",
+    "empty": "Aucun itinéraire de randonnée trouvé près de cette destination.",
+    "noMatch": "Aucun itinéraire de randonnée ne correspond à ce filtre.",
+    "backToList": "Retour aux randonnées",
+    "reopen": "Afficher les randonnées",
+    "reopenDetail": "Afficher l'itinéraire",
+    "downloadGpx": "Télécharger le GPX",
+    "distance": "Distance",
+    "radius": "Rayon",
+    "category": {
+      "all": "Toutes",
+      "national": "National",
+      "regional": "Régional",
+      "local": "Local"
+    }
+  },
+  "bikes": {
+    "loadError": "Impossible de charger les balades à vélo.",
+    "empty": "Aucune balade à vélo trouvée près de cette destination.",
+    "noMatch": "Aucune balade à vélo ne correspond à ce filtre.",
+    "backToList": "Retour aux balades à vélo",
+    "reopen": "Afficher les balades à vélo",
+    "reopenDetail": "Afficher l'itinéraire",
+    "downloadGpx": "Télécharger le GPX",
+    "distance": "Distance",
+    "radius": "Rayon",
+    "category": {
+      "all": "Toutes",
+      "national": "National",
+      "regional": "Régional",
+      "local": "Local"
+    }
+  },
+  "hotels": {
+    "comingSoon": "Bientôt disponible",
+    "comingSoonSubtitle": "La recherche et la réservation d'hôtels seront disponibles dans une prochaine mise à jour."
   },
   "attractions": {
     "title": "Attractions populaires",

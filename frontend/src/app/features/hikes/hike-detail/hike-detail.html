@@ -1,0 +1,25 @@
+@if (payload(); as p) {
+  <div class="trail-detail-panel">
+
+    <h1 class="trail-detail-name">{{ p.route.name }}</h1>
+
+    <div class="trail-detail-thumb-wrap">
+      <app-trail-thumbnail [stages]="p.route.stages" [category]="p.route.category" />
+    </div>
+
+    <div class="trail-detail-meta">
+      <span class="trail-category-badge" [class]="'badge--' + p.route.category">
+        {{ ('hikes.category.' + p.route.category) | translate }}
+      </span>
+      <span class="trail-detail-distance">
+        {{ 'hikes.distance' | translate }}: {{ p.route.distanceKm | number:'1.0-1' }} km
+      </span>
+    </div>
+
+    <button class="gpx-btn" type="button" [disabled]="downloading()" (click)="downloadGpx()">
+      <i class="fa-solid fa-download"></i>
+      {{ 'hikes.downloadGpx' | translate }}
+    </button>
+
+  </div>
+}
