@@ -2,11 +2,27 @@
 
 ## Feature
 
+Destination Activities + Trip Planner Rebuild — Phase 0: Destination Detail Hikes, Bike Rides, Hotels
+
 ## Status
+
+In progress — branch `feature/dest-detail-hikes-bikes-hotels`
 
 ## Goals
 
+First phase of a larger, 5-phase rebuild (full vision in `context/features/trip-planner-rebuild-spec.md`). This phase only:
+
+- Remove the "Plan a Trip" link from the destination-detail drawer.
+- Add three new destination-detail drawers: **Hikes** and **Bike Rides** (real data from geo.admin.ch, `ch.astra.wanderland`/`ch.astra.veloland`, view-only card list + detail map view + GPX download), and **Hotels** (empty "coming soon" stub, no backend).
+- Backend: factor hiking-route logic into a shared util, add distance calc + WGS84 reprojection + GPX export, and add a new bike-routes endpoint mirroring hikes with the veloland layer.
+- Hike/bike cards show name, category (national/regional/local), distance, and a generated route-shape thumbnail (no photos, no difficulty/duration/elevation — confirmed the geometry data has no elevation).
+
+Later phases (1–4, not started) rebuild the Trip Planner itself into a 5-step wizard (My Trip → Itinerary → Activities → Summary → Save Trip) — see the master spec for full detail.
+
 ## Notes
+
+- Old Trip Planner code/data model will be removed in Phase 1, not this phase.
+- See `context/features/trip-planner-rebuild-spec.md` for the full data model and all phase details.
 
 ## History
 
