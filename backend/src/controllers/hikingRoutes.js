@@ -1,6 +1,6 @@
 import ErrorResponse from '../utils/errorResponse.js';
 import asyncHandler from '../middleware/async.js';
-import { fetchSchweizMobilRoutes, buildGpx } from '../utils/schweizMobilRoutes.js';
+import { fetchSchweizMobilRoutes, buildGpx, fetchElevationProfile } from '../utils/schweizMobilRoutes.js';
 
 // ch.astra.wanderland = official SchweizMobil hiking routes (Wanderland)
 const HIKING_LAYER = 'ch.astra.wanderland';
@@ -48,4 +48,30 @@ export const getHikesGpx = asyncHandler(async (req, res, next) => {
         .set('Content-Type', 'application/gpx+xml')
         .set('Content-Disposition', `attachment; filename="${filename}"`)
         .send(gpx);
+});
+
+// @desc    Elevation profile (distance vs elevation, ascent/descent) for a hiking route
+// @route   POST /api/v1/hikes/elevation
+// @access  Public
+export const getHikesElevation = asyncHandler(async (req, res, next) => {
+    const { stages } = req.body;
+
+    if (!Array.isArray(stages) || !stages.length) {
+        return next(new ErrorResponse('stages array is required', 400));
+    }
+
+    try {
+        const profile = await fetchElevationProfile(stages);
+
+        if (!profile) {
+            return next(new ErrorResponse('Elevation profile unavailable for this route', 404));
+        }
+
+        res.status(200).json({ success: true, data: profile });
+    } catch (error) {
+        console.error(error);
+        next(
+            new ErrorResponse(`An error occurred during the request: ${error.message}`, 500)
+        );
+    }
 });

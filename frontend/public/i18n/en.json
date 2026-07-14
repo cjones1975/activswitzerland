@@ -195,6 +195,12 @@
       "national": "National",
       "regional": "Regional",
       "local": "Local"
+    },
+    "elevation": {
+      "title": "Elevation profile",
+      "ascent": "Ascent",
+      "descent": "Descent",
+      "loadError": "Could not load the elevation profile."
     }
   },
   "bikes": {
@@ -212,6 +218,12 @@
       "national": "National",
       "regional": "Regional",
       "local": "Local"
+    },
+    "elevation": {
+      "title": "Elevation profile",
+      "ascent": "Ascent",
+      "descent": "Descent",
+      "loadError": "Could not load the elevation profile."
     }
   },
   "hotels": {

@@ -16,6 +16,30 @@
       </span>
     </div>
 
+    <div class="elevation-section">
+      <h2 class="elevation-title">{{ 'hikes.elevation.title' | translate }}</h2>
+
+      @if (elevationLoading()) {
+        <p-skeleton height="140px" borderRadius="10px" />
+      } @else if (elevationError()) {
+        <p-message severity="warn" class="w-full">
+          {{ 'hikes.elevation.loadError' | translate }}
+        </p-message>
+      } @else if (elevationProfile(); as profile) {
+        <div class="elevation-stats">
+          <span class="elevation-stat elevation-stat--ascent" [attr.aria-label]="('hikes.elevation.ascent' | translate) + ': ' + (profile.ascentM | number:'1.2-2') + ' m'">
+            <i class="fa-solid fa-arrow-up" aria-hidden="true"></i> {{ profile.ascentM | number:'1.2-2' }} m
+          </span>
+          <span class="elevation-stat elevation-stat--descent" [attr.aria-label]="('hikes.elevation.descent' | translate) + ': ' + (profile.descentM | number:'1.2-2') + ' m'">
+            <i class="fa-solid fa-arrow-down" aria-hidden="true"></i> {{ profile.descentM | number:'1.2-2' }} m
+          </span>
+        </div>
+        <app-elevation-chart
+          [profile]="profile"
+          [ariaLabel]="('hikes.elevation.title' | translate) + ': ' + (profile.minElevation | number:'1.2-2') + '–' + (profile.maxElevation | number:'1.2-2') + ' m'" />
+      }
+    </div>
+
     <button class="gpx-btn" type="button" [disabled]="downloading()" (click)="downloadGpx()">
       <i class="fa-solid fa-download"></i>
       {{ 'hikes.downloadGpx' | translate }}

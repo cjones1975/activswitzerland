@@ -71,3 +71,37 @@
   opacity: 0.6;
   cursor: default;
 }
+
+.elevation-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.elevation-title {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--navy-900);
+}
+
+.elevation-stats {
+  display: flex;
+  gap: 1rem;
+}
+
+.elevation-stat {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+.elevation-stat--ascent {
+  color: #dc2626;
+}
+
+.elevation-stat--descent {
+  color: #1a7a4c;
+}
