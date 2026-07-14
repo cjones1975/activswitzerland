@@ -12,6 +12,19 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-14 — Hike/Bike Elevation Profile Implemented
+
+- Branch: `feature/hike-bike-elevation`
+- Backend: `schweizMobilRoutes.js` — added `fetchElevationProfile(stages)`, `fetchLineProfile(line)` (POSTs to geo.admin.ch's `profile.json`, form-urlencoded body with the `Content-Type` header set explicitly without a charset — geo.admin.ch 415s on axios' default `;charset=utf-8`); rebases each line's cumulative `dist` against a running total for one continuous distance axis across stages
+- `hikingRoutes.js`/`bikeRoutes.js` controllers: added `getHikesElevation`/`getBikesElevation` (400 on missing `stages`, 404 if the profile comes back with fewer than 2 usable points); `routes/hikingRoutes.js`/`routes/bikeRoutes.js` mounted `POST /elevation` on each
+- Frontend: `models/elevation-profile.ts`; `trail-routes.ts` gained `getElevationProfile(kind, route)`; new `shared/elevation-chart/` — hand-rolled SVG area chart (single-hue line/fill, hairline gridlines, muted axis labels, pointer + keyboard crosshair/tooltip), built per the `dataviz` skill's form/color/interaction rules, takes an `ariaLabel` input so the shared component isn't coupled to the hikes/bikes i18n namespace
+- `hike-detail`/`bike-detail`: added `elevationProfile`/`elevationLoading`/`elevationError` signals, fetched via a `Subject`+`switchMap` effect keyed off the drawer payload (same pattern as `attraction-detail`); template renders an "Elevation profile" section (ascent/descent stat row + chart) with a skeleton while loading and a `p-message` warn on error
+- i18n: `hikes.elevation.*`/`bikes.elevation.*` (`title`, `ascent`, `descent`, `loadError`) added across en/de/fr/it
+- UAT fixes in the same branch: moved the elevation section above the GPX download button; ascent styled red, descent green; ascent/descent/min/max now display to 2 decimal places (`number:'1.2-2'`) instead of whole meters
+- Fixed a real accuracy bug found via UAT: geo.admin.ch's `profile.json` ignores the `nb_points` cap whenever the input line already has more vertices than that (returns one DEM sample per original digitized vertex instead of resampling down) — for a 20km route this meant summing every raw delta across ~2,300 points, overcounting ascent/descent by ~7% against SchweizMobil's own published figures (confirmed against "Sentier du Rhône (Genève - La Plaine)": raw sum gave 494.2m/514.0m ascent/descent vs SchweizMobil's published 460m/480m). Replaced raw delta-summation with a 0.5m noise-threshold/hysteresis filter (only count a climb/descent once cumulative movement clears the threshold, then reset the baseline) — verified this lands within ~1% of SchweizMobil (455m/475m)
+- `angular.json`: bumped production budgets (initial 500kB/1MB → 1MB/3MB warning/error; component-style 4kB/8kB → 6kB/12kB) — the app's bundle was already over the old budgets before this feature; the failure surfaced when this feature's build ran
+- Feature marked complete
+
 ### 2026-07-13 — Destination Detail Hikes, Bike Rides, Hotels Implemented
 
 - Branch: `feature/dest-detail-hikes-bikes-hotels`

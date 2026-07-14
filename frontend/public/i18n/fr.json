@@ -195,6 +195,12 @@
       "national": "National",
       "regional": "Régional",
       "local": "Local"
+    },
+    "elevation": {
+      "title": "Profil altimétrique",
+      "ascent": "Montée",
+      "descent": "Descente",
+      "loadError": "Impossible de charger le profil altimétrique."
     }
   },
   "bikes": {
@@ -212,6 +218,12 @@
       "national": "National",
       "regional": "Régional",
       "local": "Local"
+    },
+    "elevation": {
+      "title": "Profil altimétrique",
+      "ascent": "Montée",
+      "descent": "Descente",
+      "loadError": "Impossible de charger le profil altimétrique."
     }
   },
   "hotels": {

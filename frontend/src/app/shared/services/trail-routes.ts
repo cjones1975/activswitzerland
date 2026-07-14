@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { TrailRoute, TrailRoutesResponse } from '../../models/trail-route';
+import { ElevationProfile, ElevationProfileResponse } from '../../models/elevation-profile';
 
 export type TrailKind = 'hike' | 'bike';
 
@@ -33,5 +34,14 @@ export class TrailRoutesService {
       { name: route.name, stages: route.stages.map(s => ({ geometry: s.geometry })) },
       { responseType: 'blob' },
     );
+  }
+
+  getElevationProfile(kind: TrailKind, route: TrailRoute): Observable<ElevationProfile> {
+    return this.http
+      .post<ElevationProfileResponse>(
+        `${environment.apiUrl}/api/v1/${KIND_PATH[kind]}/elevation`,
+        { stages: route.stages.map(s => ({ geometry: s.geometry })) },
+      )
+      .pipe(map(res => res.data));
   }
 }
