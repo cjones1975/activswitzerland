@@ -81,6 +81,10 @@ export class DrawerHost {
       this.svc.open('destination-detail', payload.destination);
       return;
     }
+    if (payload.source === 'trip-summary') {
+      this.svc.open('trip-planner');
+      return;
+    }
     this.svc.open('all-attractions', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
   }
 
@@ -120,6 +124,10 @@ export class DrawerHost {
   onHikeDetailBack() {
     const payload = this.svc.getPayload<HikeDetailPayload>('hike-detail')!;
     this.svc.close('hike-detail');
+    if (payload.source === 'trip-summary') {
+      this.svc.open('trip-planner');
+      return;
+    }
     this.svc.open('hikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
   }
 
@@ -141,6 +149,10 @@ export class DrawerHost {
   onBikeDetailBack() {
     const payload = this.svc.getPayload<BikeDetailPayload>('bike-detail')!;
     this.svc.close('bike-detail');
+    if (payload.source === 'trip-summary') {
+      this.svc.open('trip-planner');
+      return;
+    }
     this.svc.open('bikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
   }
 

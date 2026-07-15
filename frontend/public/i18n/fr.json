@@ -143,6 +143,17 @@
         "dayDateLabel": "Jour {{day}} - {{date}}",
         "continue": "Résumé",
         "noStops": "Ajoutez des arrêts d'au moins un jour pour commencer à ajouter des activités."
+      },
+      "step4": {
+        "destinations": "Destinations",
+        "activities": "Activités",
+        "timeline": "Chronologie",
+        "mapView": "Vue carte",
+        "connectionNeeded": "Correspondance nécessaire : {{from}} → {{to}}",
+        "fixConnection": "Choisir une correspondance",
+        "routeComplete": "Itinéraire complet !",
+        "noActivities": "Aucune activité ajoutée pour l'instant.",
+        "continue": "Enregistrer"
       }
     }
   },

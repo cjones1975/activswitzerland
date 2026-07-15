@@ -12,6 +12,18 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-15 — Trip Planner Rebuild Phase 3 (Summary) Implemented
+
+- Branch: `feature/trip-planner-summary`; specced in `context/features/trip-planner-summary-spec.md` (split out of `trip-planner-rebuild-spec.md`'s Phase 3 section, which was trimmed to a pointer)
+- `shared/map/map.ts`: `syncTripRoute()`'s road branch replaced the old start/end icon scheme (green circle-dot / red location-dot) with every stop numbered 1..N, all sharing the existing navy numbered-circle style except the final stop (destination), which gets a distinct red — generalizes to any number of stops instead of a fixed start/end pair
+- `trip-planner-layout.ts/html`: `tripAttractionMarkers` (Phase 1 scaffolding, attraction-only) renamed to `tripActivityMarkers` and widened to all three `ActivityKind`s with a per-kind icon/color (binoculars/navy, hiking/green, bicycle/orange); marker `id` switched from `a.refId` (collidable across kinds) to `a.id` (the selection's own unique uuid); `(markerClick)` bound on `<app-map>` (previously unbound) to a new `onActivityMarkerClick()` — looks up the full `TripActivitySelection` by marker id, re-fetches the source object (`AttractionsService.getAttraction()` by id for attractions; best-effort radius re-search + id match via `TrailRoutesService.getRoutes()` around the owning stop's coordinates for hikes/bikes, since there's no fetch-by-id for trail routes), and opens the matching detail drawer
+- `attraction-detail.ts`/`hike-detail.ts`/`bike-detail.ts`: payloads gained a `'trip-summary'` source value (new union member on `AttractionDetailPayload.source`, new optional `source?` field on `HikeDetailPayload`/`BikeDetailPayload`, which previously had none); `drawer-host.ts`'s `onAttractionDetailBack()`/`onHikeDetailBack()`/`onBikeDetailBack()` each gained a `source === 'trip-summary'` branch that reopens `'trip-planner'` (un-collapsing the drawer back to Summary) instead of the normal list-drawer reopen, since a Summary map-marker click has no backing list drawer on the stack to return to
+- New `features/trip-planner/step4-summary/` — stat tiles (destination/activity counts), road-or-rail + date-range badges, a Timeline/Map View toggle (Map View just calls `drawer.collapse('trip-planner')`, reusing the map-reveal mechanism already built into `trip-planner-layout`; no new toggle plumbing needed), one card per stop with `days > 0` showing its activities grouped by kind with an inline remove (×) (mirrors `step3-activities`), an informational "connection needed" banner per unresolved rail leg with a "Fix connection" action (`plannerSvc.step.set(2)` — Step 2 already renders every unresolved leg simultaneously, no per-leg state needed), and a "Route complete!" banner once every leg (rail) or the road trip itself is resolved; wired into `trip-planner-wizard` as `@case (4)`
+- i18n: `trip.planner.step4.*` added across en/de/fr/it
+- Confirmed via product decision during spec: activity thumbnails are icon-only (no photos) for all three kinds — no `TripActivitySelection` model changes needed
+- Verified via `tsc --noEmit` and `ng build` (both clean); UI not yet exercised in a live browser session
+- Feature marked complete
+
 ### 2026-07-15 — Trip Planner Rebuild Phase 2 (Activities) Implemented
 
 - Branch: `feature/trip-planner-activities`; specced in `context/features/trip-planner-activities-spec.md` (split out of `trip-planner-rebuild-spec.md`'s Phase 2 section, which was trimmed to a pointer)

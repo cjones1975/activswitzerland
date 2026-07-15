@@ -11,6 +11,7 @@ import { TripStop } from '../../../models/trip';
 import { Step1MyTrip } from '../step1-my-trip/step1-my-trip';
 import { Step2Itinerary } from '../step2-itinerary/step2-itinerary';
 import { Step3Activities } from '../step3-activities/step3-activities';
+import { Step4Summary } from '../step4-summary/step4-summary';
 
 interface TripPlannerPrefill {
   name: string;
@@ -24,7 +25,7 @@ const STEP_KEYS = ['myTrip', 'itinerary', 'activities', 'summary', 'save'] as co
 @Component({
   selector: 'app-trip-planner-wizard',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, ConfirmDialog, Step1MyTrip, Step2Itinerary, Step3Activities],
+  imports: [CommonModule, TranslatePipe, ConfirmDialog, Step1MyTrip, Step2Itinerary, Step3Activities, Step4Summary],
   providers: [ConfirmationService],
   templateUrl: './trip-planner-wizard.html',
   styleUrl: './trip-planner-wizard.css',

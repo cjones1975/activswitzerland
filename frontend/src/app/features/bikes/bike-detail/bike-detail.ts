@@ -19,6 +19,7 @@ export interface BikeDetailPayload {
   destination: GeoLocation;
   mode?: 'view' | 'select';
   stopId?: string;
+  source?: 'trip-summary';
 }
 
 @Component({

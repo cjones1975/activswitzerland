@@ -143,6 +143,17 @@
         "dayDateLabel": "Giorno {{day}} - {{date}}",
         "continue": "Riepilogo",
         "noStops": "Aggiungi tappe di almeno un giorno per iniziare ad aggiungere attività."
+      },
+      "step4": {
+        "destinations": "Destinazioni",
+        "activities": "Attività",
+        "timeline": "Cronologia",
+        "mapView": "Vista mappa",
+        "connectionNeeded": "Coincidenza necessaria: {{from}} → {{to}}",
+        "fixConnection": "Scegli coincidenza",
+        "routeComplete": "Percorso completo!",
+        "noActivities": "Nessuna attività ancora aggiunta.",
+        "continue": "Salva"
       }
     }
   },

@@ -1,0 +1,114 @@
+<div class="s4-content">
+  <div class="s4-stats">
+    <div class="s4-stat-tile">
+      <i class="fa-solid fa-location-dot"></i>
+      <span class="s4-stat-value">{{ destinationCount() }}</span>
+      <span class="s4-stat-label">{{ 'trip.planner.step4.destinations' | translate }}</span>
+    </div>
+    <div class="s4-stat-tile">
+      <i class="fa-solid fa-eye"></i>
+      <span class="s4-stat-value">{{ activityCount() }}</span>
+      <span class="s4-stat-label">{{ 'trip.planner.step4.activities' | translate }}</span>
+    </div>
+  </div>
+
+  <div class="s4-badges">
+    <span class="s4-type-badge">
+      <i class="fa-light" [class.fa-car]="type() === 'road'" [class.fa-train]="type() === 'rail'"></i>
+      {{ (type() === 'road' ? 'trip.planner.typeRoad' : 'trip.planner.typeRail') | translate }}
+    </span>
+    <span class="s4-date-badge">
+      <i class="fa-light fa-calendar"></i>
+      @if (dateMode() === 'dates' && formattedDateRange(); as range) {
+        {{ range }}
+      } @else {
+        {{ 'trip.planner.step1.daysTrip' | translate: { count: dayCount() } }}
+      }
+    </span>
+  </div>
+
+  <div class="s4-view-toggle">
+    <button type="button" class="s4-view-btn s4-view-btn--active" disabled>
+      <i class="fa-solid fa-list"></i>
+      {{ 'trip.planner.step4.timeline' | translate }}
+    </button>
+    <button type="button" class="s4-view-btn" (click)="showMap()">
+      <i class="fa-light fa-map"></i>
+      {{ 'trip.planner.step4.mapView' | translate }}
+    </button>
+  </div>
+
+  @if (!visibleStops().length) {
+    <p class="s4-empty">{{ 'trip.planner.step4.noActivities' | translate }}</p>
+  }
+
+  @for (stop of visibleStops(); track stop.id; let i = $index) {
+    <div class="s4-stop-card">
+      <div class="s4-stop-head">
+        <span class="s4-stop-index" [class.s4-stop-index--final]="i === visibleStops().length - 1">{{ i + 1 }}</span>
+        <div class="s4-stop-heading">
+          <span class="s4-stop-name">{{ stop.name }}</span>
+          <span class="s4-stop-role">{{ ('trip.planner.step2.' + stop.role) | translate }}</span>
+        </div>
+        @if (stopDayLabels().get(stop.id); as label) {
+          <span class="s4-day-label">
+            {{ (label.start === label.end ? 'trip.planner.step2.dayLabel' : 'trip.planner.step2.dayRangeLabel') | translate: label }}
+          </span>
+        }
+      </div>
+
+      @if (!hasActivities(stop)) {
+        <p class="s4-stop-empty">{{ 'trip.planner.step4.noActivities' | translate }}</p>
+      }
+
+      @for (group of groups; track group.kind) {
+        @if (activitiesFor(stop, group.kind); as items) {
+          @if (items.length) {
+            <div class="s4-group">
+              <div class="s4-group-head">
+                <i [class]="group.icon"></i>
+                <span>{{ group.labelKey | translate }}</span>
+              </div>
+              @for (activity of items; track activity.id) {
+                <div class="s4-activity-item">
+                  <span class="s4-activity-name">{{ activity.name }}</span>
+                  <span class="s4-activity-day">{{ activity.day }}</span>
+                  <button type="button" class="s4-activity-remove" [attr.aria-label]="'trip.planner.step3.removeFromTrip' | translate" (click)="removeActivity(activity)">
+                    <i class="fa-light fa-xmark"></i>
+                  </button>
+                </div>
+              }
+            </div>
+          }
+        }
+      }
+    </div>
+  }
+
+  @if (type() === 'rail') {
+    @for (leg of unresolvedLegs(); track leg.from.id + leg.to.id) {
+      <div class="s4-connection-banner">
+        <i class="fa-light fa-triangle-exclamation"></i>
+        <span>{{ 'trip.planner.step4.connectionNeeded' | translate: { from: leg.from.name, to: leg.to.name } }}</span>
+        <button type="button" class="s4-fix-connection" (click)="fixConnection()">
+          {{ 'trip.planner.step4.fixConnection' | translate }}
+        </button>
+      </div>
+    }
+  }
+
+  @if (routeComplete()) {
+    <div class="s4-complete-banner">
+      <i class="fa-solid fa-circle-check"></i>
+      <div>
+        <div>{{ 'trip.planner.step4.routeComplete' | translate }}</div>
+        <div class="s4-route-summary">{{ routeSummary() }}</div>
+      </div>
+    </div>
+  }
+</div>
+
+<div class="s4-footer">
+  <p-button [label]="'trip.planner.back' | translate" icon="fa-light fa-chevron-left" severity="secondary" [outlined]="true" (onClick)="back()" />
+  <p-button [label]="'trip.planner.step4.continue' | translate" icon="fa-light fa-chevron-right" iconPos="right" (onClick)="continue()" />
+</div>
