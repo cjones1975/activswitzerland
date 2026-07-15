@@ -11,7 +11,6 @@ export type DrawerKey =
   | 'language'
   | 'profile'
   | 'trip-planner'
-  | 'things-to-do'
   | 'hikes'
   | 'hike-detail'
   | 'bikes'

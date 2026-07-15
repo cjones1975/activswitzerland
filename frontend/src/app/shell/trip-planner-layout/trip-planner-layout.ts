@@ -8,10 +8,8 @@ import { LangService } from '../../shared/services/lang';
 import { Destination } from '../../models/destination';
 import { MapComponent } from '../../shared/map/map';
 import type { MapMarker } from '../../shared/map/map';
-import { AttractionMarkersService } from '../../shared/services/attraction-markers';
 import { Drawer } from '../../shared/services/drawer';
 import { TripPlannerService } from '../../shared/services/trip-planner';
-import { hasValidGeo } from '../../shared/services/attraction-markers';
 import { PlannedTrip } from '../../models/trip';
 
 @Component({
@@ -30,7 +28,6 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   protected drawer = inject(Drawer);
   private destroyRef = inject(DestroyRef);
   private tripPlanner = inject(TripPlannerService);
-  private attractionMarkers = inject(AttractionMarkersService);
 
   center = signal<[number, number] | undefined>([8.2275, 46.8182]);
   mapZoom = signal(7);
@@ -40,32 +37,21 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   tripType = signal<'road' | 'rail' | null>(null);
   trip = signal<PlannedTrip | null>(null);
 
-  /** Attraction pins for stops' selected "things to do", reactive to selection and cache changes. */
-  tripAttractionMarkers = computed<MapMarker[]>(() => {
-    const selections = this.trip()?.attractionSelections;
-    this.tripPlanner.attractionCacheVersion();
-    if (!selections) return [];
-
-    const ids = new Set(Object.values(selections).flat());
-    const markers: MapMarker[] = [];
-    for (const id of ids) {
-      const attraction = this.tripPlanner.getAttraction(id);
-      if (attraction && hasValidGeo(attraction)) {
-        markers.push({
-          lng: attraction.geo.longitude,
-          lat: attraction.geo.latitude,
-          // icon: 'fa-solid fa-map-pin',
-          icon: 'fa-solid fa-location-dot',
-          color: '#1a2f4a',
-          className: 'trip-attraction-marker',
-          label: attraction.name,
-          id: attraction.identifier,
-          clickable: true,
-        });
-      }
-    }
-    return markers;
-  });
+  /** Activity pins (Phase 2 populates `trip.activities`; always empty this phase, so this renders nothing yet). */
+  tripAttractionMarkers = computed<MapMarker[]>(() =>
+    (this.trip()?.activities ?? [])
+      .filter(a => a.kind === 'attraction' && a.lat != null && a.lon != null)
+      .map(a => ({
+        lng: a.lon!,
+        lat: a.lat!,
+        icon: 'fa-solid fa-location-dot',
+        color: '#1a2f4a',
+        className: 'trip-attraction-marker',
+        label: a.name,
+        id: a.refId,
+        clickable: true,
+      }))
+  );
 
   /** Ordered [lon, lat] pairs for each planned stop, passed to the map for marker rendering. */
   tripStopPoints = computed<[number, number][]>(() =>
@@ -149,14 +135,6 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
         this.drawer.open('trip-planner');
       }
     });
-  }
-
-  onAttractionMarkerClick(marker: MapMarker): void {
-    if (!marker.id) return;
-    const attraction = this.tripPlanner.getAttraction(marker.id);
-    if (!attraction) return;
-    this.drawer.close('trip-planner');
-    this.drawer.open('attraction-detail', { attraction, source: 'trip-planner' });
   }
 
   backToDestination(): void {

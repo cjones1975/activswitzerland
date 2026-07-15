@@ -1,0 +1,43 @@
+<div class="tpw-header">
+  <div class="tpw-title-row">
+    <div class="tpw-step-title">{{ stepLabelKey(currentStepKey()) | translate }}</div>
+    @if (hasDraft()) {
+      <button type="button" class="tpw-start-over" (click)="confirmStartOver()">
+        {{ 'trip.planner.startOver' | translate }}
+      </button>
+    }
+  </div>
+  <div class="tpw-indicator">
+    @for (key of stepKeys; track key; let i = $index) {
+      <div class="tpw-node">
+        <div class="tpw-circle"
+             [class.tpw-circle--done]="plannerSvc.step() > i + 1"
+             [class.tpw-circle--active]="plannerSvc.step() === i + 1">
+          @if (plannerSvc.step() > i + 1) {
+            <i class="fa-solid fa-check"></i>
+          } @else {
+            {{ i + 1 }}
+          }
+        </div>
+        <span class="tpw-label" [class.tpw-label--active]="plannerSvc.step() === i + 1">
+          {{ stepLabelKey(key) | translate }}
+        </span>
+      </div>
+      @if (i < stepKeys.length - 1) {
+        <div class="tpw-connector" [class.tpw-connector--done]="plannerSvc.step() > i + 1"></div>
+      }
+    }
+  </div>
+</div>
+
+<div class="tpw-content">
+  @switch (plannerSvc.step()) {
+    @case (1) { <app-step1-my-trip></app-step1-my-trip> }
+    @case (2) { <app-step2-itinerary></app-step2-itinerary> }
+    @default {
+      <div class="tpw-placeholder">{{ 'trip.planner.comingSoon' | translate }}</div>
+    }
+  }
+</div>
+
+<p-confirmDialog />

@@ -1,0 +1,124 @@
+<div class="s2-content">
+  @if (totalTripDays(); as total) {
+    <div class="s2-range-banner">
+      <i class="fa-solid fa-circle"></i>
+      {{ 'trip.planner.step2.tripRange' | translate: { range: ('trip.planner.step1.daysTrip' | translate: { count: total }) } }}
+    </div>
+  }
+
+  @if (allocationMessage(); as msg) {
+    <p-message severity="warn" styleClass="s2-sequence-msg">{{ msg.key | translate: { count: msg.count } }}</p-message>
+  }
+
+  <!-- Departure -->
+  <div class="s2-card">
+    <div class="s2-card-head">
+      <span class="s2-num s2-num--departure">1</span>
+      <span class="s2-card-title">{{ 'trip.planner.step2.departure' | translate }}</span>
+      @if (stopDayLabels().get(departure()?.id ?? ''); as label) {
+        <span class="s2-day-label">
+          {{ (label.start === label.end ? 'trip.planner.step2.dayLabel' : 'trip.planner.step2.dayRangeLabel') | translate: label }}
+        </span>
+      }
+    </div>
+    <p-autoComplete class="s2-input" [ngModel]="departure()" optionLabel="name" [suggestions]="departureSuggestions()"
+                     (completeMethod)="searchDeparture($event)" (onSelect)="onDepartureSelect($event)"
+                     [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+    @if (departure(); as stop) {
+      <div class="s2-days-field">
+        <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
+        <input type="number" [ngModel]="stop.days" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
+      </div>
+    }
+  </div>
+
+  <!-- Via stops (reorderable) -->
+  <div class="s2-via-list" cdkDropList (cdkDropListDropped)="reorderVia($event)">
+    @for (stop of viaStops(); track stop.id; let i = $index) {
+      <div class="s2-card" cdkDrag>
+        <div class="s2-card-head">
+          <span class="s2-num s2-num--via" cdkDragHandle><i class="fa-light fa-grip-dots-vertical"></i>{{ i + 2 }}</span>
+          <span class="s2-card-title">{{ 'trip.planner.step2.stop' | translate }}</span>
+          @if (stopDayLabels().get(stop.id); as label) {
+            <span class="s2-day-label">
+              {{ (label.start === label.end ? 'trip.planner.step2.dayLabel' : 'trip.planner.step2.dayRangeLabel') | translate: label }}
+            </span>
+          }
+          <button type="button" class="s2-remove" [attr.aria-label]="'trip.planner.removeStop' | translate" (click)="removeVia(stop.id)">
+            <i class="fa-light fa-xmark"></i>
+          </button>
+        </div>
+        <p-autoComplete class="s2-input" [ngModel]="stop" optionLabel="name" [suggestions]="viaSuggestions()"
+                         (completeMethod)="searchVia($event)" (onSelect)="onViaSelect($event, stop)"
+                         [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+        <div class="s2-days-field">
+          <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
+          <input type="number" [ngModel]="stop.days" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
+        </div>
+      </div>
+    }
+  </div>
+
+  <!-- Destination -->
+  <div class="s2-card">
+    <div class="s2-card-head">
+      <span class="s2-num s2-num--destination">{{ viaStops().length + 2 }}</span>
+      <span class="s2-card-title">{{ 'trip.planner.step2.destination' | translate }}</span>
+      @if (stopDayLabels().get(destination()?.id ?? ''); as label) {
+        <span class="s2-day-label">
+          {{ (label.start === label.end ? 'trip.planner.step2.dayLabel' : 'trip.planner.step2.dayRangeLabel') | translate: label }}
+        </span>
+      }
+    </div>
+    <p-autoComplete class="s2-input" [ngModel]="destination()" optionLabel="name" [suggestions]="destinationSuggestions()"
+                     (completeMethod)="searchDestination($event)" (onSelect)="onDestinationSelect($event)"
+                     [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+    @if (destination(); as stop) {
+      <div class="s2-days-field">
+        <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
+        <input type="number" [ngModel]="stop.days" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
+      </div>
+    }
+  </div>
+
+  <!-- Add stop -->
+  <div class="s2-add-row">
+    @if (!addingStop()) {
+      <button type="button" class="s2-add-btn" [disabled]="!canAddStop()" (click)="startAddStop()">
+        <i class="fa-light fa-circle-plus"></i> {{ 'trip.planner.addStop' | translate }}
+      </button>
+    } @else {
+      <div class="s2-add-active">
+        <p-autoComplete class="s2-input" optionLabel="name" [suggestions]="addStopSuggestions()"
+                         (completeMethod)="searchAddStop($event)" (onSelect)="onAddStopSelect($event)"
+                         [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+        <button type="button" class="s2-cancel-btn" (click)="cancelAddStop()">{{ 'trip.planner.step2.cancel' | translate }}</button>
+      </div>
+    }
+  </div>
+
+  @if (routeError()) {
+    <p-message severity="error">{{ 'trip.planner.routeError' | translate }}</p-message>
+  }
+  @if (routeUnreachable()) {
+    <p-message severity="warn">{{ 'trip.planner.routeUnreachable' | translate }}</p-message>
+  }
+
+  <!-- Rail connections -->
+  @if (type() === 'rail' && legPairs().length > 0) {
+    <div class="s2-connections">
+      <div class="s2-section-title">{{ 'trip.planner.connections' | translate }}</div>
+      @for (pair of legPairs(); track pair.from.id + pair.to.id) {
+        <app-connection-leg-picker [fromStop]="pair.from" [toStop]="pair.to" (resolved)="onLegResolved()" />
+      }
+    </div>
+  }
+</div>
+
+<div class="s2-footer">
+  <p-button [label]="'trip.planner.back' | translate" icon="fa-light fa-chevron-left" severity="secondary" [outlined]="true" (onClick)="back()" />
+  <div class="s2-footer-continue">
+    <p-button [label]="'trip.planner.next' | translate" icon="fa-light fa-chevron-right" iconPos="right" [disabled]="true" />
+    <span class="s2-footer-hint">{{ 'trip.planner.step2.activitiesComingSoon' | translate }}</span>
+  </div>
+</div>

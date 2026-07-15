@@ -1,11 +1,20 @@
 import { Injectable, inject, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, of, debounceTime, skip } from 'rxjs';
-import { PlannedTrip, TripStop, TripConnection, SavedTrip } from '../../models/trip';
-import { Attraction } from '../../models/attraction';
+import {
+  PlannedTrip, TripStop, TripDateMode, TripDateRange,
+  TripConnection, TripConnectionLeg, SavedTrip,
+} from '../../models/trip';
 
-const EMPTY_TRIP: PlannedTrip = { type: 'road', stops: [] };
-const DRAFT_KEY = 'activ_trip_draft';
+const EMPTY_TRIP: PlannedTrip = {
+  type: 'road',
+  dateMode: 'dates',
+  range: { mode: 'dates' },
+  stops: [],
+  activities: [],
+};
+
+const DRAFT_KEY = 'activ_trip_draft_v2';
 
 @Injectable({ providedIn: 'root' })
 export class TripPlannerService {
@@ -13,11 +22,13 @@ export class TripPlannerService {
 
   private _trip$ = new BehaviorSubject<PlannedTrip>({ ...EMPTY_TRIP });
   private _routeCoordinates$ = new BehaviorSubject<[number, number][]>([]);
-  private pendingAttractionIds = new Set<string>();
-  private attractionCache = new Map<string, Attraction>();
 
-  /** Bumped whenever new attractions are cached, so consumers can react without storing full objects in state. */
-  readonly attractionCacheVersion = signal(0);
+  /** 1-5, owned here so sibling step components can coordinate wizard navigation without a shared parent. Only 1-2 have real content this phase. */
+  readonly step = signal(1);
+
+  nextStep(): void { this.step.update(s => Math.min(s + 1, 5)); }
+  prevStep(): void { this.step.update(s => Math.max(s - 1, 1)); }
+  resetStep(): void { this.step.set(1); }
 
   readonly trip$: Observable<PlannedTrip> = this._trip$.asObservable();
   readonly routeCoordinates$: Observable<[number, number][]> = this._routeCoordinates$.asObservable();
@@ -26,11 +37,11 @@ export class TripPlannerService {
 
   constructor() {
     try {
-      const saved = localStorage.getItem(DRAFT_KEY);
+      const saved = sessionStorage.getItem(DRAFT_KEY);
       if (saved) {
-        const draft = JSON.parse(saved) as { type: 'road' | 'rail'; stops: TripStop[]; name?: string; routeCoordinates?: [number, number][] };
+        const draft = JSON.parse(saved) as PlannedTrip;
         if (draft.stops?.length > 0) {
-          this._trip$.next({ type: draft.type ?? 'road', stops: draft.stops, name: draft.name, routeCoordinates: draft.routeCoordinates });
+          this._trip$.next(draft);
           if (draft.routeCoordinates?.length) {
             this._routeCoordinates$.next(draft.routeCoordinates);
           }
@@ -40,97 +51,74 @@ export class TripPlannerService {
 
     this._trip$.pipe(debounceTime(300), skip(1)).subscribe(trip => {
       if (trip.stops.length > 0) {
-        localStorage.setItem(DRAFT_KEY, JSON.stringify({
-          type: trip.type,
-          stops: trip.stops,
-          name: trip.name,
-          routeCoordinates: trip.routeCoordinates,
-        }));
+        sessionStorage.setItem(DRAFT_KEY, JSON.stringify(trip));
       }
     });
   }
 
   clearDraft(): void {
-    localStorage.removeItem(DRAFT_KEY);
+    sessionStorage.removeItem(DRAFT_KEY);
+  }
+
+  reset(): void {
+    this._trip$.next({ ...EMPTY_TRIP });
+    this._routeCoordinates$.next([]);
+    this.resetStep();
+    this.clearDraft();
   }
 
   setType(type: 'road' | 'rail'): void {
-    this._trip$.next({ type, stops: [] });
+    this._trip$.next({ ...EMPTY_TRIP, type });
     this._routeCoordinates$.next([]);
+    this.resetStep();
+    this.clearDraft();
   }
 
-  setStops(stops: TripStop[]): void {
-    const ids = new Set(stops.map(s => s.stationId));
-    const current = this._trip$.value.attractionSelections ?? {};
-    const pruned = Object.fromEntries(Object.entries(current).filter(([k]) => ids.has(k)));
-    this._trip$.next({ ...this._trip$.value, stops, attractionSelections: pruned });
+  setDateMode(mode: TripDateMode): void {
+    this._trip$.next({ ...this._trip$.value, dateMode: mode, range: { mode } });
+  }
+
+  setOverallRange(range: TripDateRange): void {
+    this._trip$.next({ ...this._trip$.value, range });
   }
 
   setName(name: string): void {
     this._trip$.next({ ...this._trip$.value, name });
   }
 
-  loadSavedTrip(trip: SavedTrip): void {
-    this._trip$.next({
-      type: trip.type,
-      stops: trip.stops,
-      routeCoordinates: trip.routeCoordinates,
-      name: trip.name,
-    });
-    this._routeCoordinates$.next(trip.routeCoordinates);
-    this.pendingAttractionIds = new Set(trip.attractionIds ?? []);
+  /** Ordered, fully-resolved stops (each already carries its own role — the component owns departure/via/destination assignment). */
+  setStops(stops: TripStop[]): void {
+    const validIds = new Set(stops.map(s => s.id));
+    const connections = (this._trip$.value.connections ?? [])
+      .filter(leg => validIds.has(leg.fromStopId) && validIds.has(leg.toStopId));
+    this._trip$.next({ ...this._trip$.value, stops, connections });
   }
 
-  setConnections(connections: TripConnection[]): void {
-    this._trip$.next({ ...this._trip$.value, connections, selectedConnection: undefined });
+  updateStopDays(stopId: string, days: number): void {
+    const stops = this._trip$.value.stops.map(s => s.id === stopId ? { ...s, days } : s);
+    this._trip$.next({ ...this._trip$.value, stops });
   }
 
-  selectConnection(connection: TripConnection): void {
-    this._trip$.next({ ...this._trip$.value, selectedConnection: connection });
+  // ── Rail connections (one per leg) ──────────────────────────────────────
+  setConnectionLeg(fromStopId: string, toStopId: string, connection: TripConnection): void {
+    const legs = (this._trip$.value.connections ?? [])
+      .filter(l => !(l.fromStopId === fromStopId && l.toStopId === toStopId));
+    legs.push({ fromStopId, toStopId, connection });
+    this._trip$.next({ ...this._trip$.value, connections: legs });
   }
 
-  setAttractions(attractions: Attraction[]): void {
-    this._trip$.next({ ...this._trip$.value, attractions });
+  skipConnectionLeg(fromStopId: string, toStopId: string): void {
+    const legs = (this._trip$.value.connections ?? [])
+      .filter(l => !(l.fromStopId === fromStopId && l.toStopId === toStopId));
+    legs.push({ fromStopId, toStopId, skipped: true });
+    this._trip$.next({ ...this._trip$.value, connections: legs });
   }
 
-  setRouteCoordinates(coords: [number, number][]): void {
-    this._routeCoordinates$.next(coords);
-    this._trip$.next({ ...this._trip$.value, routeCoordinates: coords });
+  getConnectionLeg(fromStopId: string, toStopId: string): TripConnectionLeg | undefined {
+    return this._trip$.value.connections?.find(l => l.fromStopId === fromStopId && l.toStopId === toStopId);
   }
 
-  toggleAttraction(stationId: string, attractionId: string): void {
-    const current = this._trip$.value.attractionSelections ?? {};
-    const selected = new Set(current[stationId] ?? []);
-    selected.has(attractionId) ? selected.delete(attractionId) : selected.add(attractionId);
-    this._trip$.next({
-      ...this._trip$.value,
-      attractionSelections: { ...current, [stationId]: [...selected] },
-    });
-  }
-
-  getSelections(stationId: string): string[] {
-    return this._trip$.value.attractionSelections?.[stationId] ?? [];
-  }
-
-  allSelectedAttractionIds(): string[] {
-    const sel = this._trip$.value.attractionSelections ?? {};
-    return [...new Set(Object.values(sel).flat())];
-  }
-
-  hydrateSelections(stationId: string, nearbyAttractionIds: string[]): void {
-    if (this.pendingAttractionIds.size === 0) return;
-    const matched = nearbyAttractionIds.filter(id => this.pendingAttractionIds.has(id));
-    if (matched.length === 0) return;
-    const current = this._trip$.value.attractionSelections ?? {};
-    this._trip$.next({
-      ...this._trip$.value,
-      attractionSelections: {
-        ...current,
-        [stationId]: [...new Set([...(current[stationId] ?? []), ...matched])],
-      },
-    });
-  }
-
+  // ── Route ─────────────────────────────────────────────────────────────
   buildRoadRoute(stops: TripStop[]): Observable<[number, number][]> {
     if (stops.length < 2) return of([]);
     const coords = stops.map(s => `${s.lon},${s.lat}`).join(';');
@@ -145,29 +133,30 @@ export class TripPlannerService {
     );
   }
 
+  /** Stitches each leg's picked connection geometry where available, falling back to a straight line for unresolved/skipped legs. */
   buildRailRoute(stops: TripStop[]): [number, number][] {
-    return stops.map(s => [s.lon, s.lat]);
-  }
-
-  cacheAttractions(attractions: Attraction[]): void {
-    let changed = false;
-    for (const attraction of attractions) {
-      if (!this.attractionCache.has(attraction.identifier)) {
-        this.attractionCache.set(attraction.identifier, attraction);
-        changed = true;
+    const coords: [number, number][] = [];
+    for (let i = 0; i < stops.length - 1; i++) {
+      const leg = this.getConnectionLeg(stops[i].id, stops[i + 1].id);
+      const legCoords = leg?.connection?.routeCoordinates;
+      if (coords.length === 0) coords.push([stops[i].lon, stops[i].lat]);
+      if (legCoords && legCoords.length >= 2) {
+        coords.push(...legCoords.slice(1));
+      } else {
+        coords.push([stops[i + 1].lon, stops[i + 1].lat]);
       }
     }
-    if (changed) this.attractionCacheVersion.update(v => v + 1);
+    return coords;
   }
 
-  getAttraction(id: string): Attraction | undefined {
-    return this.attractionCache.get(id);
+  setRouteCoordinates(coords: [number, number][]): void {
+    this._routeCoordinates$.next(coords);
+    this._trip$.next({ ...this._trip$.value, routeCoordinates: coords });
   }
 
-  reset(): void {
-    this._trip$.next({ ...EMPTY_TRIP });
-    this._routeCoordinates$.next([]);
-    this.attractionCache.clear();
-    this.attractionCacheVersion.set(0);
+  loadSavedTrip(trip: SavedTrip): void {
+    const { _id, createdAt, ...planned } = trip;
+    this._trip$.next(planned);
+    this._routeCoordinates$.next(planned.routeCoordinates ?? []);
   }
 }
