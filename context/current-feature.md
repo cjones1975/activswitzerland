@@ -29,6 +29,14 @@
 - i18n: `trip.planner.step1.*`, `trip.planner.step2.*`, `trip.planner.startOver`/`startOverConfirm` added across en/de/fr/it
 - Feature marked complete
 
+### 2026-07-15 — Connection Leg Picker Journey Detail Restored
+
+- Branch: `feature/connection-leg-detail`; specced in `context/features/connection-leg-detail-spec.md`
+- Restored the rich rail-connection detail UI that the Phase 1 rebuild had regressed to a flat one-line summary — ported verbatim from commit `cd1a672` (last commit before the old wizard was deleted), since the underlying data (`TripConnection.sections`/`TripSection*` in `models/trip.ts`, populated by `transport.ts`'s `mapSections()`) was never touched by the rebuild
+- `connection-leg-picker.ts/html/css`: both the already-picked connection and each search-result card now render as a full `.conn-card` — route header with expand chevron, transfers/duration meta row, timeline bar, and an expandable per-section detail (train category/number/direction, platforms, walk connectors); ported `toggleDetail()`/`togglePickedDetail()`, `formatPlatform()`, `formatWalk()`, `firstTrainDeparture()`, `lastTrainArrival()`, `trainColor()`, `categoryLabel()`, `isSelectedConnection()`, and the full `.conn-*` CSS block (colors adapted to this component's existing CSS variables)
+- UAT fixes in the same branch: section heading changed from "Connections" to "Train Connections" (`trip.planner.connections` key, all locales); briefly added then removed a "Change" button on the picked-connection card (plus a `clearConnectionLeg()` service method it depended on) — turned out unnecessary since the leg's own header toggle already re-reveals the search form and previous results list once a connection is picked, letting the user pick a different one or search new dates without any extra affordance
+- Feature marked complete
+
 ### 2026-07-14 — Hike/Bike Elevation Profile Implemented
 
 - Branch: `feature/hike-bike-elevation`
