@@ -143,6 +143,17 @@
         "dayDateLabel": "Day {{day}} - {{date}}",
         "continue": "Summary",
         "noStops": "Add stops with at least one day to start adding activities."
+      },
+      "step4": {
+        "destinations": "Destinations",
+        "activities": "Activities",
+        "timeline": "Timeline",
+        "mapView": "Map View",
+        "connectionNeeded": "Connection needed: {{from}} → {{to}}",
+        "fixConnection": "Fix connection",
+        "routeComplete": "Route complete!",
+        "noActivities": "No activities added yet.",
+        "continue": "Save"
       }
     }
   },

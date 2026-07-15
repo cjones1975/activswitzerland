@@ -15,7 +15,7 @@ import { GeoLocation } from '../../../models/geo-point';
 export interface AttractionDetailPayload {
   attraction: Attraction;
   destination?: GeoLocation;
-  source: 'destination-detail' | 'all-attractions';
+  source: 'destination-detail' | 'all-attractions' | 'trip-summary';
   mode?: 'view' | 'select';
   stopId?: string;
 }

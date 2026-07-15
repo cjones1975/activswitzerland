@@ -299,37 +299,25 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       return;
     }
 
-    // Road: start icon, numbered via stops, end icon
+    // Road: every stop numbered by visit order (1..N), final destination
+    // color-distinguished from departure/via stops so the scheme generalizes
+    // to any number of stops instead of a fixed start/end icon pair.
     const stops: [number, number][] = this.tripStopPoints.length >= 2
       ? this.tripStopPoints
       : (coords.length >= 2 ? [coords[0], coords[coords.length - 1]] : []);
 
     stops.forEach((coord, i) => {
-      const isStart = i === 0;
       const isEnd = i === stops.length - 1;
-      let el: HTMLElement;
-
-      if (isStart || isEnd) {
-        const icon = document.createElement('i');
-        icon.className = isStart ? 'fa-light fa-circle-dot' : 'fa-light fa-location-dot';
-        icon.style.color = isStart ? '#1a6b3c' : '#e53e3e';
-        icon.style.fontSize = '22px';
-        icon.style.filter = 'drop-shadow(0 1px 3px rgba(0,0,0,0.4))';
-        el = document.createElement('div');
-        el.className = 'map-marker-container';
-        el.appendChild(icon);
-      } else {
-        el = document.createElement('div');
-        el.className = 'trip-stop-marker';
-        el.innerHTML = `<span>${i}</span>`;
-        Object.assign(el.style, {
-          background: '#285278', color: '#fff', borderRadius: '50%',
-          width: '22px', height: '22px', display: 'flex',
-          alignItems: 'center', justifyContent: 'center',
-          fontSize: '12px', fontWeight: '700',
-          border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
-        });
-      }
+      const el = document.createElement('div');
+      el.className = 'trip-stop-marker';
+      el.innerHTML = `<span>${i + 1}</span>`;
+      Object.assign(el.style, {
+        background: isEnd ? '#e53e3e' : '#285278', color: '#fff', borderRadius: '50%',
+        width: '22px', height: '22px', display: 'flex',
+        alignItems: 'center', justifyContent: 'center',
+        fontSize: '12px', fontWeight: '700',
+        border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+      });
 
       const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
         .setLngLat(coord)

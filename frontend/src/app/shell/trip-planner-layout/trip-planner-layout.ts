@@ -5,12 +5,24 @@ import { of, startWith, switchMap } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DestinationsService } from '../../shared/services/destinations';
 import { LangService } from '../../shared/services/lang';
+import { AttractionsService } from '../../shared/services/attractions';
+import { TrailRoutesService } from '../../shared/services/trail-routes';
 import { Destination } from '../../models/destination';
 import { MapComponent } from '../../shared/map/map';
 import type { MapMarker } from '../../shared/map/map';
 import { Drawer } from '../../shared/services/drawer';
 import { TripPlannerService } from '../../shared/services/trip-planner';
-import { PlannedTrip } from '../../models/trip';
+import { PlannedTrip, ActivityKind } from '../../models/trip';
+import { GeoPoint } from '../../models/geo-point';
+import { AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
+import { HikeDetailPayload } from '../../features/hikes/hike-detail/hike-detail';
+import { BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
+
+const ACTIVITY_MARKER_STYLE: Record<ActivityKind, { icon: string; color: string }> = {
+  attraction: { icon: 'fa-solid fa-binoculars', color: '#1a2f4a' },
+  hike: { icon: 'fa-solid fa-person-hiking', color: '#1a6b3c' },
+  bike: { icon: 'fa-solid fa-bicycle', color: '#d97706' },
+};
 
 @Component({
   selector: 'app-trip-planner-layout',
@@ -28,6 +40,8 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   protected drawer = inject(Drawer);
   private destroyRef = inject(DestroyRef);
   private tripPlanner = inject(TripPlannerService);
+  private attractionsService = inject(AttractionsService);
+  private trailRoutesService = inject(TrailRoutesService);
 
   center = signal<[number, number] | undefined>([8.2275, 46.8182]);
   mapZoom = signal(7);
@@ -37,20 +51,23 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   tripType = signal<'road' | 'rail' | null>(null);
   trip = signal<PlannedTrip | null>(null);
 
-  /** Activity pins (Phase 2 populates `trip.activities`; always empty this phase, so this renders nothing yet). */
-  tripAttractionMarkers = computed<MapMarker[]>(() =>
+  /** Activity pins, distinguishable by kind, opening the item's detail drawer on click. */
+  tripActivityMarkers = computed<MapMarker[]>(() =>
     (this.trip()?.activities ?? [])
-      .filter(a => a.kind === 'attraction' && a.lat != null && a.lon != null)
-      .map(a => ({
-        lng: a.lon!,
-        lat: a.lat!,
-        icon: 'fa-solid fa-location-dot',
-        color: '#1a2f4a',
-        className: 'trip-attraction-marker',
-        label: a.name,
-        id: a.refId,
-        clickable: true,
-      }))
+      .filter(a => a.lat != null && a.lon != null)
+      .map(a => {
+        const style = ACTIVITY_MARKER_STYLE[a.kind];
+        return {
+          lng: a.lon!,
+          lat: a.lat!,
+          icon: style.icon,
+          color: style.color,
+          className: 'trip-activity-marker',
+          label: a.name,
+          id: a.id,
+          clickable: true,
+        };
+      })
   );
 
   /** Ordered [lon, lat] pairs for each planned stop, passed to the map for marker rendering. */
@@ -63,9 +80,9 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
     this.drawer.isOpen('trip-planner') ? null : this.tripRoute()
   );
 
-  /** "Things to do" attraction pins — hidden while the trip-planner drawer is open (only revealed on Save/View). */
-  displayedTripAttractionMarkers = computed<MapMarker[]>(() =>
-    this.drawer.isOpen('trip-planner') ? [] : this.tripAttractionMarkers()
+  /** Activity pins — hidden while the trip-planner drawer is open (only revealed on Save/View). */
+  displayedTripActivityMarkers = computed<MapMarker[]>(() =>
+    this.drawer.isOpen('trip-planner') ? [] : this.tripActivityMarkers()
   );
 
   /** Stop markers shown on the map — hidden while the trip-planner drawer is open. */
@@ -145,6 +162,37 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
 
   reopenTripPlanner(): void {
     this.drawer.open('trip-planner');
+  }
+
+  /** Opens the picked activity's detail drawer straight from its map marker, no backing list drawer required. */
+  onActivityMarkerClick(marker: MapMarker): void {
+    const activity = this.trip()?.activities.find(a => a.id === marker.id);
+    if (!activity) return;
+    const stop = this.trip()?.stops.find(s => s.id === activity.stopId);
+    if (!stop) return;
+    const destination: GeoPoint = { id: stop.id, name: stop.name, lat: stop.lat, lon: stop.lon };
+    const lang = this.langSvc.current;
+
+    if (activity.kind === 'attraction') {
+      this.attractionsService.getAttraction(activity.refId, lang).subscribe(attraction => {
+        const payload: AttractionDetailPayload = { attraction, destination, source: 'trip-summary' };
+        this.drawer.open('attraction-detail', payload);
+      });
+      return;
+    }
+
+    const kind = activity.kind as 'hike' | 'bike';
+    this.trailRoutesService.getRoutes(kind, stop.lat, stop.lon, lang).subscribe(routes => {
+      const route = routes.find(r => String(r.routeNumber) === activity.refId);
+      if (!route) return;
+      if (kind === 'hike') {
+        const payload: HikeDetailPayload = { route, destination, source: 'trip-summary' };
+        this.drawer.open('hike-detail', payload);
+      } else {
+        const payload: BikeDetailPayload = { route, destination, source: 'trip-summary' };
+        this.drawer.open('bike-detail', payload);
+      }
+    });
   }
 
   ngOnDestroy(): void {

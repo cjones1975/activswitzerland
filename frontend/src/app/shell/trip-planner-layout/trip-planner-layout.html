@@ -1,12 +1,13 @@
 <div class="map-wrapper">
   <app-map
-    [markers]="displayedTripAttractionMarkers()"
+    [markers]="displayedTripActivityMarkers()"
     [center]="center()"
     [zoom]="mapZoom()"
     [tripRoute]="displayedTripRoute()"
     [tripType]="tripType()"
     [tripStopPoints]="displayedTripStopPoints()"
-    [fitBounds]="tripBounds()"></app-map>
+    [fitBounds]="tripBounds()"
+    (markerClick)="onActivityMarkerClick($event)"></app-map>
 </div>
 
 <div class="reopen-btns">

@@ -143,6 +143,17 @@
         "dayDateLabel": "Tag {{day}} - {{date}}",
         "continue": "Übersicht",
         "noStops": "Fügen Sie Haltepunkte mit mindestens einem Tag hinzu, um Aktivitäten hinzuzufügen."
+      },
+      "step4": {
+        "destinations": "Ziele",
+        "activities": "Aktivitäten",
+        "timeline": "Zeitleiste",
+        "mapView": "Kartenansicht",
+        "connectionNeeded": "Verbindung benötigt: {{from}} → {{to}}",
+        "fixConnection": "Verbindung festlegen",
+        "routeComplete": "Route vollständig!",
+        "noActivities": "Noch keine Aktivitäten hinzugefügt.",
+        "continue": "Speichern"
       }
     }
   },

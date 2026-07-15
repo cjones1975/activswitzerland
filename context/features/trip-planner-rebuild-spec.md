@@ -149,10 +149,11 @@ destinations), and the add/remove-activity data flow through `TripPlannerService
 
 ## Phase 3 — Step 4 (Summary)
 
-- `features/trip-planner/step4-summary/` — a timeline/summary view of the full trip (stops in order with their dates and assigned activities) plus a way to see it on the map (reusing the existing collapse-to-reveal-map pattern via `drawer.collapse('trip-planner')` rather than embedding a second map). Rail legs still missing a connection (skipped in Step 2) need a visible "needs a connection" notice with a jump-back action into Step 2's picker for that leg — informational only, never blocking. Exact layout (stat tiles, toggle control, banners) is open; `Summary` was shown in the reviewed mockups as illustration only (not saved to `context/screenshots`, but its shape — timeline + map toggle — is captured in this description).
-- Map marker style: every stop numbered by visit order, with the final Destination visually distinguishable from earlier stops/departure (a different color is one option) — replacing today's distinct start/end icon scheme in favor of something that generalizes to N stops. Activity markers should be distinguishable by kind (attraction/hike/bike) — exact icon/color choices open.
-- Marker click → small popup card (image + name [+ distance for hike/bike]) → opens the item's detail drawer, via an enriched MapLibre popup.
-- i18n: `tripPlanner.step4.*` (`timeline`, `mapView`, `noActivities`, `routeComplete`).
+Fully specced separately in `context/features/trip-planner-summary-spec.md` — timeline +
+map-view toggle (reusing the existing collapse-to-reveal-map pattern), numbered stop markers
+with the final destination color-distinguished, activity markers distinguishable by kind
+(icon-only, no photos), marker-click reopening the item's detail drawer, and the unresolved
+rail connection jump-back notice.
 
 ## Phase 4 — Step 5 (Save Trip)
 
