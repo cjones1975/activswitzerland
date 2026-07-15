@@ -34,6 +34,7 @@
   @switch (plannerSvc.step()) {
     @case (1) { <app-step1-my-trip></app-step1-my-trip> }
     @case (2) { <app-step2-itinerary></app-step2-itinerary> }
+    @case (3) { <app-step3-activities></app-step3-activities> }
     @default {
       <div class="tpw-placeholder">{{ 'trip.planner.comingSoon' | translate }}</div>
     }

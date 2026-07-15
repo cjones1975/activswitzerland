@@ -1,21 +1,27 @@
 import { Component, AfterViewInit, DestroyRef, ElementRef, OnDestroy, ViewChild, computed, effect, inject, signal, untracked } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { LangService } from '../../../shared/services/lang';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
+import { Select } from 'primeng/select';
 import { Message } from 'primeng/message';
 import { Drawer } from '../../../shared/services/drawer';
 import { AttractionsService } from '../../../shared/services/attractions';
 import { AttractionMarkersService, hasValidGeo } from '../../../shared/services/attraction-markers';
+import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { Attraction } from '../../../models/attraction';
-import { Destination } from '../../../models/destination';
+import { GeoLocation, ActivityPickerPayload } from '../../../models/geo-point';
+import { isDestination, locId, locLat, locLon } from '../../../shared/utils/geo-location';
+import { stopDayOptions, dayChoiceLabelParams } from '../../../shared/utils/date-range';
+
+const NEARBY_RADIUS_M = 10000;
 
 @Component({
   selector: 'app-all-attractions',
   standalone: true,
-  imports: [FormsModule, InputTextModule, SkeletonModule, TranslatePipe, Message],
+  imports: [FormsModule, InputTextModule, SkeletonModule, Select, TranslatePipe, Message],
   templateUrl: './all-attractions.html',
   styleUrl: './all-attractions.css',
 })
@@ -25,14 +31,35 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
   private drawerSvc = inject(Drawer);
   private attractionsService = inject(AttractionsService);
   private attractionMarkers = inject(AttractionMarkersService);
+  private plannerSvc = inject(TripPlannerService);
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
 
-  destination = computed(() => {
+  private payload = computed(() => {
     this.drawerSvc.list();
-    return this.drawerSvc.getPayload<Destination>('all-attractions') ?? null;
+    return this.drawerSvc.getPayload<ActivityPickerPayload>('all-attractions') ?? null;
   });
+  destination = computed<GeoLocation | null>(() => this.payload()?.destination ?? null);
+  mode = computed(() => this.payload()?.mode ?? 'view');
+  stopId = computed(() => this.payload()?.stopId);
+
+  private trip = toSignal(this.plannerSvc.trip$, { initialValue: this.plannerSvc.snapshot });
+  dayOptions = computed(() => {
+    const stopId = this.stopId();
+    return this.mode() === 'select' && stopId ? stopDayOptions(this.trip(), stopId) : [];
+  });
+  dayChoices = computed(() => this.dayOptions().map(opt => {
+    const { key, params } = dayChoiceLabelParams(this.trip(), opt);
+    return { value: opt.value, label: this.translate.instant(key, params) };
+  }));
+  private addedRefIds = computed(() => {
+    const stopId = this.stopId();
+    if (!stopId) return new Set<string>();
+    this.trip();
+    return new Set(this.plannerSvc.getActivitiesForStop(stopId).filter(a => a.kind === 'attraction').map(a => a.refId));
+  });
+  private selectedDay = signal<Record<string, string | number>>({});
 
   attractions: Attraction[] = [];
   loading = signal(false);
@@ -56,8 +83,9 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
     effect(() => {
       const dest = this.destination();
       if (!dest) { this.currentDestId = null; return; }
-      if (dest.identifier === this.currentDestId) return;
-      this.currentDestId = dest.identifier;
+      const id = locId(dest);
+      if (id === this.currentDestId) return;
+      this.currentDestId = id;
       untracked(() => {
         this.clearSearch();
         this.reset();
@@ -101,7 +129,9 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       language: this.lang,
       page: this.page,
       hitsPerPage: 30,
-      placeId: dest.identifier,
+      ...(isDestination(dest)
+        ? { placeId: dest.identifier }
+        : { geoDist: `${locLat(dest)},${locLon(dest)},${NEARBY_RADIUS_M}` }),
     }).subscribe({
       next: ({ attractions, totalElements }) => {
         this.attractions = [...this.attractions, ...attractions];
@@ -150,7 +180,9 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       page: 0,
       search: this.searchQuery.trim(),
       hitsPerPage: 50,
-      placeId: dest.identifier,
+      ...(isDestination(dest)
+        ? { placeId: dest.identifier }
+        : { geoDist: `${locLat(dest)},${locLon(dest)},${NEARBY_RADIUS_M}` }),
       expand: false,
       translate: true,
       stripHtml: false,
@@ -181,8 +213,51 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
   }
 
   onAttractionClick(attraction: Attraction): void {
+    if (this.mode() === 'select') {
+      const dest = this.destination();
+      if (!dest) return;
+      this.drawerSvc.open('attraction-detail', {
+        attraction, destination: dest, source: 'all-attractions', mode: 'select', stopId: this.stopId(),
+      });
+      return;
+    }
     this.attractionMarkers.setSelected(attraction.identifier);
     this.drawerSvc.collapse('all-attractions');
+  }
+
+  isAdded(attraction: Attraction): boolean {
+    return this.addedRefIds().has(attraction.identifier);
+  }
+
+  dayFor(attraction: Attraction): string | number | undefined {
+    return this.selectedDay()[attraction.identifier] ?? this.dayOptions()[0]?.value;
+  }
+
+  setDay(attraction: Attraction, day: string | number): void {
+    this.selectedDay.update(m => ({ ...m, [attraction.identifier]: day }));
+  }
+
+  toggleAdd(attraction: Attraction): void {
+    const stopId = this.stopId();
+    if (!stopId) return;
+
+    if (this.isAdded(attraction)) {
+      const existing = this.plannerSvc.getActivitiesForStop(stopId).find(a => a.kind === 'attraction' && a.refId === attraction.identifier);
+      if (existing) this.plannerSvc.removeActivity(existing.id);
+      return;
+    }
+
+    const day = this.dayFor(attraction);
+    if (day == null) return;
+    this.plannerSvc.addActivity({
+      stopId,
+      kind: 'attraction',
+      refId: attraction.identifier,
+      day,
+      name: attraction.name,
+      lat: attraction.geo?.latitude != null ? Number(attraction.geo.latitude) : undefined,
+      lon: attraction.geo?.longitude != null ? Number(attraction.geo.longitude) : undefined,
+    });
   }
 
   ngOnDestroy(): void {

@@ -73,20 +73,20 @@ export class DestinationDetail {
     const dest = this.destination();
     if (!dest) return;
     this.drawerSvc.close('destination-detail');
-    this.drawerSvc.open('hikes', dest);
+    this.drawerSvc.open('hikes', { destination: dest });
   }
 
   openBikeRides() {
     const dest = this.destination();
     if (!dest) return;
     this.drawerSvc.close('destination-detail');
-    this.drawerSvc.open('bikes', dest);
+    this.drawerSvc.open('bikes', { destination: dest });
   }
 
   openHotels() {
     const dest = this.destination();
     if (!dest) return;
     this.drawerSvc.close('destination-detail');
-    this.drawerSvc.open('hotels', dest);
+    this.drawerSvc.open('hotels', { destination: dest });
   }
 }

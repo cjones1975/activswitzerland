@@ -10,12 +10,14 @@ import { AttractionsService } from '../../../shared/services/attractions';
 import { AttractionMarkersService } from '../../../shared/services/attraction-markers';
 import { LangService } from '../../../shared/services/lang';
 import { Attraction } from '../../../models/attraction';
-import { Destination } from '../../../models/destination';
+import { GeoLocation } from '../../../models/geo-point';
 
 export interface AttractionDetailPayload {
   attraction: Attraction;
-  destination?: Destination;
-  source: 'destination-detail' | 'all-attractions' | 'trip-planner';
+  destination?: GeoLocation;
+  source: 'destination-detail' | 'all-attractions';
+  mode?: 'view' | 'select';
+  stopId?: string;
 }
 
 const LANG_NAMES: Record<string, string> = {

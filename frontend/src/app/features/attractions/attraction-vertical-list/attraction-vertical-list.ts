@@ -75,7 +75,7 @@ export class AttractionVerticalList implements OnInit {
   onSeeAll(): void {
     const dest = this.drawerSvc.getPayload<Destination>('destination-detail');
     this.drawerSvc.close('destination-detail');
-    this.drawerSvc.open('all-attractions', dest);
+    this.drawerSvc.open('all-attractions', { destination: dest });
   }
 
   onAttractionClick(attraction: Attraction): void {

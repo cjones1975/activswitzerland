@@ -84,7 +84,7 @@
 }
 
 .skeleton-card {
-  height: 90px;
+  height: 110px;
   border-radius: 10px;
   overflow: hidden;
   margin: 0 1rem;
@@ -92,7 +92,8 @@
 
 .attraction-card {
   display: flex;
-  height: 90px;
+  flex-direction: column;
+  height: 110px;
   border-radius: 10px;
   overflow: hidden;
   margin: 0 1rem;
@@ -104,6 +105,54 @@
 
 .attraction-card:hover {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.attraction-card--select {
+  height: auto;
+}
+
+.card-row {
+  display: flex;
+  height: 110px;
+  flex-shrink: 0;
+}
+
+.card-select-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem 0.65rem;
+  cursor: default;
+}
+
+.card-day-select {
+  flex: 1;
+  min-width: 0;
+}
+
+::ng-deep .card-day-select .p-select-label {
+  font-size: 0.75rem;
+}
+
+.card-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--navy-900);
+  color: var(--color-white);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.card-add-btn--added {
+  background: var(--gray-200, #e2e8f0);
+  color: var(--navy-900);
 }
 
 .card-photo {

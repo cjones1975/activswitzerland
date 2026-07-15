@@ -10,7 +10,7 @@ import { Message } from 'primeng/message';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TransportService, LocationSearchResult } from '../../../shared/services/transport';
 import { TripStop, TripDateRange } from '../../../models/trip';
-import { tripDayCount } from '../../../shared/utils/date-range';
+import { tripDayCount, stopDayRanges } from '../../../shared/utils/date-range';
 import { ConnectionLegPicker } from './connection-leg-picker/connection-leg-picker';
 
 const MAX_VIA_STOPS = 6;
@@ -49,27 +49,8 @@ export class Step2Itinerary {
     return { key, count };
   });
 
-  /**
-   * "Day N" / "Days N–M" per stop, derived by walking the itinerary and accumulating days spent.
-   * A 0-day stop (same-day pass-through, or a non-day departure point like "home") doesn't get an
-   * exclusive day of its own — it's labeled with whatever day is already "current" at that point:
-   * Day 0 if nothing has been allocated yet, otherwise the same day as the stop before it.
-   */
-  readonly stopDayLabels = computed(() => {
-    const labels = new Map<string, { start: number; end: number }>();
-    let currentDay = 0;
-    for (const stop of this.trip().stops) {
-      if (stop.days > 0) {
-        const start = currentDay + 1;
-        const end = currentDay + stop.days;
-        labels.set(stop.id, { start, end });
-        currentDay = end;
-      } else {
-        labels.set(stop.id, { start: currentDay, end: currentDay });
-      }
-    }
-    return labels;
-  });
+  /** "Day N" / "Days N–M" per stop — see `stopDayRanges()` for the accumulation rule. */
+  readonly stopDayLabels = computed(() => stopDayRanges(this.trip().stops));
 
   private readonly initial = this.buildInitialSlots();
   readonly departure = signal<TripStop | null>(this.initial.departure);
@@ -95,7 +76,9 @@ export class Step2Itinerary {
     return pairs;
   });
 
-  readonly canContinue = computed(() => this.departure() !== null && this.destination() !== null && !this.routeUnreachable());
+  readonly canContinue = computed(() =>
+    this.departure() !== null && this.destination() !== null && !this.routeUnreachable() && this.allocationMessage() === null
+  );
 
   constructor() {
     if (this.departure() && this.destination()) this.syncStops();
@@ -187,6 +170,11 @@ export class Step2Itinerary {
   }
 
   // ── Days ──────────────────────────────────────────────────────────────
+  /** Days here is owned by the service (`updateStopDays`), not the local departure/via/destination draft — always read the live value so the field can't display a stale copy. */
+  daysFor(stop: TripStop): number {
+    return this.trip().stops.find(s => s.id === stop.id)?.days ?? stop.days;
+  }
+
   onDaysChange(stop: TripStop, value: number | null): void {
     if (value == null || value < 0) return;
     this.plannerSvc.updateStopDays(stop.id, value);
@@ -200,9 +188,16 @@ export class Step2Itinerary {
   }
 
   // ── Sync + route ──────────────────────────────────────────────────────
+  /**
+   * Rebuilds the service's stop list from the local identity/order draft (departure/via/destination).
+   * `days` isn't part of that draft — it's edited directly against the service via `updateStopDays` — so
+   * each stop's current live days is preserved here rather than overwritten with a stale draft copy.
+   */
   private syncStops(): void {
+    const currentDays = new Map(this.trip().stops.map(s => [s.id, s.days]));
     const list = [this.departure(), ...this.viaStops(), this.destination()]
-      .filter((s): s is TripStop => s !== null);
+      .filter((s): s is TripStop => s !== null)
+      .map(s => ({ ...s, days: currentDays.get(s.id) ?? s.days }));
     this.plannerSvc.setStops(list);
     this.rebuildRoute();
   }
@@ -242,5 +237,9 @@ export class Step2Itinerary {
 
   back(): void {
     this.plannerSvc.prevStep();
+  }
+
+  next(): void {
+    this.plannerSvc.nextStep();
   }
 }

@@ -20,7 +20,7 @@ import { HikeDetail, HikeDetailPayload } from '../../features/hikes/hike-detail/
 import { BikesList } from '../../features/bikes/bikes-list/bikes-list';
 import { BikeDetail, BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
 import { HotelsStub } from '../../features/hotels/hotels-stub/hotels-stub';
-import { Destination } from '../../models/destination';
+import { ActivityPickerPayload } from '../../models/geo-point';
 import { WeatherPayload } from '../../models/weather';
 
 @Component({
@@ -54,15 +54,19 @@ export class DrawerHost {
   }
 
   onAllAttractionsBack() {
-    const dest = this.svc.getPayload<Destination>('all-attractions');
+    const payload = this.svc.getPayload<ActivityPickerPayload>('all-attractions');
     this.svc.close('all-attractions');
-    this.svc.open('destination-detail', dest);
+    if (payload?.mode === 'select') {
+      this.svc.open('trip-planner');
+    } else {
+      this.svc.open('destination-detail', payload?.destination);
+    }
     this.attractionMarkers.setSelected(null);
   }
 
   allAttractionsDestinationName = computed(() => {
     this.svc.list();
-    return this.svc.getPayload<Destination>('all-attractions')?.name ?? '';
+    return this.svc.getPayload<ActivityPickerPayload>('all-attractions')?.destination?.name ?? '';
   });
 
   attractionDetailSource = computed(() => {
@@ -73,15 +77,11 @@ export class DrawerHost {
   onAttractionDetailBack() {
     const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail')!;
     this.svc.close('attraction-detail');
-    if (payload.source === 'trip-planner') {
-      this.svc.open('trip-planner');
-      return;
-    }
     if (payload.source === 'destination-detail') {
       this.svc.open('destination-detail', payload.destination);
       return;
     }
-    this.svc.open('all-attractions', payload.destination);
+    this.svc.open('all-attractions', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
   }
 
   attractionDetailDestinationName = computed(() => {
@@ -103,47 +103,59 @@ export class DrawerHost {
   }
 
   onHikesBack() {
-    const dest = this.svc.getPayload<Destination>('hikes');
+    const payload = this.svc.getPayload<ActivityPickerPayload>('hikes');
     this.svc.close('hikes');
-    this.svc.open('destination-detail', dest);
+    if (payload?.mode === 'select') {
+      this.svc.open('trip-planner');
+    } else {
+      this.svc.open('destination-detail', payload?.destination);
+    }
   }
 
   hikesDestinationName = computed(() => {
     this.svc.list();
-    return this.svc.getPayload<Destination>('hikes')?.name ?? '';
+    return this.svc.getPayload<ActivityPickerPayload>('hikes')?.destination?.name ?? '';
   });
 
   onHikeDetailBack() {
     const payload = this.svc.getPayload<HikeDetailPayload>('hike-detail')!;
     this.svc.close('hike-detail');
-    this.svc.open('hikes', payload.destination);
+    this.svc.open('hikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
   }
 
   onBikesBack() {
-    const dest = this.svc.getPayload<Destination>('bikes');
+    const payload = this.svc.getPayload<ActivityPickerPayload>('bikes');
     this.svc.close('bikes');
-    this.svc.open('destination-detail', dest);
+    if (payload?.mode === 'select') {
+      this.svc.open('trip-planner');
+    } else {
+      this.svc.open('destination-detail', payload?.destination);
+    }
   }
 
   bikesDestinationName = computed(() => {
     this.svc.list();
-    return this.svc.getPayload<Destination>('bikes')?.name ?? '';
+    return this.svc.getPayload<ActivityPickerPayload>('bikes')?.destination?.name ?? '';
   });
 
   onBikeDetailBack() {
     const payload = this.svc.getPayload<BikeDetailPayload>('bike-detail')!;
     this.svc.close('bike-detail');
-    this.svc.open('bikes', payload.destination);
+    this.svc.open('bikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
   }
 
   onHotelsBack() {
-    const dest = this.svc.getPayload<Destination>('hotels');
+    const payload = this.svc.getPayload<ActivityPickerPayload>('hotels');
     this.svc.close('hotels');
-    this.svc.open('destination-detail', dest);
+    if (payload?.mode === 'select') {
+      this.svc.open('trip-planner');
+    } else {
+      this.svc.open('destination-detail', payload?.destination);
+    }
   }
 
   hotelsDestinationName = computed(() => {
     this.svc.list();
-    return this.svc.getPayload<Destination>('hotels')?.name ?? '';
+    return this.svc.getPayload<ActivityPickerPayload>('hotels')?.destination?.name ?? '';
   });
 }

@@ -25,7 +25,11 @@
 
 .s2-range-banner i { font-size: 0.4rem; color: var(--navy-500, #6b90b8); }
 
-::ng-deep .s2-sequence-msg { margin-bottom: 0.85rem; width: 100%; }
+::ng-deep .s2-sequence-msg {
+  flex-shrink: 0;
+  width: calc(100% - 2rem);
+  margin: 0.65rem 1rem 0;
+}
 
 .s2-card {
   border: 1px solid var(--gray-200, #e2e8f0);
@@ -172,7 +176,7 @@
 .s2-footer {
   flex-shrink: 0;
   display: grid;
-  grid-template-columns: auto 1fr;
+  grid-template-columns: 1fr 1fr;
   align-items: center;
   gap: 0.75rem;
   padding: 0.75rem 1rem;
@@ -180,16 +184,4 @@
   background: var(--color-white);
 }
 
-.s2-footer-continue {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 0.25rem;
-}
-
-::ng-deep .s2-footer-continue .p-button { width: 100%; justify-content: center; }
-
-.s2-footer-hint {
-  font-size: 0.68rem;
-  color: var(--gray-400);
-}
+::ng-deep .s2-footer .p-button { width: 100%; justify-content: center; }

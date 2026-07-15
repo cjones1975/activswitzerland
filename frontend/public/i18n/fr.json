@@ -129,7 +129,20 @@
         "searchConnection": "Rechercher des connexions",
         "searchingConnections": "Recherche de connexions…",
         "skipForNow": "Ignorer pour l'instant",
-        "activitiesComingSoon": "Activités — disponibles dans une prochaine mise à jour"
+        "continue": "Activités"
+      },
+      "step3": {
+        "placesToVisit": "Lieux à visiter",
+        "hikesNearby": "Randonnées à proximité",
+        "bikesNearby": "Parcours vélo",
+        "hotelsNearby": "Hôtels",
+        "hotelsComingSoon": "Bientôt disponible",
+        "addToTrip": "Ajouter au voyage",
+        "added": "Ajouté",
+        "removeFromTrip": "Retirer du voyage",
+        "dayDateLabel": "Jour {{day}} - {{date}}",
+        "continue": "Résumé",
+        "noStops": "Ajoutez des arrêts d'au moins un jour pour commencer à ajouter des activités."
       }
     }
   },

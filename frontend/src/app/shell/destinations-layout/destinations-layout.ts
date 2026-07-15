@@ -229,7 +229,7 @@ export class DestinationsLayout implements OnInit, OnDestroy {
     const dest = this.destination();
     if (!dest) return;
     this.drawer.close('destination-detail');
-    this.drawer.open('all-attractions', dest);
+    this.drawer.open('all-attractions', { destination: dest });
   }
 
   reopenAllAttractions(): void {

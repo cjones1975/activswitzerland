@@ -1,7 +1,7 @@
 import { Injectable, signal } from '@angular/core';
 import { MapMarker } from '../map/map';
 import { TrailCategory, TrailRoute, trailCategoryColor } from '../../models/trail-route';
-import { Destination } from '../../models/destination';
+import { GeoLocation } from '../../models/geo-point';
 
 export type TrailCategoryFilter = TrailCategory | 'all';
 
@@ -18,9 +18,9 @@ export class HikeMarkersService {
   // resetting to defaults whenever a genuinely new destination is visited.
   readonly radiusKm = signal(30);
   readonly selectedCategory = signal<TrailCategoryFilter>('all');
-  private lastDestination: Destination | null = null;
+  private lastDestination: GeoLocation | null = null;
 
-  resetFiltersForDestination(dest: Destination): void {
+  resetFiltersForDestination(dest: GeoLocation): void {
     if (dest === this.lastDestination) return;
     this.lastDestination = dest;
     this.radiusKm.set(30);
