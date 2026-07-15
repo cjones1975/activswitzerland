@@ -1,0 +1,57 @@
+<div class="s1-content">
+  <div class="s1-section">
+    <div class="s1-section-title">{{ 'trip.planner.step1.tripType' | translate }}</div>
+    <div class="select-cards">
+      @for (opt of tripTypes; track opt.value) {
+        <button type="button" class="select-card" [class.select-card--selected]="type() === opt.value" (click)="selectType(opt.value)">
+          <span class="select-card-icon"><i [class]="opt.icon"></i></span>
+          <span class="select-card-radio" [class.select-card-radio--on]="type() === opt.value"></span>
+          <span class="select-card-title">{{ opt.titleKey | translate }}</span>
+          <span class="select-card-subtitle">{{ opt.subtitleKey | translate }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="s1-section">
+    <div class="s1-section-title">{{ 'trip.planner.step1.travelDates' | translate }}</div>
+    <div class="select-cards">
+      @for (opt of dateModes; track opt.value) {
+        <button type="button" class="select-card" [class.select-card--selected]="dateMode() === opt.value" (click)="selectDateMode(opt.value)">
+          <span class="select-card-icon"><i [class]="opt.icon"></i></span>
+          <span class="select-card-radio" [class.select-card-radio--on]="dateMode() === opt.value"></span>
+          <span class="select-card-title">{{ opt.titleKey | translate }}</span>
+          <span class="select-card-subtitle">{{ opt.subtitleKey | translate }}</span>
+        </button>
+      }
+    </div>
+  </div>
+
+  @if (dateMode() === 'dates') {
+    <div class="s1-field">
+      <label for="s1-start">{{ 'trip.planner.step1.startDate' | translate }}</label>
+      <input id="s1-start" type="date" class="s1-date-input" [ngModel]="startDate()" (ngModelChange)="onStartDateChange($event)" [attr.min]="todayIso" />
+    </div>
+    <div class="s1-field">
+      <label for="s1-end">{{ 'trip.planner.step1.endDate' | translate }}</label>
+      <input id="s1-end" type="date" class="s1-date-input" [ngModel]="endDate()" (ngModelChange)="onEndDateChange($event)" [attr.min]="startDate() || todayIso" />
+    </div>
+  } @else {
+    <div class="s1-field">
+      <label for="s1-numdays">{{ 'trip.planner.step1.numDays' | translate }}</label>
+      <p-inputNumber inputId="s1-numdays" [ngModel]="numDays()" (ngModelChange)="onNumDaysChange($event)" [min]="1" [max]="60" [showButtons]="true" styleClass="w-full" />
+    </div>
+  }
+
+  @if (daysCount(); as count) {
+    <div class="s1-days-badge">
+      <i class="fa-solid fa-circle"></i>
+      {{ 'trip.planner.step1.daysTrip' | translate: { count } }}
+    </div>
+  }
+</div>
+
+<div class="s1-footer">
+  <p-button [label]="'trip.planner.step1.continue' | translate" icon="fa-light fa-chevron-right" iconPos="right"
+            styleClass="w-full" [disabled]="!canContinue()" (onClick)="continue()" />
+</div>

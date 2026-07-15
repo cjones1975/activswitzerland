@@ -14,8 +14,7 @@ import { DestinationDetail } from '../../features/destinations/destination-detai
 import { AllAttractions } from '../../features/attractions/all-attractions/all-attractions';
 import { AttractionDetail, AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
 import { Weather } from '../weather/weather';
-import { TripPlanner } from '../../features/trip-planner/trip-planner';
-import { ThingsToDo } from '../../features/trip-planner/things-to-do/things-to-do';
+import { TripPlannerWizard } from '../../features/trip-planner/trip-planner-wizard/trip-planner-wizard';
 import { HikesList } from '../../features/hikes/hikes-list/hikes-list';
 import { HikeDetail, HikeDetailPayload } from '../../features/hikes/hike-detail/hike-detail';
 import { BikesList } from '../../features/bikes/bikes-list/bikes-list';
@@ -23,12 +22,11 @@ import { BikeDetail, BikeDetailPayload } from '../../features/bikes/bike-detail/
 import { HotelsStub } from '../../features/hotels/hotels-stub/hotels-stub';
 import { Destination } from '../../models/destination';
 import { WeatherPayload } from '../../models/weather';
-import { TripStop } from '../../models/trip';
 
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, TripPlanner, ThingsToDo, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, TripPlannerWizard, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -75,10 +73,6 @@ export class DrawerHost {
   onAttractionDetailBack() {
     const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail')!;
     this.svc.close('attraction-detail');
-    if (payload.source === 'things-to-do') {
-      this.svc.open('things-to-do', { stop: payload.stop });
-      return;
-    }
     if (payload.source === 'trip-planner') {
       this.svc.open('trip-planner');
       return;
@@ -93,12 +87,6 @@ export class DrawerHost {
   attractionDetailDestinationName = computed(() => {
     this.svc.list();
     return this.svc.getPayload<AttractionDetailPayload>('attraction-detail')?.destination?.name ?? '';
-  });
-
-  thingsToDoTitle = computed(() => {
-    this.svc.list();
-    const stop = this.svc.getPayload<{ stop: TripStop }>('things-to-do')?.stop;
-    return stop?.name ?? '';
   });
 
   weatherLocationName = computed(() => {

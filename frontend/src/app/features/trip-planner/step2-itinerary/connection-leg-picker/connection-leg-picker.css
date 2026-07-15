@@ -1,0 +1,151 @@
+.leg-card {
+  border: 1px solid var(--gray-200, #e2e8f0);
+  border-radius: 10px;
+  overflow: hidden;
+  margin-bottom: 0.6rem;
+  background: var(--color-white);
+}
+
+.leg-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+  padding: 0.65rem 0.75rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  text-align: left;
+  font: inherit;
+}
+
+.leg-route {
+  flex: 1;
+  min-width: 0;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy-900);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.leg-route i { font-size: 0.7rem; color: var(--gray-400); margin: 0 0.2rem; }
+
+.leg-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.72rem;
+  font-weight: 600;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.leg-status--ok { color: #1a6b3c; }
+.leg-status--skipped { color: var(--gray-500); }
+.leg-status--needed { color: #b45309; }
+
+.leg-chevron {
+  color: var(--gray-400);
+  font-size: 0.8rem;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.leg-chevron--open { transform: rotate(180deg); }
+
+.leg-picked {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 0.75rem 0.65rem;
+  font-size: 0.8rem;
+  color: var(--navy-700, #3a5a7a);
+}
+
+.leg-body {
+  padding: 0.75rem;
+  border-top: 1px solid var(--gray-200, #e2e8f0);
+  background: var(--gray-50, #f8fafc);
+}
+
+.leg-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.leg-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.leg-field label {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--navy-700, #3a5a7a);
+}
+
+.leg-field input {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--gray-300, #cbd5e1);
+  border-radius: 6px;
+  font-size: 0.82rem;
+  font-family: inherit;
+}
+
+.leg-loading, .leg-empty {
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  padding: 0.5rem 0;
+}
+
+.leg-connections {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.leg-conn-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  padding: 0.5rem 0.65rem;
+  border: 1px solid var(--gray-200, #e2e8f0);
+  border-radius: 8px;
+  background: var(--color-white);
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.leg-conn-card:hover {
+  border-color: var(--navy-500, #6b90b8);
+}
+
+.leg-conn-time {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--navy-900);
+}
+
+.leg-conn-meta {
+  font-size: 0.72rem;
+  color: var(--gray-500);
+}
+
+.leg-skip {
+  background: none;
+  border: none;
+  color: var(--gray-500);
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-decoration: underline;
+  cursor: pointer;
+  padding: 0;
+}

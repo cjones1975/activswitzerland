@@ -124,6 +124,8 @@ export interface SavedTrip extends PlannedTrip {
 - `features/trip-planner/trip-planner.ts/.html/.css` (old wizard body)
 - `features/trip-planner/things-to-do/*` (only caller deleted; superseded by Phase 2's per-day model)
 - Old body of `shared/services/trip-planner.ts` (rewritten; OSRM call + localStorage-autosave-draft pattern salvaged)
+- `'things-to-do'` from `DrawerKey` (`shared/services/drawer.ts`) and its registration/back-nav wiring in `drawer-host.ts/.html`
+- `'things-to-do'` from `AttractionDetailPayload.source` (`features/attractions/attraction-detail/attraction-detail.ts`) and the corresponding branch in `drawer-host.ts`'s `onAttractionDetailBack()` — dead once the drawer it points at is gone. Phase 2 introduces whatever new source value its select-mode picker needs.
 
 ### Kept / modified
 - `shared/services/transport.ts` / `backend/.../transport.js`: `searchLocations()` reused as-is for Step 2's free-text stop search. `getConnections`/`getConnectionJourneys` reused as-is, called once per leg.

@@ -12,6 +12,23 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-15 — Trip Planner Rebuild Phase 1 Implemented
+
+- Branch: `feature/trip-planner-shell-itinerary`
+- Deleted the old wizard (`trip-planner.ts/.html/.css`) and `things-to-do/*`, and the old body of `shared/services/trip-planner.ts`; removed `'things-to-do'` from `DrawerKey`/`AttractionDetailPayload.source` and its now-dead back-nav branch in `drawer-host.ts`
+- `models/trip.ts` rewritten: `PlannedTrip{type,dateMode,range,stops,connections,activities,routeCoordinates,name}`; `TripStop{id,role,name,lat,lon,externalId,days}` — see below for why per-stop dates ended up as a plain day-count rather than an arrival/departure pair
+- `TripPlannerService` rewritten around the new model — `setType`/`setDateMode`/`setOverallRange`/`setStops`/`updateStopDays`/`setConnectionLeg`/`skipConnectionLeg`/`reset`/`loadSavedTrip`; draft autosave switched from `localStorage` to `sessionStorage` (survives a reload, clears on tab close instead of lingering indefinitely); `reset()`/`setType()` now actually clear the draft (previously wiped the in-memory trip but left a stale copy in storage that would silently reappear)
+- New `features/trip-planner/trip-planner-wizard/` shell (the `'trip-planner'` drawer's component) — step signal (1–5) + step indicator; "Start over" action in the header (confirm dialog) once a draft exists
+- New `features/trip-planner/step1-my-trip/` — road/rail toggle, dates-vs-day-count toggle; past dates disabled (`min` = today); day count is inclusive so a 1-day trip (start date === end date) is valid
+- New `features/trip-planner/step2-itinerary/` — departure/via/destination cards with CDK drag-drop reordering on via stops, free-text autocomplete via `transport.ts` `searchLocations()`, and a per-leg rail connection picker (`connection-leg-picker/`: search/pick/"Skip for now", never blocks the step)
+- Per-stop date modeling went through two false starts before landing on the shipped design, driven by UAT:
+  1. Arrival/departure per stop with auto-shift cascading on edit — reverted after a real bug surfaced (epoch-day numbers leaking into "day count" mode fields) and the cascade logic proved hard to reason about
+  2. Locked (departure's arrival / destination's departure, mirrored from the trip's overall range) + editable fields with equality-chain validation between neighbors — worked but validation initially checked "on or after" instead of exact equality and let one bad stop cascade false positives onto everything after it
+  3. Shipped design: each stop just holds `days: number` (0 allowed — same-day pass-throughs, or a non-day departure point like "home"); validation is one arithmetic check, `sum(stop.days) === trip's total days`; a "Day N" / "Days N–M" label per stop is derived by walking the stops in order and accumulating
+- Fixed two PrimeNG v21 API mismatches found via UAT: `p-autoComplete` uses `optionLabel`, not `field` (silently fell back to rendering `[object Object]`); `p-message`'s `text` input is deprecated in favor of `<p-message>content</p-message>` projection
+- i18n: `trip.planner.step1.*`, `trip.planner.step2.*`, `trip.planner.startOver`/`startOverConfirm` added across en/de/fr/it
+- Feature marked complete
+
 ### 2026-07-14 — Hike/Bike Elevation Profile Implemented
 
 - Branch: `feature/hike-bike-elevation`

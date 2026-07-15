@@ -1,0 +1,55 @@
+<div class="leg-card">
+  <button type="button" class="leg-header" (click)="toggle()">
+    <span class="leg-route">{{ fromStop.name }} <i class="fa-light fa-arrow-right"></i> {{ toStop.name }}</span>
+    @if (leg()?.connection) {
+      <span class="leg-status leg-status--ok"><i class="fa-solid fa-circle-check"></i> {{ 'trip.planner.step2.connectionPicked' | translate }}</span>
+    } @else if (leg()?.skipped) {
+      <span class="leg-status leg-status--skipped"><i class="fa-light fa-circle-minus"></i> {{ 'trip.planner.step2.connectionSkipped' | translate }}</span>
+    } @else {
+      <span class="leg-status leg-status--needed"><i class="fa-light fa-triangle-exclamation"></i> {{ 'trip.planner.step2.connectionNeeded' | translate }}</span>
+    }
+    <i class="fa-light fa-chevron-down leg-chevron" [class.leg-chevron--open]="expanded()"></i>
+  </button>
+
+  @if (leg()?.connection; as conn) {
+    <div class="leg-picked">
+      <span class="leg-picked-time">{{ formatTime(conn.departure) }} → {{ formatTime(conn.arrival) }}</span>
+      <span class="leg-picked-meta">{{ formatDuration(conn.duration) }} · {{ conn.transfers }} {{ (conn.transfers === 1 ? 'trip.planner.transfer' : 'trip.planner.transfers') | translate }}</span>
+    </div>
+  }
+
+  @if (expanded()) {
+    <div class="leg-body">
+      <div class="leg-form">
+        <div class="leg-field">
+          <label>{{ 'trip.planner.date' | translate }}</label>
+          <input type="date" [ngModel]="date()" (ngModelChange)="date.set($event)" />
+        </div>
+        <div class="leg-field">
+          <label>{{ 'trip.planner.time' | translate }}</label>
+          <input type="time" [ngModel]="time()" (ngModelChange)="time.set($event)" />
+        </div>
+        <p-button [label]="'trip.planner.step2.searchConnection' | translate" size="small" [disabled]="!date() || !time()" (onClick)="search()" />
+      </div>
+
+      @if (loading()) {
+        <div class="leg-loading">{{ 'trip.planner.step2.searchingConnections' | translate }}</div>
+      } @else if (error()) {
+        <p class="leg-empty">{{ 'trip.planner.noConnections' | translate }}</p>
+      } @else if (searched() && connections().length === 0) {
+        <p class="leg-empty">{{ 'trip.planner.noConnections' | translate }}</p>
+      } @else if (connections().length > 0) {
+        <div class="leg-connections">
+          @for (conn of connections(); track $index) {
+            <button type="button" class="leg-conn-card" (click)="pick(conn)">
+              <span class="leg-conn-time">{{ formatTime(conn.departure) }} → {{ formatTime(conn.arrival) }}</span>
+              <span class="leg-conn-meta">{{ formatDuration(conn.duration) }} · {{ conn.transfers }} {{ (conn.transfers === 1 ? 'trip.planner.transfer' : 'trip.planner.transfers') | translate }}</span>
+            </button>
+          }
+        </div>
+      }
+
+      <button type="button" class="leg-skip" (click)="skip()">{{ 'trip.planner.step2.skipForNow' | translate }}</button>
+    </div>
+  }
+</div>

@@ -4,6 +4,14 @@ import { Observable, map, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { TripStop, TripConnection, TripSection } from '../../models/trip';
 
+/** Raw hit from the location search — callers turn this into a full TripStop (assigning id/role/range). */
+export interface LocationSearchResult {
+  externalId: string;
+  name: string;
+  lat: number;
+  lon: number;
+}
+
 interface LocationResult {
   id: string;
   name: string;
@@ -75,14 +83,14 @@ export class TransportService {
   private http = inject(HttpClient);
   private base = `${environment.apiUrl}/api/v1/transport`;
 
-  searchLocations(query: string, tripType: 'road' | 'rail' = 'rail'): Observable<TripStop[]> {
+  searchLocations(query: string, tripType: 'road' | 'rail' = 'rail'): Observable<LocationSearchResult[]> {
     const type = tripType === 'road' ? 'address' : 'station';
     const params = new HttpParams().set('location', query).set('type', type);
     return this.http.get<LocationsResponse>(`${this.base}/locations`, { params }).pipe(
       map(res => (res.data.stations ?? [])
         .filter(s => s.coordinate?.x && s.coordinate?.y)
         .map(s => ({
-          stationId: s.id,
+          externalId: s.id,
           name: s.name,
           lon: s.coordinate.y,
           lat: s.coordinate.x,
@@ -120,12 +128,12 @@ export class TransportService {
 
   getConnectionJourneys(stops: TripStop[], date: string, time: string): Observable<[number, number][][]> {
     let params = new HttpParams()
-      .set('from', stops[0].stationId)
-      .set('to', stops[stops.length - 1].stationId)
+      .set('from', stops[0].externalId ?? stops[0].name)
+      .set('to', stops[stops.length - 1].externalId ?? stops[stops.length - 1].name)
       .set('fields[]', 'connections/sections/journey/passList/station')
       .set('isArrivalTime', 'false');
 
-    const via = stops.slice(1, -1).map(s => s.stationId);
+    const via = stops.slice(1, -1).map(s => s.externalId ?? s.name);
     via.forEach(v => { params = params.append('via', v); });
 
     if (date) params = params.set('date', date);
