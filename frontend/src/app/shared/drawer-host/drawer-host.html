@@ -123,9 +123,7 @@
         <div class="dest-header">
             <button class="dest-back" type="button" (click)="onAttractionDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
-                @if (attractionDetailSource() === 'trip-planner') {
-                    {{ 'trip.planner.backToPlanner' | translate }}
-                } @else if (attractionDetailSource() === 'destination-detail') {
+                @if (attractionDetailSource() === 'destination-detail') {
                     {{ 'attractions.backToDestination' | translate: { name: attractionDetailDestinationName() } }}
                 } @else {
                     {{ 'attractions.backToAttractions' | translate }}

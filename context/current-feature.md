@@ -12,6 +12,25 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-15 — Trip Planner Rebuild Phase 2 (Activities) Implemented
+
+- Branch: `feature/trip-planner-activities`; specced in `context/features/trip-planner-activities-spec.md` (split out of `trip-planner-rebuild-spec.md`'s Phase 2 section, which was trimmed to a pointer)
+- New `models/geo-point.ts`: `GeoPoint{id,name,lat,lon}` + `ActivityPickerPayload{destination,mode?,stopId?}` — decouples `all-attractions`/`hikes-list`/`bikes-list` from requiring a full MySwitzerland catalogue `Destination`, since trip stops are free-text/address search results; `shared/utils/geo-location.ts` (`isDestination`/`locId`/`locLat`/`locLon`) normalizes reads across the two shapes. Both pickers already supported pure lat/lon radius search under the hood (`AttractionsService.getAttractionsNearby`, geo.admin.ch's `lat`/`lon`/`radius`) — no backend changes needed
+- `all-attractions`/`hikes-list`/`bikes-list`: payload widened from a bare `Destination` to `ActivityPickerPayload`; added `mode`/`stopId`/`dayOptions`/`dayChoices` (translated "Day N" / "Day N - DD-MM-YYYY" labels) computeds; each card gains a day-select + Add/Added button in `mode: 'select'`; card-tap still opens the (read-only) detail drawer in select mode instead of collapsing to the map
+- `attraction-detail`/`hike-detail`/`bike-detail` payloads gained `mode?`/`stopId?` so `drawer-host.ts`'s back-nav handlers can reconstruct the picker's payload; removed `AttractionDetailPayload.source`'s dead `'trip-planner'` arm (never had a caller) — select-mode detail views now back-nav to the originating list, not straight to the wizard
+- `TripPlannerService` gained `addActivity`/`removeActivity`/`isActivityAdded`/`getActivitiesForStop`; `shared/utils/date-range.ts` gained `stopDayRanges`/`stopDayOptions`/`formatDdMmYyyy`/`dayChoiceLabelParams` (the former lifted out of `Step2Itinerary`'s local computed, now shared with Step 3)
+- New `features/trip-planner/step3-activities/` — one card per stop with `days > 0`, four category rows (Places to Visit/Hikes/Bike Rides/Hotels-stub) opening the matching picker in select mode, plus an inline added-items list per stop with its own remove control; wired into `trip-planner-wizard` as `@case (3)`
+- i18n: `trip.planner.step3.*` added across en/de/fr/it
+- UAT fixes in the same branch:
+  - Real bug: Step 2's "Next" button had been hardcoded `[disabled]="true"` with a "coming soon" hint ever since Phase 1 — never wired up once Step 3 actually existed. Wired to `canContinue()` + a new `next()` method
+  - Real bug: the days-here `<input>` was bound to `stop.days` off `Step2Itinerary`'s local departure/via/destination draft signals, which `onDaysChange()` never updated (only `TripPlannerService` was updated) — the field silently reverted to its old value on the next render, and `syncStops()` (called on unrelated edits like reordering) would then clobber the service's correct value with the stale draft copy. Fixed by reading the live value via a new `daysFor(stop)` helper and having `syncStops()` preserve each stop's current live `days` instead of overwriting it
+  - Real bug: `canContinue` never checked `allocationMessage()`, so Step 2 let you continue to Activities with an over/under-budget day allocation despite the warning banner showing. Added `allocationMessage() === null` to the gate
+  - Day-select dropdown: PrimeNG's default overlay was rendering inside the scrolling card (pushing it up/clipping) — added `appendTo="body"`; since that portals the option list to `<body>`, outside any component's view, `panelStyleClass="day-select-panel"` + a global `styles.css` rule was needed to size its font (component-scoped `::ng-deep` can't reach a body-appended node — only the closed control's own label, which stays in-component, could be sized that way)
+  - Footer Back/Next buttons switched from `grid-template-columns: auto 1fr` to `1fr 1fr` (equal width) on both `step2-itinerary` and `step3-activities`; Next-button labels changed from generic "Next" to bare step names ("Activities", "Summary" — matching Step 1's pre-existing "Continue to Itinerary" precedent, then simplified to drop "Continue to" except on Step 1 per follow-up feedback)
+  - "Places to Visit" card height bumped 90px → 110px (description text was clipping at 3 lines)
+  - Allocation warning banner moved from the top of the scrollable stop list to just above the footer, so it stays visible without scrolling on mobile
+- Feature marked complete
+
 ### 2026-07-15 — Trip Planner Rebuild Phase 1 Implemented
 
 - Branch: `feature/trip-planner-shell-itinerary`

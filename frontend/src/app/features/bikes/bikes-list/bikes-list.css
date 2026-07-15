@@ -60,6 +60,7 @@
 
 .trail-card {
   display: flex;
+  flex-direction: column;
   height: 90px;
   border-radius: 10px;
   overflow: hidden;
@@ -72,6 +73,54 @@
 
 .trail-card:hover {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.trail-card--select {
+  height: auto;
+}
+
+.trail-card-row {
+  display: flex;
+  height: 90px;
+  flex-shrink: 0;
+}
+
+.trail-select-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem 0.65rem;
+  cursor: default;
+}
+
+.trail-day-select {
+  flex: 1;
+  min-width: 0;
+}
+
+::ng-deep .trail-day-select .p-select-label {
+  font-size: 0.75rem;
+}
+
+.trail-add-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+  flex-shrink: 0;
+  padding: 0.4rem 0.75rem;
+  border: none;
+  border-radius: 8px;
+  background: var(--navy-900);
+  color: var(--color-white);
+  font-size: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.trail-add-btn--added {
+  background: var(--gray-200, #e2e8f0);
+  color: var(--navy-900);
 }
 
 .trail-thumb-wrap {

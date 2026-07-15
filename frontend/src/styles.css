@@ -67,6 +67,12 @@ body {
   font-family: 'Strichpunkt Sans', sans-serif;
 }
 
+/* Trip Planner Step 3 — day-assignment select, appendTo="body" so component-scoped
+   styles can't reach it (portalled straight to <body>, outside any component view). */
+.day-select-panel .p-select-option {
+  font-size: 0.75rem;
+}
+
 /* Toast */
 .p-toast {
     max-width: 300px;

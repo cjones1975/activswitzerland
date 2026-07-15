@@ -4,6 +4,7 @@ import { BehaviorSubject, Observable, map, of, debounceTime, skip } from 'rxjs';
 import {
   PlannedTrip, TripStop, TripDateMode, TripDateRange,
   TripConnection, TripConnectionLeg, SavedTrip,
+  ActivityKind, TripActivitySelection,
 } from '../../models/trip';
 
 const EMPTY_TRIP: PlannedTrip = {
@@ -116,6 +117,25 @@ export class TripPlannerService {
 
   getConnectionLeg(fromStopId: string, toStopId: string): TripConnectionLeg | undefined {
     return this._trip$.value.connections?.find(l => l.fromStopId === fromStopId && l.toStopId === toStopId);
+  }
+
+  // ── Activities (Step 3) ──────────────────────────────────────────────
+  addActivity(selection: Omit<TripActivitySelection, 'id'>): void {
+    const activities = [...this._trip$.value.activities, { ...selection, id: crypto.randomUUID() }];
+    this._trip$.next({ ...this._trip$.value, activities });
+  }
+
+  removeActivity(activityId: string): void {
+    const activities = this._trip$.value.activities.filter(a => a.id !== activityId);
+    this._trip$.next({ ...this._trip$.value, activities });
+  }
+
+  isActivityAdded(stopId: string, kind: ActivityKind, refId: string): boolean {
+    return this._trip$.value.activities.some(a => a.stopId === stopId && a.kind === kind && a.refId === refId);
+  }
+
+  getActivitiesForStop(stopId: string): TripActivitySelection[] {
+    return this._trip$.value.activities.filter(a => a.stopId === stopId);
   }
 
   // ── Route ─────────────────────────────────────────────────────────────

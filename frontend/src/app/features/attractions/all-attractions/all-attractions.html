@@ -28,12 +28,36 @@
         <p class="no-results">{{ 'attractions.search.noResults' | translate }}</p>
       } @else {
         @for (attraction of searchResults; track attraction.identifier) {
-          <div class="attraction-card" (click)="onAttractionClick(attraction)">
-            <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
-            <div class="card-text">
-              <h3 class="card-name">{{ attraction.name }}</h3>
-              <p class="card-abstract">{{ attraction.abstract }}</p>
+          <div class="attraction-card" [class.attraction-card--select]="mode() === 'select'" (click)="onAttractionClick(attraction)">
+            <div class="card-row">
+              <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
+              <div class="card-text">
+                <h3 class="card-name">{{ attraction.name }}</h3>
+                <p class="card-abstract">{{ attraction.abstract }}</p>
+              </div>
             </div>
+            @if (mode() === 'select') {
+              <div class="card-select-row" (click)="$event.stopPropagation()">
+                @if (dayOptions().length > 1) {
+                  <p-select
+                    class="card-day-select"
+                    appendTo="body"
+                    panelStyleClass="day-select-panel"
+                    [options]="dayChoices()"
+                    optionLabel="label"
+                    optionValue="value"
+                    [ngModel]="dayFor(attraction)"
+                    (ngModelChange)="setDay(attraction, $event)" />
+                }
+                <button type="button" class="card-add-btn" [class.card-add-btn--added]="isAdded(attraction)" (click)="toggleAdd(attraction)">
+                  @if (isAdded(attraction)) {
+                    <i class="fa-solid fa-check"></i> {{ 'trip.planner.step3.added' | translate }}
+                  } @else {
+                    <i class="fa-solid fa-plus"></i> {{ 'trip.planner.step3.addToTrip' | translate }}
+                  }
+                </button>
+              </div>
+            }
           </div>
         }
       }
@@ -49,12 +73,36 @@
       </p-message>
     } @else {
       @for (attraction of attractions; track attraction.identifier) {
-        <div class="attraction-card" (click)="onAttractionClick(attraction)">
-          <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
-          <div class="card-text">
-            <h3 class="card-name">{{ attraction.name }}</h3>
-            <p class="card-abstract">{{ attraction.abstract }}</p>
+        <div class="attraction-card" [class.attraction-card--select]="mode() === 'select'" (click)="onAttractionClick(attraction)">
+          <div class="card-row">
+            <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
+            <div class="card-text">
+              <h3 class="card-name">{{ attraction.name }}</h3>
+              <p class="card-abstract">{{ attraction.abstract }}</p>
+            </div>
           </div>
+          @if (mode() === 'select') {
+            <div class="card-select-row" (click)="$event.stopPropagation()">
+              @if (dayOptions().length > 1) {
+                <p-select
+                  class="card-day-select"
+                  appendTo="body"
+                  panelStyleClass="day-select-panel"
+                  [options]="dayChoices()"
+                  optionLabel="label"
+                  optionValue="value"
+                  [ngModel]="dayFor(attraction)"
+                  (ngModelChange)="setDay(attraction, $event)" />
+              }
+              <button type="button" class="card-add-btn" [class.card-add-btn--added]="isAdded(attraction)" (click)="toggleAdd(attraction)">
+                @if (isAdded(attraction)) {
+                  <i class="fa-solid fa-check"></i> {{ 'trip.planner.step3.added' | translate }}
+                } @else {
+                  <i class="fa-solid fa-plus"></i> {{ 'trip.planner.step3.addToTrip' | translate }}
+                }
+              </button>
+            </div>
+          }
         </div>
       }
 

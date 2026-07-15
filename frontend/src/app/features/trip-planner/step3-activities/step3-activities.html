@@ -1,0 +1,59 @@
+<div class="s3-content">
+  @if (!visibleStops().length) {
+    <p class="s3-empty">{{ 'trip.planner.step3.noStops' | translate }}</p>
+  }
+
+  @for (stop of visibleStops(); track stop.id) {
+    <div class="s3-stop-card">
+      <div class="s3-stop-head">
+        <i class="fa-solid fa-location-dot"></i>
+        <span class="s3-stop-name">{{ stop.name }}</span>
+        <span class="s3-stop-role">{{ ('trip.planner.step2.' + stop.role) | translate }}</span>
+      </div>
+      @if (stopDayLabels().get(stop.id); as label) {
+        <span class="s3-day-label">
+          {{ (label.start === label.end ? 'trip.planner.step2.dayLabel' : 'trip.planner.step2.dayRangeLabel') | translate: label }}
+        </span>
+      }
+
+      <div class="s3-category-list">
+        @for (category of categories; track category.kind) {
+          <button type="button" class="s3-category-row" (click)="openPicker(stop, category)">
+            <i [class]="category.icon"></i>
+            <span class="s3-category-label">{{ category.labelKey | translate }}</span>
+            @if (activitiesFor(stop, category.kind).length; as count) {
+              <span class="s3-category-count">{{ count }}</span>
+            }
+            <i class="fa-light fa-chevron-right s3-category-chevron"></i>
+          </button>
+        }
+        <button type="button" class="s3-category-row s3-category-row--hotels" (click)="openHotels(stop)">
+          <i class="fa-solid fa-bed"></i>
+          <span class="s3-category-label">{{ 'trip.planner.step3.hotelsNearby' | translate }}</span>
+          <span class="s3-category-hint">{{ 'trip.planner.step3.hotelsComingSoon' | translate }}</span>
+          <i class="fa-light fa-chevron-right s3-category-chevron"></i>
+        </button>
+      </div>
+
+      @if (allActivitiesFor(stop).length) {
+        <div class="s3-added-list">
+          @for (activity of allActivitiesFor(stop); track activity.id) {
+            <div class="s3-added-item">
+              <i [class]="categoryFor(activity.kind)?.icon"></i>
+              <span class="s3-added-name">{{ activity.name }}</span>
+              <span class="s3-added-day">{{ activity.day }}</span>
+              <button type="button" class="s3-added-remove" [attr.aria-label]="'trip.planner.step3.removeFromTrip' | translate" (click)="removeActivity(activity)">
+                <i class="fa-light fa-xmark"></i>
+              </button>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>
+
+<div class="s3-footer">
+  <p-button [label]="'trip.planner.back' | translate" icon="fa-light fa-chevron-left" severity="secondary" [outlined]="true" (onClick)="back()" />
+  <p-button [label]="'trip.planner.step3.continue' | translate" icon="fa-light fa-chevron-right" iconPos="right" (onClick)="continue()" />
+</div>

@@ -46,19 +46,43 @@
   } @else {
     <div class="card-list">
       @for (route of filteredRoutes(); track route.routeNumber) {
-        <div class="trail-card" (click)="onRouteClick(route)">
-          <div class="trail-thumb-wrap">
-            <app-trail-thumbnail [stages]="route.stages" [category]="route.category" />
-          </div>
-          <div class="trail-card-text">
-            <h3 class="trail-name">{{ route.name }}</h3>
-            <div class="trail-meta-row">
-              <span class="trail-category-badge" [class]="'badge--' + route.category">
-                {{ ('bikes.category.' + route.category) | translate }}
-              </span>
-              <span class="trail-distance">{{ route.distanceKm | number:'1.0-1' }} km</span>
+        <div class="trail-card" [class.trail-card--select]="mode() === 'select'" (click)="onRouteClick(route)">
+          <div class="trail-card-row">
+            <div class="trail-thumb-wrap">
+              <app-trail-thumbnail [stages]="route.stages" [category]="route.category" />
+            </div>
+            <div class="trail-card-text">
+              <h3 class="trail-name">{{ route.name }}</h3>
+              <div class="trail-meta-row">
+                <span class="trail-category-badge" [class]="'badge--' + route.category">
+                  {{ ('bikes.category.' + route.category) | translate }}
+                </span>
+                <span class="trail-distance">{{ route.distanceKm | number:'1.0-1' }} km</span>
+              </div>
             </div>
           </div>
+          @if (mode() === 'select') {
+            <div class="trail-select-row" (click)="$event.stopPropagation()">
+              @if (dayOptions().length > 1) {
+                <p-select
+                  class="trail-day-select"
+                  appendTo="body"
+                  panelStyleClass="day-select-panel"
+                  [options]="dayChoices()"
+                  optionLabel="label"
+                  optionValue="value"
+                  [ngModel]="dayFor(route)"
+                  (ngModelChange)="setDay(route, $event)" />
+              }
+              <button type="button" class="trail-add-btn" [class.trail-add-btn--added]="isAdded(route)" (click)="toggleAdd(route)">
+                @if (isAdded(route)) {
+                  <i class="fa-solid fa-check"></i> {{ 'trip.planner.step3.added' | translate }}
+                } @else {
+                  <i class="fa-solid fa-plus"></i> {{ 'trip.planner.step3.addToTrip' | translate }}
+                }
+              </button>
+            </div>
+          }
         </div>
       }
     </div>

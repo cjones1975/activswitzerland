@@ -11,12 +11,14 @@ import { HikeMarkersService } from '../../../shared/services/hike-markers';
 import { TrailThumbnail } from '../../../shared/trail-thumbnail/trail-thumbnail';
 import { ElevationChart } from '../../../shared/elevation-chart/elevation-chart';
 import { TrailRoute } from '../../../models/trail-route';
-import { Destination } from '../../../models/destination';
+import { GeoLocation } from '../../../models/geo-point';
 import { ElevationProfile } from '../../../models/elevation-profile';
 
 export interface HikeDetailPayload {
   route: TrailRoute;
-  destination: Destination;
+  destination: GeoLocation;
+  mode?: 'view' | 'select';
+  stopId?: string;
 }
 
 @Component({

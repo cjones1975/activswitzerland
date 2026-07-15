@@ -1,24 +1,28 @@
 import { Component, DestroyRef, OnDestroy, computed, effect, inject, signal, untracked } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { SkeletonModule } from 'primeng/skeleton';
 import { SelectButton } from 'primeng/selectbutton';
+import { Select } from 'primeng/select';
 import { Message } from 'primeng/message';
 import { LangService } from '../../../shared/services/lang';
 import { Drawer } from '../../../shared/services/drawer';
 import { TrailRoutesService } from '../../../shared/services/trail-routes';
 import { HikeMarkersService, TrailCategoryFilter } from '../../../shared/services/hike-markers';
+import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TrailThumbnail } from '../../../shared/trail-thumbnail/trail-thumbnail';
 import { TrailRoute } from '../../../models/trail-route';
-import { Destination } from '../../../models/destination';
+import { GeoLocation, ActivityPickerPayload } from '../../../models/geo-point';
+import { locLat, locLon } from '../../../shared/utils/geo-location';
+import { stopDayOptions, dayChoiceLabelParams } from '../../../shared/utils/date-range';
 import { HikeDetailPayload } from '../hike-detail/hike-detail';
 
 @Component({
   selector: 'app-hikes-list',
   standalone: true,
-  imports: [DecimalPipe, FormsModule, SkeletonModule, SelectButton, Message, TranslatePipe, TrailThumbnail],
+  imports: [DecimalPipe, FormsModule, SkeletonModule, SelectButton, Select, Message, TranslatePipe, TrailThumbnail],
   templateUrl: './hikes-list.html',
   styleUrl: './hikes-list.css',
 })
@@ -29,14 +33,35 @@ export class HikesList implements OnDestroy {
   // not this component, so it survives the drawer destroying/recreating this
   // component on open/close — see hike-markers.ts for why.
   protected hikeMarkers = inject(HikeMarkersService);
+  private plannerSvc = inject(TripPlannerService);
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
 
-  destination = computed(() => {
+  private payload = computed(() => {
     this.drawerSvc.list();
-    return this.drawerSvc.getPayload<Destination>('hikes') ?? null;
+    return this.drawerSvc.getPayload<ActivityPickerPayload>('hikes') ?? null;
   });
+  destination = computed<GeoLocation | null>(() => this.payload()?.destination ?? null);
+  mode = computed(() => this.payload()?.mode ?? 'view');
+  stopId = computed(() => this.payload()?.stopId);
+
+  private trip = toSignal(this.plannerSvc.trip$, { initialValue: this.plannerSvc.snapshot });
+  dayOptions = computed(() => {
+    const stopId = this.stopId();
+    return this.mode() === 'select' && stopId ? stopDayOptions(this.trip(), stopId) : [];
+  });
+  dayChoices = computed(() => this.dayOptions().map(opt => {
+    const { key, params } = dayChoiceLabelParams(this.trip(), opt);
+    return { value: opt.value, label: this.translate.instant(key, params) };
+  }));
+  private addedRefIds = computed(() => {
+    const stopId = this.stopId();
+    if (!stopId) return new Set<string>();
+    this.trip();
+    return new Set(this.plannerSvc.getActivitiesForStop(stopId).filter(a => a.kind === 'hike').map(a => a.refId));
+  });
+  private selectedDay = signal<Record<string, string | number>>({});
 
   radiusOptions = [5, 10, 20, 30];
 
@@ -74,11 +99,11 @@ export class HikesList implements OnDestroy {
 
   private load(): void {
     const dest = this.destination();
-    if (!dest?.geo?.latitude || !dest?.geo?.longitude) return;
+    if (!dest) return;
 
     this.loading.set(true);
     this.loadError.set(false);
-    this.trailRoutesService.getRoutes('hike', dest.geo.latitude, dest.geo.longitude, this.langSvc.current, this.hikeMarkers.radiusKm() * 1000).subscribe({
+    this.trailRoutesService.getRoutes('hike', locLat(dest), locLon(dest), this.langSvc.current, this.hikeMarkers.radiusKm() * 1000).subscribe({
       next: routes => {
         this.routes.set(routes);
         this.hikeMarkers.set(routes);
@@ -101,11 +126,55 @@ export class HikesList implements OnDestroy {
     const dest = this.destination();
     if (!dest) return;
     this.hikeMarkers.setSelected(`hike-${route.routeNumber}`);
+    if (this.mode() === 'select') {
+      const payload: HikeDetailPayload = { route, destination: dest, mode: 'select', stopId: this.stopId() };
+      this.drawerSvc.open('hike-detail', payload);
+      return;
+    }
     const payload: HikeDetailPayload = { route, destination: dest };
     this.drawerSvc.open('hike-detail', payload);
     // Only the detail drawer needs collapsing to reveal the map now — no need
     // to also collapse this list underneath it.
     this.drawerSvc.collapse('hikes');
+  }
+
+  isAdded(route: TrailRoute): boolean {
+    return this.addedRefIds().has(String(route.routeNumber));
+  }
+
+  dayFor(route: TrailRoute): string | number | undefined {
+    return this.selectedDay()[route.routeNumber] ?? this.dayOptions()[0]?.value;
+  }
+
+  setDay(route: TrailRoute, day: string | number): void {
+    this.selectedDay.update(m => ({ ...m, [route.routeNumber]: day }));
+  }
+
+  toggleAdd(route: TrailRoute): void {
+    const stopId = this.stopId();
+    if (!stopId) return;
+
+    const refId = String(route.routeNumber);
+    if (this.isAdded(route)) {
+      const existing = this.plannerSvc.getActivitiesForStop(stopId).find(a => a.kind === 'hike' && a.refId === refId);
+      if (existing) this.plannerSvc.removeActivity(existing.id);
+      return;
+    }
+
+    const day = this.dayFor(route);
+    if (day == null) return;
+    const start = route.stages[0]?.geometryWgs84?.coordinates?.[0]?.[0];
+    this.plannerSvc.addActivity({
+      stopId,
+      kind: 'hike',
+      refId,
+      day,
+      name: route.name,
+      lat: start?.[1],
+      lon: start?.[0],
+      distanceKm: route.distanceKm,
+      category: route.category,
+    });
   }
 
   ngOnDestroy(): void {

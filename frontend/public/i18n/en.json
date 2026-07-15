@@ -129,7 +129,20 @@
         "searchConnection": "Search connections",
         "searchingConnections": "Searching connections…",
         "skipForNow": "Skip for now",
-        "activitiesComingSoon": "Activities — coming in a future update"
+        "continue": "Activities"
+      },
+      "step3": {
+        "placesToVisit": "Places to Visit",
+        "hikesNearby": "Hikes in the Area",
+        "bikesNearby": "Bike Rides",
+        "hotelsNearby": "Hotels",
+        "hotelsComingSoon": "Coming soon",
+        "addToTrip": "Add to Trip",
+        "added": "Added",
+        "removeFromTrip": "Remove from trip",
+        "dayDateLabel": "Day {{day}} - {{date}}",
+        "continue": "Summary",
+        "noStops": "Add stops with at least one day to start adding activities."
       }
     }
   },

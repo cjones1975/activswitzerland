@@ -6,10 +6,6 @@
     </div>
   }
 
-  @if (allocationMessage(); as msg) {
-    <p-message severity="warn" styleClass="s2-sequence-msg">{{ msg.key | translate: { count: msg.count } }}</p-message>
-  }
-
   <!-- Departure -->
   <div class="s2-card">
     <div class="s2-card-head">
@@ -27,7 +23,7 @@
     @if (departure(); as stop) {
       <div class="s2-days-field">
         <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
-        <input type="number" [ngModel]="stop.days" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
+        <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
       </div>
     }
   </div>
@@ -53,7 +49,7 @@
                          [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
         <div class="s2-days-field">
           <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
-          <input type="number" [ngModel]="stop.days" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
+          <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
         </div>
       </div>
     }
@@ -76,7 +72,7 @@
     @if (destination(); as stop) {
       <div class="s2-days-field">
         <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
-        <input type="number" [ngModel]="stop.days" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
+        <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
       </div>
     }
   </div>
@@ -115,10 +111,11 @@
   }
 </div>
 
+@if (allocationMessage(); as msg) {
+  <p-message severity="warn" styleClass="s2-sequence-msg">{{ msg.key | translate: { count: msg.count } }}</p-message>
+}
+
 <div class="s2-footer">
   <p-button [label]="'trip.planner.back' | translate" icon="fa-light fa-chevron-left" severity="secondary" [outlined]="true" (onClick)="back()" />
-  <div class="s2-footer-continue">
-    <p-button [label]="'trip.planner.next' | translate" icon="fa-light fa-chevron-right" iconPos="right" [disabled]="true" />
-    <span class="s2-footer-hint">{{ 'trip.planner.step2.activitiesComingSoon' | translate }}</span>
-  </div>
+  <p-button [label]="'trip.planner.step2.continue' | translate" icon="fa-light fa-chevron-right" iconPos="right" [disabled]="!canContinue()" (onClick)="next()" />
 </div>

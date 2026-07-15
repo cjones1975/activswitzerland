@@ -142,11 +142,10 @@ export interface SavedTrip extends PlannedTrip {
 
 ## Phase 2 — Step 3 (Activities)
 
-- `features/trip-planner/step3-activities/` — iterates `trip.stops` in itinerary order, shows each stop's date range and 4 activity pickers underneath: Places to Visit, Hikes in the Area, Bike Rides, Hotels (soft-disabled). Each activity kind should be visually distinguishable at a glance (e.g. a distinct icon/color per kind) — exact styling open, `Places to visit.png`/`Bike rides.png` illustrate the idea, not the final look.
-- Extend `all-attractions`/`hikes`/`bikes` drawer payloads with `mode: 'view'|'select'` + `stopId` — select mode needs a way to assign a picked item to one of the stop's available days and show it's been added; an inline day-select + add button, toggling to an "added" state once selected, is one reasonable pattern.
-- `TripPlannerService`: `addActivity()`, `removeActivity()`, `getActivitiesForStopDay(stopId, day)`.
-- Hotels picker reuses Phase 0's stub with a "coming soon" banner.
-- i18n: `tripPlanner.step3.*` (`placesToVisit`, `hikesNearby`, `bikesNearby`, `hotelsNearby`, `hotelsComingSoon`, `assignToDay`, `removeFromDay`, `added`).
+Fully specced separately in `context/features/trip-planner-activities-spec.md` — select-mode
+picking of attractions/hikes/bike rides per stop-day, `GeoPoint` payload widening so the
+existing pickers work off free-text trip stops (not just MySwitzerland catalogue
+destinations), and the add/remove-activity data flow through `TripPlannerService`.
 
 ## Phase 3 — Step 4 (Summary)
 
