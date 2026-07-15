@@ -39,8 +39,23 @@ export class ConnectionLegPicker {
   readonly searched = signal(false);
   readonly error = signal(false);
 
+  /** Which search-result card (by index) has its journey detail expanded, if any. */
+  readonly expandedDetailIndex = signal<number | null>(null);
+  /** Whether the already-picked connection's journey detail is expanded. */
+  readonly pickedDetailExpanded = signal(false);
+
   toggle(): void {
     this.expanded.update(v => !v);
+  }
+
+  toggleDetail(index: number, event: Event): void {
+    event.stopPropagation();
+    this.expandedDetailIndex.update(i => (i === index ? null : index));
+  }
+
+  togglePickedDetail(event: Event): void {
+    event.stopPropagation();
+    this.pickedDetailExpanded.update(v => !v);
   }
 
   search(): void {
@@ -70,7 +85,13 @@ export class ConnectionLegPicker {
   pick(conn: TripConnection): void {
     this.plannerSvc.setConnectionLeg(this.fromStop.id, this.toStop.id, conn);
     this.expanded.set(false);
+    this.expandedDetailIndex.set(null);
     this.resolved.emit();
+  }
+
+  isSelectedConnection(conn: TripConnection): boolean {
+    const sel = this.leg()?.connection;
+    return !!sel && sel.departure === conn.departure && sel.from === conn.from;
   }
 
   skip(): void {
@@ -92,5 +113,38 @@ export class ConnectionLegPicker {
     const days = parseInt(match[1]), hrs = parseInt(match[2]), mins = parseInt(match[3]);
     const totalHrs = days * 24 + hrs;
     return totalHrs > 0 ? `${totalHrs}h ${mins}m` : `${mins}m`;
+  }
+
+  formatPlatform(platform?: string): string {
+    return platform ? `Pl. ${platform}` : '';
+  }
+
+  formatWalk(seconds?: number): string {
+    if (!seconds || seconds < 60) return '';
+    return `${Math.floor(seconds / 60)} min`;
+  }
+
+  firstTrainDeparture(conn: TripConnection): string {
+    const first = conn.sections?.find(s => s.type === 'journey');
+    return first?.departure?.time ?? conn.departure;
+  }
+
+  lastTrainArrival(conn: TripConnection): string {
+    const journeys = conn.sections?.filter(s => s.type === 'journey') ?? [];
+    const last = journeys[journeys.length - 1];
+    return last?.arrival?.time ?? conn.arrival;
+  }
+
+  trainColor(category: string): string {
+    const longDistance = ['IC', 'ICN', 'IR', 'EC', 'EN', 'TGV', 'RJX'];
+    return longDistance.includes(category?.toUpperCase()) ? '#dc2626' : '#0079c3';
+  }
+
+  categoryLabel(category: string): string {
+    const labels: Record<string, string> = {
+      IC: 'Intercity', ICN: 'Intercity-Neigezug', IR: 'InterRegio',
+      EC: 'EuroCity',  RE: 'RegioExpress',         S: 'S-Bahn',
+    };
+    return labels[category?.toUpperCase()] ?? category;
   }
 }
