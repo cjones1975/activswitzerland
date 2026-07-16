@@ -63,7 +63,6 @@
       "transfers": "Umstiege",
       "select": "Auswählen",
       "tripName": "Reisename",
-      "tripNamePlaceholder": "Vorschlag",
       "save": "Reise speichern",
       "saveHint": "Melden Sie sich an, um Ihre Reisen zu speichern",
       "savedSuccess": "Reise gespeichert!",
@@ -74,7 +73,6 @@
       "backToPlanner": "Zurück zum Reiseplaner",
       "back": "Zurück",
       "next": "Weiter",
-      "comingSoon": "Demnächst verfügbar",
       "startOver": "Neu beginnen",
       "startOverConfirm": "Dadurch wird Ihre begonnene Reise verworfen. Möchten Sie wirklich neu beginnen?",
       "noConnections": "Für dieses Datum und diese Uhrzeit wurden keine Verbindungen gefunden. Versuchen Sie eine andere Suche.",
@@ -154,6 +152,18 @@
         "routeComplete": "Route vollständig!",
         "noActivities": "Noch keine Aktivitäten hinzugefügt.",
         "continue": "Speichern"
+      },
+      "step5": {
+        "title": "Reise speichern",
+        "subtitle": "Geben Sie Ihrem Schweizer Abenteuer einen Namen und speichern Sie es für später",
+        "type": "Art",
+        "duration": "Dauer",
+        "suggestedRoad": "Meine Schweizer Autoreise",
+        "suggestedRail": "Meine Schweizer Bahnreise",
+        "update": "Reise aktualisieren",
+        "browseSavedTrips": "Gespeicherte Reisen durchsuchen",
+        "backToSummary": "Zurück zur Übersicht",
+        "saveError": "Ihre Reise konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
       }
     }
   },

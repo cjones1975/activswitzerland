@@ -1,0 +1,64 @@
+<div class="s5-content">
+  <div class="s5-icon"><i class="fa-light fa-compass"></i></div>
+  <h2 class="s5-title">{{ 'trip.planner.step5.title' | translate }}</h2>
+  <p class="s5-subtitle">{{ 'trip.planner.step5.subtitle' | translate }}</p>
+
+  <div class="s5-field">
+    <label for="s5-name">{{ 'trip.planner.tripName' | translate }}</label>
+    <input pInputText id="s5-name" type="text" class="s5-name-input"
+           [ngModel]="name()" (ngModelChange)="setName($event)" />
+  </div>
+
+  @if (!auth.isLoggedIn()) {
+    <p class="s5-signin-hint">
+      <i class="fa-light fa-circle-info"></i>
+      {{ 'trip.planner.saveHint' | translate }}
+    </p>
+  }
+
+  <div class="s5-summary">
+    <div class="s5-summary-row">
+      <span class="s5-summary-label">{{ 'trip.planner.step5.type' | translate }}</span>
+      <span class="s5-summary-value">{{ (type() === 'road' ? 'trip.planner.typeRoad' : 'trip.planner.typeRail') | translate }}</span>
+    </div>
+    <div class="s5-summary-row">
+      <span class="s5-summary-label">{{ 'trip.planner.step5.duration' | translate }}</span>
+      <span class="s5-summary-value">
+        @if (dateMode() === 'dates' && formattedDateRange(); as range) {
+          {{ range }}
+        } @else {
+          {{ 'trip.planner.step1.daysTrip' | translate: { count: dayCount() } }}
+        }
+      </span>
+    </div>
+    <div class="s5-summary-row">
+      <span class="s5-summary-label">{{ 'trip.planner.step4.destinations' | translate }}</span>
+      <span class="s5-summary-value">{{ destinationCount() }}</span>
+    </div>
+    <div class="s5-summary-row">
+      <span class="s5-summary-label">{{ 'trip.planner.step4.activities' | translate }}</span>
+      <span class="s5-summary-value">{{ activityCount() }}</span>
+    </div>
+  </div>
+
+  <p-button
+    [label]="(isEditing() ? 'trip.planner.step5.update' : 'trip.planner.save') | translate"
+    icon="fa-light fa-floppy-disk"
+    styleClass="w-full s5-save-btn"
+    [loading]="saving()"
+    [disabled]="!name().trim()"
+    (onClick)="save()" />
+
+  <p-button
+    [label]="'trip.planner.step5.browseSavedTrips' | translate"
+    icon="fa-light fa-clock-rotate-left"
+    severity="secondary"
+    [outlined]="true"
+    styleClass="w-full s5-browse-btn"
+    (onClick)="browseSavedTrips()" />
+
+  <button type="button" class="s5-back-link" (click)="back()">
+    <i class="fa-light fa-chevron-left"></i>
+    {{ 'trip.planner.step5.backToSummary' | translate }}
+  </button>
+</div>

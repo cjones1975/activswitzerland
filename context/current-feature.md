@@ -12,6 +12,19 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-16 — Trip Planner Rebuild Phase 4 (Save Trip) Implemented
+
+- Branch: `feature/trip-planner-save`; specced in `context/features/trip-planner-save-spec.md` (split out of `trip-planner-rebuild-spec.md`'s Phase 4 section, which was trimmed to a pointer)
+- `backend/src/models/Trip.js` fully replaced (no migration) to mirror `models/trip.ts`'s `PlannedTrip` shape — `TripDateRangeSchema`, `TripStopSchema`, `TripSectionStopSchema`/`TripSectionJourneySchema`/`TripSectionSchema`, `TripConnectionSchema`, `TripConnectionLegSchema`, `TripActivitySchema` (day as `Mixed` — ISO date string or relative day number), top-level `TripSchema{user, name, type, dateMode, range, stops, connections, activities, routeCoordinates, createdAt}`; old documents (`stationId`/`attractionIds` shape) are orphaned, per the master spec's explicit no-migration decision
+- `controllers/trips.js`: `createTrip` field list updated to `{ name, type, dateMode, range, stops, connections, activities, routeCoordinates }` (was `{ name, type, stops, attractionIds, routeCoordinates }`); `getTrips`/`updateTrip`/`deleteTrip` unchanged
+- `TripPlannerService` gained a `loadedTripId` signal — set by `loadSavedTrip()` (captures `trip._id`, previously discarded), cleared by `reset()`/`setType()` — so Step 5 can tell whether the in-progress trip was reopened from Profile
+- New `features/trip-planner/step5-save/` — trip name input pre-filled with a suggested name (`trip.planner.step5.suggestedRoad`/`suggestedRail`) or the existing name when editing a saved trip; plain type/duration/destinations/activities summary rows (small, deliberate duplication of Step 4's computeds rather than a shared abstraction for four one-line reads); Save Trip/Update Trip action, create vs. update decided by `plannerSvc.loadedTripId()`; anonymous users see `saveHint` text and a Save click opens the `'auth'` drawer instead of calling the API (stacks on top of `'trip-planner'`, no redirect needed — Save works normally once logged in); on success the returned `_id` is written back into `loadedTripId` (so a second Save updates instead of duplicating), the draft is cleared, a `savedSuccess` toast fires, and the trip-planner drawer auto-collapses to reveal the finished route on the map (reuses Step 4's existing map-reveal mechanism, no new plumbing); "Browse Saved Trips" links out to `/auth/profile` (no new browse UI — Profile's saved-trips grid already exists); wired into `trip-planner-wizard` as `@case (5)`, replacing the `@default` placeholder now that all 5 steps are covered
+- `profile.ts`'s `viewTrip()` gained `this.tripPlannerSvc.step.set(4)` alongside the existing `loadSavedTrip(trip)` call, so reopening a saved trip lands on Summary instead of My Trip — no new "one-shot flag" needed since `step` was already a public writable signal
+- i18n: `trip.planner.step5.*` added across en/de/fr/it; removed the now-unused `tripNamePlaceholder` (superseded by the pre-filled suggested name) and `trip.planner.comingSoon` (the wizard's placeholder case it backed no longer exists) keys
+- UAT fix in the same branch: the save-confirmation and save-error toasts were unreadable — `Toast.success()`/`Toast.error()` were called with no `styleClass`, unlike `Auth`'s calls which already pass `'toast-success'`/`'toast-error'` to pick up `styles.css`'s custom-background rules; both now explicitly pass `'toast-error'` (red background) per direct user feedback after testing
+- Verified via `tsc --noEmit` and `ng build` (both clean); UI not yet exercised in a live browser session
+- Feature marked complete
+
 ### 2026-07-15 — Trip Planner Rebuild Phase 3 (Summary) Implemented
 
 - Branch: `feature/trip-planner-summary`; specced in `context/features/trip-planner-summary-spec.md` (split out of `trip-planner-rebuild-spec.md`'s Phase 3 section, which was trimmed to a pointer)
