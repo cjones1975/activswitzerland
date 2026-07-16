@@ -157,14 +157,11 @@ rail connection jump-back notice.
 
 ## Phase 4 — Step 5 (Save Trip)
 
-### Backend — `backend/src/models/Trip.js` fully replaced (no migration)
-Schema mirrors the frontend model: `TripDateRangeSchema`, `TripStopSchema`, `TripConnectionLegSchema` (embeds full connection/section detail), `TripActivitySchema`, top-level `TripSchema{user, name, type, dateMode, range, stops, connections, activities, routeCoordinates, createdAt}`.
-- `controllers/trips.js`: field lists updated; `getTrips`/`deleteTrip` unchanged.
-
-### Frontend
-- `features/trip-planner/step5-save/` — trip-name input, a short read-only summary of the trip (type/duration/destinations/activities counts is one reasonable set), a Save action, and a plain-text pointer to Profile for finding saved trips later ("Navigate to your profile to find your saved trips" — no separate browse-trips UI needed here), plus a way back to Summary. Exact layout open.
-- `profile.ts/.html`: `viewTrip()` sets a one-shot flag so the wizard opens directly at Step 4 when loading a saved trip.
-- i18n: `tripPlanner.step5.*` (`tripName`, `save`, `saveHint`, `savedSuccess`, `findSavedTrips`).
+Fully specced separately in `context/features/trip-planner-save-spec.md` — full replacement of
+the backend `Trip` schema (no migration) to mirror the frontend model, a trip-name input
+pre-filled with a suggested name, a plain summary of type/duration/destinations/activities,
+create-vs-update save logic keyed off whether the trip was loaded from Profile, the
+sign-in gate for anonymous users, and `profile.ts`'s `viewTrip()` jumping straight to Step 4.
 
 ## Cross-cutting nav changes
 

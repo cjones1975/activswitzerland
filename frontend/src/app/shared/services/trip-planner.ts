@@ -27,6 +27,9 @@ export class TripPlannerService {
   /** 1-5, owned here so sibling step components can coordinate wizard navigation without a shared parent. Only 1-2 have real content this phase. */
   readonly step = signal(1);
 
+  /** Set when the in-progress trip was loaded from a saved trip — lets Step 5 update it in place instead of duplicating. */
+  readonly loadedTripId = signal<string | null>(null);
+
   nextStep(): void { this.step.update(s => Math.min(s + 1, 5)); }
   prevStep(): void { this.step.update(s => Math.max(s - 1, 1)); }
   resetStep(): void { this.step.set(1); }
@@ -66,6 +69,7 @@ export class TripPlannerService {
     this._routeCoordinates$.next([]);
     this.resetStep();
     this.clearDraft();
+    this.loadedTripId.set(null);
   }
 
   setType(type: 'road' | 'rail'): void {
@@ -73,6 +77,7 @@ export class TripPlannerService {
     this._routeCoordinates$.next([]);
     this.resetStep();
     this.clearDraft();
+    this.loadedTripId.set(null);
   }
 
   setDateMode(mode: TripDateMode): void {
@@ -178,5 +183,6 @@ export class TripPlannerService {
     const { _id, createdAt, ...planned } = trip;
     this._trip$.next(planned);
     this._routeCoordinates$.next(planned.routeCoordinates ?? []);
+    this.loadedTripId.set(_id ?? null);
   }
 }

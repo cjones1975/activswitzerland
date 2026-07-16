@@ -63,7 +63,6 @@
       "transfers": "correspondances",
       "select": "Sélectionner",
       "tripName": "Nom du voyage",
-      "tripNamePlaceholder": "Suggestion",
       "save": "Enregistrer le voyage",
       "saveHint": "Connectez-vous pour sauvegarder vos voyages",
       "savedSuccess": "Voyage enregistré !",
@@ -74,7 +73,6 @@
       "backToPlanner": "Retour au planificateur",
       "back": "Retour",
       "next": "Suivant",
-      "comingSoon": "Bientôt disponible",
       "startOver": "Recommencer",
       "startOverConfirm": "Cela supprimera votre voyage en cours. Voulez-vous vraiment recommencer ?",
       "noConnections": "Aucune connexion trouvée pour cette date et cette heure. Essayez une autre recherche.",
@@ -154,6 +152,18 @@
         "routeComplete": "Itinéraire complet !",
         "noActivities": "Aucune activité ajoutée pour l'instant.",
         "continue": "Enregistrer"
+      },
+      "step5": {
+        "title": "Enregistrez votre voyage",
+        "subtitle": "Donnez un nom à votre aventure suisse et enregistrez-la pour plus tard",
+        "type": "Type",
+        "duration": "Durée",
+        "suggestedRoad": "Mon road trip suisse",
+        "suggestedRail": "Mon voyage en train suisse",
+        "update": "Mettre à jour le voyage",
+        "browseSavedTrips": "Parcourir les voyages enregistrés",
+        "backToSummary": "Retour à l'aperçu",
+        "saveError": "Impossible d'enregistrer votre voyage. Veuillez réessayer."
       }
     }
   },

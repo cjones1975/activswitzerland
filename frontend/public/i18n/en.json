@@ -63,7 +63,6 @@
       "transfers": "transfers",
       "select": "Select",
       "tripName": "Trip name",
-      "tripNamePlaceholder": "Suggested",
       "save": "Save Trip",
       "saveHint": "Sign in to save your trips",
       "savedSuccess": "Trip saved!",
@@ -74,7 +73,6 @@
       "backToPlanner": "Back to trip planner",
       "back": "Back",
       "next": "Next",
-      "comingSoon": "Coming soon",
       "startOver": "Start over",
       "startOverConfirm": "This will discard your in-progress trip. Are you sure you want to start over?",
       "noConnections": "No connections found for this date and time. Try a different search.",
@@ -154,6 +152,18 @@
         "routeComplete": "Route complete!",
         "noActivities": "No activities added yet.",
         "continue": "Save"
+      },
+      "step5": {
+        "title": "Save Your Trip",
+        "subtitle": "Give your Swiss adventure a name and save it for later",
+        "type": "Type",
+        "duration": "Duration",
+        "suggestedRoad": "My Swiss Road Trip",
+        "suggestedRail": "My Swiss Rail Trip",
+        "update": "Update Trip",
+        "browseSavedTrips": "Browse Saved Trips",
+        "backToSummary": "Back to Summary",
+        "saveError": "Could not save your trip. Please try again."
       }
     }
   },

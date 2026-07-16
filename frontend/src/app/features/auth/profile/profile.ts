@@ -102,6 +102,7 @@ export class Profile implements OnInit {
 
   viewTrip(trip: SavedTrip): void {
     this.tripPlannerSvc.loadSavedTrip(trip);
+    this.tripPlannerSvc.step.set(4);
     this.router.navigate(['/trip-planner']);
   }
 

@@ -14,13 +14,16 @@ export const getTrips = asyncHandler(async (req, res) => {
 // @route  POST /api/v1/trips
 // @access Private
 export const createTrip = asyncHandler(async (req, res) => {
-    const { name, type, stops, attractionIds, routeCoordinates } = req.body;
+    const { name, type, dateMode, range, stops, connections, activities, routeCoordinates } = req.body;
     const trip = await Trip.create({
         user: req.user.id,
         name,
         type,
+        dateMode,
+        range,
         stops,
-        attractionIds: attractionIds ?? [],
+        connections: connections ?? [],
+        activities: activities ?? [],
         routeCoordinates: routeCoordinates ?? [],
     });
     res.status(201).json({ success: true, data: trip });

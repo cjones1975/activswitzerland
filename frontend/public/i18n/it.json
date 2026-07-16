@@ -63,7 +63,6 @@
       "transfers": "cambi",
       "select": "Seleziona",
       "tripName": "Nome del viaggio",
-      "tripNamePlaceholder": "Suggerimento",
       "save": "Salva viaggio",
       "saveHint": "Accedi per salvare i tuoi viaggi",
       "savedSuccess": "Viaggio salvato!",
@@ -74,7 +73,6 @@
       "backToPlanner": "Torna al pianificatore",
       "back": "Indietro",
       "next": "Avanti",
-      "comingSoon": "Prossimamente",
       "startOver": "Ricomincia",
       "startOverConfirm": "Questo eliminerà il viaggio in corso. Sei sicuro di voler ricominciare?",
       "noConnections": "Nessuna connessione trovata per questa data e ora. Prova una ricerca diversa.",
@@ -154,6 +152,18 @@
         "routeComplete": "Percorso completo!",
         "noActivities": "Nessuna attività ancora aggiunta.",
         "continue": "Salva"
+      },
+      "step5": {
+        "title": "Salva il tuo viaggio",
+        "subtitle": "Dai un nome alla tua avventura svizzera e salvala per dopo",
+        "type": "Tipo",
+        "duration": "Durata",
+        "suggestedRoad": "Il mio viaggio in auto in Svizzera",
+        "suggestedRail": "Il mio viaggio in treno in Svizzera",
+        "update": "Aggiorna viaggio",
+        "browseSavedTrips": "Sfoglia viaggi salvati",
+        "backToSummary": "Torna al riepilogo",
+        "saveError": "Impossibile salvare il viaggio. Riprova."
       }
     }
   },
