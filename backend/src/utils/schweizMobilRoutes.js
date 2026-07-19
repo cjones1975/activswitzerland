@@ -2,6 +2,7 @@ import axios from 'axios';
 import proj4 from 'proj4';
 
 const GEOADMIN_IDENTIFY_URL = 'https://api3.geo.admin.ch/rest/services/all/MapServer/identify';
+const GEOADMIN_FIND_URL = 'https://api3.geo.admin.ch/rest/services/all/MapServer/find';
 const GEOADMIN_PROFILE_URL = 'https://api3.geo.admin.ch/rest/services/profile.json';
 
 // Cap points-per-line so the payload doesn't grow unbounded on very long
@@ -112,6 +113,11 @@ export async function fetchSchweizMobilRoutes({ layer, easting, northing, radius
                 routeNumber,
                 name: feature.properties?.chmobil_title || `Route ${routeNumber}`,
                 category: getRouteCategory(routeNumber),
+                // chmobil_has_segment: true means this route is one stage of a
+                // longer multi-day route; false means it's a complete standalone
+                // route. Assumed consistent across all of a route's stages, so
+                // only the first feature seen for this route number is captured.
+                hasSegment: feature.properties?.chmobil_has_segment,
                 properties: feature.properties,
                 stages: [],
             });
@@ -119,12 +125,34 @@ export async function fetchSchweizMobilRoutes({ layer, easting, northing, radius
 
         routesByNumber.get(routeNumber).stages.push({
             stageId: feature.id,
+            stageNumber: parseStageNumber(feature.id),
+            title: feature.properties?.chmobil_title || '',
             // Normalized to MultiLineString, LV95 meters.
             geometry: { type: 'MultiLineString', coordinates: getLines(feature.geometry) },
         });
     }
 
-    return Array.from(routesByNumber.values()).map(route => {
+    const routes = Array.from(routesByNumber.values());
+
+    // Nearby-search results only see the stages that fall within the search
+    // radius, not the whole route - so the "Stage 9 of 20" badge needs a
+    // separate, lightweight (attributes-only, no geometry) nationwide count
+    // per multi-day route. Fetched in parallel, best-effort: a failure here
+    // just means that route's badge omits the "of N" suffix.
+    const totalStagesByRoute = new Map();
+    await Promise.all(
+        routes.filter(route => route.hasSegment).map(async route => {
+            try {
+                totalStagesByRoute.set(route.routeNumber, await fetchStageCount({
+                    layer, routeNumber: route.routeNumber, lang: langParam,
+                }));
+            } catch (error) {
+                console.error(`Stage count failed for route ${route.routeNumber}: ${error.message}`);
+            }
+        })
+    );
+
+    return routes.map(route => {
         const distanceMeters = route.stages.reduce(
             (sum, stage) => sum + linesDistanceMeters(stage.geometry.coordinates),
             0
@@ -132,7 +160,11 @@ export async function fetchSchweizMobilRoutes({ layer, easting, northing, radius
         const distanceKm = distanceMeters / 1000;
 
         return {
-            ...route,
+            routeNumber: route.routeNumber,
+            name: route.name,
+            category: route.category,
+            isMultiDay: !!route.hasSegment,
+            totalStages: totalStagesByRoute.get(route.routeNumber),
             distanceKm,
             distanceMiles: distanceKm * 0.621371,
             stages: route.stages.map(stage => ({
@@ -141,6 +173,119 @@ export async function fetchSchweizMobilRoutes({ layer, easting, northing, radius
             })),
         };
     });
+}
+
+// Attributes-only (no geometry) count of how many stages a route has
+// nationwide - used for the "Stage 9 of 20" badge total, without paying for
+// the full geometry payload fetchRouteStages needs.
+async function fetchStageCount({ layer, routeNumber, lang }) {
+    const response = await axios({
+        method: 'get',
+        url: GEOADMIN_FIND_URL,
+        params: {
+            layer,
+            searchField: 'chmobil_route_number',
+            searchText: routeNumber,
+            contains: false,
+            returnGeometry: false,
+            lang,
+        },
+    });
+
+    return response.data?.results?.length ?? undefined;
+}
+
+// id format is "{routeNumber}.{stageNumber}", e.g. "6.18" = stage 18 of route 6.
+function parseStageNumber(featureId) {
+    return parseInt(String(featureId).split('.')[1], 10);
+}
+
+// The raw chmobil_title always includes a "(From - To)" leg suffix, which
+// reads redundantly at the route level once stage progress is already shown
+// separately (e.g. "Stage 9 of 20") - stripped here for the route-level name,
+// left intact on each stage's own title.
+function stripStageSuffix(title) {
+    return String(title ?? '').replace(/\s*\([^)]*\)\s*$/, '').trim();
+}
+
+// Fetches every stage of a multi-day route nationwide (not radius-limited),
+// via geo.admin.ch's "find" service (search by attribute value across the
+// whole layer) rather than the radius-bound "identify" service used by
+// fetchSchweizMobilRoutes above. find requires two calls to get both
+// attributes and geometry: returnGeometry=false returns attributes but no
+// geometry, returnGeometry=true returns geometry but no attributes at all -
+// the two result sets are merged here by feature id.
+export async function fetchRouteStages({ layer, routeNumber, lang }) {
+    const langParam = SUPPORTED_LANGS.includes(lang) ? lang : 'en';
+
+    const findParams = {
+        layer,
+        searchField: 'chmobil_route_number',
+        searchText: routeNumber,
+        contains: false,
+    };
+
+    const [attributesRes, geometryRes] = await Promise.all([
+        axios({
+            method: 'get',
+            url: GEOADMIN_FIND_URL,
+            params: { ...findParams, returnGeometry: false, lang: langParam },
+        }),
+        axios({
+            method: 'get',
+            url: GEOADMIN_FIND_URL,
+            params: { ...findParams, returnGeometry: true, sr: 2056, geometryFormat: 'geojson' },
+        }),
+    ]);
+
+    const attributesByKey = new Map();
+    for (const feature of attributesRes.data?.results || []) {
+        const key = feature.id ?? feature.featureId;
+        attributesByKey.set(key, feature.attributes ?? feature.properties ?? {});
+    }
+
+    const geometryByKey = new Map();
+    for (const feature of geometryRes.data?.results || []) {
+        const key = feature.id ?? feature.featureId;
+        geometryByKey.set(key, feature.geometry);
+    }
+
+    const stages = [];
+    for (const [key, attrs] of attributesByKey) {
+        const geometry = geometryByKey.get(key);
+        if (!geometry) continue;
+
+        stages.push({
+            stageId: key,
+            stageNumber: parseStageNumber(key),
+            title: attrs.chmobil_title || '',
+            hasSegment: attrs.chmobil_has_segment,
+            geometry: { type: 'MultiLineString', coordinates: getLines(geometry) },
+        });
+    }
+
+    if (!stages.length) return null;
+
+    stages.sort((a, b) => a.stageNumber - b.stageNumber);
+
+    const distanceMeters = stages.reduce(
+        (sum, stage) => sum + linesDistanceMeters(stage.geometry.coordinates),
+        0
+    );
+    const distanceKm = distanceMeters / 1000;
+
+    return {
+        routeNumber,
+        name: stripStageSuffix(stages[0].title),
+        category: getRouteCategory(routeNumber),
+        isMultiDay: !!stages[0].hasSegment,
+        distanceKm,
+        distanceMiles: distanceKm * 0.621371,
+        stages: stages.map(({ hasSegment, ...stage }) => ({
+            ...stage,
+            geometryWgs84: reprojectGeometry(stage.geometry),
+        })),
+    };
 }
 
 function escapeXml(value) {

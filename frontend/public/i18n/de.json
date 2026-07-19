@@ -251,6 +251,14 @@
       "ascent": "Aufstieg",
       "descent": "Abstieg",
       "loadError": "Das Höhenprofil konnte nicht geladen werden."
+    },
+    "multiDay": {
+      "stage": "Etappe {{n}} von {{total}}",
+      "stageNoTotal": "Etappe {{n}}",
+      "stageRange": "Etappen {{start}}–{{end}} von {{total}}",
+      "stageRangeNoTotal": "Etappen {{start}}–{{end}}",
+      "seeAllStages": "Alle Etappen anzeigen",
+      "singleRoute": "Einzelroute"
     }
   },
   "bikes": {
@@ -273,6 +281,14 @@
       "ascent": "Aufstieg",
       "descent": "Abstieg",
       "loadError": "Das Höhenprofil konnte nicht geladen werden."
+    },
+    "multiDay": {
+      "stage": "Etappe {{n}} von {{total}}",
+      "stageNoTotal": "Etappe {{n}}",
+      "stageRange": "Etappen {{start}}–{{end}} von {{total}}",
+      "stageRangeNoTotal": "Etappen {{start}}–{{end}}",
+      "seeAllStages": "Alle Etappen anzeigen",
+      "singleRoute": "Einzelroute"
     }
   },
   "hotels": {

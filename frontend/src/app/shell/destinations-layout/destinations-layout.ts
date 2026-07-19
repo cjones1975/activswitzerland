@@ -46,17 +46,47 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   // this array when another category (hikes/bikes) becomes active.
   private showAttractionMarkers = computed(() => this.attractionMarkers.markers().length > 0);
 
+  // Nearby-search markers are hidden while a "see all stages" overview is
+  // active, so the two never render on the map at once (mirrors the
+  // category-level "only one active category" rule from ActivityMapService,
+  // scoped here to hikes/bikes' own overview-vs-nearby-search distinction).
   private showHikeMarkers = computed(() => {
     this.drawer.list();
+    if (this.hikeMarkers.stageOverview()) return false;
     return this.drawer.isOpen('hikes') || this.drawer.isCollapsed('hikes')
       || this.drawer.isOpen('hike-detail') || this.drawer.isCollapsed('hike-detail');
   });
 
   private showBikeMarkers = computed(() => {
     this.drawer.list();
+    if (this.bikeMarkers.stageOverview()) return false;
     return this.drawer.isOpen('bikes') || this.drawer.isCollapsed('bikes')
       || this.drawer.isOpen('bike-detail') || this.drawer.isCollapsed('bike-detail');
   });
+
+  // "See all stages" nationwide overview — whichever of hikes/bikes is
+  // active (only one at a time in practice, since it's triggered per-card
+  // from one list). Rendered as its own map line/markers, independent of
+  // trailRoute (which is driven by hike-detail/bike-detail instead).
+  stageOverviewRoute = computed<TrailRoute | null>(() => this.hikeMarkers.stageOverview() ?? this.bikeMarkers.stageOverview());
+
+  stageOverviewLines = computed<[number, number][][]>(() => {
+    const route = this.stageOverviewRoute();
+    return route ? route.stages.flatMap(s => s.geometryWgs84?.coordinates ?? []) : [];
+  });
+
+  stageOverviewStages = computed<{ lng: number; lat: number; stageNumber: number }[]>(() => {
+    const route = this.stageOverviewRoute();
+    if (!route) return [];
+    return route.stages
+      .map(s => {
+        const point = s.geometryWgs84?.coordinates?.[0]?.[0];
+        return point ? { lng: point[0], lat: point[1], stageNumber: s.stageNumber } : null;
+      })
+      .filter((s): s is { lng: number; lat: number; stageNumber: number } => s !== null);
+  });
+
+  stageOverviewColor = computed<string>(() => trailCategoryColor(this.stageOverviewRoute()?.category ?? 'local'));
 
   // Selected hike/bike route's full geometry, shown as a second map line
   // independent of the trip-planner's own route line. Kept as separate line
@@ -254,13 +284,23 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   }
 
   reopenHikes(): void {
+    // hike-detail drives its own trailRoute/trailColor independently of the
+    // hikes list/stageOverview - if it's left open or collapsed underneath
+    // (e.g. the user got here via this reopen button rather than hike-detail's
+    // own back arrow), its route line would keep rendering alongside whatever
+    // the list shows next. Closing it fully (safe no-op if it isn't open) keeps
+    // "back to the list" a clean reset regardless of how the user got here.
+    this.drawer.close('hike-detail');
     this.drawer.open('hikes');
     this.hikeMarkers.setSelected(null);
+    this.hikeMarkers.clearStageOverview();
   }
 
   reopenBikes(): void {
+    this.drawer.close('bike-detail');
     this.drawer.open('bikes');
     this.bikeMarkers.setSelected(null);
+    this.bikeMarkers.clearStageOverview();
   }
 
 ngOnDestroy(): void {

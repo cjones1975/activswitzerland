@@ -61,6 +61,20 @@
               </div>
             </div>
           </div>
+          <div class="trail-badge-row">
+            @if (route.isMultiDay) {
+              <span class="trail-stage-badge">{{ stageBadge(route) }}</span>
+              <button
+                type="button"
+                class="trail-seeall-link"
+                [disabled]="seeAllStagesLoading() === route.routeNumber"
+                (click)="onSeeAllStages(route); $event.stopPropagation()">
+                {{ 'bikes.multiDay.seeAllStages' | translate }}
+              </button>
+            } @else {
+              <span class="trail-single-badge">{{ 'bikes.multiDay.singleRoute' | translate }}</span>
+            }
+          </div>
           @if (mode() === 'select') {
             <div class="trail-select-row" (click)="$event.stopPropagation()">
               @if (dayOptions().length > 1) {

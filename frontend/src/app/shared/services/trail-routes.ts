@@ -12,6 +12,11 @@ const KIND_PATH: Record<TrailKind, string> = {
   bike: 'bikes',
 };
 
+interface RouteStagesResponse {
+  success: boolean;
+  data: TrailRoute;
+}
+
 @Injectable({ providedIn: 'root' })
 export class TrailRoutesService {
   private http = inject(HttpClient);
@@ -42,6 +47,14 @@ export class TrailRoutesService {
         `${environment.apiUrl}/api/v1/${KIND_PATH[kind]}/elevation`,
         { stages: route.stages.map(s => ({ geometry: s.geometry })) },
       )
+      .pipe(map(res => res.data));
+  }
+
+  getRouteStages(kind: TrailKind, routeNumber: string | number, lang: string): Observable<TrailRoute> {
+    const params = new HttpParams().set('lang', lang);
+
+    return this.http
+      .get<RouteStagesResponse>(`${environment.apiUrl}/api/v1/${KIND_PATH[kind]}/${routeNumber}/stages`, { params })
       .pipe(map(res => res.data));
   }
 }

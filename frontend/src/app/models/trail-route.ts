@@ -10,6 +10,8 @@ export interface TrailGeometry {
 
 export interface TrailStage {
   stageId: string;
+  stageNumber: number;
+  title: string;                 // per-stage "(From - To)" chmobil_title
   geometry: TrailGeometry;       // LV95 easting/northing meters
   geometryWgs84: TrailGeometry;  // lon/lat
 }
@@ -20,6 +22,12 @@ export interface TrailRoute {
   category: TrailCategory;
   distanceKm: number;
   distanceMiles: number;
+  // True when this route is one stage of a longer multi-day route
+  // (SchweizMobil's chmobil_has_segment); false for a standalone route.
+  isMultiDay: boolean;
+  // Nationwide stage count for a multi-day route (only set when isMultiDay
+  // is true) - undefined if the best-effort backend lookup failed.
+  totalStages?: number;
   stages: TrailStage[];
 }
 

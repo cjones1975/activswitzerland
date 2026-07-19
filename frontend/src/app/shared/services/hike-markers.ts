@@ -12,6 +12,10 @@ export class HikeMarkersService {
   readonly routeMap = signal<Map<string, TrailRoute>>(new Map());
   readonly hasRoutes = signal(true);
 
+  // Nationwide "see all stages" overview for a multi-day route, shown on the
+  // map in place of the normal nearby-search markers while active.
+  readonly stageOverview = signal<TrailRoute | null>(null);
+
   // List-view filter state lives here, not on the list component, so it
   // survives the component being destroyed/recreated as the drawer opens
   // and closes (PrimeNG tears down drawer content on hide), while still
@@ -52,10 +56,19 @@ export class HikeMarkersService {
     this.hasRoutes.set(value);
   }
 
+  setStageOverview(route: TrailRoute | null): void {
+    this.stageOverview.set(route);
+  }
+
+  clearStageOverview(): void {
+    this.stageOverview.set(null);
+  }
+
   clear(): void {
     this.markers.set([]);
     this.selectedId.set(null);
     this.routeMap.set(new Map());
     this.hasRoutes.set(true);
+    this.stageOverview.set(null);
   }
 }

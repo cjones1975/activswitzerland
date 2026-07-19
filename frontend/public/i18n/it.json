@@ -251,6 +251,14 @@
       "ascent": "Salita",
       "descent": "Discesa",
       "loadError": "Impossibile caricare il profilo altimetrico."
+    },
+    "multiDay": {
+      "stage": "Tappa {{n}} di {{total}}",
+      "stageNoTotal": "Tappa {{n}}",
+      "stageRange": "Tappe {{start}}–{{end}} di {{total}}",
+      "stageRangeNoTotal": "Tappe {{start}}–{{end}}",
+      "seeAllStages": "Vedi tutte le tappe",
+      "singleRoute": "Percorso singolo"
     }
   },
   "bikes": {
@@ -273,6 +281,14 @@
       "ascent": "Salita",
       "descent": "Discesa",
       "loadError": "Impossibile caricare il profilo altimetrico."
+    },
+    "multiDay": {
+      "stage": "Tappa {{n}} di {{total}}",
+      "stageNoTotal": "Tappa {{n}}",
+      "stageRange": "Tappe {{start}}–{{end}} di {{total}}",
+      "stageRangeNoTotal": "Tappe {{start}}–{{end}}",
+      "seeAllStages": "Vedi tutte le tappe",
+      "singleRoute": "Percorso singolo"
     }
   },
   "hotels": {

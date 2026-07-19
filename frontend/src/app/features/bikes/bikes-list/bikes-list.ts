@@ -82,6 +82,8 @@ export class BikesList implements OnDestroy {
   loadError = signal(false);
   skeletons = Array(6);
 
+  seeAllStagesLoading = signal<string | number | null>(null);
+
   constructor() {
     effect(() => {
       const dest = this.destination();
@@ -136,6 +138,32 @@ export class BikesList implements OnDestroy {
     // Only the detail drawer needs collapsing to reveal the map now — no need
     // to also collapse this list underneath it.
     this.drawerSvc.collapse('bikes');
+  }
+
+  stageBadge(route: TrailRoute): string {
+    const numbers = route.stages.map(s => s.stageNumber).filter(n => !isNaN(n)).sort((a, b) => a - b);
+    const total = route.totalStages;
+    if (numbers.length <= 1) {
+      return total != null
+        ? this.translate.instant('bikes.multiDay.stage', { n: numbers[0], total })
+        : this.translate.instant('bikes.multiDay.stageNoTotal', { n: numbers[0] });
+    }
+    const params = { start: numbers[0], end: numbers[numbers.length - 1] };
+    return total != null
+      ? this.translate.instant('bikes.multiDay.stageRange', { ...params, total })
+      : this.translate.instant('bikes.multiDay.stageRangeNoTotal', params);
+  }
+
+  onSeeAllStages(route: TrailRoute): void {
+    this.seeAllStagesLoading.set(route.routeNumber);
+    this.trailRoutesService.getRouteStages('bike', route.routeNumber, this.langSvc.current).subscribe({
+      next: fullRoute => {
+        this.seeAllStagesLoading.set(null);
+        this.bikeMarkers.setStageOverview(fullRoute);
+        this.drawerSvc.collapse('bikes');
+      },
+      error: () => this.seeAllStagesLoading.set(null),
+    });
   }
 
   isAdded(route: TrailRoute): boolean {
