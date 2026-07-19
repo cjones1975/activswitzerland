@@ -52,6 +52,13 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   // straight line across the gap.
   @Input() trailRoute: [number, number][][] | null = null;
   @Input() trailColor = '#d97706';
+  // "See all stages" nationwide overview for a multi-day hike/bike route:
+  // the full stage-by-stage line plus one numbered marker per stage, kept
+  // independent of trailRoute/tripRoute so it can be shown or hidden on its
+  // own regardless of what else is on the map.
+  @Input() stageOverviewLines: [number, number][][] | null = null;
+  @Input() stageOverviewStages: { lng: number; lat: number; stageNumber: number }[] = [];
+  @Input() stageOverviewColor = '#d97706';
 
   @Output() markerClick = new EventEmitter<MapMarker>();
 
@@ -86,6 +93,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.syncMarkers();
       this.syncTripRoute();
       this.syncTrailRoute();
+      this.syncStageOverview();
       if (this.fitBounds && this.fitBounds.length >= 2) {
         this.applyFitBounds(this.fitBounds, false);
       } else if (this.center) {
@@ -113,6 +121,9 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     if ((changes['trailRoute'] || changes['trailColor']) && this.mapLoaded) {
       this.syncTrailRoute();
+    }
+    if ((changes['stageOverviewLines'] || changes['stageOverviewStages'] || changes['stageOverviewColor']) && this.mapLoaded) {
+      this.syncStageOverview();
     }
     if (changes['fitBounds'] && this.mapLoaded && this.fitBounds && this.fitBounds.length >= 2) {
       this.applyFitBounds(this.fitBounds, true);
@@ -390,8 +401,64 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     });
   }
 
+  private stageOverviewMarkers: Marker[] = [];
+
+  // Mirrors syncTripRoute()'s numbered-marker + GeoJSON-line approach, on its
+  // own source/layer ids so it doesn't collide with trip-route-line/trail-route-line.
+  private syncStageOverview(): void {
+    if (!this.map) return;
+
+    if (this.map.getLayer('stage-overview-line')) this.map.removeLayer('stage-overview-line');
+    if (this.map.getSource('stage-overview')) this.map.removeSource('stage-overview');
+
+    this.stageOverviewMarkers.forEach(m => m.remove());
+    this.stageOverviewMarkers = [];
+
+    const lines = this.stageOverviewLines?.filter(line => line.length >= 2);
+    if (!lines || !lines.length) return;
+
+    this.map.addSource('stage-overview', {
+      type: 'geojson',
+      data: {
+        type: 'Feature',
+        geometry: { type: 'MultiLineString' as const, coordinates: lines },
+        properties: {},
+      },
+    });
+
+    this.map.addLayer({
+      id: 'stage-overview-line',
+      type: 'line',
+      source: 'stage-overview',
+      layout: { 'line-cap': 'round', 'line-join': 'round' },
+      paint: {
+        'line-color': this.stageOverviewColor,
+        'line-width': 4,
+      },
+    });
+
+    this.stageOverviewStages.forEach(stage => {
+      const el = document.createElement('div');
+      el.className = 'trip-stop-marker';
+      el.innerHTML = `<span>${stage.stageNumber}</span>`;
+      Object.assign(el.style, {
+        background: this.stageOverviewColor, color: '#fff', borderRadius: '50%',
+        width: '22px', height: '22px', display: 'flex',
+        alignItems: 'center', justifyContent: 'center',
+        fontSize: '12px', fontWeight: '700',
+        border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
+      });
+
+      const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+        .setLngLat([stage.lng, stage.lat])
+        .addTo(this.map!);
+      this.stageOverviewMarkers.push(marker);
+    });
+  }
+
   ngOnDestroy(): void {
     this.markerInstances.forEach(({ marker }) => marker.remove());
+    this.stageOverviewMarkers.forEach(m => m.remove());
     this.map?.remove();
   }
 }

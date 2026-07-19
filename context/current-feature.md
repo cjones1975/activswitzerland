@@ -12,6 +12,24 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-19 — Hike/Bike Multi-Day Stages Implemented
+
+- Branch: `feature/hike-bike-multi-day-stages`; specced in `context/features/hike-bike-multi-day-stages-spec.md`
+- Backend: `schweizMobilRoutes.js` — existing radius search (`fetchSchweizMobilRoutes`) now captures `hasSegment`/`stageNumber`/per-stage `title` while grouping stage features; new `fetchRouteStages({ layer, routeNumber, lang })` does the two-call `find`-service fetch (attributes-only + geometry-only, merged by feature id, sorted by stage number, reprojected to WGS84) for the nationwide "see all stages" fetch; new `GET /api/v1/{hikes|bikes}/:routeNumber/stages` routes, cached via `cacheResponse()`
+- Frontend: `TrailStage` gained `stageNumber`/`title`; `TrailRoute` gained `isMultiDay`/`totalStages`; new `TrailRoutesService.getRouteStages()`; `hikes-list`/`bikes-list` show a new badge row below the category/distance row (Stage N of Total / Stages N–M of Total / Single route, with `NoTotal` i18n fallback keys if the total-stage lookup fails) plus a "See all stages" link right-aligned via `justify-content: space-between`; new `stageOverview` signal on `HikeMarkersService`/`BikeMarkersService`; `map.ts` renders the nationwide stage line + numbered markers via a new `syncStageOverview()` (own source/layer ids, mirrors `syncTripRoute()`'s pattern); `destinations-layout` wires it up and hides the normal nearby-search markers while an overview is active
+- i18n: `hikes.multiDay.*`/`bikes.multiDay.*` (`stage`, `stageNoTotal`, `stageRange`, `stageRangeNoTotal`, `seeAllStages`, `singleRoute`) added across en/de/fr/it
+- Real bug found via UAT: after initial implementation, no route ever showed as multi-day — root cause was a stale Redis cache (`cacheResponse()`, 24h TTL keyed by request URL only, no version-busting) still serving pre-feature `/api/v1/hikes`/`/api/v1/bikes` responses with no `isMultiDay` field at all. Confirmed the backend logic itself was correct by querying the live geo.admin.ch API directly (bypassing the cache), then flushed the 16 stale `mys:/api/v1/hikes*`/`mys:/api/v1/bikes*` Redis keys
+- Follow-up UAT fix: badge text changed to include the nationwide total ("Stage 9 of 20" / "Stages 9–10 of 20") — required a new best-effort, attributes-only (`returnGeometry=false`, no geometry payload) `fetchStageCount()` per multi-day route, fetched in parallel during the radius search and cached alongside it; "See all stages" link moved to the right edge of its row
+- Real bug found via UAT: a route opened via its detail card (`hike-detail`/`bike-detail`, which drives its own independent `trailRoute`/`trailColor` map layer) kept rendering on the map even after returning to the list and viewing a different route's "see all stages" overview — `reopenHikes()`/`reopenBikes()` only reopened the list drawer, never closed the still-open (or collapsed) detail drawer underneath it. Fixed by having both reopen methods close the sibling detail drawer first (safe no-op if it isn't open), matching how the detail drawer's own back arrow already behaved
+- Verified via `tsc --noEmit` and `ng build` (both clean); UI not yet exercised in a live browser session (no browser-automation tool available in this environment)
+- Feature marked complete
+
+### 2026-07-19 — Hike/Bike Multi-Day Stages Specced
+
+- Specced multi-day stage badges ("Stage # of a multi-day route" / "Stages #–#" / "Single route") on hike/bike list cards, plus a "See all stages" map view drawing the full nationwide stage line + numbered markers, reusing the existing hikes/bikes reopen-button mechanism to return to the list
+- Confirmed via direct API testing: `chmobil_has_segment` + the `"{routeNumber}.{stageNumber}"` feature id distinguish multi-day vs standalone routes; geo.admin.ch's `find` service (not the radius-bound `identify` used today) is required for a nationwide all-stages fetch, and needs two calls (`returnGeometry=false` for attributes, `=true` for geometry) merged by id
+- Created `context/features/hike-bike-multi-day-stages-spec.md`; no feature branch created yet
+
 ### 2026-07-16 — Trip Planner Rebuild Phase 4 (Save Trip) Implemented
 
 - Branch: `feature/trip-planner-save`; specced in `context/features/trip-planner-save-spec.md` (split out of `trip-planner-rebuild-spec.md`'s Phase 4 section, which was trimmed to a pointer)

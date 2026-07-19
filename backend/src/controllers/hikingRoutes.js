@@ -1,6 +1,6 @@
 import ErrorResponse from '../utils/errorResponse.js';
 import asyncHandler from '../middleware/async.js';
-import { fetchSchweizMobilRoutes, buildGpx, fetchElevationProfile } from '../utils/schweizMobilRoutes.js';
+import { fetchSchweizMobilRoutes, buildGpx, fetchElevationProfile, fetchRouteStages } from '../utils/schweizMobilRoutes.js';
 
 // ch.astra.wanderland = official SchweizMobil hiking routes (Wanderland)
 const HIKING_LAYER = 'ch.astra.wanderland';
@@ -68,6 +68,28 @@ export const getHikesElevation = asyncHandler(async (req, res, next) => {
         }
 
         res.status(200).json({ success: true, data: profile });
+    } catch (error) {
+        console.error(error);
+        next(
+            new ErrorResponse(`An error occurred during the request: ${error.message}`, 500)
+        );
+    }
+});
+
+// @desc    All stages of a multi-day hiking route, nationwide (not radius-limited)
+// @route   GET /api/v1/hikes/:routeNumber/stages
+// @access  Public
+export const getHikeStages = asyncHandler(async (req, res, next) => {
+    const { routeNumber } = req.params;
+
+    try {
+        const route = await fetchRouteStages({ layer: HIKING_LAYER, routeNumber, lang: req.query.lang });
+
+        if (!route) {
+            return next(new ErrorResponse(`No stages found for route ${routeNumber}`, 404));
+        }
+
+        res.status(200).json({ success: true, data: route });
     } catch (error) {
         console.error(error);
         next(
