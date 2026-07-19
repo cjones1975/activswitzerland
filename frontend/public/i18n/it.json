@@ -15,7 +15,8 @@
     "login": "Accedi",
     "logout": "Esci",
     "close": "Chiudi",
-    "showOnMap": "Mostra sulla mappa"
+    "showOnMap": "Mostra sulla mappa",
+    "back": "Indietro"
   },
   "auth": {
     "toast": {
@@ -222,12 +223,12 @@
       "count": "{{count}} destinazioni"
     },
     "detail": {
-      "back": "Torna alle destinazioni",
       "visit": "Visita la pagina ufficiale",
       "open": "Torna a {{name}}",
-      "hikes": "Escursioni",
-      "bikeRides": "Percorsi in bici",
-      "hotels": "Hotel"
+      "hikes": "Sentieri escursionistici",
+      "bikeRides": "Percorsi ciclabili",
+      "hotels": "Hotel",
+      "hotelsSubtitle": "Trova ottime sistemazioni nella zona."
     }
   },
   "hikes": {
@@ -236,7 +237,6 @@
     "noMatch": "Nessun percorso escursionistico corrisponde a questo filtro.",
     "backToList": "Torna alle escursioni",
     "reopen": "Mostra escursioni",
-    "reopenDetail": "Mostra percorso",
     "downloadGpx": "Scarica GPX",
     "distance": "Distanza",
     "radius": "Raggio",
@@ -259,7 +259,6 @@
     "noMatch": "Nessun percorso in bici corrisponde a questo filtro.",
     "backToList": "Torna ai percorsi in bici",
     "reopen": "Mostra percorsi in bici",
-    "reopenDetail": "Mostra percorso",
     "downloadGpx": "Scarica GPX",
     "distance": "Distanza",
     "radius": "Raggio",

@@ -96,9 +96,11 @@ export const getDestination = asyncHandler(async (req, res, next) => {
 // @route   GET /api/v1/topattractions
 // @access  Public
 export const getTopAttractions = asyncHandler(async (req, res, next) => {
+  const placeIdParam = req.query.placeId ? `&placeId=${encodeURIComponent(req.query.placeId)}` : '';
+  const geoDistParam = req.query['geo.dist'] ? `&geo.dist=${encodeURIComponent(req.query['geo.dist'])}` : '';
   const config = {
     method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}&placeId=${req.query.placeId}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}&top=${req.query.top}`,
+    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}&top=${req.query.top}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'

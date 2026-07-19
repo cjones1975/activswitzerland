@@ -15,7 +15,8 @@
     "login": "Anmelden",
     "logout": "Abmelden",
     "close": "Schliessen",
-    "showOnMap": "Auf Karte anzeigen"
+    "showOnMap": "Auf Karte anzeigen",
+    "back": "Zurück"
   },
   "auth": {
     "toast": {
@@ -222,12 +223,12 @@
       "count": "{{count}} Reiseziele"
     },
     "detail": {
-      "back": "Zurück zu den Reisezielen",
       "visit": "Offizielle Seite besuchen",
       "open": "Zurück zu {{name}}",
-      "hikes": "Wanderungen",
-      "bikeRides": "Velotouren",
-      "hotels": "Hotels"
+      "hikes": "Wanderwege",
+      "bikeRides": "Velowege",
+      "hotels": "Hotels",
+      "hotelsSubtitle": "Finde tolle Unterkünfte in der Umgebung."
     }
   },
   "hikes": {
@@ -236,7 +237,6 @@
     "noMatch": "Keine Wanderrouten entsprechen diesem Filter.",
     "backToList": "Zurück zu den Wanderungen",
     "reopen": "Wanderungen anzeigen",
-    "reopenDetail": "Route anzeigen",
     "downloadGpx": "GPX herunterladen",
     "distance": "Distanz",
     "radius": "Umkreis",
@@ -259,7 +259,6 @@
     "noMatch": "Keine Velotouren entsprechen diesem Filter.",
     "backToList": "Zurück zu den Velotouren",
     "reopen": "Velotouren anzeigen",
-    "reopenDetail": "Route anzeigen",
     "downloadGpx": "GPX herunterladen",
     "distance": "Distanz",
     "radius": "Umkreis",

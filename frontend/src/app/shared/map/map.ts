@@ -24,6 +24,10 @@ export interface MapMarker {
   id?: string;
   highlight?: boolean;
   clickable?: boolean;
+  /** Show the label popup immediately on add, not just after a click. Clicking still toggles it (default maplibre-gl marker/popup behavior). */
+  openByDefault?: boolean;
+  /** Asset path to a PNG/image icon. Takes precedence over `icon`/`color` when set. */
+  image?: string;
 }
 
 @Component({
@@ -38,7 +42,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() zoom = 10;
   @Input() center?: [number, number];
   @Input() style = 'https://tiles.openfreemap.org/styles/bright';
-  @Input() activeMarker?: { lng: number; lat: number; zoom?: number };
+  @Input() activeMarker?: { lng: number; lat: number; zoom?: number; id?: string };
   @Input() tripRoute: [number, number][] | null = null;
   @Input() tripType: 'road' | 'rail' | null = null;
   @Input() tripStopPoints: [number, number][] = [];
@@ -138,6 +142,12 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   private buildMarkerEl(marker: MapMarker): HTMLElement {
+    if (marker.image) {
+      const img = document.createElement('img');
+      img.src = marker.image;
+      img.className = `map-marker-image${marker.highlight ? ' marker-selected' : ''}${marker.className ? ' ' + marker.className : ''}`;
+      return img;
+    }
     const el = document.createElement('i');
     el.className = `${marker.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${marker.highlight ? ' marker-selected' : ''}${marker.className ? ' ' + marker.className : ''}`;
     el.style.color = marker.highlight ? '#e53e3e' : (marker.color ?? '');
@@ -161,7 +171,12 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         ? `<button class="popup-btn" type="button"><span class="popup-name">${marker.label}</span><i class="fa-solid fa-circle-arrow-right popup-arrow"></i></button>`
         : `<span class="popup-name">${marker.label}</span>`;
 
-      const popup = new maplibregl.Popup({ closeButton: false, closeOnClick: true, offset: 20 }).setHTML(popupHtml);
+      const popup = new maplibregl.Popup({
+        closeButton: false,
+        closeOnClick: true,
+        offset: 20,
+        className: marker.className,
+      }).setHTML(popupHtml);
 
       if (marker.clickable) {
         popup.on('open', () => {
@@ -180,6 +195,9 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
 
     instance.addTo(this.map!);
+    if (marker.openByDefault && marker.label) {
+      instance.togglePopup();
+    }
     this.markerInstances.set(key, { marker: instance, el });
   }
 
@@ -200,8 +218,13 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     for (const [key, m] of incoming) {
       if (this.markerInstances.has(key)) {
         const { marker, el } = this.markerInstances.get(key)!;
-        el.className = `${m.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${m.highlight ? ' marker-selected' : ''}${m.className ? ' ' + m.className : ''}`;
-        el.style.color = m.highlight ? '#e53e3e' : (m.color ?? '');
+        if (m.image) {
+          (el as HTMLImageElement).src = m.image;
+          el.className = `map-marker-image${m.highlight ? ' marker-selected' : ''}${m.className ? ' ' + m.className : ''}`;
+        } else {
+          el.className = `${m.icon ?? 'fa-solid fa-bullseye'} map-marker-icon${m.highlight ? ' marker-selected' : ''}${m.className ? ' ' + m.className : ''}`;
+          el.style.color = m.highlight ? '#e53e3e' : (m.color ?? '');
+        }
         const container = marker.getElement();
         const prevClass = container.dataset['customClass'] ?? '';
         if (prevClass) container.classList.remove(...prevClass.split(' ').filter(Boolean));
@@ -215,12 +238,12 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   private previousView?: { center: maplibregl.LngLat; zoom: number };
 
-  private activateMarker(target: { lng: number; lat: number; zoom?: number }): void {
+  private activateMarker(target: { lng: number; lat: number; zoom?: number; id?: string }): void {
     if (!this.previousView && this.map) {
       this.previousView = { center: this.map.getCenter(), zoom: this.map.getZoom() };
     }
 
-    const key = `${target.lng},${target.lat}`;
+    const key = target.id ?? `${target.lng},${target.lat}`;
     const popup = this.popupInstances.get(key);
 
     this.map?.flyTo({
@@ -231,8 +254,19 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     if (popup) {
       this.map?.once('moveend', () => {
+        this.closeOtherPopups(popup);
         popup.setLngLat([target.lng, target.lat]).addTo(this.map!);
       });
+    }
+  }
+
+  // Direct marker clicks close other open popups for free (they trigger each
+  // popup's own `closeOnClick` map-click listener via event bubbling), but
+  // programmatic activation via `activeMarker` never fires a click, so it
+  // needs to close any other open popup explicitly.
+  private closeOtherPopups(except: Popup): void {
+    for (const popup of this.popupInstances.values()) {
+      if (popup !== except) popup.remove();
     }
   }
 

@@ -15,7 +15,8 @@
     "login": "Log In",
     "logout": "Log out",
     "close": "Close",
-    "showOnMap": "Show on map"
+    "showOnMap": "Show on map",
+    "back": "Back"
   },
   "auth": {
     "toast": {
@@ -222,12 +223,12 @@
       "count": "{{count}} destinations"
     },
     "detail": {
-      "back": "Back to destinations",
       "visit": "Visit official page",
       "open": "Back to {{name}}",
-      "hikes": "Hikes",
-      "bikeRides": "Bike Rides",
-      "hotels": "Hotels"
+      "hikes": "Hike Trails",
+      "bikeRides": "Bike Trails",
+      "hotels": "Hotels",
+      "hotelsSubtitle": "Find great places to stay in the area."
     }
   },
   "hikes": {
@@ -236,7 +237,6 @@
     "noMatch": "No hiking routes match this filter.",
     "backToList": "Back to hikes",
     "reopen": "Show hikes",
-    "reopenDetail": "Show route",
     "downloadGpx": "Download GPX",
     "distance": "Distance",
     "radius": "Radius",
@@ -259,7 +259,6 @@
     "noMatch": "No bike routes match this filter.",
     "backToList": "Back to bike rides",
     "reopen": "Show bike rides",
-    "reopenDetail": "Show route",
     "downloadGpx": "Download GPX",
     "distance": "Distance",
     "radius": "Radius",
