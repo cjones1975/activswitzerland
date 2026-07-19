@@ -15,6 +15,12 @@ export class AttractionMarkersService {
   readonly attractionMap = signal<Map<string, Attraction>>(new Map());
   readonly hasAttractions = signal(true);
 
+  // List-view radius lives here, not on the list component, so it survives
+  // the component being destroyed/recreated as the drawer opens and closes
+  // (PrimeNG tears down drawer content on hide) — same pattern as hike/bike
+  // markers' own radiusKm.
+  readonly radiusKm = signal(20);
+
   set(markers: MapMarker[], attractions: Attraction[]): void {
     this.markers.set(markers);
     this.attractionMap.set(new Map(attractions.map(a => [a.identifier, a])));

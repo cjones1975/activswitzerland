@@ -12,8 +12,6 @@ import { LangService } from '../../../shared/services/lang';
 import { Attraction } from '../../../models/attraction';
 import { Destination } from '../../../models/destination';
 
-const NEARBY_RADIUS_M = 10000;
-
 @Component({
   selector: 'app-attraction-vertical-list',
   standalone: true,
@@ -47,7 +45,7 @@ export class AttractionVerticalList implements OnInit {
         const base = {
           language: event.lang,
           page: 0,
-          geoDist: `${this.lat},${this.lon},${NEARBY_RADIUS_M}`,
+          geoDist: `${this.lat},${this.lon},${this.attractionMarkers.radiusKm() * 1000}`,
           expand: false,
           translate: true,
           stripHtml: false,
@@ -84,7 +82,7 @@ export class AttractionVerticalList implements OnInit {
         language: event.lang,
         page: 0,
         hitsPerPage: 50,
-        geoDist: `${this.lat},${this.lon},${NEARBY_RADIUS_M}`,
+        geoDist: `${this.lat},${this.lon},${this.attractionMarkers.radiusKm() * 1000}`,
       })),
       catchError(() => of(null)),
       takeUntilDestroyed(this.destroyRef),

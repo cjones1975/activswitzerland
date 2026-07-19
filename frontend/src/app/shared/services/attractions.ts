@@ -75,7 +75,7 @@ export class AttractionsService {
   }
 
   getAttractionsNearby(lat: number, lon: number, language: string, page = 0, hitsPerPage = 20): Observable<AttractionsPage> {
-    return this.getAttractions({ language, page, hitsPerPage, geoDist: `${lat},${lon},10000` });
+    return this.getAttractions({ language, page, hitsPerPage, geoDist: `${lat},${lon}` });
   }
 
   searchAttractions(params: {
@@ -116,7 +116,7 @@ export class AttractionsService {
       page,
       search,
       hitsPerPage,
-      geoDist: `${lat},${lon},10000`,
+      geoDist: `${lat},${lon}`,
       expand: false,
       translate: true,
       stripHtml: false,

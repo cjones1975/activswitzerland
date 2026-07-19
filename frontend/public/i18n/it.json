@@ -281,7 +281,8 @@
   },
   "attractions": {
     "title": "Attrazioni popolari",
-    "titleFallback": "Attrazioni",
+    "titleFallback": "Attrazioni nella zona",
+    "radius": "Raggio",
     "seeAll": "Vedi tutte le attrazioni",
     "backToDestination": "Torna a {{name}}",
     "backToAttractions": "Torna alle attrazioni",

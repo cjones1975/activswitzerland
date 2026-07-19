@@ -281,7 +281,8 @@
   },
   "attractions": {
     "title": "Popular attractions",
-    "titleFallback": "Attractions",
+    "titleFallback": "Attractions in the area",
+    "radius": "Radius",
     "seeAll": "See all attractions",
     "backToDestination": "Back to {{name}}",
     "backToAttractions": "Back to attractions",

@@ -6,6 +6,7 @@ import { LangService } from '../../../shared/services/lang';
 import { InputTextModule } from 'primeng/inputtext';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Select } from 'primeng/select';
+import { SelectButton } from 'primeng/selectbutton';
 import { Message } from 'primeng/message';
 import { Drawer } from '../../../shared/services/drawer';
 import { AttractionsService } from '../../../shared/services/attractions';
@@ -16,12 +17,10 @@ import { GeoLocation, ActivityPickerPayload } from '../../../models/geo-point';
 import { locId, locLat, locLon } from '../../../shared/utils/geo-location';
 import { stopDayOptions, dayChoiceLabelParams } from '../../../shared/utils/date-range';
 
-const NEARBY_RADIUS_M = 10000;
-
 @Component({
   selector: 'app-all-attractions',
   standalone: true,
-  imports: [FormsModule, InputTextModule, SkeletonModule, Select, TranslatePipe, Message],
+  imports: [FormsModule, InputTextModule, SkeletonModule, Select, SelectButton, TranslatePipe, Message],
   templateUrl: './all-attractions.html',
   styleUrl: './all-attractions.css',
 })
@@ -30,11 +29,13 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
 
   private drawerSvc = inject(Drawer);
   private attractionsService = inject(AttractionsService);
-  private attractionMarkers = inject(AttractionMarkersService);
+  protected attractionMarkers = inject(AttractionMarkersService);
   private plannerSvc = inject(TripPlannerService);
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
+
+  radiusOptions = [5, 10, 20, 30];
 
   private payload = computed(() => {
     this.drawerSvc.list();
@@ -110,6 +111,12 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
     });
   }
 
+  onRadiusChange(km: number): void {
+    this.attractionMarkers.radiusKm.set(km);
+    this.clearSearch();
+    this.reset();
+  }
+
   private reset(): void {
     this.attractions = [];
     this.page = 0;
@@ -129,7 +136,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       language: this.lang,
       page: this.page,
       hitsPerPage: 30,
-      geoDist: `${locLat(dest)},${locLon(dest)},${NEARBY_RADIUS_M}`,
+      geoDist: `${locLat(dest)},${locLon(dest)},${this.attractionMarkers.radiusKm() * 1000}`,
     }).subscribe({
       next: ({ attractions, totalElements }) => {
         this.attractions = [...this.attractions, ...attractions];
@@ -178,7 +185,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       page: 0,
       search: this.searchQuery.trim(),
       hitsPerPage: 50,
-      geoDist: `${locLat(dest)},${locLon(dest)},${NEARBY_RADIUS_M}`,
+      geoDist: `${locLat(dest)},${locLon(dest)},${this.attractionMarkers.radiusKm() * 1000}`,
       expand: false,
       translate: true,
       stripHtml: false,

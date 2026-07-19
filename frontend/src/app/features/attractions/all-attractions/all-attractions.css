@@ -8,6 +8,31 @@
   padding: 0.75rem 1rem 0.25rem;
 }
 
+.filter-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 1rem 0.25rem;
+}
+
+.filter-label {
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--gray-500);
+  flex-shrink: 0;
+}
+
+.radius-toggle {
+  flex: 1;
+}
+
+::ng-deep .radius-toggle .p-togglebutton {
+  font-size: 0.75rem;
+  padding: 0.35rem 0.5rem;
+}
+
 .input-wrap {
   position: relative;
   display: flex;

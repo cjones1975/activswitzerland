@@ -16,6 +16,20 @@
     </div>
   </div>
 
+  <div class="filter-row">
+    <span class="filter-label">{{ 'attractions.radius' | translate }}</span>
+    <p-selectButton
+      [options]="radiusOptions"
+      [ngModel]="attractionMarkers.radiusKm()"
+      (ngModelChange)="onRadiusChange($event)"
+      [allowEmpty]="false"
+      class="radius-toggle">
+      <ng-template #item let-km>
+        <span>{{ km }} km</span>
+      </ng-template>
+    </p-selectButton>
+  </div>
+
   <div class="card-list">
     @if (isSearchMode()) {
       @if (searching()) {
