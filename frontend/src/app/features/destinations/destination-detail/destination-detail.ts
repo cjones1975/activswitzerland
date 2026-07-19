@@ -5,6 +5,7 @@ import { GalleriaModule } from 'primeng/galleria';
 import { Subject, switchMap } from 'rxjs';
 import { Drawer } from '../../../shared/services/drawer';
 import { WeatherService } from '../../../shared/services/weather';
+import { ActivityMapService } from '../../../shared/services/activity-map';
 import { Destination } from '../../../models/destination';
 import { DailyForecast, WeatherPayload } from '../../../models/weather';
 import { AttractionVerticalList } from '../../attractions/attraction-vertical-list/attraction-vertical-list';
@@ -19,6 +20,7 @@ import { AttractionVerticalList } from '../../attractions/attraction-vertical-li
 export class DestinationDetail {
   private drawerSvc = inject(Drawer);
   private weatherService = inject(WeatherService);
+  private activityMap = inject(ActivityMapService);
   private destroyRef = inject(DestroyRef);
 
   destination = computed(() => {
@@ -73,6 +75,9 @@ export class DestinationDetail {
     const dest = this.destination();
     if (!dest) return;
     this.drawerSvc.close('destination-detail');
+    // Only one activity category's markers/reopen-button shows on the map at
+    // a time — wipe any other category's leftover state before switching.
+    this.activityMap.showOnly('hikes');
     this.drawerSvc.open('hikes', { destination: dest });
   }
 
@@ -80,6 +85,7 @@ export class DestinationDetail {
     const dest = this.destination();
     if (!dest) return;
     this.drawerSvc.close('destination-detail');
+    this.activityMap.showOnly('bikes');
     this.drawerSvc.open('bikes', { destination: dest });
   }
 
@@ -87,6 +93,7 @@ export class DestinationDetail {
     const dest = this.destination();
     if (!dest) return;
     this.drawerSvc.close('destination-detail');
+    this.activityMap.showOnly('hotels');
     this.drawerSvc.open('hotels', { destination: dest });
   }
 }

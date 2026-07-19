@@ -15,7 +15,8 @@
     "login": "Connexion",
     "logout": "Se déconnecter",
     "close": "Fermer",
-    "showOnMap": "Afficher sur la carte"
+    "showOnMap": "Afficher sur la carte",
+    "back": "Retour"
   },
   "auth": {
     "toast": {
@@ -222,12 +223,12 @@
       "count": "{{count}} destinations"
     },
     "detail": {
-      "back": "Retour aux destinations",
       "visit": "Visiter la page officielle",
       "open": "Retour à {{name}}",
-      "hikes": "Randonnées",
-      "bikeRides": "Balades à vélo",
-      "hotels": "Hôtels"
+      "hikes": "Sentiers de randonnée",
+      "bikeRides": "Pistes cyclables",
+      "hotels": "Hôtels",
+      "hotelsSubtitle": "Trouvez de superbes hébergements dans la région."
     }
   },
   "hikes": {
@@ -236,7 +237,6 @@
     "noMatch": "Aucun itinéraire de randonnée ne correspond à ce filtre.",
     "backToList": "Retour aux randonnées",
     "reopen": "Afficher les randonnées",
-    "reopenDetail": "Afficher l'itinéraire",
     "downloadGpx": "Télécharger le GPX",
     "distance": "Distance",
     "radius": "Rayon",
@@ -259,7 +259,6 @@
     "noMatch": "Aucune balade à vélo ne correspond à ce filtre.",
     "backToList": "Retour aux balades à vélo",
     "reopen": "Afficher les balades à vélo",
-    "reopenDetail": "Afficher l'itinéraire",
     "downloadGpx": "Télécharger le GPX",
     "distance": "Distance",
     "radius": "Rayon",

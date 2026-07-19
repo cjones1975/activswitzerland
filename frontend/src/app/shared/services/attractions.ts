@@ -25,21 +25,23 @@ export class AttractionsService {
     language: string;
     page: number;
     hitsPerPage: number;
-    placeId: string;
+    placeId?: string;
+    geoDist?: string; // "lat,lon,radiusMeters"
     expand: boolean;
     translate: boolean;
     stripHtml: boolean;
     top: boolean;
   }): Observable<Attraction[]> {
-    const httpParams = new HttpParams()
+    let httpParams = new HttpParams()
       .set('language', params.language)
       .set('page', params.page)
       .set('hitsPerPage', params.hitsPerPage)
-      .set('placeId', params.placeId)
       .set('expand', String(params.expand))
       .set('translate', String(params.translate))
       .set('stripHtml', String(params.stripHtml))
       .set('top', String(params.top));
+    if (params.placeId) httpParams = httpParams.set('placeId', params.placeId);
+    if (params.geoDist) httpParams = httpParams.set('geo.dist', params.geoDist);
 
     return this.http
       .get<AttractionsResponse>(this.baseUrl + '/topattractions', { params: httpParams })

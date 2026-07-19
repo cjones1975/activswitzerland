@@ -91,12 +91,11 @@
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('all-attractions')"
     [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer all-attractions-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back" type="button" (click)="onAllAttractionsBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: allAttractionsDestinationName() }" (click)="onAllAttractionsBack()">
                 <i class="fa-regular fa-chevron-left"></i>
-                {{ 'attractions.backToDestination' | translate: { name: allAttractionsDestinationName() } }}
             </button>
             <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('all-attractions')">
                 <i class="fa-regular fa-map-location"></i>
@@ -121,13 +120,14 @@
     styleClass="dest-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back" type="button" (click)="onAttractionDetailBack()">
+            <button
+                class="dest-back dest-back-icon-only"
+                type="button"
+                [attr.aria-label]="attractionDetailSource() === 'destination-detail'
+                    ? ('attractions.backToDestination' | translate: { name: attractionDetailDestinationName() })
+                    : ('attractions.backToAttractions' | translate)"
+                (click)="onAttractionDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
-                @if (attractionDetailSource() === 'destination-detail') {
-                    {{ 'attractions.backToDestination' | translate: { name: attractionDetailDestinationName() } }}
-                } @else {
-                    {{ 'attractions.backToAttractions' | translate }}
-                }
             </button>
             <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('attraction-detail')">
                 <i class="fa-regular fa-map-location"></i>
@@ -205,12 +205,11 @@
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('destination-detail')"
     [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer dest-detail-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back" type="button" (click)="onDestinationBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'nav.back' | translate" (click)="onDestinationBack()">
                 <i class="fa-regular fa-chevron-left"></i>
-                {{ 'destinations.detail.back' | translate }}
             </button>
             <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onDrawerClose('destination-detail')">
                 <i class="fa-regular fa-map-location"></i>
@@ -232,12 +231,11 @@
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('hikes')"
     [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer hikes-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back" type="button" (click)="onHikesBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: hikesDestinationName() }" (click)="onHikesBack()">
                 <i class="fa-regular fa-chevron-left"></i>
-                {{ 'attractions.backToDestination' | translate: { name: hikesDestinationName() } }}
             </button>
             <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hikes')">
                 <i class="fa-regular fa-map-location"></i>
@@ -259,12 +257,11 @@
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('hike-detail')"
     [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer hike-detail-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back" type="button" (click)="onHikeDetailBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'hikes.backToList' | translate" (click)="onHikeDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
-                {{ 'hikes.backToList' | translate }}
             </button>
             <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hike-detail')">
                 <i class="fa-regular fa-map-location"></i>
@@ -286,12 +283,11 @@
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('bikes')"
     [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer bikes-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back" type="button" (click)="onBikesBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: bikesDestinationName() }" (click)="onBikesBack()">
                 <i class="fa-regular fa-chevron-left"></i>
-                {{ 'attractions.backToDestination' | translate: { name: bikesDestinationName() } }}
             </button>
             <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bikes')">
                 <i class="fa-regular fa-map-location"></i>
@@ -313,12 +309,11 @@
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('bike-detail')"
     [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer bike-detail-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back" type="button" (click)="onBikeDetailBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'bikes.backToList' | translate" (click)="onBikeDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
-                {{ 'bikes.backToList' | translate }}
             </button>
             <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bike-detail')">
                 <i class="fa-regular fa-map-location"></i>

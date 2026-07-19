@@ -1,6 +1,6 @@
 import { Injectable, signal } from '@angular/core';
 import { MapMarker } from '../map/map';
-import { TrailCategory, TrailRoute, trailCategoryColor } from '../../models/trail-route';
+import { TrailCategory, TrailRoute } from '../../models/trail-route';
 import { GeoLocation } from '../../models/geo-point';
 
 export type TrailCategoryFilter = TrailCategory | 'all';
@@ -16,14 +16,14 @@ export class HikeMarkersService {
   // survives the component being destroyed/recreated as the drawer opens
   // and closes (PrimeNG tears down drawer content on hide), while still
   // resetting to defaults whenever a genuinely new destination is visited.
-  readonly radiusKm = signal(30);
+  readonly radiusKm = signal(10);
   readonly selectedCategory = signal<TrailCategoryFilter>('all');
   private lastDestination: GeoLocation | null = null;
 
   resetFiltersForDestination(dest: GeoLocation): void {
     if (dest === this.lastDestination) return;
     this.lastDestination = dest;
-    this.radiusKm.set(30);
+    this.radiusKm.set(10);
     this.selectedCategory.set('all');
   }
 
@@ -36,8 +36,8 @@ export class HikeMarkersService {
         lng,
         lat,
         label: r.name,
-        icon: 'fa-solid fa-person-hiking',
-        color: trailCategoryColor(r.category),
+        image: '/assets/hike.png',
+        className: 'hike-marker',
         clickable: true,
       };
     }));

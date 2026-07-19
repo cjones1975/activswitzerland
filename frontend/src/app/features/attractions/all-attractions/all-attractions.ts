@@ -13,7 +13,7 @@ import { AttractionMarkersService, hasValidGeo } from '../../../shared/services/
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { Attraction } from '../../../models/attraction';
 import { GeoLocation, ActivityPickerPayload } from '../../../models/geo-point';
-import { isDestination, locId, locLat, locLon } from '../../../shared/utils/geo-location';
+import { locId, locLat, locLon } from '../../../shared/utils/geo-location';
 import { stopDayOptions, dayChoiceLabelParams } from '../../../shared/utils/date-range';
 
 const NEARBY_RADIUS_M = 10000;
@@ -129,9 +129,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       language: this.lang,
       page: this.page,
       hitsPerPage: 30,
-      ...(isDestination(dest)
-        ? { placeId: dest.identifier }
-        : { geoDist: `${locLat(dest)},${locLon(dest)},${NEARBY_RADIUS_M}` }),
+      geoDist: `${locLat(dest)},${locLon(dest)},${NEARBY_RADIUS_M}`,
     }).subscribe({
       next: ({ attractions, totalElements }) => {
         this.attractions = [...this.attractions, ...attractions];
@@ -140,7 +138,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
         this.hasMore.set(this.attractions.length < this.totalElements);
         const geoAttractions = this.attractions.filter(hasValidGeo);
         this.attractionMarkers.set(
-          geoAttractions.map(a => ({ id: a.identifier, lng: Number(a.geo.longitude), lat: Number(a.geo.latitude), label: a.name, icon: 'fa-solid fa-location-dot', color: '#1a2f4a', clickable: true })),
+          geoAttractions.map(a => ({ id: a.identifier, lng: Number(a.geo.longitude), lat: Number(a.geo.latitude), label: a.name, image: '/assets/attraction.png', className: 'attraction-marker', clickable: true })),
           geoAttractions
         );
         this.loading.set(false);
@@ -180,9 +178,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       page: 0,
       search: this.searchQuery.trim(),
       hitsPerPage: 50,
-      ...(isDestination(dest)
-        ? { placeId: dest.identifier }
-        : { geoDist: `${locLat(dest)},${locLon(dest)},${NEARBY_RADIUS_M}` }),
+      geoDist: `${locLat(dest)},${locLon(dest)},${NEARBY_RADIUS_M}`,
       expand: false,
       translate: true,
       stripHtml: false,

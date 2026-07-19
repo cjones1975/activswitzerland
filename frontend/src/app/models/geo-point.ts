@@ -14,4 +14,6 @@ export interface ActivityPickerPayload {
   destination: GeoLocation;
   mode?: 'view' | 'select';   // default 'view'
   stopId?: string;             // set when mode === 'select'
+  /** Where this list was opened from, for 'view' mode back-nav: 'destination-detail' reopens it on back, 'map' just collapses. */
+  origin?: 'destination-detail' | 'map';
 }

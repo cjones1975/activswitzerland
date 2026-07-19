@@ -88,14 +88,8 @@
 /* Activity cards: Hikes, Bike Rides, Hotels */
 .activity-cards {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
-}
-
-@media (max-width: 500px) {
-  .activity-cards {
-    grid-template-columns: 1fr;
-  }
 }
 
 .activity-card {
@@ -127,6 +121,21 @@
 .activity-card-label {
   font-size: 0.8rem;
   font-weight: 700;
+}
+
+.activity-card-hotels {
+  grid-column: 1 / -1;
+  background: #d97706;
+}
+
+.activity-card-hotels:hover {
+  background: #b45c06;
+}
+
+.activity-card-subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  opacity: 0.9;
 }
 
 .weather-box {

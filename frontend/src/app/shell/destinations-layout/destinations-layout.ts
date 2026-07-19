@@ -1,7 +1,7 @@
 import { Component, DestroyRef, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { startWith, switchMap } from 'rxjs';
+import { startWith, switchMap, tap } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DestinationsService } from '../../shared/services/destinations';
 import { LangService } from '../../shared/services/lang';
@@ -10,12 +10,13 @@ import { MapComponent } from '../../shared/map/map';
 import type { MapMarker } from '../../shared/map/map';
 import { Drawer } from '../../shared/services/drawer';
 import { AttractionMarkersService } from '../../shared/services/attraction-markers';
-import { AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
+import { ActivityMapService } from '../../shared/services/activity-map';
 import { HikeMarkersService } from '../../shared/services/hike-markers';
 import { BikeMarkersService } from '../../shared/services/bike-markers';
 import { HikeDetailPayload } from '../../features/hikes/hike-detail/hike-detail';
 import { BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
 import { TrailRoute, trailCategoryColor } from '../../models/trail-route';
+import { ActivityPickerPayload } from '../../models/geo-point';
 
 @Component({
   selector: 'app-destinations-layout',
@@ -34,20 +35,16 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   protected attractionMarkers = inject(AttractionMarkersService);
   protected hikeMarkers = inject(HikeMarkersService);
   protected bikeMarkers = inject(BikeMarkersService);
+  private activityMap = inject(ActivityMapService);
 
   center = signal<[number, number] | undefined>(undefined);
   destination = signal<Destination | null>(null);
 
-  private attractionDetailSource = computed(() => {
-    this.drawer.list();
-    return this.drawer.getPayload<AttractionDetailPayload>('attraction-detail')?.source;
-  });
-
-  private showAttractionMarkers = computed(() => {
-    this.drawer.list();
-    if (this.drawer.isOpen('all-attractions') || this.drawer.isCollapsed('all-attractions')) return true;
-    return this.drawer.isOpen('attraction-detail') && this.attractionDetailSource() === 'all-attractions';
-  });
+  // Attraction markers are populated as soon as the destination page loads
+  // (attraction-vertical-list's all-attractions fetch) and shown unconditionally
+  // from then on — no drawer/selection gating needed. ActivityMapService wipes
+  // this array when another category (hikes/bikes) becomes active.
+  private showAttractionMarkers = computed(() => this.attractionMarkers.markers().length > 0);
 
   private showHikeMarkers = computed(() => {
     this.drawer.list();
@@ -102,9 +99,9 @@ export class DestinationsLayout implements OnInit, OnDestroy {
       lng: dest.geo.longitude,
       lat: dest.geo.latitude,
       label: dest.name,
-      icon: 'fa-solid fa-location-dot',
-      color: '#e53e3e',
+      image: '/assets/destination.png',
       className: 'destination-marker',
+      openByDefault: true,
     };
   });
 
@@ -153,7 +150,7 @@ export class DestinationsLayout implements OnInit, OnDestroy {
     const selectedId = this.attractionMarkers.selectedId();
     if (!selectedId) return undefined;
     const m = this.attractionMarkers.markers().find(m => m.id === selectedId);
-    return m ? { lng: m.lng, lat: m.lat } : undefined;
+    return m ? { lng: m.lng, lat: m.lat, id: m.id } : undefined;
   });
 
   // Midpoint between a route's overall start and end coordinates — a
@@ -171,6 +168,11 @@ export class DestinationsLayout implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.route.params.pipe(
+      // A new destination route param means a genuinely new destination —
+      // wipe any leftover category state (markers, reopen buttons, and the
+      // Drawer's collapsed/open flags, which are app-wide singletons the
+      // previous destination's ngOnDestroy never touches) before it loads.
+      tap(() => this.activityMap.showOnly(null)),
       switchMap(params =>
         this.translate.onLangChange.pipe(
           startWith({ lang: this.langSvc.current }),
@@ -191,6 +193,9 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   openDetail(): void {
     const dest = this.destination();
     if (dest) this.drawer.open('destination-detail', dest);
+    // Returning to the destination should leave only attraction markers on
+    // the map — wipe any hike/bike route/markers left over from browsing them.
+    this.activityMap.showOnly('attractions');
     this.attractionMarkers.setSelected(null);
   }
 
@@ -219,17 +224,28 @@ export class DestinationsLayout implements OnInit, OnDestroy {
 
     const attraction = this.attractionMarkers.attractionMap().get(marker.id);
     if (!attraction) return;
-    if (this.drawer.isOpen('all-attractions') || this.drawer.isCollapsed('all-attractions')) {
+    const listOrigin = this.drawer.getPayload<ActivityPickerPayload>('all-attractions')?.origin;
+    // Only treat this as "opened from the list" when the list drawer is actually
+    // open (visible alongside the map on wide screens). A merely-collapsed or
+    // closed list means the user is looking at the map, so a marker's tooltip
+    // link should be treated as opened from the map instead.
+    const wasListOpen = this.drawer.isOpen('all-attractions');
+    if (wasListOpen) {
       this.drawer.close('all-attractions');
     }
-    this.drawer.open('attraction-detail', { attraction, destination: dest, source: 'all-attractions' });
+    this.drawer.open('attraction-detail', {
+      attraction,
+      destination: dest,
+      source: wasListOpen ? 'all-attractions' : 'map',
+      listOrigin,
+    });
   }
 
   listAllAttractions(): void {
     const dest = this.destination();
     if (!dest) return;
     this.drawer.close('destination-detail');
-    this.drawer.open('all-attractions', { destination: dest });
+    this.drawer.open('all-attractions', { destination: dest, origin: 'map' });
   }
 
   reopenAllAttractions(): void {
@@ -242,17 +258,9 @@ export class DestinationsLayout implements OnInit, OnDestroy {
     this.hikeMarkers.setSelected(null);
   }
 
-  reopenHikeDetail(): void {
-    this.drawer.open('hike-detail');
-  }
-
   reopenBikes(): void {
     this.drawer.open('bikes');
     this.bikeMarkers.setSelected(null);
-  }
-
-  reopenBikeDetail(): void {
-    this.drawer.open('bike-detail');
   }
 
 ngOnDestroy(): void {

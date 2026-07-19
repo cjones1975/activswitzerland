@@ -55,11 +55,14 @@ export class DrawerHost {
 
   onAllAttractionsBack() {
     const payload = this.svc.getPayload<ActivityPickerPayload>('all-attractions');
-    this.svc.close('all-attractions');
     if (payload?.mode === 'select') {
+      this.svc.close('all-attractions');
       this.svc.open('trip-planner');
     } else {
-      this.svc.open('destination-detail', payload?.destination);
+      this.svc.collapse('all-attractions');
+      if (payload?.origin === 'destination-detail') {
+        this.svc.open('destination-detail', payload.destination);
+      }
     }
     this.attractionMarkers.setSelected(null);
   }
@@ -85,7 +88,10 @@ export class DrawerHost {
       this.svc.open('trip-planner');
       return;
     }
-    this.svc.open('all-attractions', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
+    if (payload.source === 'map') {
+      return;
+    }
+    this.svc.open('all-attractions', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId, origin: payload.listOrigin });
   }
 
   attractionDetailDestinationName = computed(() => {

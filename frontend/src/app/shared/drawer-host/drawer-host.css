@@ -110,13 +110,29 @@
     color: var(--navy-700);
 }
 
+.dest-back-icon-only {
+    font-size: 1.1rem;
+    padding: 0.35rem;
+    border-radius: 50%;
+}
+
+.dest-back-icon-only:hover {
+    background: var(--gray-100);
+}
+
 ::ng-deep .dest-drawer .p-drawer-content {
     overflow-y: auto;
 }
 
-/* Trip planner & things-to-do drawers: full-width on mobile */
+/* Trip planner, things-to-do & destination-detail drawers: full-width on mobile */
 @media (max-width: 767px) {
-    ::ng-deep .tp-drawer {
+    ::ng-deep .tp-drawer,
+    ::ng-deep .dest-detail-drawer,
+    ::ng-deep .all-attractions-drawer,
+    ::ng-deep .hikes-drawer,
+    ::ng-deep .hike-detail-drawer,
+    ::ng-deep .bikes-drawer,
+    ::ng-deep .bike-detail-drawer {
         width: 100vw !important;
     }
 }

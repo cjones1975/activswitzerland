@@ -11,45 +11,28 @@
 
 <div class="reopen-btns">
   @if (!drawer.isOpen('destination-detail') && destination(); as dest) {
-    <button class="reopen-btn" type="button" (click)="openDetail()">
-      <i class="fa-solid fa-map-location-dot"></i>
-      {{ 'destinations.detail.open' | translate: { name: dest.name } }}
+    <button class="reopen-btn reopen-btn-img-only" type="button" [attr.aria-label]="'destinations.detail.open' | translate: { name: dest.name }" (click)="openDetail()">
+      <img class="reopen-btn-img" src="/assets/destination.png" [attr.alt]="'destinations.detail.open' | translate: { name: dest.name }" />
     </button>
   }
   @if (destination() && attractionMarkers.hasAttractions() && !drawer.isOpen('all-attractions') && !drawer.isCollapsed('all-attractions')) {
-    <button class="reopen-btn" type="button" (click)="listAllAttractions()">
-      <i class="fa-solid fa-list"></i>
-      {{ 'attractions.listAll' | translate }}
+    <button class="reopen-btn reopen-btn-img-only" type="button" [attr.aria-label]="'attractions.listAll' | translate" (click)="listAllAttractions()">
+      <img class="reopen-btn-img" src="/assets/attraction.png" [attr.alt]="'attractions.listAll' | translate" />
     </button>
   }
   @if (attractionMarkers.hasAttractions() && drawer.isCollapsed('all-attractions')) {
-    <button class="reopen-btn" type="button" (click)="reopenAllAttractions()">
-      <i class="fa-solid fa-list"></i>
-      {{ 'attractions.openAll' | translate }}
+    <button class="reopen-btn reopen-btn-img-only" type="button" [attr.aria-label]="'attractions.openAll' | translate" (click)="reopenAllAttractions()">
+      <img class="reopen-btn-img" src="/assets/attraction.png" [attr.alt]="'attractions.openAll' | translate" />
     </button>
   }
   @if (hikeMarkers.hasRoutes() && drawer.isCollapsed('hikes')) {
-    <button class="reopen-btn" type="button" (click)="reopenHikes()">
-      <i class="fa-solid fa-person-hiking"></i>
-      {{ 'hikes.reopen' | translate }}
-    </button>
-  }
-  @if (hikeMarkers.hasRoutes() && drawer.isCollapsed('hike-detail')) {
-    <button class="reopen-btn" type="button" (click)="reopenHikeDetail()">
-      <i class="fa-solid fa-route"></i>
-      {{ 'hikes.reopenDetail' | translate }}
+    <button class="reopen-btn reopen-btn-img-only" type="button" [attr.aria-label]="'hikes.reopen' | translate" (click)="reopenHikes()">
+      <img class="reopen-btn-img" src="/assets/hike.png" [attr.alt]="'hikes.reopen' | translate" />
     </button>
   }
   @if (bikeMarkers.hasRoutes() && drawer.isCollapsed('bikes')) {
-    <button class="reopen-btn" type="button" (click)="reopenBikes()">
-      <i class="fa-solid fa-bicycle"></i>
-      {{ 'bikes.reopen' | translate }}
-    </button>
-  }
-  @if (bikeMarkers.hasRoutes() && drawer.isCollapsed('bike-detail')) {
-    <button class="reopen-btn" type="button" (click)="reopenBikeDetail()">
-      <i class="fa-solid fa-route"></i>
-      {{ 'bikes.reopenDetail' | translate }}
+    <button class="reopen-btn reopen-btn-img-only" type="button" [attr.aria-label]="'bikes.reopen' | translate" (click)="reopenBikes()">
+      <img class="reopen-btn-img" src="/assets/bike.png" [attr.alt]="'bikes.reopen' | translate" />
     </button>
   }
 </div>
