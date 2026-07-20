@@ -72,9 +72,23 @@ export class DrawerHost {
     return this.svc.getPayload<ActivityPickerPayload>('all-attractions')?.destination?.name ?? '';
   });
 
+  // Trip-planner picker flow (opened in 'select' mode, or reached from a
+  // trip-summary map marker) shows no "show on map" affordance — the map
+  // behind the trip-planner drawer is a different view than the destination map.
+  isAllAttractionsTripPlanner = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<ActivityPickerPayload>('all-attractions')?.mode === 'select';
+  });
+
   attractionDetailSource = computed(() => {
     this.svc.list();
     return this.svc.getPayload<AttractionDetailPayload>('attraction-detail')?.source;
+  });
+
+  isAttractionDetailTripPlanner = computed(() => {
+    this.svc.list();
+    const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail');
+    return payload?.mode === 'select' || payload?.source === 'trip-summary';
   });
 
   onAttractionDetailBack() {
@@ -127,6 +141,17 @@ export class DrawerHost {
     return this.svc.getPayload<ActivityPickerPayload>('hikes')?.destination?.name ?? '';
   });
 
+  isHikesTripPlanner = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<ActivityPickerPayload>('hikes')?.mode === 'select';
+  });
+
+  isHikeDetailTripPlanner = computed(() => {
+    this.svc.list();
+    const payload = this.svc.getPayload<HikeDetailPayload>('hike-detail');
+    return payload?.mode === 'select' || payload?.source === 'trip-summary';
+  });
+
   onHikeDetailBack() {
     const payload = this.svc.getPayload<HikeDetailPayload>('hike-detail')!;
     this.svc.close('hike-detail');
@@ -150,6 +175,17 @@ export class DrawerHost {
   bikesDestinationName = computed(() => {
     this.svc.list();
     return this.svc.getPayload<ActivityPickerPayload>('bikes')?.destination?.name ?? '';
+  });
+
+  isBikesTripPlanner = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<ActivityPickerPayload>('bikes')?.mode === 'select';
+  });
+
+  isBikeDetailTripPlanner = computed(() => {
+    this.svc.list();
+    const payload = this.svc.getPayload<BikeDetailPayload>('bike-detail');
+    return payload?.mode === 'select' || payload?.source === 'trip-summary';
   });
 
   onBikeDetailBack() {

@@ -31,12 +31,14 @@ export class ActivityMapService {
       this.drawer.close('hike-detail');
       this.hikeMarkers.setSelected(null);
       this.hikeMarkers.setHasRoutes(false);
+      this.hikeMarkers.clearStageOverview();
     }
     if (active !== 'bikes') {
       this.drawer.close('bikes');
       this.drawer.close('bike-detail');
       this.bikeMarkers.setSelected(null);
       this.bikeMarkers.setHasRoutes(false);
+      this.bikeMarkers.clearStageOverview();
     }
   }
 }

@@ -83,10 +83,9 @@
   font-family: inherit;
 }
 
-.s3-category-row i:first-child {
-  width: 1.1rem;
-  text-align: center;
-  color: var(--navy-800);
+.s3-category-icon {
+  width: 25px;
+  height: auto;
 }
 
 .s3-category-label {
@@ -135,10 +134,9 @@
   font-size: 0.78rem;
 }
 
-.s3-added-item i:first-child {
-  width: 1rem;
-  text-align: center;
-  color: var(--navy-500, #6b90b8);
+.s3-added-icon {
+  width: 25px;
+  height: auto;
 }
 
 .s3-added-name {

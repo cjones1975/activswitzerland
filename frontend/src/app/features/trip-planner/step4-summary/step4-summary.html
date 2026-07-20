@@ -66,7 +66,7 @@
           @if (items.length) {
             <div class="s4-group">
               <div class="s4-group-head">
-                <i [class]="group.icon"></i>
+                <img [src]="group.icon" alt="" class="s4-group-icon" />
                 <span>{{ group.labelKey | translate }}</span>
               </div>
               @for (activity of items; track activity.id) {

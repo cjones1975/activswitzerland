@@ -97,9 +97,11 @@
             <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: allAttractionsDestinationName() }" (click)="onAllAttractionsBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('all-attractions')">
-                <i class="fa-regular fa-map-location"></i>
-            </button>
+            @if (!isAllAttractionsTripPlanner()) {
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('all-attractions')">
+                    <i class="fa-regular fa-map-location"></i>
+                </button>
+            }
         </div>
     </ng-template>
     <hr class="header-divider" />
@@ -117,7 +119,7 @@
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('attraction-detail')"
     [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer attraction-detail-drawer">
     <ng-template #header>
         <div class="dest-header">
             <button
@@ -129,9 +131,11 @@
                 (click)="onAttractionDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('attraction-detail')">
-                <i class="fa-regular fa-map-location"></i>
-            </button>
+            @if (!isAttractionDetailTripPlanner()) {
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('attraction-detail')">
+                    <i class="fa-regular fa-map-location"></i>
+                </button>
+            }
         </div>
     </ng-template>
     <hr class="header-divider" />
@@ -237,9 +241,11 @@
             <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: hikesDestinationName() }" (click)="onHikesBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hikes')">
-                <i class="fa-regular fa-map-location"></i>
-            </button>
+            @if (!isHikesTripPlanner()) {
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hikes')">
+                    <i class="fa-regular fa-map-location"></i>
+                </button>
+            }
         </div>
     </ng-template>
     <hr class="header-divider" />
@@ -263,9 +269,11 @@
             <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'hikes.backToList' | translate" (click)="onHikeDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hike-detail')">
-                <i class="fa-regular fa-map-location"></i>
-            </button>
+            @if (!isHikeDetailTripPlanner()) {
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hike-detail')">
+                    <i class="fa-regular fa-map-location"></i>
+                </button>
+            }
         </div>
     </ng-template>
     <hr class="header-divider" />
@@ -289,9 +297,11 @@
             <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: bikesDestinationName() }" (click)="onBikesBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bikes')">
-                <i class="fa-regular fa-map-location"></i>
-            </button>
+            @if (!isBikesTripPlanner()) {
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bikes')">
+                    <i class="fa-regular fa-map-location"></i>
+                </button>
+            }
         </div>
     </ng-template>
     <hr class="header-divider" />
@@ -315,9 +325,11 @@
             <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'bikes.backToList' | translate" (click)="onBikeDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bike-detail')">
-                <i class="fa-regular fa-map-location"></i>
-            </button>
+            @if (!isBikeDetailTripPlanner()) {
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bike-detail')">
+                    <i class="fa-regular fa-map-location"></i>
+                </button>
+            }
         </div>
     </ng-template>
     <hr class="header-divider" />

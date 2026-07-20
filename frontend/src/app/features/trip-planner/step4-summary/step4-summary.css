@@ -182,6 +182,11 @@
   margin-bottom: 0.3rem;
 }
 
+.s4-group-icon {
+  width: 0.75rem;
+  height: auto;
+}
+
 .s4-activity-item {
   display: flex;
   align-items: center;

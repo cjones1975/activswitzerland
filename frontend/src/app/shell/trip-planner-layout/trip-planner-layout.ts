@@ -18,10 +18,10 @@ import { AttractionDetailPayload } from '../../features/attractions/attraction-d
 import { HikeDetailPayload } from '../../features/hikes/hike-detail/hike-detail';
 import { BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
 
-const ACTIVITY_MARKER_STYLE: Record<ActivityKind, { icon: string; color: string }> = {
-  attraction: { icon: 'fa-solid fa-binoculars', color: '#1a2f4a' },
-  hike: { icon: 'fa-solid fa-person-hiking', color: '#1a6b3c' },
-  bike: { icon: 'fa-solid fa-bicycle', color: '#d97706' },
+const ACTIVITY_MARKER_STYLE: Record<ActivityKind, { image: string }> = {
+  attraction: { image: '/assets/attraction.png' },
+  hike: { image: '/assets/hike.png' },
+  bike: { image: '/assets/bike.png' },
 };
 
 @Component({
@@ -60,8 +60,7 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
         return {
           lng: a.lon!,
           lat: a.lat!,
-          icon: style.icon,
-          color: style.color,
+          image: style.image,
           className: 'trip-activity-marker',
           label: a.name,
           id: a.id,

@@ -19,7 +19,7 @@
       <div class="s3-category-list">
         @for (category of categories; track category.kind) {
           <button type="button" class="s3-category-row" (click)="openPicker(stop, category)">
-            <i [class]="category.icon"></i>
+            <img [src]="category.icon" alt="" class="s3-category-icon" />
             <span class="s3-category-label">{{ category.labelKey | translate }}</span>
             @if (activitiesFor(stop, category.kind).length; as count) {
               <span class="s3-category-count">{{ count }}</span>
@@ -28,7 +28,7 @@
           </button>
         }
         <button type="button" class="s3-category-row s3-category-row--hotels" (click)="openHotels(stop)">
-          <i class="fa-solid fa-bed"></i>
+          <img src="/assets/hotel.png" alt="" class="s3-category-icon" />
           <span class="s3-category-label">{{ 'trip.planner.step3.hotelsNearby' | translate }}</span>
           <span class="s3-category-hint">{{ 'trip.planner.step3.hotelsComingSoon' | translate }}</span>
           <i class="fa-light fa-chevron-right s3-category-chevron"></i>
@@ -39,7 +39,7 @@
         <div class="s3-added-list">
           @for (activity of allActivitiesFor(stop); track activity.id) {
             <div class="s3-added-item">
-              <i [class]="categoryFor(activity.kind)?.icon"></i>
+              <img [src]="categoryFor(activity.kind)?.icon" alt="" class="s3-added-icon" />
               <span class="s3-added-name">{{ activity.name }}</span>
               <span class="s3-added-day">{{ activity.day }}</span>
               <button type="button" class="s3-added-remove" [attr.aria-label]="'trip.planner.step3.removeFromTrip' | translate" (click)="removeActivity(activity)">

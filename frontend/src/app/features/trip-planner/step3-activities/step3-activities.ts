@@ -17,9 +17,9 @@ interface ActivityCategory {
 }
 
 const CATEGORIES: ActivityCategory[] = [
-  { kind: 'attraction', icon: 'fa-solid fa-binoculars', labelKey: 'trip.planner.step3.placesToVisit', drawerKey: 'all-attractions' },
-  { kind: 'hike', icon: 'fa-solid fa-person-hiking', labelKey: 'trip.planner.step3.hikesNearby', drawerKey: 'hikes' },
-  { kind: 'bike', icon: 'fa-solid fa-bicycle', labelKey: 'trip.planner.step3.bikesNearby', drawerKey: 'bikes' },
+  { kind: 'attraction', icon: '/assets/attraction.png', labelKey: 'trip.planner.step3.placesToVisit', drawerKey: 'all-attractions' },
+  { kind: 'hike', icon: '/assets/hike.png', labelKey: 'trip.planner.step3.hikingTrails', drawerKey: 'hikes' },
+  { kind: 'bike', icon: '/assets/bike.png', labelKey: 'trip.planner.step3.bikingTrails', drawerKey: 'bikes' },
 ];
 
 @Component({

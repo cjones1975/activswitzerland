@@ -27,7 +27,7 @@
   font-size: 0.68rem;
   font-weight: 600;
   letter-spacing: 0.03em;
-  color: var(--navy-300, #8fb0d1);
+  color: var(--navy-200, #bcd0e5);
   text-decoration: underline;
   cursor: pointer;
 }

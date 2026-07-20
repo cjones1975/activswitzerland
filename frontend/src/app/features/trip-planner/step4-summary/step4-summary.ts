@@ -11,9 +11,9 @@ import { stopDayRanges, tripDayCount, formatDdMmYyyy } from '../../../shared/uti
 interface ActivityGroup { kind: ActivityKind; icon: string; labelKey: string; }
 
 const ACTIVITY_GROUPS: ActivityGroup[] = [
-  { kind: 'attraction', icon: 'fa-solid fa-binoculars', labelKey: 'trip.planner.step3.placesToVisit' },
-  { kind: 'hike', icon: 'fa-solid fa-person-hiking', labelKey: 'trip.planner.step3.hikesNearby' },
-  { kind: 'bike', icon: 'fa-solid fa-bicycle', labelKey: 'trip.planner.step3.bikesNearby' },
+  { kind: 'attraction', icon: '/assets/attraction.png', labelKey: 'trip.planner.step3.placesToVisit' },
+  { kind: 'hike', icon: '/assets/hike.png', labelKey: 'trip.planner.step3.hikesNearby' },
+  { kind: 'bike', icon: '/assets/bike.png', labelKey: 'trip.planner.step3.bikesNearby' },
 ];
 
 @Component({

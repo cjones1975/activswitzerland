@@ -64,13 +64,15 @@
           <div class="trail-badge-row">
             @if (route.isMultiDay) {
               <span class="trail-stage-badge">{{ stageBadge(route) }}</span>
-              <button
-                type="button"
-                class="trail-seeall-link"
-                [disabled]="seeAllStagesLoading() === route.routeNumber"
-                (click)="onSeeAllStages(route); $event.stopPropagation()">
-                {{ 'hikes.multiDay.seeAllStages' | translate }}
-              </button>
+              @if (mode() !== 'select') {
+                <button
+                  type="button"
+                  class="trail-seeall-link"
+                  [disabled]="seeAllStagesLoading() === route.routeNumber"
+                  (click)="onSeeAllStages(route); $event.stopPropagation()">
+                  {{ 'hikes.multiDay.seeAllStages' | translate }}
+                </button>
+              }
             } @else {
               <span class="trail-single-badge">{{ 'hikes.multiDay.singleRoute' | translate }}</span>
             }

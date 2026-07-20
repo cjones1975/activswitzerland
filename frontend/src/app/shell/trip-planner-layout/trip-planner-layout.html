@@ -18,9 +18,8 @@
     </button>
   }
   @if (!drawer.isOpen('trip-planner')) {
-    <button class="reopen-btn" type="button" (click)="reopenTripPlanner()">
-      <i class="fa-light fa-route"></i>
-      {{ 'trip.planner.open' | translate }}
+    <button class="reopen-btn reopen-btn-img-only" type="button" [attr.aria-label]="'trip.planner.open' | translate" (click)="reopenTripPlanner()">
+      <img class="reopen-btn-img" src="/assets/trip.png" [attr.alt]="'trip.planner.open' | translate" />
     </button>
   }
 </div>
