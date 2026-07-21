@@ -12,7 +12,8 @@
     "logout": "Esci",
     "close": "Chiudi",
     "showOnMap": "Mostra sulla mappa",
-    "back": "Indietro"
+    "back": "Indietro",
+    "search": "Cerca"
   },
   "auth": {
     "toast": {
@@ -368,6 +369,19 @@
       "attractions": "Attrazioni",
       "cantons": "Cantoni",
       "unesco": "Siti UNESCO"
+    }
+  },
+  "home": {
+    "search": {
+      "placesTab": "Luoghi da visitare",
+      "thingsTab": "Cose da fare",
+      "placeholderPlaces": "Cerca una città, un paese o una regione…",
+      "placeholderThings": "Cerca un'attrazione o un'attività…",
+      "searchButton": "Cerca",
+      "backToSearch": "Torna alla ricerca",
+      "loadError": "Qualcosa è andato storto. Riprova.",
+      "noDestinationResults": "Siamo spiacenti, non abbiamo trovato destinazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave.",
+      "noAttractionResults": "Siamo spiacenti, non abbiamo trovato attrazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave."
     }
   }
 }

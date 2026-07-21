@@ -15,11 +15,14 @@ import { GeoLocation } from '../../../models/geo-point';
 export interface AttractionDetailPayload {
   attraction: Attraction;
   destination?: GeoLocation;
-  source: 'destination-detail' | 'all-attractions' | 'trip-summary' | 'map';
+  source: 'destination-detail' | 'all-attractions' | 'trip-summary' | 'map' | 'search';
   mode?: 'view' | 'select';
   stopId?: string;
   /** Carries the originating all-attractions list's own `origin`, so reopening it on back-nav keeps the right back-button behavior. */
   listOrigin?: 'destination-detail' | 'map';
+  /** Query text + active tab, set when source === 'search', so back-nav can reconstruct the `/search` URL. */
+  searchQuery?: string;
+  searchTab?: 'places' | 'things';
 }
 
 const LANG_NAMES: Record<string, string> = {

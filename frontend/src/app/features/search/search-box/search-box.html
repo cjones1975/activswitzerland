@@ -1,0 +1,37 @@
+<div class="search-box">
+  <div class="search-tabs">
+    <button
+      type="button"
+      class="search-tab"
+      [class.search-tab--active]="activeTab() === 'places'"
+      (click)="selectTab('places')">
+      <i class="fa-solid fa-location-dot"></i>
+      {{ 'home.search.placesTab' | translate }}
+    </button>
+    <button
+      type="button"
+      class="search-tab"
+      [class.search-tab--active]="activeTab() === 'things'"
+      (click)="selectTab('things')">
+      <i class="fa-solid fa-bolt"></i>
+      {{ 'home.search.thingsTab' | translate }}
+    </button>
+  </div>
+  <div class="search-card">
+    <div class="search-input-wrap">
+      <i class="fa-regular fa-magnifying-glass search-input-icon"></i>
+      <input
+        pInputText
+        type="search"
+        class="search-input"
+        [ngModel]="queryText()"
+        (ngModelChange)="queryText.set($event)"
+        (keydown.enter)="onSubmit()"
+        [placeholder]="(activeTab() === 'places' ? 'home.search.placeholderPlaces' : 'home.search.placeholderThings') | translate" />
+    </div>
+    <button type="button" class="search-submit-btn" (click)="onSubmit()">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      {{ 'home.search.searchButton' | translate }}
+    </button>
+  </div>
+</div>

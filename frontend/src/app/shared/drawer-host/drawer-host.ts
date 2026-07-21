@@ -49,7 +49,12 @@ export class DrawerHost {
 
   onDestinationBack() {
     this.svc.close('destination-detail');
-    const category = this.router.parseUrl(this.router.url).queryParams['category'];
+    const queryParams = this.router.parseUrl(this.router.url).queryParams;
+    if (queryParams['from'] === 'search') {
+      this.router.navigate(['/search'], { queryParams: { q: queryParams['q'], tab: queryParams['tab'] } });
+      return;
+    }
+    const category = queryParams['category'];
     this.router.navigate(['/destinations'], category ? { queryParams: { category } } : {});
   }
 
@@ -85,10 +90,12 @@ export class DrawerHost {
     return this.svc.getPayload<AttractionDetailPayload>('attraction-detail')?.source;
   });
 
+  // Also covers the 'search' source: /search has no map view behind it, so
+  // there's nothing for "show on map" to reveal there either.
   isAttractionDetailTripPlanner = computed(() => {
     this.svc.list();
     const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail');
-    return payload?.mode === 'select' || payload?.source === 'trip-summary';
+    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search';
   });
 
   onAttractionDetailBack() {
@@ -103,6 +110,10 @@ export class DrawerHost {
       return;
     }
     if (payload.source === 'map') {
+      return;
+    }
+    if (payload.source === 'search') {
+      this.router.navigate(['/search'], { queryParams: { q: payload.searchQuery, tab: payload.searchTab ?? 'things' } });
       return;
     }
     this.svc.open('all-attractions', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId, origin: payload.listOrigin });

@@ -28,6 +28,16 @@ export class DestinationDetail {
     return this.drawerSvc.getPayload<Destination>('destination-detail') ?? null;
   });
 
+  // MySwitzerland occasionally returns a destination with no geo coordinates
+  // at all (list endpoints filter these out server-side, but a directly-loaded
+  // single destination isn't filtered) — every feature below that needs
+  // lat/lon (weather, nearby attractions, hikes/bikes radius search) must be
+  // gated on this rather than assume `dest.geo` exists.
+  hasGeo = computed(() => {
+    const dest = this.destination();
+    return !!(dest?.geo?.latitude && dest?.geo?.longitude);
+  });
+
   todayWeather = signal<DailyForecast | null>(null);
   weatherLoading = signal(false);
 
@@ -50,7 +60,7 @@ export class DestinationDetail {
 
     effect(() => {
       const dest = this.destination();
-      if (!dest) { this.todayWeather.set(null); return; }
+      if (!dest?.geo?.latitude || !dest?.geo?.longitude) { this.todayWeather.set(null); return; }
       untracked(() => this.weatherTrigger$.next({
         lat: dest.geo.latitude,
         lon: dest.geo.longitude,
@@ -60,7 +70,7 @@ export class DestinationDetail {
 
   openWeather() {
     const dest = this.destination();
-    if (!dest) return;
+    if (!dest?.geo?.latitude || !dest?.geo?.longitude) return;
     const payload: WeatherPayload = {
       lat: dest.geo.latitude,
       lon: dest.geo.longitude,
@@ -73,7 +83,7 @@ export class DestinationDetail {
 
   openHikes() {
     const dest = this.destination();
-    if (!dest) return;
+    if (!dest?.geo?.latitude || !dest?.geo?.longitude) return;
     this.drawerSvc.close('destination-detail');
     // Only one activity category's markers/reopen-button shows on the map at
     // a time — wipe any other category's leftover state before switching.
@@ -83,7 +93,7 @@ export class DestinationDetail {
 
   openBikeRides() {
     const dest = this.destination();
-    if (!dest) return;
+    if (!dest?.geo?.latitude || !dest?.geo?.longitude) return;
     this.drawerSvc.close('destination-detail');
     this.activityMap.showOnly('bikes');
     this.drawerSvc.open('bikes', { destination: dest });

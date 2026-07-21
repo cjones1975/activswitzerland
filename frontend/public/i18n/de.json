@@ -12,7 +12,8 @@
     "logout": "Abmelden",
     "close": "Schliessen",
     "showOnMap": "Auf Karte anzeigen",
-    "back": "Zurück"
+    "back": "Zurück",
+    "search": "Suche"
   },
   "auth": {
     "toast": {
@@ -368,6 +369,19 @@
       "attractions": "Attraktionen",
       "cantons": "Kantone",
       "unesco": "UNESCO-Stätten"
+    }
+  },
+  "home": {
+    "search": {
+      "placesTab": "Orte besuchen",
+      "thingsTab": "Aktivitäten",
+      "placeholderPlaces": "Stadt, Land oder Region suchen…",
+      "placeholderThings": "Attraktion oder Aktivität suchen…",
+      "searchButton": "Suchen",
+      "backToSearch": "Zurück zur Suche",
+      "loadError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "noDestinationResults": "Es tut uns leid, wir konnten keine Reiseziele zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort.",
+      "noAttractionResults": "Es tut uns leid, wir konnten keine Attraktionen zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort."
     }
   }
 }

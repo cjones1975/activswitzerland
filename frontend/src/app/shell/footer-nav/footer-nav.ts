@@ -25,7 +25,7 @@ export class FooterNav {
 
   private isFooterNavRoute(url: string): boolean {
     const path = url.split('?')[0];
-    return path === '/' || path === '/destinations'
+    return path === '/' || path === '/destinations' || path === '/search'
       || /^\/destinations\/.+/.test(path) || /^\/trip-planner(\/.*)?$/.test(path);
   }
 }

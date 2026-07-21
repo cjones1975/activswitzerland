@@ -1,0 +1,114 @@
+.search-box {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  background: var(--color-white);
+}
+
+.search-tabs {
+  display: flex;
+}
+
+.search-tab {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.9rem 1rem;
+  background: var(--gray-50);
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  cursor: pointer;
+  font-family: inherit;
+  transition: background 0.15s, color 0.15s;
+}
+
+.search-tab--active {
+  background: var(--color-white);
+  color: var(--navy-900);
+  border-bottom-color: var(--navy-800);
+}
+
+.search-card {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem;
+}
+
+.search-input-wrap {
+  position: relative;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.search-input-icon {
+  position: absolute;
+  left: 1rem;
+  color: var(--gray-400);
+  font-size: 0.9rem;
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.85rem 1rem 0.85rem 2.5rem;
+  border: 1px solid var(--gray-200);
+  border-radius: 999px;
+  font-size: 0.95rem;
+  background: var(--gray-50);
+  color: var(--navy-900);
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.search-input:focus {
+  border-color: var(--navy-500);
+}
+
+.search-submit-btn {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.85rem 1.5rem;
+  background: var(--navy-900);
+  color: var(--color-white);
+  border: none;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.9rem;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+  transition: background 0.15s;
+}
+
+.search-submit-btn:hover {
+  background: var(--navy-700);
+}
+
+@media (max-width: 640px) {
+  .search-tab {
+    font-size: 0.78rem;
+    padding: 0.75rem 0.5rem;
+  }
+
+  .search-card {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .search-submit-btn {
+    justify-content: center;
+  }
+}

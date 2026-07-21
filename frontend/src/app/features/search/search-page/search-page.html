@@ -1,0 +1,40 @@
+<div class="search-page">
+  <div class="search-page-input-row">
+    <div class="search-input-wrap">
+      <i class="fa-regular fa-magnifying-glass search-input-icon"></i>
+      <input
+        pInputText
+        type="search"
+        class="search-input"
+        [ngModel]="queryInput()"
+        (ngModelChange)="queryInput.set($event)"
+        (keydown.enter)="onSubmit()"
+        [placeholder]="'home.search.placeholderPlaces' | translate" />
+    </div>
+    <button type="button" class="search-submit-btn" (click)="onSubmit()">
+      <i class="fa-solid fa-magnifying-glass"></i>
+      {{ 'home.search.searchButton' | translate }}
+    </button>
+  </div>
+
+  <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)" [lazy]="true">
+    <p-tablist>
+      <p-tab value="places">
+        <i class="fa-solid fa-location-dot"></i>
+        {{ 'home.search.placesTab' | translate }}
+      </p-tab>
+      <p-tab value="things">
+        <i class="fa-solid fa-bolt"></i>
+        {{ 'home.search.thingsTab' | translate }}
+      </p-tab>
+    </p-tablist>
+    <p-tabpanels>
+      <p-tabpanel value="places">
+        <app-destination-search-results [query]="query()" />
+      </p-tabpanel>
+      <p-tabpanel value="things">
+        <app-attraction-search-results [query]="query()" />
+      </p-tabpanel>
+    </p-tabpanels>
+  </p-tabs>
+</div>

@@ -33,14 +33,16 @@
       <p class="abstract" [innerHTML]="dest.abstract"></p>
 
       <div class="activity-cards">
-        <button class="activity-card" type="button" (click)="openHikes()">
-          <i class="fa-solid fa-person-hiking activity-card-icon"></i>
-          <span class="activity-card-label">{{ 'destinations.detail.hikes' | translate }}</span>
-        </button>
-        <button class="activity-card" type="button" (click)="openBikeRides()">
-          <i class="fa-solid fa-bicycle activity-card-icon"></i>
-          <span class="activity-card-label">{{ 'destinations.detail.bikeRides' | translate }}</span>
-        </button>
+        @if (hasGeo()) {
+          <button class="activity-card" type="button" (click)="openHikes()">
+            <i class="fa-solid fa-person-hiking activity-card-icon"></i>
+            <span class="activity-card-label">{{ 'destinations.detail.hikes' | translate }}</span>
+          </button>
+          <button class="activity-card" type="button" (click)="openBikeRides()">
+            <i class="fa-solid fa-bicycle activity-card-icon"></i>
+            <span class="activity-card-label">{{ 'destinations.detail.bikeRides' | translate }}</span>
+          </button>
+        }
         <button class="activity-card activity-card-hotels" type="button" (click)="openHotels()">
           <i class="fa-solid fa-bed activity-card-icon"></i>
           <span class="activity-card-label">{{ 'destinations.detail.hotels' | translate }}</span>
@@ -48,32 +50,36 @@
         </button>
       </div>
 
-      <div class="weather-box">
-        @if (weatherLoading()) {
-          <div class="weather-skeleton"></div>
-        } @else if (todayWeather(); as w) {
-          <div class="weather-card-inner">
-            <span class="weather-title">{{ 'weather.today' | translate }}</span>
-            <div class="weather-main-row">
-              <i [class]="w.weatherCode.icon + ' weather-icon'"></i>
-              <span class="weather-temp">{{ w.maxTemp }}°C</span>
+      @if (hasGeo()) {
+        <div class="weather-box">
+          @if (weatherLoading()) {
+            <div class="weather-skeleton"></div>
+          } @else if (todayWeather(); as w) {
+            <div class="weather-card-inner">
+              <span class="weather-title">{{ 'weather.today' | translate }}</span>
+              <div class="weather-main-row">
+                <i [class]="w.weatherCode.icon + ' weather-icon'"></i>
+                <span class="weather-temp">{{ w.maxTemp }}°C</span>
+              </div>
+              <span class="weather-desc">{{ w.weatherCode.labelKey | translate }}</span>
+              <button class="forecast-link" type="button" (click)="openWeather()">
+                {{ 'weather.seeForecast' | translate }}
+                <i class="fa-solid fa-arrow-right"></i>
+              </button>
             </div>
-            <span class="weather-desc">{{ w.weatherCode.labelKey | translate }}</span>
-            <button class="forecast-link" type="button" (click)="openWeather()">
-              {{ 'weather.seeForecast' | translate }}
-              <i class="fa-solid fa-arrow-right"></i>
-            </button>
-          </div>
-        } @else {
-          <div class="weather-unavailable">
-            <i class="fa-light fa-cloud weather-icon"></i>
-            <span class="weather-temp">--°C</span>
-          </div>
-        }
-      </div>
+          } @else {
+            <div class="weather-unavailable">
+              <i class="fa-light fa-cloud weather-icon"></i>
+              <span class="weather-temp">--°C</span>
+            </div>
+          }
+        </div>
+      }
     </div>
 
-    <app-attraction-vertical-list [lat]="dest.geo.latitude" [lon]="dest.geo.longitude" />
+    @if (hasGeo()) {
+      <app-attraction-vertical-list [lat]="dest.geo.latitude" [lon]="dest.geo.longitude" />
+    }
 
   </div>
 }

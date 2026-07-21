@@ -31,6 +31,9 @@
         </div>
     </div>
 </section>
+<div class="home-search-wrap">
+  <app-search-box (search)="onSearch($event)"></app-search-box>
+</div>
 <div class="home-section">
   <div class="section-inner">
     <app-destination-horizontal-list

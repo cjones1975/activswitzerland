@@ -12,6 +12,88 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-21 — Destination/Attraction Missing-Geo Crash Fixed
+
+- Real bug found via user report: `destination-detail.ts` crashed (`Cannot read properties
+  of undefined (reading 'latitude')`) for destinations MySwitzerland returns with no `geo`
+  coordinates at all — the weather-fetch effect assumed `dest.geo.latitude` always exists
+- `backend/src/controllers/myswitzerland.js`: new shared `hasValidGeo`/`stripInvalidGeo`
+  helpers (NaN + non-zero check, mirrors the frontend's existing `hasValidGeo` in
+  `attraction-markers.ts`) applied to all 6 list-returning endpoints
+  (`getDestinations`, `getDestinationsByGeobBox`, `searchDestinations`, `getTopAttractions`,
+  `getAttractions`, `searchAttractions`) — records with missing/placeholder (0,0)
+  coordinates are filtered out of the response before it reaches the client. Single-record
+  endpoints (`getDestination`/`getAttraction`) are untouched, since filtering doesn't apply
+  when the client explicitly requested that exact id
+- `destination-detail.ts/.html`: new `hasGeo` computed guards the weather-fetch effect,
+  `openWeather()`, and `openHikes()`/`openBikeRides()` (which pass the destination's
+  coordinates into a downstream radius search that would crash the same way); template
+  hides the Hikes/Bike Rides cards, weather box, and nearby-attractions list entirely when
+  geo is missing rather than rendering broken UI — Hotels stays visible since it doesn't
+  depend on coordinates
+- Verified via `tsc --noEmit` and `ng build` (both clean)
+
+### 2026-07-21 — Homepage Search Implemented
+
+- Branch: `feature/home-search`; specced in `context/features/home-search-spec.md`
+- Backend: new `searchDestinations` handler in `myswitzerland.js` mirroring
+  `searchAttractions` (destinations had no free-text `query` param before this), mounted at
+  `GET /searchdestinations` with the same `cacheResponse()` middleware as every other route
+- `DestinationsService.searchDestinations()` added, mirroring `AttractionsService.searchAttractions`
+- `AttractionDetailPayload.source` gained a `'search'` value plus `searchQuery`/`searchTab`
+  fields; `onDestinationBack()`/`onAttractionDetailBack()` in `drawer-host.ts` became
+  origin-aware — a destination or attraction reached via search now returns to
+  `/search?q=...&tab=...` on back instead of the destinations list/all-attractions, via a
+  new `from`/`q`/`tab` query-param branch (same pattern as the existing
+  `AttractionDetailPayload.source`/`ActivityPickerPayload.origin` mechanism)
+- New `features/search/search-box/` — tabs (Places to visit/Things to do) + input + button,
+  matching `context/screenshots/homepage_search.png` (journey/layout reference only, not an
+  exact color spec, per the user); embedded on the homepage between hero and City Breaks,
+  overlapping the hero's bottom edge via negative `margin-top`
+- New `/search` route → `features/search/search-page/`, using PrimeNG's `p-tabs`/`p-tablist`/
+  `p-tabpanels` with `[lazy]="true"` so only the active tab's result component ever mounts
+  and fetches; a shared search input updates the URL (`?q=`/`?tab=`) on submit or tab switch
+- New `features/search/destination-search-results/` and `attraction-search-results/` — each
+  guards against refetching an already-searched query (per-tab, per-query caching); click-through
+  to `/destinations/:id` (destinations) or the `attraction-detail` drawer directly (attractions)
+- "Search" added to `menu-nav` and `footer-nav`; `footer-nav`'s `isFooterNavRoute` extended to
+  show on `/search` too
+- i18n: `nav.search`, `home.search.*` (tabs, placeholders, search button, back-to-search,
+  load/no-results errors) added across en/de/fr/it
+- Deviation from spec: the spec described one component serving both the homepage card and
+  the `/search` page's header/control. Built instead as `SearchBox` (homepage-only,
+  self-contained tab-toggle + input + button, navigates away on submit) plus a simpler input
+  row directly in `SearchPage` paired with real PrimeNG tabs for results-switching — avoids
+  either an awkward tabless `p-tabs` instance or two live tab UIs stacked on one page
+- UAT fixes in the same branch: hero-overlap negative margin reduced by 40px (`-3rem/-4rem`
+  → `-0.5rem/-1.5rem`) so the search card sits lower/less overlapping; search-box shadow
+  softened (`0 10px 30px rgba(0,0,0,.18)` → `0 4px 16px rgba(0,0,0,.1)`) to match the app's
+  subtler card-shadow scale; Nature Parks section (last on the homepage) gained
+  `padding-bottom: 6rem` since the fixed 64px footer-nav was partially covering its content
+- Verified via `tsc --noEmit` and `ng build` (both clean); UI not yet exercised in a live
+  browser session (no browser-automation tool available in this environment)
+- Feature marked complete
+
+### 2026-07-21 — Homepage Search Specced
+
+- Specced a homepage search section (between hero and City Breaks) letting users search
+  destinations ("Places to visit") or attractions ("Things to do") via PrimeNG Tabs,
+  submit-based (not type-ahead), with lazy per-tab fetch and per-(tab, query) caching so
+  only the active tab's API call fires
+- New dedicated `/search` route hosts the full results experience (not a drawer) —
+  shareable/bookmarkable `?q=`/`?tab=` URL; destination results navigate to
+  `/destinations/:id` (reusing the existing `destination-detail` drawer auto-open),
+  attraction results open `attraction-detail` directly with a new `source: 'search'` value
+- Confirmed decision: `destination-detail`'s back button (`onDestinationBack()` in
+  `drawer-host.ts`) needs to become origin-aware — currently only knows how to return to
+  the destinations list via a `category` query param; a `from`/`q`/`tab` query-param branch
+  is needed so a destination reached via search returns to `/search` instead, following the
+  same pattern already used by `AttractionDetailPayload.source`/`ActivityPickerPayload.origin`
+- Backend needs a new `searchDestinations` handler/route mirroring `searchAttractions` —
+  destinations currently have no free-text search parameter at all
+- "Search" link to be added to `menu-nav`/`footer-nav`
+- Created `context/features/home-search-spec.md`; no feature branch created yet
+
 ### 2026-07-19 — Hike/Bike Multi-Day Stages Implemented
 
 - Branch: `feature/hike-bike-multi-day-stages`; specced in `context/features/hike-bike-multi-day-stages-spec.md`

@@ -1,0 +1,23 @@
+<div class="results-list">
+  @if (loading()) {
+    @for (s of skeletons; track $index) {
+      <div class="skeleton-card">
+        <p-skeleton width="100%" height="100%" borderRadius="10px" />
+      </div>
+    }
+  } @else if (error()) {
+    <p class="no-results">{{ 'home.search.loadError' | translate }}</p>
+  } @else if (searched() && !results().length) {
+    <p class="no-results">{{ 'home.search.noAttractionResults' | translate }}</p>
+  } @else {
+    @for (attraction of results(); track attraction.identifier) {
+      <div class="result-card" (click)="onResultClick(attraction)">
+        <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
+        <div class="card-text">
+          <h3 class="card-name">{{ attraction.name }}</h3>
+          <p class="card-abstract">{{ attraction.abstract }}</p>
+        </div>
+      </div>
+    }
+  }
+</div>

@@ -2,6 +2,22 @@ import axios from 'axios';
 import ErrorResponse from '../utils/errorResponse.js';
 import asyncHandler from '../middleware/async.js';
 
+// MySwitzerland occasionally returns destinations/attractions with missing or
+// placeholder (0,0) coordinates. Anything depending on lat/lon downstream
+// (map pins, nearby search, weather) breaks for these, so they're filtered
+// out of list responses here rather than patched at every read site.
+const hasValidGeo = (record) => {
+  const lat = Number(record?.geo?.latitude);
+  const lon = Number(record?.geo?.longitude);
+  return !Number.isNaN(lat) && !Number.isNaN(lon) && lat !== 0 && lon !== 0;
+};
+
+const stripInvalidGeo = (response) => {
+  if (Array.isArray(response.data?.data)) {
+    response.data.data = response.data.data.filter(hasValidGeo);
+  }
+};
+
 // @desc    GET destinations
 // @route   GET /api/v1/destinations
 // @access  Public
@@ -19,6 +35,7 @@ export const getDestinations = asyncHandler(async (req, res, next) => {
     if (!response.data) {
       return next(new ErrorResponse(`No destination data found`, 404));
     }
+    stripInvalidGeo(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -45,6 +62,7 @@ export const getDestinationsByGeobBox = asyncHandler(async (req, res, next) => {
     if (!response.data) {
       return next(new ErrorResponse(`No destination data found`, 404));
     }
+    stripInvalidGeo(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -92,6 +110,33 @@ export const getDestination = asyncHandler(async (req, res, next) => {
   }
 });
 
+// @desc    GET destinations matching a free-text search query
+// @route   GET /api/v1/searchdestinations
+// @access  Public
+export const searchDestinations = asyncHandler(async (req, res, next) => {
+  const config = {
+    method: 'get',
+    url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}`,
+    headers: {
+      'x-api-key': process.env.MYS_KEY,
+      accept: 'application/json'
+    },
+  };
+  try {
+    let response = await axios(config);
+    if (!response.data) {
+      return next(new ErrorResponse(`No destination data found`, 404));
+    }
+    stripInvalidGeo(response);
+    res.status(200).json({ success: true, data: response.data });
+  } catch (error) {
+    console.error(error);
+    next(
+      new ErrorResponse(`An error occurred during the request: ${error}`, 500)
+    );
+  }
+});
+
 // @desc    GET top attractions
 // @route   GET /api/v1/topattractions
 // @access  Public
@@ -111,6 +156,7 @@ export const getTopAttractions = asyncHandler(async (req, res, next) => {
     if (!response.data) {
       return next(new ErrorResponse(`No attraction data found`, 404));
     }
+    stripInvalidGeo(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -164,6 +210,7 @@ export const getAttractions = asyncHandler(async (req, res, next) => {
     if (!response.data) {
       return next(new ErrorResponse(`No attraction data found`, 404));
     }
+    stripInvalidGeo(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -192,6 +239,7 @@ export const searchAttractions = asyncHandler(async (req, res, next) => {
     if (!response.data) {
       return next(new ErrorResponse(`No attraction data found`, 404));
     }
+    stripInvalidGeo(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -200,4 +248,6 @@ export const searchAttractions = asyncHandler(async (req, res, next) => {
     );
   }
 });
+
+
 

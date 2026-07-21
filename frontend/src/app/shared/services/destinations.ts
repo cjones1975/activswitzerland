@@ -31,6 +31,26 @@ export class DestinationsService {
       .pipe(map(res => res.data.data));
   }
 
+  searchDestinations(params: {
+    language: string;
+    page: number;
+    search: string;
+    hitsPerPage: number;
+  }): Observable<Destination[]> {
+    const httpParams = new HttpParams()
+      .set('language', params.language)
+      .set('page', params.page)
+      .set('search', params.search)
+      .set('hitsPerPage', params.hitsPerPage)
+      .set('expand', 'false')
+      .set('translate', 'true')
+      .set('stripHtml', 'false');
+
+    return this.http
+      .get<DestinationsResponse>(`${environment.apiUrl}/api/v1/myswitzerland/searchdestinations`, { params: httpParams })
+      .pipe(map(res => res.data.data));
+  }
+
   getDestination(id: string, language: string): Observable<Destination> {
     const httpParams = new HttpParams()
       .set('language', language)

@@ -6,6 +6,7 @@ import { DestinationsLayout } from './shell/destinations-layout/destinations-lay
 import { TripPlannerLayout } from './shell/trip-planner-layout/trip-planner-layout';
 import { Profile } from './features/auth/profile/profile';
 import { ExploreTrips } from './features/explore-trips/explore-trips';
+import { SearchPage } from './features/search/search-page/search-page';
 import { authGuard } from './core/guards/auth';
 
 export const routes: Routes = [
@@ -19,6 +20,7 @@ export const routes: Routes = [
       { path: 'trip-planner', component: TripPlannerLayout },
       { path: 'trip-planner/:id', component: TripPlannerLayout },
       { path: 'explore-trips', component: ExploreTrips },
+      { path: 'search', component: SearchPage },
     ]
   },
   { path: 'auth', redirectTo: '', pathMatch: 'full' },

@@ -127,7 +127,9 @@
                 type="button"
                 [attr.aria-label]="attractionDetailSource() === 'destination-detail'
                     ? ('attractions.backToDestination' | translate: { name: attractionDetailDestinationName() })
-                    : ('attractions.backToAttractions' | translate)"
+                    : attractionDetailSource() === 'search'
+                        ? ('home.search.backToSearch' | translate)
+                        : ('attractions.backToAttractions' | translate)"
                 (click)="onAttractionDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>

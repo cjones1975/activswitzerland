@@ -12,7 +12,8 @@
     "logout": "Log out",
     "close": "Close",
     "showOnMap": "Show on map",
-    "back": "Back"
+    "back": "Back",
+    "search": "Search"
   },
   "auth": {
     "toast": {
@@ -368,6 +369,19 @@
       "attractions": "Attractions",
       "cantons": "Cantons",
       "unesco": "UNESCO Sites"
+    }
+  },
+  "home": {
+    "search": {
+      "placesTab": "Places to visit",
+      "thingsTab": "Things to do",
+      "placeholderPlaces": "Search a city, country, or region…",
+      "placeholderThings": "Search an attraction or activity…",
+      "searchButton": "Search",
+      "backToSearch": "Back to search",
+      "loadError": "Something went wrong. Please try again.",
+      "noDestinationResults": "I'm sorry, we couldn't find any destinations matching your search query. Please try another keyword.",
+      "noAttractionResults": "I'm sorry, we couldn't find any attractions matching your search query. Please try another keyword."
     }
   }
 }
