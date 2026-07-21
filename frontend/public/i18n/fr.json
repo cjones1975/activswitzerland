@@ -1,8 +1,4 @@
 {
-  "app": {
-    "title": "Mon application Angular",
-    "welcome": "Bienvenue"
-  },
    "nav-drawer": {
     "subtitle": "Découvrir · Explorer · Planifier"
   },
@@ -207,7 +203,6 @@
   "destinations": {
     "viewAll": "Voir tout",
     "allCities": {
-      "title": "Toutes les villes",
       "subtitle": "{{count}} destinations"
     },
     "cityBreaks": {
@@ -326,7 +321,6 @@
   "weather": {
     "today": "Météo du jour",
     "seeForecast": "Prévisions 7 jours",
-    "backToDestination": "Retour à la destination",
     "precipChance": "Chance de précip.",
     "avgWind": "Vent moy.",
     "uvIndex": "Indice UV",
@@ -335,7 +329,35 @@
     "daylight": "Ensoleillement",
     "rain": "Pluie",
     "wind": "Vent",
-    "uv": "UV"
+    "uv": "UV",
+    "loadError": "Impossible de charger les données météo.",
+    "forecastHeading": "PRÉVISIONS 7 JOURS",
+    "todayLabel": "Aujourd'hui",
+    "daylightFormat": "{{hours}} h {{minutes}} min",
+    "code": {
+      "clearSky": "Ciel dégagé",
+      "mainlyClear": "Plutôt dégagé",
+      "partlyCloudy": "Partiellement nuageux",
+      "overcast": "Couvert",
+      "fog": "Brouillard",
+      "lightDrizzle": "Légère bruine",
+      "moderateDrizzle": "Bruine modérée",
+      "heavyDrizzle": "Forte bruine",
+      "lightFreezingRain": "Pluie verglaçante légère",
+      "heavyFreezingRain": "Forte pluie verglaçante",
+      "sunWithPossibleRain": "Soleil avec risque de pluie",
+      "moderateRain": "Pluie modérée",
+      "heavyRain": "Forte pluie",
+      "lightSnow": "Neige légère",
+      "moderateSnow": "Neige modérée",
+      "heavySnow": "Neige forte",
+      "snow": "Neige",
+      "iceRain": "Pluie verglaçante",
+      "thunderstorms": "Orages",
+      "thunderstormRain": "Orage avec pluie",
+      "hail": "Grêle",
+      "unknown": "Inconnu"
+    }
   },
   "hero": {
     "badge": "Le meilleur de la Suisse",

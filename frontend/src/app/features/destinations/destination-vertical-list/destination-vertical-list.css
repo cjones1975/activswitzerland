@@ -6,6 +6,23 @@
   padding-bottom: 5rem;
 }
 
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.75rem;
+  border-radius: 50%;
+  color: var(--navy-900);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.back-link:hover {
+  background: var(--gray-100, #f1f5f9);
+}
+
 .map-section {
   position: relative;
   width: 100%;

@@ -1,8 +1,4 @@
 {
-  "app": {
-    "title": "La mia app Angular",
-    "welcome": "Benvenuto"
-  },
   "nav-drawer": {
     "subtitle": "Scoprire · Esplorare · Pianificare"
   },
@@ -207,7 +203,6 @@
   "destinations": {
     "viewAll": "Vedi tutto",
     "allCities": {
-      "title": "Tutte le città",
       "subtitle": "{{count}} destinazioni"
     },
     "cityBreaks": {
@@ -326,7 +321,6 @@
   "weather": {
     "today": "Meteo di oggi",
     "seeForecast": "Previsioni 7 giorni",
-    "backToDestination": "Torna alla destinazione",
     "precipChance": "Prob. precipitazioni",
     "avgWind": "Vento medio",
     "uvIndex": "Indice UV",
@@ -335,7 +329,35 @@
     "daylight": "Luce del giorno",
     "rain": "Pioggia",
     "wind": "Vento",
-    "uv": "UV"
+    "uv": "UV",
+    "loadError": "Impossibile caricare i dati meteo.",
+    "forecastHeading": "PREVISIONI 7 GIORNI",
+    "todayLabel": "Oggi",
+    "daylightFormat": "{{hours}} h {{minutes}} min",
+    "code": {
+      "clearSky": "Cielo sereno",
+      "mainlyClear": "Prevalentemente sereno",
+      "partlyCloudy": "Parzialmente nuvoloso",
+      "overcast": "Coperto",
+      "fog": "Nebbia",
+      "lightDrizzle": "Pioviggine leggera",
+      "moderateDrizzle": "Pioviggine moderata",
+      "heavyDrizzle": "Pioviggine forte",
+      "lightFreezingRain": "Pioggia gelata leggera",
+      "heavyFreezingRain": "Pioggia gelata forte",
+      "sunWithPossibleRain": "Sole con possibile pioggia",
+      "moderateRain": "Pioggia moderata",
+      "heavyRain": "Pioggia forte",
+      "lightSnow": "Neve leggera",
+      "moderateSnow": "Neve moderata",
+      "heavySnow": "Neve forte",
+      "snow": "Neve",
+      "iceRain": "Pioggia gelata",
+      "thunderstorms": "Temporali",
+      "thunderstormRain": "Temporale con pioggia",
+      "hail": "Grandine",
+      "unknown": "Sconosciuto"
+    }
   },
   "hero": {
     "badge": "Il meglio della Svizzera",

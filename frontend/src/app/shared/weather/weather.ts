@@ -1,15 +1,17 @@
 import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subject, switchMap } from 'rxjs';
 import { Drawer } from '../services/drawer';
 import { WeatherService } from '../services/weather';
+import { LangService } from '../services/lang';
 import { ForecastViewModel, DailyForecast, WeatherPayload } from '../../models/weather';
 
 @Component({
   selector: 'app-weather',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   templateUrl: './weather.html',
   styleUrl: './weather.css',
 })
@@ -17,6 +19,8 @@ export class Weather {
   private drawerSvc = inject(Drawer);
   private weatherService = inject(WeatherService);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
+  private langSvc = inject(LangService);
 
   payload = computed(() => {
     this.drawerSvc.list();
@@ -108,18 +112,18 @@ export class Weather {
 
   formatDayName(dateStr: string): string {
     const d = new Date(dateStr + 'T12:00:00');
-    return d.toLocaleDateString('en', { weekday: 'short' });
+    return d.toLocaleDateString(this.langSvc.current, { weekday: 'short' });
   }
 
   formatFullDate(dateStr: string): string {
     const d = new Date(dateStr + 'T12:00:00');
-    return d.toLocaleDateString('en', { weekday: 'short', day: 'numeric', month: 'short' });
+    return d.toLocaleDateString(this.langSvc.current, { weekday: 'short', day: 'numeric', month: 'short' });
   }
 
   formatDaylight(seconds: number): string {
-    const h = Math.floor(seconds / 3600);
-    const m = Math.floor((seconds % 3600) / 60);
-    return `${h}h ${m}m`;
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    return this.translate.instant('weather.daylightFormat', { hours, minutes });
   }
 
   isToday(day: DailyForecast): boolean {

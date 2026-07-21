@@ -17,14 +17,15 @@ export class FooterNav {
   showNav = toSignal(
     this.router.events.pipe(
       filter(e => e instanceof NavigationEnd),
-      map(e => this.isMapRoute((e as NavigationEnd).urlAfterRedirects)),
-      startWith(this.isMapRoute(this.router.url)),
+      map(e => this.isFooterNavRoute((e as NavigationEnd).urlAfterRedirects)),
+      startWith(this.isFooterNavRoute(this.router.url)),
     ),
     { initialValue: false },
   );
 
-  private isMapRoute(url: string): boolean {
+  private isFooterNavRoute(url: string): boolean {
     const path = url.split('?')[0];
-    return /^\/destinations\/.+/.test(path) || /^\/trip-planner(\/.*)?$/.test(path);
+    return path === '/' || path === '/destinations'
+      || /^\/destinations\/.+/.test(path) || /^\/trip-planner(\/.*)?$/.test(path);
   }
 }

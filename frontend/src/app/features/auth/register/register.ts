@@ -46,7 +46,6 @@ export class Register implements OnInit {
   async ngOnInit(): Promise<void> {
     try {
       this.countries = await this.refData.getCountries();
-      console.log(this.countries);
     } catch {
       this.countries = [];
     }

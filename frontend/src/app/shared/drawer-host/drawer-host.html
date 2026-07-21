@@ -160,13 +160,9 @@
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onWeatherBack()">
                     <i class="fa-regular fa-chevron-left"></i>
                 </button>
-                <!-- <button class="dest-back" type="button" (click)="onWeatherBack()">
-                    <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
-                    {{ 'weather.backToDestination' | translate }}
-                </button>    -->
             </div>
             <h2 class="weather-location-name">{{ weatherLocationName() }}</h2>
-            <span class="weather-forecast-label">7-DAY FORECAST</span>
+            <span class="weather-forecast-label">{{ 'weather.forecastHeading' | translate }}</span>
         </div>
     </ng-template>
     <hr class="header-divider" />

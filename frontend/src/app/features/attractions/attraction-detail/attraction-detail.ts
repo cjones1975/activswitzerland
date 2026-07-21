@@ -55,7 +55,6 @@ export class AttractionDetail implements OnDestroy {
   private fetchTrigger$ = new Subject<{ id: string; lang: string }>();
 
   neededTime = computed(() => {
-    console.log(this.fullAttraction());
     const c = this.fullAttraction()?.classification?.find(cl => cl.name === 'neededtime');
     return c?.values?.[0]?.title ?? null;
   });

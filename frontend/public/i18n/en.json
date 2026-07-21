@@ -1,8 +1,4 @@
 {
-  "app": {
-    "title": "My Angular App",
-    "welcome": "Welcome"
-  },
   "nav-drawer": {
     "subtitle": "Discover · Explore · Plan"
   },
@@ -207,7 +203,6 @@
   "destinations": {
     "viewAll": "View all",
     "allCities": {
-      "title": "All Cities",
       "subtitle": "{{count}} destinations"
     },
     "cityBreaks": {
@@ -326,7 +321,6 @@
   "weather": {
     "today": "Today's weather",
     "seeForecast": "7 day forecast",
-    "backToDestination": "Back to destination",
     "precipChance": "Precip. chance",
     "avgWind": "Avg. wind",
     "uvIndex": "UV Index",
@@ -335,7 +329,35 @@
     "daylight": "Daylight",
     "rain": "Rain",
     "wind": "Wind",
-    "uv": "UV"
+    "uv": "UV",
+    "loadError": "Unable to load weather data.",
+    "forecastHeading": "7-DAY FORECAST",
+    "todayLabel": "Today",
+    "daylightFormat": "{{hours}}h {{minutes}}m",
+    "code": {
+      "clearSky": "Clear sky",
+      "mainlyClear": "Mainly clear",
+      "partlyCloudy": "Partly cloudy",
+      "overcast": "Overcast",
+      "fog": "Fog",
+      "lightDrizzle": "Light drizzle",
+      "moderateDrizzle": "Moderate drizzle",
+      "heavyDrizzle": "Heavy drizzle",
+      "lightFreezingRain": "Light freezing rain",
+      "heavyFreezingRain": "Heavy freezing rain",
+      "sunWithPossibleRain": "Sun with possible rain",
+      "moderateRain": "Moderate rain",
+      "heavyRain": "Heavy rain",
+      "lightSnow": "Light snow",
+      "moderateSnow": "Moderate snow",
+      "heavySnow": "Heavy snow",
+      "snow": "Snow",
+      "iceRain": "Ice rain",
+      "thunderstorms": "Thunderstorms",
+      "thunderstormRain": "Thunderstorm & rain",
+      "hail": "Hail",
+      "unknown": "Unknown"
+    }
   },
   "hero": {
     "badge": "Switzerland's finest experiences",

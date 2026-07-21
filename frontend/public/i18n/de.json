@@ -1,8 +1,4 @@
 {
-  "app": {
-    "title": "Meine Angular App",
-    "welcome": "Willkommen"
-  },
    "nav-drawer": {
     "subtitle": "Entdecken · Erkunden · Planen"
   },
@@ -207,7 +203,6 @@
   "destinations": {
     "viewAll": "Alle anzeigen",
     "allCities": {
-      "title": "Alle Städte",
       "subtitle": "{{count}} Reiseziele"
     },
     "cityBreaks": {
@@ -326,7 +321,6 @@
   "weather": {
     "today": "Heutiges Wetter",
     "seeForecast": "7-Tage-Vorhersage",
-    "backToDestination": "Zurück zum Reiseziel",
     "precipChance": "Niederschlagswahrsch.",
     "avgWind": "Ø Wind",
     "uvIndex": "UV-Index",
@@ -335,7 +329,35 @@
     "daylight": "Tageslicht",
     "rain": "Regen",
     "wind": "Wind",
-    "uv": "UV"
+    "uv": "UV",
+    "loadError": "Wetterdaten konnten nicht geladen werden.",
+    "forecastHeading": "7-TAGE-VORHERSAGE",
+    "todayLabel": "Heute",
+    "daylightFormat": "{{hours}} Std {{minutes}} Min",
+    "code": {
+      "clearSky": "Klarer Himmel",
+      "mainlyClear": "Überwiegend klar",
+      "partlyCloudy": "Teilweise bewölkt",
+      "overcast": "Bedeckt",
+      "fog": "Nebel",
+      "lightDrizzle": "Leichter Nieselregen",
+      "moderateDrizzle": "Mäßiger Nieselregen",
+      "heavyDrizzle": "Starker Nieselregen",
+      "lightFreezingRain": "Leichter gefrierender Regen",
+      "heavyFreezingRain": "Starker gefrierender Regen",
+      "sunWithPossibleRain": "Sonne mit möglichem Regen",
+      "moderateRain": "Mäßiger Regen",
+      "heavyRain": "Starker Regen",
+      "lightSnow": "Leichter Schneefall",
+      "moderateSnow": "Mäßiger Schneefall",
+      "heavySnow": "Starker Schneefall",
+      "snow": "Schnee",
+      "iceRain": "Eisregen",
+      "thunderstorms": "Gewitter",
+      "thunderstormRain": "Gewitter mit Regen",
+      "hail": "Hagel",
+      "unknown": "Unbekannt"
+    }
   },
   "hero": {
     "badge": "Das Beste der Schweiz",

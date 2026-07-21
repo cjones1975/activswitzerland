@@ -58,7 +58,7 @@
               <i [class]="w.weatherCode.icon + ' weather-icon'"></i>
               <span class="weather-temp">{{ w.maxTemp }}°C</span>
             </div>
-            <span class="weather-desc">{{ w.weatherCode.label }}</span>
+            <span class="weather-desc">{{ w.weatherCode.labelKey | translate }}</span>
             <button class="forecast-link" type="button" (click)="openWeather()">
               {{ 'weather.seeForecast' | translate }}
               <i class="fa-solid fa-arrow-right"></i>

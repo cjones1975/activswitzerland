@@ -1,6 +1,10 @@
 <div class="page-content">
+  <a class="back-link" routerLink="/" [attr.aria-label]="'nav.back' | translate">
+    <i class="fa-solid fa-chevron-left"></i>
+  </a>
+
   <div class="map-section" #mapSection>
-    <app-map [markers]="mapMarkers()" [zoom]="6"></app-map>
+    <app-map [markers]="mapMarkers()" [zoom]="6" (markerClick)="onMarkerClick($event)"></app-map>
   </div>
 
   <div class="list-header">

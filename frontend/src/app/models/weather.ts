@@ -9,7 +9,7 @@ export type WeatherPayload = {
 
 export interface WeatherCodeInfo {
     code: number;
-    label: string;
+    labelKey: string;
     icon: string;
 }
 
@@ -49,40 +49,40 @@ export interface ForecastViewModel {
 // --- Weather code map (WMO codes from Open-Meteo) ---
 
 const WEATHER_CODE_MAP: Record<number, WeatherCodeInfo> = {
-    0: { code: 0, label: 'Clear sky', icon: 'fa-light fa-sun' },
-    1: { code: 1, label: 'Mainly clear', icon: 'fa-light fa-sun-cloud' },
-    2: { code: 2, label: 'Partly cloudy', icon: 'fa-light fa-cloud-sun' },
-    3: { code: 3, label: 'Overcast', icon: 'fa-light fa-cloud' },
-    45: { code: 45, label: 'Fog', icon: 'fa-light fa-cloud-fog' },
-    48: { code: 48, label: 'Fog', icon: 'fa-light fa-cloud-fog' },
-    51: { code: 51, label: 'Light drizzel', icon: 'fa-light fa-cloud-drizzle' },
-    53: { code: 53, label: 'Moderate drizzel', icon: 'fa-light fa-cloud-drizzle' },
-    55: { code: 55, label: 'Heavy drizzel', icon: 'fa-light fa-cloud-showers' },
-    56: { code: 56, label: 'Light freezing rain', icon: 'fa-light fa-cloud-sleet' },
-    57: { code: 57, label: 'Heavy freezing rain', icon: 'fa-light fa-cloud-sleet' },
-    61: { code: 61, label: 'Sun with possible rain', icon: 'fa-light fa-cloud-sun-rain' },
-    63: { code: 63, label: 'Moderate rain', icon: 'fa-light fa-cloud-drizzle' },
-    65: { code: 65, label: 'Heavy rain', icon: 'fa-light fa-cloud-showers' },
-    66: { code: 66, label: 'Light freezing rain', icon: 'fa-light fa-cloud-sleet' },
-    67: { code: 67, label: 'Heavy freezing rain', icon: 'fa-light fa-cloud-sleet' },
-    71: { code: 71, label: 'Light Snow', icon: 'fa-light fa-cloud-snow' },
-    73: { code: 73, label: 'Moderate Snow', icon: 'fa-light fa-cloud-snow' },
-    75: { code: 75, label: 'Heavy Snow', icon: 'fa-light fa-cloud-snow' },
-    77: { code: 77, label: 'Snow', icon: 'fa-light fa-cloud-snow' },
-    80: { code: 80, label: 'Sun with possible rain', icon: 'fa-light fa-cloud-sun-rain' },
-    81: { code: 81, label: 'Moderate rain', icon: 'fa-light fa-cloud-drizzle' },
-    82: { code: 81, label: 'Heavy rain', icon: 'fa-light fa-cloud-showers' },
-    85: { code: 85, label: 'Ice rain', icon: 'fa-light fa-cloud-sleet' },
-    86: { code: 86, label: 'Ice rain', icon: 'fa-light fa-cloud-sleet' },
-    95: { code: 95, label: 'Thunderstorms', icon: 'fa-light fa-cloud-bolt-sun' },
-    96: { code: 96, label: 'Thunderstorm & rain', icon: 'fa-light fa-cloud-sun-rain' },
-    99: { code: 99, label: 'Hail', icon: 'fa-light fa-cloud-hail' },
+    0: { code: 0, labelKey: 'weather.code.clearSky', icon: 'fa-light fa-sun' },
+    1: { code: 1, labelKey: 'weather.code.mainlyClear', icon: 'fa-light fa-sun-cloud' },
+    2: { code: 2, labelKey: 'weather.code.partlyCloudy', icon: 'fa-light fa-cloud-sun' },
+    3: { code: 3, labelKey: 'weather.code.overcast', icon: 'fa-light fa-cloud' },
+    45: { code: 45, labelKey: 'weather.code.fog', icon: 'fa-light fa-cloud-fog' },
+    48: { code: 48, labelKey: 'weather.code.fog', icon: 'fa-light fa-cloud-fog' },
+    51: { code: 51, labelKey: 'weather.code.lightDrizzle', icon: 'fa-light fa-cloud-drizzle' },
+    53: { code: 53, labelKey: 'weather.code.moderateDrizzle', icon: 'fa-light fa-cloud-drizzle' },
+    55: { code: 55, labelKey: 'weather.code.heavyDrizzle', icon: 'fa-light fa-cloud-showers' },
+    56: { code: 56, labelKey: 'weather.code.lightFreezingRain', icon: 'fa-light fa-cloud-sleet' },
+    57: { code: 57, labelKey: 'weather.code.heavyFreezingRain', icon: 'fa-light fa-cloud-sleet' },
+    61: { code: 61, labelKey: 'weather.code.sunWithPossibleRain', icon: 'fa-light fa-cloud-sun-rain' },
+    63: { code: 63, labelKey: 'weather.code.moderateRain', icon: 'fa-light fa-cloud-drizzle' },
+    65: { code: 65, labelKey: 'weather.code.heavyRain', icon: 'fa-light fa-cloud-showers' },
+    66: { code: 66, labelKey: 'weather.code.lightFreezingRain', icon: 'fa-light fa-cloud-sleet' },
+    67: { code: 67, labelKey: 'weather.code.heavyFreezingRain', icon: 'fa-light fa-cloud-sleet' },
+    71: { code: 71, labelKey: 'weather.code.lightSnow', icon: 'fa-light fa-cloud-snow' },
+    73: { code: 73, labelKey: 'weather.code.moderateSnow', icon: 'fa-light fa-cloud-snow' },
+    75: { code: 75, labelKey: 'weather.code.heavySnow', icon: 'fa-light fa-cloud-snow' },
+    77: { code: 77, labelKey: 'weather.code.snow', icon: 'fa-light fa-cloud-snow' },
+    80: { code: 80, labelKey: 'weather.code.sunWithPossibleRain', icon: 'fa-light fa-cloud-sun-rain' },
+    81: { code: 81, labelKey: 'weather.code.moderateRain', icon: 'fa-light fa-cloud-drizzle' },
+    82: { code: 82, labelKey: 'weather.code.heavyRain', icon: 'fa-light fa-cloud-showers' },
+    85: { code: 85, labelKey: 'weather.code.iceRain', icon: 'fa-light fa-cloud-sleet' },
+    86: { code: 86, labelKey: 'weather.code.iceRain', icon: 'fa-light fa-cloud-sleet' },
+    95: { code: 95, labelKey: 'weather.code.thunderstorms', icon: 'fa-light fa-cloud-bolt-sun' },
+    96: { code: 96, labelKey: 'weather.code.thunderstormRain', icon: 'fa-light fa-cloud-sun-rain' },
+    99: { code: 99, labelKey: 'weather.code.hail', icon: 'fa-light fa-cloud-hail' },
 };
 
 export function mapWeatherCode(code: number): WeatherCodeInfo {
     return WEATHER_CODE_MAP[code] ?? {
         code,
-        label: 'Unknown',
+        labelKey: 'weather.code.unknown',
         icon: 'wi wi-na',
     };
 }
@@ -95,9 +95,6 @@ export function buildForecastViewModel(apiData: any): ForecastViewModel {
 
     const hourlyPoints: HourlyPoint[] = h.time.map((t: string, i: number) => {
         const date = t.split('T')[0];
-
-        // const windSpeedMs = h.windspeed_10m?.[i];         // m/s
-        // const windSpeedKmh = windSpeedMs != null ? windSpeedMs * 3.6 : undefined;
 
         return {
             time: t,

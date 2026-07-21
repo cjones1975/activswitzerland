@@ -159,7 +159,6 @@ export const getAttractions = asyncHandler(async (req, res, next) => {
       accept: 'application/json'
     },
   };
-  console.log(config.url);
   try {
     let response = await axios(config);
     if (!response.data) {
