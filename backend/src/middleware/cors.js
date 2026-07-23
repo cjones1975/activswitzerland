@@ -11,9 +11,8 @@ const corsHandler = () => {
     });
   } else {
     const whitelist = [
-      'https://localhost',
-      'http://localhost:4200',
-      'http://cjones.synology.me:4200'
+      'https://activswitzerland.com',
+      'https://www.activswitzerland.com'
     ];
     const corsOptions = {
       origin: function (origin, callback) {
