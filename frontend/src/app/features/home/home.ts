@@ -15,7 +15,7 @@ export class Home {
   private router = inject(Router);
 
   openTripPlanner(): void {
-    this.router.navigate(['/trip-planner']);
+    this.router.navigate(['/trip-planner'], { queryParams: { from: this.router.url } });
   }
 
   onSearch(event: { query: string; tab: 'places' | 'things' }): void {

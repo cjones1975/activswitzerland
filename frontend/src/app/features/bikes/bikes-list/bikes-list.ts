@@ -133,10 +133,9 @@ export class BikesList implements OnDestroy {
       this.drawerSvc.open('bike-detail', payload);
       return;
     }
-    const payload: BikeDetailPayload = { route, destination: dest };
-    this.drawerSvc.open('bike-detail', payload);
-    // Only the detail drawer needs collapsing to reveal the map now — no need
-    // to also collapse this list underneath it.
+    // Reveal the map with the route selected and its tooltip visible — bike-detail
+    // only opens once the user clicks the tooltip (destinations-layout's onMarkerClick),
+    // mirroring the attraction flow.
     this.drawerSvc.collapse('bikes');
   }
 

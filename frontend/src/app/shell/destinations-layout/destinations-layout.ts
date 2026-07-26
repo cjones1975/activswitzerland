@@ -13,8 +13,6 @@ import { AttractionMarkersService } from '../../shared/services/attraction-marke
 import { ActivityMapService } from '../../shared/services/activity-map';
 import { HikeMarkersService } from '../../shared/services/hike-markers';
 import { BikeMarkersService } from '../../shared/services/bike-markers';
-import { HikeDetailPayload } from '../../features/hikes/hike-detail/hike-detail';
-import { BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
 import { TrailRoute, trailCategoryColor } from '../../models/trail-route';
 import { ActivityPickerPayload } from '../../models/geo-point';
 
@@ -90,34 +88,39 @@ export class DestinationsLayout implements OnInit, OnDestroy {
 
   // Selected hike/bike route's full geometry, shown as a second map line
   // independent of the trip-planner's own route line. Kept as separate line
-  // segments (not joined end-to-end) since a route can have gaps.
+  // segments (not joined end-to-end) since a route can have gaps. Driven by
+  // the selected marker itself (not drawer state) so the line is already
+  // visible once a route is selected from the list, before hike-detail/
+  // bike-detail is opened — matching what's shown once that drawer is open.
   trailRoute = computed<[number, number][][] | null>(() => {
-    this.drawer.list();
-    if (this.drawer.isOpen('hike-detail') || this.drawer.isCollapsed('hike-detail')) {
-      const payload = this.drawer.getPayload<HikeDetailPayload>('hike-detail');
-      return payload ? this.collectLines(payload.route.stages) : null;
+    const selectedHikeId = this.hikeMarkers.selectedId();
+    if (selectedHikeId) {
+      const route = this.hikeMarkers.routeMap().get(selectedHikeId);
+      return route ? this.collectLines(route.stages) : null;
     }
-    if (this.drawer.isOpen('bike-detail') || this.drawer.isCollapsed('bike-detail')) {
-      const payload = this.drawer.getPayload<BikeDetailPayload>('bike-detail');
-      return payload ? this.collectLines(payload.route.stages) : null;
+    const selectedBikeId = this.bikeMarkers.selectedId();
+    if (selectedBikeId) {
+      const route = this.bikeMarkers.routeMap().get(selectedBikeId);
+      return route ? this.collectLines(route.stages) : null;
     }
     return null;
   });
 
   trailColor = computed<string>(() => {
-    this.drawer.list();
-    if (this.drawer.isOpen('hike-detail') || this.drawer.isCollapsed('hike-detail')) {
-      const payload = this.drawer.getPayload<HikeDetailPayload>('hike-detail');
-      return trailCategoryColor(payload?.route.category ?? 'local');
+    const selectedHikeId = this.hikeMarkers.selectedId();
+    if (selectedHikeId) {
+      const route = this.hikeMarkers.routeMap().get(selectedHikeId);
+      return trailCategoryColor(route?.category ?? 'local');
     }
-    if (this.drawer.isOpen('bike-detail') || this.drawer.isCollapsed('bike-detail')) {
-      const payload = this.drawer.getPayload<BikeDetailPayload>('bike-detail');
-      return trailCategoryColor(payload?.route.category ?? 'local');
+    const selectedBikeId = this.bikeMarkers.selectedId();
+    if (selectedBikeId) {
+      const route = this.bikeMarkers.routeMap().get(selectedBikeId);
+      return trailCategoryColor(route?.category ?? 'local');
     }
     return trailCategoryColor('local');
   });
 
-  private collectLines(stages: HikeDetailPayload['route']['stages']): [number, number][][] {
+  private collectLines(stages: TrailRoute['stages']): [number, number][][] {
     return stages.flatMap(s => s.geometryWgs84?.coordinates ?? []);
   }
 
@@ -165,16 +168,14 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   selectedMarker = computed(() => {
     const selectedHikeId = this.hikeMarkers.selectedId();
     if (selectedHikeId) {
-      const route = this.hikeMarkers.routeMap().get(selectedHikeId);
-      const point = route && this.trailFocusPoint(route);
-      if (point) return { ...point, zoom: 10 };
+      const m = this.hikeMarkers.markers().find(m => m.id === selectedHikeId);
+      return m ? { lng: m.lng, lat: m.lat, id: m.id, zoom: 10 } : undefined;
     }
 
     const selectedBikeId = this.bikeMarkers.selectedId();
     if (selectedBikeId) {
-      const route = this.bikeMarkers.routeMap().get(selectedBikeId);
-      const point = route && this.trailFocusPoint(route);
-      if (point) return { ...point, zoom: 10 };
+      const m = this.bikeMarkers.markers().find(m => m.id === selectedBikeId);
+      return m ? { lng: m.lng, lat: m.lat, id: m.id, zoom: 10 } : undefined;
     }
 
     const selectedId = this.attractionMarkers.selectedId();
@@ -182,17 +183,6 @@ export class DestinationsLayout implements OnInit, OnDestroy {
     const m = this.attractionMarkers.markers().find(m => m.id === selectedId);
     return m ? { lng: m.lng, lat: m.lat, id: m.id } : undefined;
   });
-
-  // Midpoint between a route's overall start and end coordinates — a
-  // reasonable stand-in for "the middle of the trail" given we only have
-  // grouped stage geometry, not a guaranteed start-to-end vertex order.
-  private trailFocusPoint(route: TrailRoute): { lng: number; lat: number } | undefined {
-    const points = route.stages.flatMap(s => s.geometryWgs84?.coordinates ?? []).flat();
-    if (!points.length) return undefined;
-    const [firstLng, firstLat] = points[0];
-    const [lastLng, lastLat] = points[points.length - 1];
-    return { lng: (firstLng + lastLng) / 2, lat: (firstLat + lastLat) / 2 };
-  }
 
   private openDetailTimer?: ReturnType<typeof setTimeout>;
 

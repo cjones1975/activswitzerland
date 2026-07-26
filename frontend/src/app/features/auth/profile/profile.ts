@@ -97,13 +97,13 @@ export class Profile implements OnInit {
 
   // ── Saved trips ────────────────────────────────────────────────────────────
   openTripPlanner(): void {
-    this.router.navigate(['/trip-planner']);
+    this.router.navigate(['/trip-planner'], { queryParams: { from: this.router.url } });
   }
 
   viewTrip(trip: SavedTrip): void {
     this.tripPlannerSvc.loadSavedTrip(trip);
     this.tripPlannerSvc.step.set(4);
-    this.router.navigate(['/trip-planner']);
+    this.router.navigate(['/trip-planner'], { queryParams: { from: this.router.url } });
   }
 
   confirmDeleteTrip(trip: SavedTrip): void {

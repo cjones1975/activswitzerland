@@ -297,7 +297,7 @@
     "title": "Beliebte Attraktionen",
     "titleFallback": "Attraktionen in der Umgebung",
     "radius": "Umkreis",
-    "seeAll": "Alle Attraktionen anzeigen",
+    "seeAll": "Alle anzeigen",
     "backToDestination": "Zurück zu {{name}}",
     "backToAttractions": "Zurück zu den Attraktionen",
     "openAll": "Attraktionen öffnen",
@@ -375,7 +375,7 @@
     "search": {
       "placesTab": "Orte besuchen",
       "thingsTab": "Aktivitäten",
-      "placeholderPlaces": "Stadt, Land oder Region suchen…",
+      "placeholderPlaces": "Stadt, Sehenswürdigkeit oder Region suchen…",
       "placeholderThings": "Attraktion oder Aktivität suchen…",
       "searchButton": "Suchen",
       "backToSearch": "Zurück zur Suche",

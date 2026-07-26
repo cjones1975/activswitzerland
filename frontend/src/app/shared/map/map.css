@@ -122,6 +122,19 @@
 :host ::ng-deep .popup-arrow {
   font-size: 0.85rem;
   color: #ffffff;
+  display: inline-block;
+  animation: popup-arrow-pulse 1.4s ease-in-out infinite;
+}
+
+@keyframes popup-arrow-pulse {
+  0%, 100% { transform: translateX(0); opacity: 1; }
+  50% { transform: translateX(3px); opacity: 0.6; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host ::ng-deep .popup-arrow {
+    animation: none;
+  }
 }
 
 :host ::ng-deep .popup-btn:hover .popup-name {

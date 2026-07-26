@@ -297,7 +297,7 @@
     "title": "Attrazioni popolari",
     "titleFallback": "Attrazioni nella zona",
     "radius": "Raggio",
-    "seeAll": "Vedi tutte le attrazioni",
+    "seeAll": "Vedi tutto",
     "backToDestination": "Torna a {{name}}",
     "backToAttractions": "Torna alle attrazioni",
     "openAll": "Apri attrazioni",
@@ -375,7 +375,7 @@
     "search": {
       "placesTab": "Luoghi da visitare",
       "thingsTab": "Cose da fare",
-      "placeholderPlaces": "Cerca una città, un paese o una regione…",
+      "placeholderPlaces": "Cerca una città, un monumento o una regione…",
       "placeholderThings": "Cerca un'attrazione o un'attività…",
       "searchButton": "Cerca",
       "backToSearch": "Torna alla ricerca",

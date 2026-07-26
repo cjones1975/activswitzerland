@@ -9,22 +9,17 @@
             <i class="fa-light fa-magnifying-glass"></i>
         </span>
     </a>
-    <a class="footer-btn" routerLink="/explore">
-        <span class="footer-icon-wrap">
-            <i class="fa-light fa-compass"></i>
-        </span>
-    </a>
-    <a class="footer-btn" routerLink="/map">
+    <a class="footer-btn" routerLink="/trip-planner" [queryParams]="{ from: router.url }" routerLinkActive="active">
         <span class="footer-icon-wrap">
             <i class="fa-light fa-route"></i>
         </span>
     </a>
-    <a class="footer-btn" routerLink="/trips">
+    <a class="footer-btn" routerLink="/explore-trips" routerLinkActive="active">
         <span class="footer-icon-wrap">
-            <i class="fa-light fa-bookmark"></i>
+            <i class="fa-light fa-compass"></i>
         </span>
     </a>
-    <a class="footer-btn" routerLink="/auth/profile">
+    <a class="footer-btn" (click)="onProfileClick()">
         <span class="footer-icon-wrap">
             <i class="fa-light fa-circle-user"></i>
         </span>

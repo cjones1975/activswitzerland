@@ -2,6 +2,8 @@ import { Component, inject } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive, NavigationEnd } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
+import { Auth } from '../../core/services/auth';
+import { Drawer } from '../../shared/services/drawer';
 
 @Component({
   selector: 'app-footer-nav',
@@ -12,7 +14,9 @@ import { filter, map, startWith } from 'rxjs';
   host: { '[style.display]': "showNav() ? '' : 'none'" },
 })
 export class FooterNav {
-  private router = inject(Router);
+  protected router = inject(Router);
+  private auth = inject(Auth);
+  private drawer = inject(Drawer);
 
   showNav = toSignal(
     this.router.events.pipe(
@@ -27,5 +31,13 @@ export class FooterNav {
     const path = url.split('?')[0];
     return path === '/' || path === '/destinations' || path === '/search'
       || /^\/destinations\/.+/.test(path) || /^\/trip-planner(\/.*)?$/.test(path);
+  }
+
+  onProfileClick(): void {
+    if (this.auth.isLoggedIn()) {
+      this.router.navigate(['/auth/profile']);
+    } else {
+      this.drawer.open('auth');
+    }
   }
 }
