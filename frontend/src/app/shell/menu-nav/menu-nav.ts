@@ -17,7 +17,7 @@ import { Auth } from '../../core/services/auth';
 export class MenuNav {
   private langSvc = inject(LangService);
   private drawer = inject(Drawer);
-  private router = inject(Router);
+  protected router = inject(Router);
   protected auth = inject(Auth);
 
   languages = [
@@ -52,6 +52,15 @@ export class MenuNav {
       this.auth.logout();
       this.closeMenu();
       this.router.navigate(['/']);
+    } else {
+      this.openAuth();
+    }
+  }
+
+  onProfileClick(): void {
+    if (this.auth.isLoggedIn()) {
+      this.closeMenu();
+      this.router.navigate(['/auth/profile']);
     } else {
       this.openAuth();
     }

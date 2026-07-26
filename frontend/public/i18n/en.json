@@ -263,6 +263,10 @@
     "loadError": "Could not load bike routes.",
     "empty": "No bike routes found near this destination.",
     "noMatch": "No bike routes match this filter.",
+    "tabs": {
+      "road": "Road trails",
+      "mountain": "Mountain trails"
+    },
     "backToList": "Back to bike rides",
     "reopen": "Show bike rides",
     "downloadGpx": "Download GPX",
@@ -297,7 +301,7 @@
     "title": "Popular attractions",
     "titleFallback": "Attractions in the area",
     "radius": "Radius",
-    "seeAll": "See all attractions",
+    "seeAll": "See all",
     "backToDestination": "Back to {{name}}",
     "backToAttractions": "Back to attractions",
     "openAll": "Open attractions",
@@ -375,7 +379,7 @@
     "search": {
       "placesTab": "Places to visit",
       "thingsTab": "Things to do",
-      "placeholderPlaces": "Search a city, country, or region…",
+      "placeholderPlaces": "Search a city, landmark, or region…",
       "placeholderThings": "Search an attraction or activity…",
       "searchButton": "Search",
       "backToSearch": "Back to search",

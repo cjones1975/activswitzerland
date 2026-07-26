@@ -34,7 +34,8 @@
     position="right"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('auth')"
-    [style]="{ width: 'min(420px, 100vw)' }">
+    [style]="{ width: 'min(420px, 100vw)' }"
+    styleClass="auth-drawer">
     <ng-template #header>
         <div class="menu-header">
             <div class="menu-brand">
@@ -185,7 +186,7 @@
     styleClass="dest-drawer tp-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('trip-planner')">
+            <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onTripPlannerBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
             <div class="menu-brand-text tp-header-brand">

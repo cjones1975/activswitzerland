@@ -69,6 +69,7 @@ const TripActivitySchema = new mongoose.Schema({
     lon:        Number,
     distanceKm: Number,
     category:   { type: String, enum: ['national', 'regional', 'local'] },
+    bikeType:   { type: String, enum: ['road', 'mountain'] },
 }, { _id: false });
 
 const TripSchema = new mongoose.Schema({

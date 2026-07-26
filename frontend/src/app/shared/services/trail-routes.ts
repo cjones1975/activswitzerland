@@ -6,6 +6,7 @@ import { TrailRoute, TrailRoutesResponse } from '../../models/trail-route';
 import { ElevationProfile, ElevationProfileResponse } from '../../models/elevation-profile';
 
 export type TrailKind = 'hike' | 'bike';
+export type BikeType = 'road' | 'mountain';
 
 const KIND_PATH: Record<TrailKind, string> = {
   hike: 'hikes',
@@ -21,12 +22,13 @@ interface RouteStagesResponse {
 export class TrailRoutesService {
   private http = inject(HttpClient);
 
-  getRoutes(kind: TrailKind, lat: number, lon: number, lang: string, radius = 30000): Observable<TrailRoute[]> {
-    const params = new HttpParams()
+  getRoutes(kind: TrailKind, lat: number, lon: number, lang: string, radius = 30000, bikeType?: BikeType): Observable<TrailRoute[]> {
+    let params = new HttpParams()
       .set('lat', lat)
       .set('lon', lon)
       .set('radius', radius)
       .set('lang', lang);
+    if (bikeType) params = params.set('bikeType', bikeType);
 
     return this.http
       .get<TrailRoutesResponse>(`${environment.apiUrl}/api/v1/${KIND_PATH[kind]}`, { params })
@@ -50,8 +52,9 @@ export class TrailRoutesService {
       .pipe(map(res => res.data));
   }
 
-  getRouteStages(kind: TrailKind, routeNumber: string | number, lang: string): Observable<TrailRoute> {
-    const params = new HttpParams().set('lang', lang);
+  getRouteStages(kind: TrailKind, routeNumber: string | number, lang: string, bikeType?: BikeType): Observable<TrailRoute> {
+    let params = new HttpParams().set('lang', lang);
+    if (bikeType) params = params.set('bikeType', bikeType);
 
     return this.http
       .get<RouteStagesResponse>(`${environment.apiUrl}/api/v1/${KIND_PATH[kind]}/${routeNumber}/stages`, { params })

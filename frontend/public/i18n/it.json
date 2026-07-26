@@ -263,6 +263,10 @@
     "loadError": "Impossibile caricare i percorsi in bici.",
     "empty": "Nessun percorso in bici trovato vicino a questa destinazione.",
     "noMatch": "Nessun percorso in bici corrisponde a questo filtro.",
+    "tabs": {
+      "road": "Percorsi su strada",
+      "mountain": "Percorsi mountain bike"
+    },
     "backToList": "Torna ai percorsi in bici",
     "reopen": "Mostra percorsi in bici",
     "downloadGpx": "Scarica GPX",
@@ -297,7 +301,7 @@
     "title": "Attrazioni popolari",
     "titleFallback": "Attrazioni nella zona",
     "radius": "Raggio",
-    "seeAll": "Vedi tutte le attrazioni",
+    "seeAll": "Vedi tutto",
     "backToDestination": "Torna a {{name}}",
     "backToAttractions": "Torna alle attrazioni",
     "openAll": "Apri attrazioni",
@@ -375,7 +379,7 @@
     "search": {
       "placesTab": "Luoghi da visitare",
       "thingsTab": "Cose da fare",
-      "placeholderPlaces": "Cerca una città, un paese o una regione…",
+      "placeholderPlaces": "Cerca una città, un monumento o una regione…",
       "placeholderThings": "Cerca un'attrazione o un'attività…",
       "searchButton": "Cerca",
       "backToSearch": "Torna alla ricerca",

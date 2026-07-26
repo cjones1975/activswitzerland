@@ -181,7 +181,8 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
     }
 
     const kind = activity.kind as 'hike' | 'bike';
-    this.trailRoutesService.getRoutes(kind, stop.lat, stop.lon, lang).subscribe(routes => {
+    const bikeType = kind === 'bike' ? (activity.bikeType ?? 'road') : undefined;
+    this.trailRoutesService.getRoutes(kind, stop.lat, stop.lon, lang, undefined, bikeType).subscribe(routes => {
       const route = routes.find(r => String(r.routeNumber) === activity.refId);
       if (!route) return;
       if (kind === 'hike') {

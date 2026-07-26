@@ -1,28 +1,26 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-    <div class="field-row">
-        <div class="field">
-            <label class="field-label">First name</label>
-            <input
-                pInputText
-                class="field-input"
-                type="text"
-                formControlName="firstName"
-                placeholder="First name"
-                [class.invalid]="form.controls.firstName.invalid && form.controls.firstName.touched"
-            />
-        </div>
-        <div class="field">
-            <label class="field-label">Last name</label>
-            <input
-                pInputText
-                class="field-input"
-                type="text"
-                formControlName="lastName"
-                placeholder="Last name"
-                [class.invalid]="form.controls.lastName.invalid && form.controls.lastName.touched"
-            />
-        </div>
+    <div class="field">
+        <label class="field-label">First name</label>
+        <input
+            pInputText
+            class="field-input"
+            type="text"
+            formControlName="firstName"
+            placeholder="First name"
+            [class.invalid]="form.controls.firstName.invalid && form.controls.firstName.touched"
+        />
+    </div>
+    <div class="field">
+        <label class="field-label">Last name</label>
+        <input
+            pInputText
+            class="field-input"
+            type="text"
+            formControlName="lastName"
+            placeholder="Last name"
+            [class.invalid]="form.controls.lastName.invalid && form.controls.lastName.touched"
+        />
     </div>
 
     <div class="field">
@@ -38,6 +36,7 @@
                 placeholder="Select your country"
                 [filter]="true"
                 [checkmark]="true"
+                [showClear]="true"
                 [class.invalid]="form.controls.country.invalid && form.controls.country.touched"
             />
         </div>

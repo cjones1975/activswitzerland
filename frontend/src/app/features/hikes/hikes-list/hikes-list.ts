@@ -133,10 +133,9 @@ export class HikesList implements OnDestroy {
       this.drawerSvc.open('hike-detail', payload);
       return;
     }
-    const payload: HikeDetailPayload = { route, destination: dest };
-    this.drawerSvc.open('hike-detail', payload);
-    // Only the detail drawer needs collapsing to reveal the map now — no need
-    // to also collapse this list underneath it.
+    // Reveal the map with the route selected and its tooltip visible — hike-detail
+    // only opens once the user clicks the tooltip (destinations-layout's onMarkerClick),
+    // mirroring the attraction flow.
     this.drawerSvc.collapse('hikes');
   }
 

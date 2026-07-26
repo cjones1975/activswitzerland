@@ -29,6 +29,7 @@ export class Login {
     try {
       const { email, password } = this.form.getRawValue();
       await this.auth.login(email, password);
+      this.drawer.close('auth');
     } finally {
       this.submitting.set(false);
     }

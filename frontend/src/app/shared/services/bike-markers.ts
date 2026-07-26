@@ -2,6 +2,7 @@ import { Injectable, signal } from '@angular/core';
 import { MapMarker } from '../map/map';
 import { TrailCategory, TrailRoute } from '../../models/trail-route';
 import { GeoLocation } from '../../models/geo-point';
+import { BikeType } from './trail-routes';
 
 export type TrailCategoryFilter = TrailCategory | 'all';
 
@@ -22,6 +23,7 @@ export class BikeMarkersService {
   // resetting to defaults whenever a genuinely new destination is visited.
   readonly radiusKm = signal(10);
   readonly selectedCategory = signal<TrailCategoryFilter>('all');
+  readonly bikeType = signal<BikeType>('road');
   private lastDestination: GeoLocation | null = null;
 
   resetFiltersForDestination(dest: GeoLocation): void {
@@ -29,6 +31,12 @@ export class BikeMarkersService {
     this.lastDestination = dest;
     this.radiusKm.set(10);
     this.selectedCategory.set('all');
+    this.bikeType.set('road');
+  }
+
+  /** Route numbers aren't unique across the road/mountain networks, so marker ids/routeMap keys must be namespaced by bikeType. */
+  markerId(routeNumber: string | number): string {
+    return `bike-${this.bikeType()}-${routeNumber}`;
   }
 
   set(routes: TrailRoute[]): void {
@@ -36,7 +44,7 @@ export class BikeMarkersService {
     this.markers.set(withStart.map(r => {
       const [lng, lat] = r.stages[0].geometryWgs84.coordinates[0][0];
       return {
-        id: `bike-${r.routeNumber}`,
+        id: this.markerId(r.routeNumber),
         lng,
         lat,
         label: r.name,
@@ -45,11 +53,15 @@ export class BikeMarkersService {
         clickable: true,
       };
     }));
-    this.routeMap.set(new Map(withStart.map(r => [`bike-${r.routeNumber}`, r])));
+    this.routeMap.set(new Map(withStart.map(r => [this.markerId(r.routeNumber), r])));
   }
 
   setSelected(id: string | null): void {
     this.selectedId.set(id);
+  }
+
+  setBikeType(type: BikeType): void {
+    this.bikeType.set(type);
   }
 
   setHasRoutes(value: boolean): void {

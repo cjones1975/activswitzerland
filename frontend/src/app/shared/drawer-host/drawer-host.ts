@@ -47,6 +47,18 @@ export class DrawerHost {
     this.svc.collapse(key);
   }
 
+  // Only set when trip-planner was entered from nav-menu/footer-nav (which
+  // stamp the page they were clicked from as `from`) rather than from a
+  // destination's own "plan a trip" flow — that case has no `from` and
+  // just closes, leaving TripPlannerLayout's own "back to destination" button.
+  onTripPlannerBack() {
+    this.svc.close('trip-planner');
+    const from = this.router.parseUrl(this.router.url).queryParams['from'];
+    if (from) {
+      this.router.navigateByUrl(from);
+    }
+  }
+
   onDestinationBack() {
     this.svc.close('destination-detail');
     const queryParams = this.router.parseUrl(this.router.url).queryParams;

@@ -124,7 +124,7 @@
     overflow-y: auto;
 }
 
-/* Trip planner, things-to-do & destination-detail drawers: full-width on mobile */
+/* Trip planner, things-to-do, destination-detail & auth drawers: full-width on mobile */
 @media (max-width: 767px) {
     ::ng-deep .tp-drawer,
     ::ng-deep .dest-detail-drawer,
@@ -133,7 +133,8 @@
     ::ng-deep .hikes-drawer,
     ::ng-deep .hike-detail-drawer,
     ::ng-deep .bikes-drawer,
-    ::ng-deep .bike-detail-drawer {
+    ::ng-deep .bike-detail-drawer,
+    ::ng-deep .auth-drawer {
         width: 100vw !important;
     }
 }
