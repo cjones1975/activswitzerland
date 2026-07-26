@@ -73,6 +73,7 @@ export interface TripActivitySelection {
   lat?: number; lon?: number;
   distanceKm?: number;               // hike/bike only
   category?: 'national' | 'regional' | 'local';
+  bikeType?: 'road' | 'mountain';     // bike only
 }
 
 export interface PlannedTrip {

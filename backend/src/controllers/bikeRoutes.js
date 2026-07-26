@@ -2,8 +2,16 @@ import ErrorResponse from '../utils/errorResponse.js';
 import asyncHandler from '../middleware/async.js';
 import { fetchSchweizMobilRoutes, buildGpx, fetchElevationProfile, fetchRouteStages } from '../utils/schweizMobilRoutes.js';
 
-// ch.astra.veloland = official SchweizMobil bike routes (Veloland)
-const BIKE_LAYER = 'ch.astra.veloland';
+// ch.astra.veloland = official SchweizMobil road/city cycling routes (Veloland)
+// ch.astra.mountainbikeland = official SchweizMobil mountain bike routes (Mountainbikeland)
+const BIKE_LAYERS = {
+    road: 'ch.astra.veloland',
+    mountain: 'ch.astra.mountainbikeland',
+};
+
+function resolveBikeType(req) {
+    return req.query.bikeType === 'mountain' ? 'mountain' : 'road';
+}
 
 // @desc    GET bike routes near a point
 // @route   GET /api/v1/bikes
@@ -11,10 +19,11 @@ const BIKE_LAYER = 'ch.astra.veloland';
 export const getBikes = asyncHandler(async (req, res, next) => {
     const { easting, northing } = req.lv95;
     const radiusMeters = parseInt(req.query.radius, 10) || 30000;
+    const bikeType = resolveBikeType(req);
 
     try {
         const bikes = await fetchSchweizMobilRoutes({
-            layer: BIKE_LAYER,
+            layer: BIKE_LAYERS[bikeType],
             easting,
             northing,
             radiusMeters,
@@ -81,9 +90,10 @@ export const getBikesElevation = asyncHandler(async (req, res, next) => {
 // @access  Public
 export const getBikeStages = asyncHandler(async (req, res, next) => {
     const { routeNumber } = req.params;
+    const bikeType = resolveBikeType(req);
 
     try {
-        const route = await fetchRouteStages({ layer: BIKE_LAYER, routeNumber, lang: req.query.lang });
+        const route = await fetchRouteStages({ layer: BIKE_LAYERS[bikeType], routeNumber, lang: req.query.lang });
 
         if (!route) {
             return next(new ErrorResponse(`No stages found for route ${routeNumber}`, 404));

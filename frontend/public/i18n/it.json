@@ -263,6 +263,10 @@
     "loadError": "Impossibile caricare i percorsi in bici.",
     "empty": "Nessun percorso in bici trovato vicino a questa destinazione.",
     "noMatch": "Nessun percorso in bici corrisponde a questo filtro.",
+    "tabs": {
+      "road": "Percorsi su strada",
+      "mountain": "Percorsi mountain bike"
+    },
     "backToList": "Torna ai percorsi in bici",
     "reopen": "Mostra percorsi in bici",
     "downloadGpx": "Scarica GPX",

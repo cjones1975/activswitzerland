@@ -263,6 +263,10 @@
     "loadError": "Impossible de charger les balades à vélo.",
     "empty": "Aucune balade à vélo trouvée près de cette destination.",
     "noMatch": "Aucune balade à vélo ne correspond à ce filtre.",
+    "tabs": {
+      "road": "Itinéraires cyclables",
+      "mountain": "Itinéraires VTT"
+    },
     "backToList": "Retour aux balades à vélo",
     "reopen": "Afficher les balades à vélo",
     "downloadGpx": "Télécharger le GPX",

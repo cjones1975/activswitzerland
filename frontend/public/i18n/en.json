@@ -263,6 +263,10 @@
     "loadError": "Could not load bike routes.",
     "empty": "No bike routes found near this destination.",
     "noMatch": "No bike routes match this filter.",
+    "tabs": {
+      "road": "Road trails",
+      "mountain": "Mountain trails"
+    },
     "backToList": "Back to bike rides",
     "reopen": "Show bike rides",
     "downloadGpx": "Download GPX",

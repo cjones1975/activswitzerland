@@ -263,6 +263,10 @@
     "loadError": "Velotouren konnten nicht geladen werden.",
     "empty": "In der Nähe dieses Reiseziels wurden keine Velotouren gefunden.",
     "noMatch": "Keine Velotouren entsprechen diesem Filter.",
+    "tabs": {
+      "road": "Velorouten",
+      "mountain": "Mountainbike-Routen"
+    },
     "backToList": "Zurück zu den Velotouren",
     "reopen": "Velotouren anzeigen",
     "downloadGpx": "GPX herunterladen",

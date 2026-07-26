@@ -1,5 +1,14 @@
 <div class="trail-list-panel">
 
+  <div class="trail-type-tabs">
+    <button type="button" class="trail-type-tab" [class.trail-type-tab--active]="bikeMarkers.bikeType() === 'road'" (click)="onBikeTypeChange('road')">
+      {{ 'bikes.tabs.road' | translate }}
+    </button>
+    <button type="button" class="trail-type-tab" [class.trail-type-tab--active]="bikeMarkers.bikeType() === 'mountain'" (click)="onBikeTypeChange('mountain')">
+      {{ 'bikes.tabs.mountain' | translate }}
+    </button>
+  </div>
+
   <div class="trail-filters">
     <div class="filter-row">
       <span class="filter-label">{{ 'bikes.radius' | translate }}</span>

@@ -4,6 +4,30 @@
   min-height: 100%;
 }
 
+.trail-type-tabs {
+  display: flex;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.trail-type-tab {
+  flex: 1;
+  padding: 0.7rem 0.5rem;
+  background: none;
+  border: none;
+  border-bottom: 3px solid transparent;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--gray-500);
+  cursor: pointer;
+  font-family: inherit;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.trail-type-tab--active {
+  color: var(--navy-900);
+  border-bottom-color: var(--navy-800);
+}
+
 .trail-filters {
   display: flex;
   flex-direction: column;

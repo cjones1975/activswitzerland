@@ -9,7 +9,7 @@ import { Select } from 'primeng/select';
 import { Message } from 'primeng/message';
 import { LangService } from '../../../shared/services/lang';
 import { Drawer } from '../../../shared/services/drawer';
-import { TrailRoutesService } from '../../../shared/services/trail-routes';
+import { TrailRoutesService, BikeType } from '../../../shared/services/trail-routes';
 import { BikeMarkersService, TrailCategoryFilter } from '../../../shared/services/bike-markers';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TrailThumbnail } from '../../../shared/trail-thumbnail/trail-thumbnail';
@@ -59,7 +59,11 @@ export class BikesList implements OnDestroy {
     const stopId = this.stopId();
     if (!stopId) return new Set<string>();
     this.trip();
-    return new Set(this.plannerSvc.getActivitiesForStop(stopId).filter(a => a.kind === 'bike').map(a => a.refId));
+    return new Set(
+      this.plannerSvc.getActivitiesForStop(stopId)
+        .filter(a => a.kind === 'bike' && a.bikeType === this.bikeMarkers.bikeType())
+        .map(a => a.refId)
+    );
   });
   private selectedDay = signal<Record<string, string | number>>({});
 
@@ -105,7 +109,7 @@ export class BikesList implements OnDestroy {
 
     this.loading.set(true);
     this.loadError.set(false);
-    this.trailRoutesService.getRoutes('bike', locLat(dest), locLon(dest), this.langSvc.current, this.bikeMarkers.radiusKm() * 1000).subscribe({
+    this.trailRoutesService.getRoutes('bike', locLat(dest), locLon(dest), this.langSvc.current, this.bikeMarkers.radiusKm() * 1000, this.bikeMarkers.bikeType()).subscribe({
       next: routes => {
         this.routes.set(routes);
         this.bikeMarkers.set(routes);
@@ -124,10 +128,18 @@ export class BikesList implements OnDestroy {
     this.load();
   }
 
+  onBikeTypeChange(type: BikeType): void {
+    if (this.bikeMarkers.bikeType() === type) return;
+    this.bikeMarkers.setBikeType(type);
+    this.bikeMarkers.setSelected(null);
+    this.bikeMarkers.clearStageOverview();
+    this.load();
+  }
+
   onRouteClick(route: TrailRoute): void {
     const dest = this.destination();
     if (!dest) return;
-    this.bikeMarkers.setSelected(`bike-${route.routeNumber}`);
+    this.bikeMarkers.setSelected(this.bikeMarkers.markerId(route.routeNumber));
     if (this.mode() === 'select') {
       const payload: BikeDetailPayload = { route, destination: dest, mode: 'select', stopId: this.stopId() };
       this.drawerSvc.open('bike-detail', payload);
@@ -155,7 +167,7 @@ export class BikesList implements OnDestroy {
 
   onSeeAllStages(route: TrailRoute): void {
     this.seeAllStagesLoading.set(route.routeNumber);
-    this.trailRoutesService.getRouteStages('bike', route.routeNumber, this.langSvc.current).subscribe({
+    this.trailRoutesService.getRouteStages('bike', route.routeNumber, this.langSvc.current, this.bikeMarkers.bikeType()).subscribe({
       next: fullRoute => {
         this.seeAllStagesLoading.set(null);
         this.bikeMarkers.setStageOverview(fullRoute);
@@ -182,8 +194,9 @@ export class BikesList implements OnDestroy {
     if (!stopId) return;
 
     const refId = String(route.routeNumber);
+    const bikeType = this.bikeMarkers.bikeType();
     if (this.isAdded(route)) {
-      const existing = this.plannerSvc.getActivitiesForStop(stopId).find(a => a.kind === 'bike' && a.refId === refId);
+      const existing = this.plannerSvc.getActivitiesForStop(stopId).find(a => a.kind === 'bike' && a.refId === refId && a.bikeType === bikeType);
       if (existing) this.plannerSvc.removeActivity(existing.id);
       return;
     }
@@ -201,6 +214,7 @@ export class BikesList implements OnDestroy {
       lon: start?.[0],
       distanceKm: route.distanceKm,
       category: route.category,
+      bikeType,
     });
   }
 

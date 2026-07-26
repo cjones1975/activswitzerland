@@ -12,6 +12,28 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-26 — Mountain Bike Trails Implemented
+
+- Branch: `feature/mountain-bike-trails`; specced in `context/features/mountain-bike-spec.md`
+- Backend: `bikeRoutes.js` — `BIKE_LAYER` constant replaced with a `BIKE_LAYERS` map (`road` → `ch.astra.veloland`, `mountain` → `ch.astra.mountainbikeland`) + `resolveBikeType(req)` helper (defaults to `'road'`), used by both `getBikes` and `getBikeStages`; no changes needed to the shared `schweizMobilRoutes.js` utilities (layer-agnostic) or `cacheResponse()` (already keys on full query string, so `road`/`mountain` cache independently)
+- `models/Trip.js`: `TripActivitySchema` gained `bikeType: enum['road','mountain']` (optional)
+- Frontend: `trail-routes.ts` — `getRoutes`/`getRouteStages` gained an optional trailing `bikeType` param (new `BikeType` export), sent as a query param only when provided; `models/trip.ts` — `TripActivitySelection.bikeType?`
+- `bike-markers.ts`: new `bikeType` signal (default `'road'`, reset alongside `radiusKm`/`selectedCategory` in `resetFiltersForDestination`), `setBikeType()`, and a `markerId(routeNumber)` helper producing `bike-{type}-{routeNumber}` — replaces the old `bike-{routeNumber}` id, which would have collided between the two independently-numbered networks
+- `bikes-list.ts`: new `onBikeTypeChange()` (no-op if unchanged; else switches type, clears `selectedId`/`stageOverview`, refetches); `load()`/`onSeeAllStages()` pass the active `bikeType`; `toggleAdd()`/`addedRefIds` also match on `bikeType` so a same-numbered route in the other network doesn't show a false "Added" badge
+- `bikes-list.html`/`.css`: new "Road trails"/"Mountain trails" tab row at the top of the drawer, styled like the homepage search box's tabs but fitted to the drawer panel (no floating-card chrome)
+- `trip-planner-layout.ts`: `onActivityMarkerClick`'s bike branch passes `activity.bikeType ?? 'road'`, so saved-trip bike activities from before this feature still resolve correctly
+- i18n: `bikes.tabs.road`/`bikes.tabs.mountain` added across en/de/fr/it
+- Verified via `tsc --noEmit` and `ng build --configuration production` (both clean; only pre-existing bundle-size/CommonJS warnings unrelated to this change) and `node --check` on both modified backend files; UI not yet exercised in a live browser session
+- Feature marked complete
+
+### 2026-07-26 — Mountain Bike Trails Specced
+
+- Investigated a user question ("does the bike API distinguish mountain bike vs. normal bike trails?") — found `bikeRoutes.js` only ever queries `ch.astra.veloland` (road/city cycling); mountain bike routes aren't fetched at all, so the distinction doesn't exist in the data yet
+- Confirmed live via direct geo.admin.ch `identify` calls that `ch.astra.mountainbikeland` is a real, separate SchweizMobil layer with the same `chmobil_*` attribute schema as Veloland/Wanderland — no backend utility changes needed beyond parameterizing the `layer`
+- Identified that route numbers aren't unique across the two networks, so marker ids/routeMap keys/saved-trip activity refs all need a `bikeType` tag, not just a new UI toggle
+- Scoped as its own feature (not folded into the in-progress `app-fixes3` mobile-fixes branch) per user decision; `app-fixes3`'s WIP was committed first so it wasn't dragged onto the new branch
+- Created `context/features/mountain-bike-spec.md` and `feature/mountain-bike-trails` branch (off `app-fixes3`); no implementation yet
+
 ### 2026-07-21 — Destination/Attraction Missing-Geo Crash Fixed
 
 - Real bug found via user report: `destination-detail.ts` crashed (`Cannot read properties
