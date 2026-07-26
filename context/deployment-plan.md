@@ -45,6 +45,15 @@ Internet ──443/80──▶ Router (port-forward, pre-existing) ──▶ NAS
 
 Only `frontend` publishes a port, and only to `127.0.0.1` (DSM's reverse proxy runs on the same host). Backend/mongo/redis are internal-only — no direct internet exposure, no CORS friction (browser calls are same-origin through nginx).
 
+## DNS (name.com)
+
+Swisscom's home connection has a **dynamic public IP**, so plain A records would eventually go stale whenever it rotates. Fixed by pointing DNS at Swisscom's own DDNS hostname (from their Internet-Box DDNS feature) instead of a fixed IP:
+
+- `activswitzerland.com` — **ANAME** record → the Swisscom DDNS hostname (name.com's workaround for "CNAME at the zone apex," which plain DNS doesn't allow).
+- `www.activswitzerland.com` — **CNAME** record → the same Swisscom DDNS hostname.
+
+This is transparent to everything else (Let's Encrypt, DSM reverse proxy, nginx) — they only care that the hostname resolves correctly at request time, not how. No cert/reverse-proxy changes needed when this was set up.
+
 ## Key files (repo)
 
 - `infra/docker/frontend/Dockerfile` — multi-stage: builds the Angular prod bundle, serves via nginx.
