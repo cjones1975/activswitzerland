@@ -28,13 +28,15 @@
   </div>
 
   @if (dateMode() === 'dates') {
-    <div class="s1-field">
-      <label for="s1-start">{{ 'trip.planner.step1.startDate' | translate }}</label>
-      <input id="s1-start" type="date" class="s1-date-input" [ngModel]="startDate()" (ngModelChange)="onStartDateChange($event)" [attr.min]="todayIso" />
-    </div>
-    <div class="s1-field">
-      <label for="s1-end">{{ 'trip.planner.step1.endDate' | translate }}</label>
-      <input id="s1-end" type="date" class="s1-date-input" [ngModel]="endDate()" (ngModelChange)="onEndDateChange($event)" [attr.min]="startDate() || todayIso" />
+    <div class="s1-date-row">
+      <div class="s1-field">
+        <label for="s1-start">{{ 'trip.planner.step1.startDate' | translate }}</label>
+        <input id="s1-start" type="date" class="s1-date-input" [ngModel]="startDate()" (ngModelChange)="onStartDateChange($event)" [attr.min]="todayIso" />
+      </div>
+      <div class="s1-field">
+        <label for="s1-end">{{ 'trip.planner.step1.endDate' | translate }}</label>
+        <input id="s1-end" type="date" class="s1-date-input" [ngModel]="endDate()" (ngModelChange)="onEndDateChange($event)" [attr.min]="startDate() || todayIso" />
+      </div>
     </div>
   } @else {
     <div class="s1-field">
@@ -50,6 +52,8 @@
     </div>
   }
 </div>
+
+<app-start-over-link />
 
 <div class="s1-footer">
   <p-button [label]="'trip.planner.step1.continue' | translate" icon="fa-light fa-chevron-right" iconPos="right"

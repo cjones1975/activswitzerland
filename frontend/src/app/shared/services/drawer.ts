@@ -10,7 +10,7 @@ export type DrawerKey =
   | 'weather'
   | 'language'
   | 'profile'
-  | 'trip-planner'
+  | 'connections'
   | 'hikes'
   | 'hike-detail'
   | 'bikes'

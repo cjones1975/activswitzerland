@@ -1,25 +1,29 @@
-<div class="map-wrapper">
-  <app-map
-    [markers]="displayedTripActivityMarkers()"
-    [center]="center()"
-    [zoom]="mapZoom()"
-    [tripRoute]="displayedTripRoute()"
-    [tripType]="tripType()"
-    [tripStopPoints]="displayedTripStopPoints()"
-    [fitBounds]="tripBounds()"
-    (markerClick)="onActivityMarkerClick($event)"></app-map>
-</div>
+@if (!tripPlanner.wizardVisible()) {
+  <div class="map-wrapper">
+    <app-map
+      [markers]="tripActivityMarkers()"
+      [center]="center()"
+      [zoom]="mapZoom()"
+      [tripRoute]="tripRoute()"
+      [tripType]="tripType()"
+      [tripStopPoints]="tripStopPoints()"
+      [fitBounds]="tripBounds()"
+      (markerClick)="onActivityMarkerClick($event)"></app-map>
+  </div>
 
-<div class="reopen-btns">
-  @if (destination()) {
-    <button class="reopen-btn" type="button" (click)="backToDestination()">
-      <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
-      {{ 'attractions.backToDestination' | translate }}
-    </button>
-  }
-  @if (!drawer.isOpen('trip-planner')) {
+  <div class="reopen-btns">
+    @if (destination()) {
+      <button class="reopen-btn" type="button" (click)="backToDestination()">
+        <i class="fa-sharp fa-solid fa-circle-arrow-left"></i>
+        {{ 'attractions.backToDestination' | translate }}
+      </button>
+    }
     <button class="reopen-btn reopen-btn-img-only" type="button" [attr.aria-label]="'trip.planner.open' | translate" (click)="reopenTripPlanner()">
       <img class="reopen-btn-img" src="/assets/trip.png" [attr.alt]="'trip.planner.open' | translate" />
     </button>
-  }
-</div>
+  </div>
+} @else {
+  <div class="tp-wizard-host">
+    <app-trip-planner-wizard></app-trip-planner-wizard>
+  </div>
+}

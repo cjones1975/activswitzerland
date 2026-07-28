@@ -1,10 +1,9 @@
 import { Component, DestroyRef, computed, effect, inject, untracked } from '@angular/core';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { TranslatePipe } from '@ngx-translate/core';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService } from 'primeng/api';
-import { Drawer } from '../../../shared/services/drawer';
 import { TransportService } from '../../../shared/services/transport';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TripStop } from '../../../models/trip';
@@ -32,10 +31,7 @@ const STEP_KEYS = ['myTrip', 'itinerary', 'activities', 'summary', 'save'] as co
   styleUrl: './trip-planner-wizard.css',
 })
 export class TripPlannerWizard {
-  private drawerSvc = inject(Drawer);
   private transportSvc = inject(TransportService);
-  private confirmSvc = inject(ConfirmationService);
-  private translate = inject(TranslateService);
   plannerSvc = inject(TripPlannerService);
   private destroyRef = inject(DestroyRef);
 
@@ -43,17 +39,9 @@ export class TripPlannerWizard {
 
   readonly currentStepKey = computed(() => this.stepKeys[this.plannerSvc.step() - 1]);
 
-  private readonly trip = toSignal(this.plannerSvc.trip$, { initialValue: this.plannerSvc.snapshot });
-  readonly hasDraft = computed(() => this.trip().stops.length > 0);
-
-  private readonly prefillPayload = computed(() => {
-    this.drawerSvc.list();
-    return this.drawerSvc.getPayload<string | TripPlannerPrefill>('trip-planner') ?? null;
-  });
-
   constructor() {
     effect(() => {
-      const payload = this.prefillPayload();
+      const payload = this.plannerSvc.prefillPayload() as string | TripPlannerPrefill | null;
       if (!payload) return;
       untracked(() => this.applyPrefill(payload));
     });
@@ -61,18 +49,6 @@ export class TripPlannerWizard {
 
   stepLabelKey(key: string): string {
     return `trip.planner.steps.${key}`;
-  }
-
-  confirmStartOver(): void {
-    this.confirmSvc.confirm({
-      message: this.translate.instant('trip.planner.startOverConfirm'),
-      header: this.translate.instant('trip.planner.startOver'),
-      icon: 'fa-light fa-triangle-exclamation',
-      acceptLabel: this.translate.instant('trip.planner.startOver'),
-      rejectLabel: this.translate.instant('trip.planner.back'),
-      acceptButtonStyleClass: 'p-button-danger',
-      accept: () => this.plannerSvc.reset(),
-    });
   }
 
   private applyPrefill(payload: string | TripPlannerPrefill): void {

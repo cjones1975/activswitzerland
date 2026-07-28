@@ -8,6 +8,7 @@ import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { ActivityKind, TripStop, TripActivitySelection } from '../../../models/trip';
 import { GeoPoint } from '../../../models/geo-point';
 import { stopDayRanges } from '../../../shared/utils/date-range';
+import { StartOverLink } from '../start-over-link/start-over-link';
 
 interface ActivityCategory {
   kind: ActivityKind;
@@ -25,7 +26,7 @@ const CATEGORIES: ActivityCategory[] = [
 @Component({
   selector: 'app-step3-activities',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, Button],
+  imports: [CommonModule, TranslatePipe, Button, StartOverLink],
   templateUrl: './step3-activities.html',
   styleUrl: './step3-activities.css',
 })

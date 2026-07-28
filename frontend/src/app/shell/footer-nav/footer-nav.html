@@ -9,7 +9,7 @@
             <i class="fa-light fa-magnifying-glass"></i>
         </span>
     </a>
-    <a class="footer-btn" routerLink="/trip-planner" [queryParams]="{ from: router.url }" routerLinkActive="active">
+    <a class="footer-btn" routerLink="/trip-planner" [queryParams]="{ from: router.url }" routerLinkActive="active" [routerLinkActiveOptions]="{ paths: 'subset', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }">
         <span class="footer-icon-wrap">
             <i class="fa-light fa-route"></i>
         </span>

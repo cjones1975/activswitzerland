@@ -17,6 +17,7 @@ import { GeoPoint } from '../../models/geo-point';
 import { AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
 import { HikeDetailPayload } from '../../features/hikes/hike-detail/hike-detail';
 import { BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
+import { TripPlannerWizard } from '../../features/trip-planner/trip-planner-wizard/trip-planner-wizard';
 
 const ACTIVITY_MARKER_STYLE: Record<ActivityKind, { image: string }> = {
   attraction: { image: '/assets/attraction.png' },
@@ -27,7 +28,7 @@ const ACTIVITY_MARKER_STYLE: Record<ActivityKind, { image: string }> = {
 @Component({
   selector: 'app-trip-planner-layout',
   standalone: true,
-  imports: [MapComponent, TranslatePipe],
+  imports: [MapComponent, TranslatePipe, TripPlannerWizard],
   templateUrl: './trip-planner-layout.html',
   styleUrl: './trip-planner-layout.css',
 })
@@ -39,7 +40,7 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   private langSvc = inject(LangService);
   protected drawer = inject(Drawer);
   private destroyRef = inject(DestroyRef);
-  private tripPlanner = inject(TripPlannerService);
+  protected tripPlanner = inject(TripPlannerService);
   private attractionsService = inject(AttractionsService);
   private trailRoutesService = inject(TrailRoutesService);
 
@@ -74,27 +75,10 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
     this.trip()?.stops.map(s => [s.lon, s.lat] as [number, number]) ?? []
   );
 
-  /** Route shown on the map — hidden while the trip-planner drawer is open (only revealed on Save/View). */
-  displayedTripRoute = computed<[number, number][] | null>(() =>
-    this.drawer.isOpen('trip-planner') ? null : this.tripRoute()
-  );
-
-  /** Activity pins — hidden while the trip-planner drawer is open (only revealed on Save/View). */
-  displayedTripActivityMarkers = computed<MapMarker[]>(() =>
-    this.drawer.isOpen('trip-planner') ? [] : this.tripActivityMarkers()
-  );
-
-  /** Stop markers shown on the map — hidden while the trip-planner drawer is open. */
-  displayedTripStopPoints = computed<[number, number][]>(() =>
-    this.drawer.isOpen('trip-planner') ? [] : this.tripStopPoints()
-  );
-
-  /** Full route coordinates when the drawer collapses so the map can fit the entire route, including round trips. */
+  /** Full route coordinates so the map can fit the entire route, including round trips — the map is only ever mounted once the wizard is hidden. */
   tripBounds = computed<[number, number][] | null>(() => {
-    const collapsed = !this.drawer.isOpen('trip-planner');
     const route = this.tripRoute();
-    if (!collapsed || !route || route.length < 2) return null;
-    return route;
+    return route && route.length >= 2 ? route : null;
   });
 
   private firstRouteEmission = true;
@@ -144,12 +128,11 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
           this.mapZoom.set(12);
           this.center.set([dest.geo.longitude, dest.geo.latitude]);
         }
-        this.drawer.open('trip-planner', hasGeo
+        this.tripPlanner.setPrefillPayload(hasGeo
           ? { name: dest.name, lat: dest.geo.latitude, lon: dest.geo.longitude, identifier: dest.identifier }
           : dest.name);
-      } else {
-        this.drawer.open('trip-planner');
       }
+      this.tripPlanner.showWizard();
     });
   }
 
@@ -160,7 +143,7 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   }
 
   reopenTripPlanner(): void {
-    this.drawer.open('trip-planner');
+    this.tripPlanner.showWizard();
   }
 
   /** Opens the picked activity's detail drawer straight from its map marker, no backing list drawer required. */
@@ -196,7 +179,6 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   }
 
   ngOnDestroy(): void {
-    this.drawer.close('trip-planner');
     this.tripPlanner.reset();
   }
 }

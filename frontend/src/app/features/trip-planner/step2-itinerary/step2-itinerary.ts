@@ -4,14 +4,15 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe } from '@ngx-translate/core';
 import { DragDropModule, CdkDragDrop, moveItemInArray } from '@angular/cdk/drag-drop';
-import { AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
+import { AutoComplete, AutoCompleteModule, AutoCompleteSelectEvent } from 'primeng/autocomplete';
 import { Button } from 'primeng/button';
 import { Message } from 'primeng/message';
+import { Drawer } from '../../../shared/services/drawer';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TransportService, LocationSearchResult } from '../../../shared/services/transport';
 import { TripStop, TripDateRange } from '../../../models/trip';
 import { tripDayCount, stopDayRanges } from '../../../shared/utils/date-range';
-import { ConnectionLegPicker } from './connection-leg-picker/connection-leg-picker';
+import { StartOverLink } from '../start-over-link/start-over-link';
 
 const MAX_VIA_STOPS = 6;
 const DEFAULT_STOP_DAYS = 1;
@@ -19,13 +20,14 @@ const DEFAULT_STOP_DAYS = 1;
 @Component({
   selector: 'app-step2-itinerary',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, DragDropModule, AutoCompleteModule, Button, Message, ConnectionLegPicker],
+  imports: [CommonModule, FormsModule, TranslatePipe, DragDropModule, AutoCompleteModule, Button, Message, StartOverLink],
   templateUrl: './step2-itinerary.html',
   styleUrl: './step2-itinerary.css',
 })
 export class Step2Itinerary {
   private plannerSvc = inject(TripPlannerService);
   private transportSvc = inject(TransportService);
+  private drawerSvc = inject(Drawer);
   private destroyRef = inject(DestroyRef);
 
   private readonly trip = toSignal(this.plannerSvc.trip$, { initialValue: this.plannerSvc.snapshot });
@@ -69,12 +71,9 @@ export class Step2Itinerary {
   readonly routeError = signal(false);
   readonly routeUnreachable = signal(false);
 
-  readonly legPairs = computed(() => {
-    const stops = this.trip().stops;
-    const pairs: { from: TripStop; to: TripStop }[] = [];
-    for (let i = 0; i < stops.length - 1; i++) pairs.push({ from: stops[i], to: stops[i + 1] });
-    return pairs;
-  });
+  readonly unresolvedLegCount = computed(() =>
+    this.plannerSvc.legPairs().filter(pair => !this.plannerSvc.getConnectionLeg(pair.from.id, pair.to.id)?.connection).length
+  );
 
   readonly canContinue = computed(() =>
     this.departure() !== null && this.destination() !== null && !this.routeUnreachable() && this.allocationMessage() === null
@@ -110,7 +109,10 @@ export class Step2Itinerary {
   searchAddStop(event: { query: string }): void { this.search(event, this.addStopSuggestions); }
 
   onDepartureSelect(event: AutoCompleteSelectEvent): void {
-    const result = event.value as LocationSearchResult;
+    this.applyDeparture(event.value as LocationSearchResult);
+  }
+
+  private applyDeparture(result: LocationSearchResult): void {
     const existing = this.departure();
     this.departure.set({
       id: existing?.id ?? crypto.randomUUID(),
@@ -122,7 +124,10 @@ export class Step2Itinerary {
   }
 
   onDestinationSelect(event: AutoCompleteSelectEvent): void {
-    const result = event.value as LocationSearchResult;
+    this.applyDestination(event.value as LocationSearchResult);
+  }
+
+  private applyDestination(result: LocationSearchResult): void {
     const existing = this.destination();
     this.destination.set({
       id: existing?.id ?? crypto.randomUUID(),
@@ -134,17 +139,78 @@ export class Step2Itinerary {
   }
 
   onViaSelect(event: AutoCompleteSelectEvent, stop: TripStop): void {
-    const result = event.value as LocationSearchResult;
+    this.applyVia(event.value as LocationSearchResult, stop);
+  }
+
+  private applyVia(result: LocationSearchResult, stop: TripStop): void {
     const updated: TripStop = { ...stop, name: result.name, lat: result.lat, lon: result.lon, externalId: result.externalId };
     this.viaStops.update(v => v.map(s => s.id === stop.id ? updated : s));
     this.syncStops();
+  }
+
+  onDepartureClear(): void {
+    this.departure.set(null);
+    this.syncStops();
+  }
+
+  onDestinationClear(): void {
+    this.destination.set(null);
+    this.syncStops();
+  }
+
+  /**
+   * Not every typed character ends in a real pick via the dropdown — PrimeNG's own `forceSelection`
+   * input looked like the obvious way to require one, but it re-validates the typed text against
+   * cached suggestions on every internal `hide()` (including the one right after a *successful*
+   * select elsewhere), which fights over focus with whatever the user clicks next. So this is done
+   * ourselves instead, on blur and on Enter: if the typed text exactly matches one of the current
+   * suggestions, treat it as though that suggestion was clicked; otherwise revert the stray text
+   * straight on the native input, back to the last real selection's name if there is one, blank
+   * otherwise.
+   */
+  private commitTypedText(
+    auto: AutoComplete,
+    suggestions: LocationSearchResult[],
+    currentName: string | undefined,
+    applyMatch: (result: LocationSearchResult) => void,
+  ): void {
+    const input = auto.inputEL?.nativeElement;
+    if (!input) return;
+    const typed = input.value.trim();
+    const expected = currentName ?? '';
+    if (typed === expected) return;
+    const match = suggestions.find(s => s.name.toLowerCase() === typed.toLowerCase());
+    if (match) {
+      applyMatch(match);
+      return;
+    }
+    input.value = expected;
+  }
+
+  onDepartureCommit(auto: AutoComplete): void {
+    this.commitTypedText(auto, this.departureSuggestions(), this.departure()?.name, result => this.applyDeparture(result));
+  }
+
+  onDestinationCommit(auto: AutoComplete): void {
+    this.commitTypedText(auto, this.destinationSuggestions(), this.destination()?.name, result => this.applyDestination(result));
+  }
+
+  onViaCommit(auto: AutoComplete, stop: TripStop): void {
+    this.commitTypedText(auto, this.viaSuggestions(), stop.name, result => this.applyVia(result, stop));
+  }
+
+  onAddStopCommit(auto: AutoComplete): void {
+    this.commitTypedText(auto, this.addStopSuggestions(), undefined, result => this.applyAddStop(result));
   }
 
   startAddStop(): void { this.addingStop.set(true); }
   cancelAddStop(): void { this.addingStop.set(false); this.addStopSuggestions.set([]); }
 
   onAddStopSelect(event: AutoCompleteSelectEvent): void {
-    const result = event.value as LocationSearchResult;
+    this.applyAddStop(event.value as LocationSearchResult);
+  }
+
+  private applyAddStop(result: LocationSearchResult): void {
     const stop: TripStop = {
       id: crypto.randomUUID(),
       role: 'stop',
@@ -202,8 +268,8 @@ export class Step2Itinerary {
     this.rebuildRoute();
   }
 
-  onLegResolved(): void {
-    this.rebuildRoute();
+  openConnections(): void {
+    this.drawerSvc.open('connections');
   }
 
   private rebuildRoute(): void {

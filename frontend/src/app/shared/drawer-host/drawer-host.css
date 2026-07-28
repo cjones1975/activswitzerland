@@ -124,9 +124,9 @@
     overflow-y: auto;
 }
 
-/* Trip planner, things-to-do, destination-detail & auth drawers: full-width on mobile */
+/* Connections, destination-detail & auth drawers: full-width on mobile */
 @media (max-width: 767px) {
-    ::ng-deep .tp-drawer,
+    ::ng-deep .connections-drawer,
     ::ng-deep .dest-detail-drawer,
     ::ng-deep .all-attractions-drawer,
     ::ng-deep .attraction-detail-drawer,
@@ -137,13 +137,6 @@
     ::ng-deep .auth-drawer {
         width: 100vw !important;
     }
-}
-
-/* Trip planner manages its own scroll via flex layout */
-::ng-deep .tp-drawer .p-drawer-content {
-    overflow: hidden;
-    display: flex;
-    flex-direction: column;
 }
 
 /* Weather drawer header */

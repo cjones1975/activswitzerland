@@ -8,6 +8,7 @@ import { InputNumber } from 'primeng/inputnumber';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TripDateMode } from '../../../models/trip';
 import { tripDayCount } from '../../../shared/utils/date-range';
+import { StartOverLink } from '../start-over-link/start-over-link';
 
 interface SelectCardOption<T> {
   value: T;
@@ -19,7 +20,7 @@ interface SelectCardOption<T> {
 @Component({
   selector: 'app-step1-my-trip',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, Button, InputNumber],
+  imports: [CommonModule, FormsModule, TranslatePipe, Button, InputNumber, StartOverLink],
   templateUrl: './step1-my-trip.html',
   styleUrl: './step1-my-trip.css',
 })

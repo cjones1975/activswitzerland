@@ -1,12 +1,4 @@
 <div class="tpw-header">
-  <div class="tpw-title-row">
-    <div class="tpw-step-title">{{ stepLabelKey(currentStepKey()) | translate }}</div>
-    @if (hasDraft()) {
-      <button type="button" class="tpw-start-over" (click)="confirmStartOver()">
-        {{ 'trip.planner.startOver' | translate }}
-      </button>
-    }
-  </div>
   <div class="tpw-indicator">
     @for (key of stepKeys; track key; let i = $index) {
       <div class="tpw-node">
