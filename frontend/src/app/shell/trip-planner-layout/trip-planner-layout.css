@@ -60,3 +60,14 @@
   height: auto;
   display: block;
 }
+
+.tp-wizard-host {
+  position: fixed;
+  top: 3.5rem;
+  bottom: 64px;
+  left: 0;
+  right: 0;
+  z-index: 110;
+  background: var(--color-white);
+  overflow: hidden;
+}

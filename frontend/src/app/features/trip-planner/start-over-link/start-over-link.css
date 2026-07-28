@@ -1,0 +1,21 @@
+.start-over-row {
+  display: flex;
+  justify-content: center;
+  padding: 0.35rem 0;
+}
+
+.start-over-link {
+  background: none;
+  border: none;
+  padding: 0;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  color: var(--gray-500);
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.start-over-link:hover {
+  color: var(--navy-800);
+}

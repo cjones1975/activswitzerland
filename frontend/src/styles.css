@@ -73,6 +73,20 @@ body {
   font-size: 0.75rem;
 }
 
+/* Trip Planner "Start over" confirm dialog accept button — p-confirmDialog defaults to
+   appendTo="body" too, so this can't be scoped to start-over-link's own component styles. */
+.start-over-accept-btn.p-button {
+  background: #1a6b3c !important;
+  border-color: #1a6b3c !important;
+  color: var(--color-white) !important;
+}
+
+.start-over-accept-btn.p-button:hover {
+  background: #174f2f !important;
+  border-color: #174f2f !important;
+  color: var(--color-white) !important;
+}
+
 /* Toast */
 .p-toast {
     max-width: 300px;

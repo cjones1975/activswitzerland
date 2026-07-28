@@ -1,4 +1,5 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, inject, signal, computed } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable, map, of, debounceTime, skip } from 'rxjs';
 import {
@@ -30,6 +31,17 @@ export class TripPlannerService {
   /** Set when the in-progress trip was loaded from a saved trip — lets Step 5 update it in place instead of duplicating. */
   readonly loadedTripId = signal<string | null>(null);
 
+  /** Whether the wizard is showing (vs. hidden to reveal the route/markers on the map, e.g. Step 4/5's "Map View"). */
+  readonly wizardVisible = signal(true);
+  showWizard(): void { this.wizardVisible.set(true); }
+  hideWizard(): void { this.wizardVisible.set(false); }
+
+  /** Destination prefill payload seeded by `TripPlannerLayout` on `/trip-planner/:id` or the home hero's "plan a trip" flow. */
+  readonly prefillPayload = signal<string | { name: string; lat: number; lon: number; identifier: string } | null>(null);
+  setPrefillPayload(payload: string | { name: string; lat: number; lon: number; identifier: string }): void {
+    this.prefillPayload.set(payload);
+  }
+
   nextStep(): void { this.step.update(s => Math.min(s + 1, 5)); }
   prevStep(): void { this.step.update(s => Math.max(s - 1, 1)); }
   resetStep(): void { this.step.set(1); }
@@ -38,6 +50,19 @@ export class TripPlannerService {
   readonly routeCoordinates$: Observable<[number, number][]> = this._routeCoordinates$.asObservable();
 
   get snapshot(): PlannedTrip { return this._trip$.value; }
+
+  private readonly tripSignal = toSignal(this._trip$, { initialValue: this._trip$.value });
+
+  /** Consecutive stop-to-stop legs, shared by Step 2's connections button, the connections drawer, and Step 4's unresolved-leg banner. */
+  readonly legPairs = computed(() => {
+    const stops = this.tripSignal().stops;
+    const pairs: { from: TripStop; to: TripStop }[] = [];
+    for (let i = 0; i < stops.length - 1; i++) pairs.push({ from: stops[i], to: stops[i + 1] });
+    return pairs;
+  });
+
+  /** Whether there's an in-progress trip worth offering to discard — shared by every step's "Start over" link. */
+  readonly hasDraft = computed(() => this.tripSignal().stops.length > 0);
 
   constructor() {
     try {
@@ -70,6 +95,7 @@ export class TripPlannerService {
     this.resetStep();
     this.clearDraft();
     this.loadedTripId.set(null);
+    this.wizardVisible.set(true);
   }
 
   setType(type: 'road' | 'rail'): void {

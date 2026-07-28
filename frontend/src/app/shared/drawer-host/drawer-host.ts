@@ -14,7 +14,8 @@ import { DestinationDetail } from '../../features/destinations/destination-detai
 import { AllAttractions } from '../../features/attractions/all-attractions/all-attractions';
 import { AttractionDetail, AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
 import { Weather } from '../weather/weather';
-import { TripPlannerWizard } from '../../features/trip-planner/trip-planner-wizard/trip-planner-wizard';
+import { TripPlannerService } from '../services/trip-planner';
+import { ConnectionsDrawer } from '../../features/trip-planner/connections-drawer/connections-drawer';
 import { HikesList } from '../../features/hikes/hikes-list/hikes-list';
 import { HikeDetail, HikeDetailPayload } from '../../features/hikes/hike-detail/hike-detail';
 import { BikesList } from '../../features/bikes/bikes-list/bikes-list';
@@ -26,7 +27,7 @@ import { WeatherPayload } from '../../models/weather';
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, TripPlannerWizard, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -34,6 +35,7 @@ export class DrawerHost {
   svc = inject(Drawer);
   private router = inject(Router);
   private attractionMarkers = inject(AttractionMarkersService);
+  private tripPlanner = inject(TripPlannerService);
 
   onVisibleChange(key: DrawerKey, visible: boolean) {
     visible ? this.svc.open(key) : this.svc.close(key);
@@ -45,18 +47,6 @@ export class DrawerHost {
 
   onCollapse(key: DrawerKey) {
     this.svc.collapse(key);
-  }
-
-  // Only set when trip-planner was entered from nav-menu/footer-nav (which
-  // stamp the page they were clicked from as `from`) rather than from a
-  // destination's own "plan a trip" flow — that case has no `from` and
-  // just closes, leaving TripPlannerLayout's own "back to destination" button.
-  onTripPlannerBack() {
-    this.svc.close('trip-planner');
-    const from = this.router.parseUrl(this.router.url).queryParams['from'];
-    if (from) {
-      this.router.navigateByUrl(from);
-    }
   }
 
   onDestinationBack() {
@@ -74,7 +64,7 @@ export class DrawerHost {
     const payload = this.svc.getPayload<ActivityPickerPayload>('all-attractions');
     if (payload?.mode === 'select') {
       this.svc.close('all-attractions');
-      this.svc.open('trip-planner');
+      this.tripPlanner.showWizard();
     } else {
       this.svc.collapse('all-attractions');
       if (payload?.origin === 'destination-detail') {
@@ -90,8 +80,8 @@ export class DrawerHost {
   });
 
   // Trip-planner picker flow (opened in 'select' mode, or reached from a
-  // trip-summary map marker) shows no "show on map" affordance — the map
-  // behind the trip-planner drawer is a different view than the destination map.
+  // trip-summary map marker) shows no "show on map" affordance — the wizard
+  // isn't a drawer over this map, it's a different page's content entirely.
   isAllAttractionsTripPlanner = computed(() => {
     this.svc.list();
     return this.svc.getPayload<ActivityPickerPayload>('all-attractions')?.mode === 'select';
@@ -118,7 +108,7 @@ export class DrawerHost {
       return;
     }
     if (payload.source === 'trip-summary') {
-      this.svc.open('trip-planner');
+      this.tripPlanner.showWizard();
       return;
     }
     if (payload.source === 'map') {
@@ -153,7 +143,7 @@ export class DrawerHost {
     const payload = this.svc.getPayload<ActivityPickerPayload>('hikes');
     this.svc.close('hikes');
     if (payload?.mode === 'select') {
-      this.svc.open('trip-planner');
+      this.tripPlanner.showWizard();
     } else {
       this.svc.open('destination-detail', payload?.destination);
     }
@@ -179,7 +169,7 @@ export class DrawerHost {
     const payload = this.svc.getPayload<HikeDetailPayload>('hike-detail')!;
     this.svc.close('hike-detail');
     if (payload.source === 'trip-summary') {
-      this.svc.open('trip-planner');
+      this.tripPlanner.showWizard();
       return;
     }
     this.svc.open('hikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
@@ -189,7 +179,7 @@ export class DrawerHost {
     const payload = this.svc.getPayload<ActivityPickerPayload>('bikes');
     this.svc.close('bikes');
     if (payload?.mode === 'select') {
-      this.svc.open('trip-planner');
+      this.tripPlanner.showWizard();
     } else {
       this.svc.open('destination-detail', payload?.destination);
     }
@@ -215,7 +205,7 @@ export class DrawerHost {
     const payload = this.svc.getPayload<BikeDetailPayload>('bike-detail')!;
     this.svc.close('bike-detail');
     if (payload.source === 'trip-summary') {
-      this.svc.open('trip-planner');
+      this.tripPlanner.showWizard();
       return;
     }
     this.svc.open('bikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
@@ -225,7 +215,7 @@ export class DrawerHost {
     const payload = this.svc.getPayload<ActivityPickerPayload>('hotels');
     this.svc.close('hotels');
     if (payload?.mode === 'select') {
-      this.svc.open('trip-planner');
+      this.tripPlanner.showWizard();
     } else {
       this.svc.open('destination-detail', payload?.destination);
     }

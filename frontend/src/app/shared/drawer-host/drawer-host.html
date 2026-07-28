@@ -172,31 +172,31 @@
     <app-weather></app-weather>
 </p-drawer>
 
-<!-- TRIP PLANNER -->
+<!-- TRAIN CONNECTIONS -->
 <p-drawer
-    [visible]="svc.isOpen('trip-planner')"
+    [visible]="svc.isOpen('connections')"
     [closable]="false"
     [dismissible]="false"
     [closeOnEscape]="false"
-    (visibleChange)="onVisibleChange('trip-planner', $event)"
+    (visibleChange)="onVisibleChange('connections', $event)"
     position="left"
     appendTo="body"
-    [baseZIndex]="svc.zIndexFor('trip-planner')"
+    [baseZIndex]="svc.zIndexFor('connections')"
     [style]="{ width: 'min(480px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer tp-drawer">
+    styleClass="dest-drawer connections-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onTripPlannerBack()">
+            <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('connections')">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
             <div class="menu-brand-text tp-header-brand">
-                <i class="fa-light fa-route"></i>
-                <span class="menu-brand-name">{{ 'trip.planner.title' | translate }}</span>
+                <i class="fa-light fa-train"></i>
+                <span class="menu-brand-name">{{ 'trip.planner.connections' | translate }}</span>
             </div>
         </div>
     </ng-template>
     <hr class="header-divider" />
-    <app-trip-planner-wizard></app-trip-planner-wizard>
+    <app-connections-drawer></app-connections-drawer>
 </p-drawer>
 
 <!-- DESTINATION DETAIL -->

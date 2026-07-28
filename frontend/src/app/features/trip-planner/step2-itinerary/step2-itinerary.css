@@ -173,6 +173,48 @@
   margin: 1rem 0 0.5rem;
 }
 
+.s2-connections-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: 100%;
+  margin-top: 0.75rem;
+  padding: 0.75rem;
+  border: 1px solid var(--gray-200, #e2e8f0);
+  border-radius: 10px;
+  background: var(--color-white);
+  color: var(--navy-900);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  text-align: left;
+}
+
+.s2-connections-btn:hover {
+  border-color: var(--navy-500, #6b90b8);
+}
+
+.s2-connections-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.3rem;
+  height: 1.3rem;
+  padding: 0 0.35rem;
+  border-radius: 999px;
+  background: #b45309;
+  color: var(--color-white);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.s2-connections-chevron {
+  margin-left: auto;
+  color: var(--gray-400);
+  font-size: 0.8rem;
+}
+
 .s2-footer {
   flex-shrink: 0;
   display: grid;

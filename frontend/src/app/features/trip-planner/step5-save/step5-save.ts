@@ -13,11 +13,12 @@ import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TripsService } from '../../../shared/services/trips';
 import { SavedTrip } from '../../../models/trip';
 import { tripDayCount, formatDdMmYyyy } from '../../../shared/utils/date-range';
+import { StartOverLink } from '../start-over-link/start-over-link';
 
 @Component({
   selector: 'app-step5-save',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, Button, InputText],
+  imports: [CommonModule, FormsModule, TranslatePipe, Button, InputText, StartOverLink],
   templateUrl: './step5-save.html',
   styleUrl: './step5-save.css',
 })
@@ -81,7 +82,7 @@ export class Step5Save {
         if (saved._id) this.plannerSvc.loadedTripId.set(saved._id);
         this.plannerSvc.clearDraft();
         this.toast.success(this.translate.instant('trip.planner.savedSuccess'), undefined, 3000, 'toast-error');
-        this.drawerSvc.collapse('trip-planner');
+        this.plannerSvc.hideWizard();
       },
       error: () => {
         this.saving.set(false);

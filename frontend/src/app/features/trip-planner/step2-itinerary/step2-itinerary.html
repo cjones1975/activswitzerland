@@ -17,8 +17,9 @@
         </span>
       }
     </div>
-    <p-autoComplete class="s2-input" [ngModel]="departure()" optionLabel="name" [suggestions]="departureSuggestions()"
-                     (completeMethod)="searchDeparture($event)" (onSelect)="onDepartureSelect($event)"
+    <p-autoComplete #depAuto class="s2-input" [ngModel]="departure()" optionLabel="name" [suggestions]="departureSuggestions()"
+                     (completeMethod)="searchDeparture($event)" (onSelect)="onDepartureSelect($event)" (onClear)="onDepartureClear()"
+                     (onBlur)="onDepartureCommit(depAuto)" (keydown.enter)="onDepartureCommit(depAuto)" [showClear]="true"
                      [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
     @if (departure(); as stop) {
       <div class="s2-days-field">
@@ -41,11 +42,12 @@
             </span>
           }
           <button type="button" class="s2-remove" [attr.aria-label]="'trip.planner.removeStop' | translate" (click)="removeVia(stop.id)">
-            <i class="fa-light fa-xmark"></i>
+            <i class="fa-solid fa-trash"></i>
           </button>
         </div>
-        <p-autoComplete class="s2-input" [ngModel]="stop" optionLabel="name" [suggestions]="viaSuggestions()"
-                         (completeMethod)="searchVia($event)" (onSelect)="onViaSelect($event, stop)"
+        <p-autoComplete #viaAuto class="s2-input" [ngModel]="stop" optionLabel="name" [suggestions]="viaSuggestions()"
+                         (completeMethod)="searchVia($event)" (onSelect)="onViaSelect($event, stop)" (onClear)="removeVia(stop.id)"
+                         (onBlur)="onViaCommit(viaAuto, stop)" (keydown.enter)="onViaCommit(viaAuto, stop)" [showClear]="true"
                          [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
         <div class="s2-days-field">
           <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
@@ -66,8 +68,9 @@
         </span>
       }
     </div>
-    <p-autoComplete class="s2-input" [ngModel]="destination()" optionLabel="name" [suggestions]="destinationSuggestions()"
-                     (completeMethod)="searchDestination($event)" (onSelect)="onDestinationSelect($event)"
+    <p-autoComplete #destAuto class="s2-input" [ngModel]="destination()" optionLabel="name" [suggestions]="destinationSuggestions()"
+                     (completeMethod)="searchDestination($event)" (onSelect)="onDestinationSelect($event)" (onClear)="onDestinationClear()"
+                     (onBlur)="onDestinationCommit(destAuto)" (keydown.enter)="onDestinationCommit(destAuto)" [showClear]="true"
                      [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
     @if (destination(); as stop) {
       <div class="s2-days-field">
@@ -85,8 +88,9 @@
       </button>
     } @else {
       <div class="s2-add-active">
-        <p-autoComplete class="s2-input" optionLabel="name" [suggestions]="addStopSuggestions()"
+        <p-autoComplete #addAuto class="s2-input" optionLabel="name" [suggestions]="addStopSuggestions()"
                          (completeMethod)="searchAddStop($event)" (onSelect)="onAddStopSelect($event)"
+                         (onBlur)="onAddStopCommit(addAuto)" (keydown.enter)="onAddStopCommit(addAuto)"
                          [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
         <button type="button" class="s2-cancel-btn" (click)="cancelAddStop()">{{ 'trip.planner.step2.cancel' | translate }}</button>
       </div>
@@ -100,20 +104,23 @@
     <p-message severity="warn">{{ 'trip.planner.routeUnreachable' | translate }}</p-message>
   }
 
-  <!-- Rail connections -->
-  @if (type() === 'rail' && legPairs().length > 0) {
-    <div class="s2-connections">
-      <div class="s2-section-title">{{ 'trip.planner.connections' | translate }}</div>
-      @for (pair of legPairs(); track pair.from.id + pair.to.id) {
-        <app-connection-leg-picker [fromStop]="pair.from" [toStop]="pair.to" (resolved)="onLegResolved()" />
+  @if (type() === 'rail') {
+    <button type="button" class="s2-connections-btn" (click)="openConnections()">
+      <i class="fa-light fa-train"></i>
+      {{ 'trip.planner.connections' | translate }}
+      @if (unresolvedLegCount(); as count) {
+        <span class="s2-connections-badge">{{ count }}</span>
       }
-    </div>
+      <i class="fa-light fa-chevron-right s2-connections-chevron"></i>
+    </button>
   }
 </div>
 
 @if (allocationMessage(); as msg) {
   <p-message severity="warn" styleClass="s2-sequence-msg">{{ msg.key | translate: { count: msg.count } }}</p-message>
 }
+
+<app-start-over-link />
 
 <div class="s2-footer">
   <p-button [label]="'trip.planner.back' | translate" icon="fa-light fa-chevron-left" severity="secondary" [outlined]="true" (onClick)="back()" />

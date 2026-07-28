@@ -1,0 +1,7 @@
+@if (plannerSvc.hasDraft()) {
+  <div class="start-over-row">
+    <button type="button" class="start-over-link" (click)="confirmStartOver()">
+      {{ 'trip.planner.startOver' | translate }}
+    </button>
+  </div>
+}

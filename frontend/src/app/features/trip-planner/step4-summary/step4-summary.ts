@@ -7,6 +7,7 @@ import { Drawer } from '../../../shared/services/drawer';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { ActivityKind, TripStop, TripActivitySelection } from '../../../models/trip';
 import { stopDayRanges, tripDayCount, formatDdMmYyyy } from '../../../shared/utils/date-range';
+import { StartOverLink } from '../start-over-link/start-over-link';
 
 interface ActivityGroup { kind: ActivityKind; icon: string; labelKey: string; }
 
@@ -19,7 +20,7 @@ const ACTIVITY_GROUPS: ActivityGroup[] = [
 @Component({
   selector: 'app-step4-summary',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, Button],
+  imports: [CommonModule, TranslatePipe, Button, StartOverLink],
   templateUrl: './step4-summary.html',
   styleUrl: './step4-summary.css',
 })
@@ -48,14 +49,9 @@ export class Step4Summary {
   readonly stopDayLabels = computed(() => stopDayRanges(this.trip().stops));
 
   readonly unresolvedLegs = computed(() => {
-    const stops = this.trip().stops;
     if (this.type() !== 'rail') return [];
-    const legs: { from: TripStop; to: TripStop }[] = [];
-    for (let i = 0; i < stops.length - 1; i++) {
-      const leg = this.plannerSvc.getConnectionLeg(stops[i].id, stops[i + 1].id);
-      if (!leg?.connection) legs.push({ from: stops[i], to: stops[i + 1] });
-    }
-    return legs;
+    return this.plannerSvc.legPairs()
+      .filter(pair => !this.plannerSvc.getConnectionLeg(pair.from.id, pair.to.id)?.connection);
   });
 
   readonly routeComplete = computed(() =>
@@ -82,11 +78,11 @@ export class Step4Summary {
   }
 
   showMap(): void {
-    this.drawerSvc.collapse('trip-planner');
+    this.plannerSvc.hideWizard();
   }
 
   fixConnection(): void {
-    this.plannerSvc.step.set(2);
+    this.drawerSvc.open('connections');
   }
 
   back(): void {
