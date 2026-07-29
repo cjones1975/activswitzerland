@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, OnInit, Output, ViewChild, inject, signal } from '@angular/core';
+import { AfterViewInit, Component, DestroyRef, ElementRef, EventEmitter, Input, OnDestroy, OnInit, Output, Renderer2, ViewChild, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,9 +16,11 @@ const DEBOUNCE_MS = 300;
   templateUrl: './location-search-sheet.html',
   styleUrl: './location-search-sheet.css',
 })
-export class LocationSearchSheet implements OnInit, AfterViewInit {
+export class LocationSearchSheet implements OnInit, AfterViewInit, OnDestroy {
   private transportSvc = inject(TransportService);
   private destroyRef = inject(DestroyRef);
+  private hostEl = inject(ElementRef<HTMLElement>);
+  private renderer = inject(Renderer2);
 
   @Input({ required: true }) tripType!: 'road' | 'rail';
   @Input() initialValue = '';
@@ -34,6 +36,12 @@ export class LocationSearchSheet implements OnInit, AfterViewInit {
   private readonly queryChanges = new Subject<string>();
 
   ngOnInit(): void {
+    // Moved to a direct child of <body> so `.lss-overlay`'s `position: fixed` can never be
+    // trapped by an ancestor's stacking context (a scrolled Step 2 card list, wizard chrome,
+    // etc.) — the scenario item 2 exists to fix in the first place is opening this while
+    // already scrolled down, so it must render correctly regardless of ancestor scroll state.
+    this.renderer.appendChild(document.body, this.hostEl.nativeElement);
+
     this.query.set(this.initialValue);
 
     this.queryChanges.pipe(
@@ -54,6 +62,12 @@ export class LocationSearchSheet implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.inputRef?.nativeElement.focus();
+  }
+
+  ngOnDestroy(): void {
+    // Angular's own removal logic tracks the element's original (logical) parent — since it was
+    // manually re-parented to <body> above, remove it ourselves so it can't leak into the DOM.
+    this.hostEl.nativeElement.remove();
   }
 
   onQueryChange(value: string): void {
