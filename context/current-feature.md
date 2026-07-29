@@ -2,15 +2,39 @@
 
 ## Feature
 
+Image Copyright Compliance (expand=true + no_image fallback + galleria caption)
+
 ## Status
+
+Specced — `context/features/image-copyright-compliance-spec.md`. No feature branch created yet; implementation not started.
 
 ## Goals
 
+- Request `expand=true` on every MySwitzerland query (list + single-record), replacing the current `expand=false`/omitted calls, so image attribution metadata (`copyrightHolder`) is available everywhere.
+- Enforce MySwitzerland's T&C: only ever display images with a non-empty `copyrightHolder`, filtered out server-side so a non-compliant image never reaches the frontend.
+- List cards (destinations + attractions) fall back to `no_image.png` when no compliant image exists for a record.
+- Detail pages (attraction + destination) show no image section at all when no compliant image exists — no `.photo` fallback, unlike list cards.
+- Add a `© {{image.name}}` caption overlay on the detail-page galleria's main image.
+
 ## Notes
+
+- Live-tested against the MySwitzerland API before speccing: 46% of images (98/213 sampled across real attractions/destinations) have no `copyrightHolder` field at all.
+- `expand` only changes behavior on list endpoints — single-record endpoints (`/attractions/:id`, `/destinations/:id`) already return full `image[]` data (including `copyrightHolder`) regardless of `expand`, confirmed live for `getDestination`; `getAttraction` already hardcodes `expand=true`.
+- Compliance rule is presence/non-empty of `copyrightHolder` only — no judgment of the string's content (e.g. "Editorial and touristic use" counts as compliant).
+- `encodingFormat` isn't needed — rendering is CSS `background-image: url(...)`, which doesn't need a MIME hint, and only `image/jpeg`/`image/png` were observed in sampled data.
+- Incidentally cleans up two pre-existing dead params while touching the same call sites: the now-pointless `expand` passthrough on list services, and an unused `top` param on `searchAttractions` (backend never read it).
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-07-29 — Image Copyright Compliance Specced
+
+- Investigated a user question about whether MySwitzerland's attractions/destinations queries return image copyright data — found `expand` was `false`/omitted on every list query, so only the bare `photo` string (no attribution) was ever available; single-record endpoints already return full `image[]` data regardless of `expand`
+- Live-tested the MySwitzerland API directly (list + single-record, attractions + destinations) to confirm the scope of the compliance gap: 46% of sampled images (98/213) have no `copyrightHolder` field
+- Confirmed compliance rule with the user: an image is displayable if `copyrightHolder` is present and non-empty, regardless of string content; filtering happens server-side so non-compliant images never reach the frontend
+- Scoped three changes: hardcode `expand=true` everywhere + server-side compliant-image filtering; `no_image.png` fallback on list cards (destinations didn't have this at all yet, attractions got it in a prior session); detail pages drop the `.photo` fallback entirely (no compliant image = no image section) and gain a `© {{image.name}}` galleria caption
+- Created `context/features/image-copyright-compliance-spec.md`; no feature branch created yet
 
 ### 2026-07-28 — Trip Planner Page Redesign Implemented
 
