@@ -1,5 +1,8 @@
 # Trip Planner Mobile Stop Picker — Full-Screen Search Sheet
 
+**Status: implemented** (`feature/trip-planner-mobile-stop-picker`, not yet merged — not yet
+exercised in a real browser/mobile viewport, only `tsc --noEmit`/`ng build` verified).
+
 ## Overview
 
 Step 2 of the trip planner (`Step2Itinerary`) uses PrimeNG's `p-autoComplete` (`[dropdown]="false"`,

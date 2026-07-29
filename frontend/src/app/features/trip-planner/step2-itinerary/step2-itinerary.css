@@ -107,6 +107,36 @@
   width: 100%;
 }
 
+.s2-mobile-field {
+  display: none;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  width: 100%;
+  margin-bottom: 0.6rem;
+  padding: 0.55rem 0.75rem;
+  border: 1px solid var(--gray-300, #cbd5e1);
+  border-radius: 8px;
+  background: var(--color-white);
+  font-family: inherit;
+  font-size: 0.85rem;
+  color: var(--navy-900);
+  text-align: left;
+  cursor: pointer;
+}
+
+.s2-mobile-field-placeholder { color: var(--gray-500); }
+
+.s2-mobile-clear {
+  display: flex;
+  align-items: center;
+  color: var(--gray-400);
+  padding: 0.15rem;
+  flex-shrink: 0;
+}
+
+.s2-mobile-clear:hover { color: #e53e3e; }
+
 .s2-days-field {
   display: flex;
   align-items: center;
@@ -146,6 +176,8 @@
 }
 
 .s2-add-btn:disabled { color: var(--gray-400); cursor: default; }
+
+.s2-add-btn--mobile { display: none; }
 
 .s2-add-active {
   display: flex;
@@ -227,3 +259,20 @@
 }
 
 ::ng-deep .s2-footer .p-button { width: 100%; justify-content: center; }
+
+/* Mobile: swap the inline p-autoComplete fields for the full-screen search sheet trigger buttons. Same breakpoint as drawer-host.css. */
+@media (max-width: 767px) {
+  .s2-input--desktop,
+  .s2-add-btn--desktop,
+  .s2-add-active--desktop {
+    display: none;
+  }
+
+  .s2-mobile-field {
+    display: flex;
+  }
+
+  .s2-add-btn--mobile {
+    display: inline-flex;
+  }
+}

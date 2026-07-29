@@ -1,0 +1,26 @@
+<div class="lss-overlay">
+  <div class="lss-header">
+    <button type="button" class="lss-back" (click)="close()" [attr.aria-label]="'trip.planner.back' | translate">
+      <i class="fa-light fa-chevron-left"></i>
+    </button>
+    <span class="lss-title">{{ 'trip.planner.step2.searchTitle' | translate }}</span>
+  </div>
+
+  <div class="lss-input-row">
+    <input #lssInput type="text" inputmode="search" autocomplete="off" class="lss-input"
+           [ngModel]="query()" (ngModelChange)="onQueryChange($event)"
+           [placeholder]="'trip.planner.step2.stop' | translate" />
+  </div>
+
+  <div class="lss-results">
+    @if (loading()) {
+      <div class="lss-state">{{ 'trip.planner.step2.searching' | translate }}</div>
+    } @else if (query().trim().length >= 3 && results().length === 0) {
+      <div class="lss-state">{{ 'trip.planner.step2.noResults' | translate }}</div>
+    } @else {
+      @for (r of results(); track r.externalId) {
+        <button type="button" class="lss-result" (click)="pick(r)">{{ r.name }}</button>
+      }
+    }
+  </div>
+</div>

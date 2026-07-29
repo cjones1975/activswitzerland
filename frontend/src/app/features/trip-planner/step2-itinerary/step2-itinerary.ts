@@ -13,14 +13,18 @@ import { TransportService, LocationSearchResult } from '../../../shared/services
 import { TripStop, TripDateRange } from '../../../models/trip';
 import { tripDayCount, stopDayRanges } from '../../../shared/utils/date-range';
 import { StartOverLink } from '../start-over-link/start-over-link';
+import { LocationSearchSheet } from './location-search-sheet/location-search-sheet';
 
 const MAX_VIA_STOPS = 6;
 const DEFAULT_STOP_DAYS = 1;
 
+/** Which stop slot the mobile full-screen search sheet is currently editing, if any. */
+type MobilePickerTarget = 'departure' | 'destination' | 'add' | { via: string };
+
 @Component({
   selector: 'app-step2-itinerary',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, DragDropModule, AutoCompleteModule, Button, Message, StartOverLink],
+  imports: [CommonModule, FormsModule, TranslatePipe, DragDropModule, AutoCompleteModule, Button, Message, StartOverLink, LocationSearchSheet],
   templateUrl: './step2-itinerary.html',
   styleUrl: './step2-itinerary.css',
 })
@@ -205,6 +209,45 @@ export class Step2Itinerary {
 
   startAddStop(): void { this.addingStop.set(true); }
   cancelAddStop(): void { this.addingStop.set(false); this.addStopSuggestions.set([]); }
+
+  // ── Mobile full-screen search sheet ─────────────────────────────────────
+  /** Which stop the sheet is editing, if open at all — its own `p-autoComplete` counterpart stays hidden via CSS on mobile, so this never fires on desktop. */
+  readonly mobilePickerTarget = signal<MobilePickerTarget | null>(null);
+
+  readonly mobilePickerInitialValue = computed(() => {
+    const target = this.mobilePickerTarget();
+    if (!target) return '';
+    if (target === 'departure') return this.departure()?.name ?? '';
+    if (target === 'destination') return this.destination()?.name ?? '';
+    if (target === 'add') return '';
+    return this.viaStopById(target.via)?.name ?? '';
+  });
+
+  private viaStopById(id: string): TripStop | undefined {
+    return this.viaStops().find(s => s.id === id);
+  }
+
+  openMobilePicker(target: MobilePickerTarget): void {
+    this.mobilePickerTarget.set(target);
+  }
+
+  closeMobilePicker(): void {
+    this.mobilePickerTarget.set(null);
+  }
+
+  /** Routes the sheet's pick back through the same apply* methods the desktop `p-autoComplete`s use — no duplicated apply logic. */
+  onMobilePicked(result: LocationSearchResult): void {
+    const target = this.mobilePickerTarget();
+    if (!target) return;
+    if (target === 'departure') this.applyDeparture(result);
+    else if (target === 'destination') this.applyDestination(result);
+    else if (target === 'add') this.applyAddStop(result);
+    else {
+      const stop = this.viaStopById(target.via);
+      if (stop) this.applyVia(result, stop);
+    }
+    this.closeMobilePicker();
+  }
 
   onAddStopSelect(event: AutoCompleteSelectEvent): void {
     this.applyAddStop(event.value as LocationSearchResult);

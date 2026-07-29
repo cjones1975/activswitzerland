@@ -17,10 +17,18 @@
         </span>
       }
     </div>
-    <p-autoComplete #depAuto class="s2-input" [ngModel]="departure()" optionLabel="name" [suggestions]="departureSuggestions()"
+    <p-autoComplete #depAuto class="s2-input s2-input--desktop" [ngModel]="departure()" optionLabel="name" [suggestions]="departureSuggestions()"
                      (completeMethod)="searchDeparture($event)" (onSelect)="onDepartureSelect($event)" (onClear)="onDepartureClear()"
                      (onBlur)="onDepartureCommit(depAuto)" (keydown.enter)="onDepartureCommit(depAuto)" [showClear]="true"
                      [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+    <button type="button" class="s2-mobile-field" (click)="openMobilePicker('departure')">
+      <span [class.s2-mobile-field-placeholder]="!departure()">{{ departure()?.name || ('trip.planner.step2.stop' | translate) }}</span>
+      @if (departure()) {
+        <span class="s2-mobile-clear" [attr.aria-label]="'trip.planner.step2.clearSelection' | translate" (click)="onDepartureClear(); $event.stopPropagation()">
+          <i class="fa-light fa-xmark"></i>
+        </span>
+      }
+    </button>
     @if (departure(); as stop) {
       <div class="s2-days-field">
         <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
@@ -45,10 +53,18 @@
             <i class="fa-solid fa-trash"></i>
           </button>
         </div>
-        <p-autoComplete #viaAuto class="s2-input" [ngModel]="stop" optionLabel="name" [suggestions]="viaSuggestions()"
+        <p-autoComplete #viaAuto class="s2-input s2-input--desktop" [ngModel]="stop" optionLabel="name" [suggestions]="viaSuggestions()"
                          (completeMethod)="searchVia($event)" (onSelect)="onViaSelect($event, stop)" (onClear)="removeVia(stop.id)"
                          (onBlur)="onViaCommit(viaAuto, stop)" (keydown.enter)="onViaCommit(viaAuto, stop)" [showClear]="true"
                          [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+        <button type="button" class="s2-mobile-field" (click)="openMobilePicker({ via: stop.id })">
+          <span [class.s2-mobile-field-placeholder]="!stop.name">{{ stop.name || ('trip.planner.step2.stop' | translate) }}</span>
+          @if (stop.name) {
+            <span class="s2-mobile-clear" [attr.aria-label]="'trip.planner.removeStop' | translate" (click)="removeVia(stop.id); $event.stopPropagation()">
+              <i class="fa-light fa-xmark"></i>
+            </span>
+          }
+        </button>
         <div class="s2-days-field">
           <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
           <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
@@ -68,10 +84,18 @@
         </span>
       }
     </div>
-    <p-autoComplete #destAuto class="s2-input" [ngModel]="destination()" optionLabel="name" [suggestions]="destinationSuggestions()"
+    <p-autoComplete #destAuto class="s2-input s2-input--desktop" [ngModel]="destination()" optionLabel="name" [suggestions]="destinationSuggestions()"
                      (completeMethod)="searchDestination($event)" (onSelect)="onDestinationSelect($event)" (onClear)="onDestinationClear()"
                      (onBlur)="onDestinationCommit(destAuto)" (keydown.enter)="onDestinationCommit(destAuto)" [showClear]="true"
                      [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+    <button type="button" class="s2-mobile-field" (click)="openMobilePicker('destination')">
+      <span [class.s2-mobile-field-placeholder]="!destination()">{{ destination()?.name || ('trip.planner.step2.stop' | translate) }}</span>
+      @if (destination()) {
+        <span class="s2-mobile-clear" [attr.aria-label]="'trip.planner.step2.clearSelection' | translate" (click)="onDestinationClear(); $event.stopPropagation()">
+          <i class="fa-light fa-xmark"></i>
+        </span>
+      }
+    </button>
     @if (destination(); as stop) {
       <div class="s2-days-field">
         <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
@@ -83,11 +107,11 @@
   <!-- Add stop -->
   <div class="s2-add-row">
     @if (!addingStop()) {
-      <button type="button" class="s2-add-btn" [disabled]="!canAddStop()" (click)="startAddStop()">
+      <button type="button" class="s2-add-btn s2-add-btn--desktop" [disabled]="!canAddStop()" (click)="startAddStop()">
         <i class="fa-light fa-circle-plus"></i> {{ 'trip.planner.addStop' | translate }}
       </button>
     } @else {
-      <div class="s2-add-active">
+      <div class="s2-add-active s2-add-active--desktop">
         <p-autoComplete #addAuto class="s2-input" optionLabel="name" [suggestions]="addStopSuggestions()"
                          (completeMethod)="searchAddStop($event)" (onSelect)="onAddStopSelect($event)"
                          (onBlur)="onAddStopCommit(addAuto)" (keydown.enter)="onAddStopCommit(addAuto)"
@@ -95,7 +119,18 @@
         <button type="button" class="s2-cancel-btn" (click)="cancelAddStop()">{{ 'trip.planner.step2.cancel' | translate }}</button>
       </div>
     }
+    <button type="button" class="s2-add-btn s2-add-btn--mobile" [disabled]="!canAddStop()" (click)="openMobilePicker('add')">
+      <i class="fa-light fa-circle-plus"></i> {{ 'trip.planner.addStop' | translate }}
+    </button>
   </div>
+
+  @if (mobilePickerTarget()) {
+    <app-location-search-sheet
+      [tripType]="type()"
+      [initialValue]="mobilePickerInitialValue()"
+      (selected)="onMobilePicked($event)"
+      (closed)="closeMobilePicker()" />
+  }
 
   @if (routeError()) {
     <p-message severity="error">{{ 'trip.planner.routeError' | translate }}</p-message>
