@@ -2,11 +2,24 @@
 
 ## Feature
 
+Trip Planner Mobile Stop Picker — full-screen search sheet replacing the PrimeNG autocomplete overlay on mobile for Step 2's four stop fields
+
 ## Status
+
+Specced; no feature branch created yet
 
 ## Goals
 
+- Fix the reported UX problem: on mobile, opening a stop field's suggestion overlay (departure/via/destination/add-stop, all `p-autoComplete`) while scrolled down a card list is clunky — the overlay clips/flips awkwardly between the on-screen keyboard and the field's scrolled position
+- On screens ≤767px only, tapping any stop field opens a dedicated full-screen search sheet (input pinned at top, results filling the rest of the screen) instead of PrimeNG's positioned overlay; desktop behavior is completely untouched
+- Deliberately avoid re-fighting PrimeNG's `AutoComplete` internals — the Trip Planner Page Redesign already hit a real focus-steal bug from `appendTo="body"`/`forceSelection` on these same four fields and reverted it per user request, so this phase replaces the interaction with a separate custom sheet component instead of repositioning/portaling PrimeNG's own overlay
+
 ## Notes
+
+- CSS-only breakpoint gating (`@media (max-width: 767px)`, matching `drawer-host.css`'s existing breakpoint) — confirmed via a full-frontend grep that this codebase has no `BreakpointObserver`/`matchMedia` usage anywhere, so each field slot renders two markup blocks (existing `p-autoComplete` + a new mobile-only button) toggled purely by CSS, rather than introducing JS breakpoint detection
+- New `LocationSearchSheet` component (`features/trip-planner/step2-itinerary/location-search-sheet/`), mounted once in `step2-itinerary.html`, self-contained (own debounced search via `TransportService.searchLocations()` directly, not reusing the desktop `search*` methods bound to PrimeNG's `completeMethod`); selections route back through the existing `applyDeparture`/`applyDestination`/`applyVia`/`applyAddStop` methods, so no apply logic is duplicated
+- Not a `DrawerKey` — it's local to `Step2Itinerary` only, never linked to from elsewhere, so it doesn't need `drawer-host.ts`'s router-back-nav wiring; z-index `1000` (above all fixed chrome, below the `Drawer` service's `DRAWER_BASE_Z = 4000` stack)
+- New i18n keys needed: `trip.planner.step2.searchTitle`/`searching`/`noResults`/`clearSelection` (en/de/fr/it); the existing `trip.planner.step2.stop` key is reused as-is for the sheet's placeholder/empty state
 
 ## History
 
@@ -32,6 +45,15 @@
 - Spec updated post-implementation to replace its original (doc-sourced, partly wrong) request/response XML with the real verified wire format
 - Real bug found via UAT: the running Docker `backend` container (`activswitzerland_backend`, port 3000) reads its env from `infra/.env`, not `backend/config/.env` — `OPENTRANSPORTDATA_ENDPOINT`/`TOKEN` had only been added to the latter, so the containerized backend's `getLocations` threw `TypeError: Invalid URL` (axios called with an `undefined` url) the moment the frontend hit it. Fixed by adding both vars to `infra/.env` as well; user rebuilt/recreated the container themselves and confirmed the stop-picker works for both road and rail trips
 - Feature marked complete
+- `feature/ojp-location-search` committed, merged into `main` (`--no-ff`, no `Co-Authored-By` trailer per explicit user instruction), and deleted; `main` pushed to `origin/main`
+
+### 2026-07-29 — Trip Planner Mobile Stop Picker Specced
+
+- Item 2 from the same trip-planner brainstorm that produced the OJP Location Search spec above — the mobile UX pain point deferred at the time
+- Confirmed via a full-frontend grep that this codebase has no `BreakpointObserver`/`matchMedia` usage anywhere; every existing responsive split is plain CSS `@media (max-width: ...)`, so the design follows that convention (two markup blocks per field, CSS-toggled) rather than introducing JS breakpoint detection
+- Deliberately designed around a specific piece of prior history: the Trip Planner Page Redesign (2026-07-28 entry above) already tried `appendTo="body"`/`forceSelection` on these same four `p-autoComplete` fields, hit a real focus-steal bug, and reverted per user request. This spec avoids repeating that by never touching PrimeNG's `AutoComplete` overlay internals for the mobile path — it swaps in a completely separate custom-built full-screen sheet component instead
+- Investigated the existing `ConnectionLegPicker`/`ConnectionsDrawer`/`Drawer` service split to confirm the new sheet should be a plain local component (like `ConnectionLegPicker`), not a new `DrawerKey` — it's never linked to from outside `Step2Itinerary`, so it doesn't need router-back-nav wiring
+- Created `context/features/trip-planner-mobile-stop-picker-spec.md`, committed directly onto `feature/ojp-location-search` (as a docs-only commit) before that branch was merged to `main`; no dedicated feature branch of its own yet — no implementation
 
 ### 2026-07-29 — Image Copyright Compliance Implemented
 
