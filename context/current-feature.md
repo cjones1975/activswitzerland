@@ -2,24 +2,11 @@
 
 ## Feature
 
-Trip Planner Mobile Stop Picker — full-screen search sheet replacing the PrimeNG autocomplete overlay on mobile for Step 2's four stop fields
-
 ## Status
-
-Specced; no feature branch created yet
 
 ## Goals
 
-- Fix the reported UX problem: on mobile, opening a stop field's suggestion overlay (departure/via/destination/add-stop, all `p-autoComplete`) while scrolled down a card list is clunky — the overlay clips/flips awkwardly between the on-screen keyboard and the field's scrolled position
-- On screens ≤767px only, tapping any stop field opens a dedicated full-screen search sheet (input pinned at top, results filling the rest of the screen) instead of PrimeNG's positioned overlay; desktop behavior is completely untouched
-- Deliberately avoid re-fighting PrimeNG's `AutoComplete` internals — the Trip Planner Page Redesign already hit a real focus-steal bug from `appendTo="body"`/`forceSelection` on these same four fields and reverted it per user request, so this phase replaces the interaction with a separate custom sheet component instead of repositioning/portaling PrimeNG's own overlay
-
 ## Notes
-
-- CSS-only breakpoint gating (`@media (max-width: 767px)`, matching `drawer-host.css`'s existing breakpoint) — confirmed via a full-frontend grep that this codebase has no `BreakpointObserver`/`matchMedia` usage anywhere, so each field slot renders two markup blocks (existing `p-autoComplete` + a new mobile-only button) toggled purely by CSS, rather than introducing JS breakpoint detection
-- New `LocationSearchSheet` component (`features/trip-planner/step2-itinerary/location-search-sheet/`), mounted once in `step2-itinerary.html`, self-contained (own debounced search via `TransportService.searchLocations()` directly, not reusing the desktop `search*` methods bound to PrimeNG's `completeMethod`); selections route back through the existing `applyDeparture`/`applyDestination`/`applyVia`/`applyAddStop` methods, so no apply logic is duplicated
-- Not a `DrawerKey` — it's local to `Step2Itinerary` only, never linked to from elsewhere, so it doesn't need `drawer-host.ts`'s router-back-nav wiring; z-index `1000` (above all fixed chrome, below the `Drawer` service's `DRAWER_BASE_Z = 4000` stack)
-- New i18n keys needed: `trip.planner.step2.searchTitle`/`searching`/`noResults`/`clearSelection` (en/de/fr/it); the existing `trip.planner.step2.stop` key is reused as-is for the sheet's placeholder/empty state
 
 ## History
 
@@ -54,6 +41,22 @@ Specced; no feature branch created yet
 - Deliberately designed around a specific piece of prior history: the Trip Planner Page Redesign (2026-07-28 entry above) already tried `appendTo="body"`/`forceSelection` on these same four `p-autoComplete` fields, hit a real focus-steal bug, and reverted per user request. This spec avoids repeating that by never touching PrimeNG's `AutoComplete` overlay internals for the mobile path — it swaps in a completely separate custom-built full-screen sheet component instead
 - Investigated the existing `ConnectionLegPicker`/`ConnectionsDrawer`/`Drawer` service split to confirm the new sheet should be a plain local component (like `ConnectionLegPicker`), not a new `DrawerKey` — it's never linked to from outside `Step2Itinerary`, so it doesn't need router-back-nav wiring
 - Created `context/features/trip-planner-mobile-stop-picker-spec.md`, committed directly onto `feature/ojp-location-search` (as a docs-only commit) before that branch was merged to `main`; no dedicated feature branch of its own yet — no implementation
+
+### 2026-07-29 — Trip Planner Mobile Stop Picker Implemented
+
+- Branch: `feature/trip-planner-mobile-stop-picker`; specced in `context/features/trip-planner-mobile-stop-picker-spec.md`
+- New `features/trip-planner/step2-itinerary/location-search-sheet/` (`LocationSearchSheet`): self-contained full-screen search component — own `query`/`results`/`loading` signals, a `Subject`+`debounceTime(300)`+`distinctUntilChanged`+`switchMap` pipeline calling `TransportService.searchLocations()` directly (3-char minimum, same gate as desktop), `ngAfterViewInit` focuses the input via `ViewChild` (not relying solely on the native `autofocus` attribute, which is unreliable for dynamically-inserted elements); emits `selected`/`closed`, doesn't close itself — the parent owns closing
+- `step2-itinerary.ts`: new `MobilePickerTarget` type (`'departure' | 'destination' | 'add' | { via: string }`), `mobilePickerTarget` signal, `mobilePickerInitialValue` computed, `openMobilePicker()`/`closeMobilePicker()`, and `onMobilePicked()` — which routes the sheet's pick back through the existing `applyDeparture`/`applyDestination`/`applyVia`/`applyAddStop` private methods unchanged, so no apply logic was duplicated
+- `step2-itinerary.html`: each of the four field slots (departure, each via stop, destination, add-stop) gained a sibling mobile-only trigger button (`.s2-mobile-field` / `.s2-add-btn--mobile`) alongside the existing `p-autoComplete` (now tagged `.s2-input--desktop`); the sheet itself is mounted once, gated on `@if (mobilePickerTarget())`. Mobile's add-stop button calls `openMobilePicker('add')` directly, skipping desktop's `addingStop`-gated inline-field/Cancel-button flow entirely, since closing the sheet without picking is already equivalent to Cancel
+- `step2-itinerary.css`: new `.s2-mobile-field`/`.s2-mobile-clear` styling (hand-matched to the app's existing input conventions, since PrimeNG's own autocomplete styling isn't captured in this component's stylesheet to copy from) plus one consolidated `@media (max-width: 767px)` block at the end of the file toggling `.s2-input--desktop`/`.s2-add-btn--desktop`/`.s2-add-active--desktop` off and `.s2-mobile-field`/`.s2-add-btn--mobile` on — same 767px breakpoint `drawer-host.css` already uses, no `BreakpointObserver`/JS detection introduced
+- i18n: `trip.planner.step2.searchTitle`/`searching`/`noResults`/`clearSelection` added across en/de/fr/it; `trip.planner.step2.stop` (placeholder) and the top-level `trip.planner.back`/`trip.planner.removeStop` keys reused as-is, no duplicates
+- Verified via `tsc --noEmit` and `ng build --configuration production` (both clean, only the pre-existing bundle-size/CommonJS warnings) and JSON-validated all four locale files; an IDE diagnostic flagged the new component as an unknown element immediately after the files were created, but that was a stale Angular Language Service snapshot — the real compiler passed clean once checked directly
+- Not yet exercised in a real browser/mobile viewport — no browser-automation tool available in this environment; flagged as an open item before merging, same as the OJP feature's own gap that the user closed by testing directly
+- UAT fixes in the same branch, found via the user testing live on their own device (the only way this component could actually be exercised, given no browser-automation tool in this environment):
+  - `.lss-input-row` top padding increased `0.75rem` → `1.25rem` for more breathing room below the header
+  - Real bug: the header bar (back control + "Search location" title) was entirely invisible on the user's device, even though the input/results below it rendered fine. Two blind guesses first (assuming a FontAwesome icon-loading issue, then a discoverability issue) didn't fix it; asking the user what they actually saw ("whole header bar is missing") plus their own hunch ("possibly hidden under header-nav") pointed at the real cause — root-caused to `.lss-overlay`'s `position: fixed` being nested inside the scrollable Step 2 card list, which item 2 exists specifically to fix by opening while already scrolled down; some combination of that ancestor chain was trapping the fixed positioning/stacking context rather than letting it anchor to the true viewport. Fixed by having `LocationSearchSheet` manually re-parent its own host element onto `document.body` via `Renderer2` in `ngOnInit` (removed again in a new `ngOnDestroy`, since Angular's own cleanup tracks the original logical parent) — a manual portal, sidestepping the whole class of ancestor stacking/scroll issues rather than chasing the exact CSS property responsible
+  - Back button iterated twice on user feedback: FontAwesome icon-only → icon replaced with a plain-text "‹ Back" (in case the FontAwesome kit script hadn't loaded) → once the real header-visibility bug above was fixed and the icon was confirmed to render fine, reverted back to the original icon-only FontAwesome chevron per user request
+- Feature marked complete
 
 ### 2026-07-29 — Image Copyright Compliance Implemented
 
