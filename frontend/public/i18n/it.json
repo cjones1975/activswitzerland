@@ -300,8 +300,7 @@
     "comingSoonSubtitle": "La ricerca e la prenotazione di hotel saranno disponibili in un futuro aggiornamento."
   },
   "attractions": {
-    "title": "Attrazioni popolari",
-    "titleFallback": "Attrazioni nella zona",
+    "title": "Attrazioni",
     "radius": "Raggio",
     "seeAll": "Vedi tutto",
     "backToDestination": "Torna a {{name}}",

@@ -18,6 +18,22 @@ const stripInvalidGeo = (response) => {
   }
 };
 
+// Meteorological (calendar-month) seasons, Northern Hemisphere - matches
+// Switzerland. Attractions tagged with all four season values are available
+// year-round, so filtering on just the current one still surfaces them.
+const getCurrentSeason = (date = new Date()) => {
+  const month = date.getMonth(); // 0 = January
+  if (month === 11 || month <= 1) return 'winter';
+  if (month <= 4) return 'spring';
+  if (month <= 7) return 'summer';
+  return 'autumn';
+};
+
+// OR-combined: attractions tagged for the current season, plus Grand Tour
+// stops regardless of season - some Grand Tour attractions aren't tagged
+// with any season at all, so they'd otherwise be filtered out entirely.
+const seasonFacetParam = () => `&facet.filter=${encodeURIComponent(`[seasons:${getCurrentSeason()},geographicallocations:alonggrandtour]`)}`;
+
 // @desc    GET destinations
 // @route   GET /api/v1/destinations
 // @access  Public
@@ -137,35 +153,6 @@ export const searchDestinations = asyncHandler(async (req, res, next) => {
   }
 });
 
-// @desc    GET top attractions
-// @route   GET /api/v1/topattractions
-// @access  Public
-export const getTopAttractions = asyncHandler(async (req, res, next) => {
-  const placeIdParam = req.query.placeId ? `&placeId=${encodeURIComponent(req.query.placeId)}` : '';
-  const geoDistParam = req.query['geo.dist'] ? `&geo.dist=${encodeURIComponent(req.query['geo.dist'])}` : '';
-  const config = {
-    method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}&top=${req.query.top}`,
-    headers: {
-      'x-api-key': process.env.MYS_KEY,
-      accept: 'application/json'
-    },
-  };
-  try {
-    let response = await axios(config);
-    if (!response.data) {
-      return next(new ErrorResponse(`No attraction data found`, 404));
-    }
-    stripInvalidGeo(response);
-    res.status(200).json({ success: true, data: response.data });
-  } catch (error) {
-    console.error(error);
-    next(
-      new ErrorResponse(`An error occurred during the request: ${error}`, 500)
-    );
-  }
-});
-
 // @desc    GET attraction by id
 // @route   GET /api/v1/attractions/:id
 // @access  Public
@@ -199,7 +186,7 @@ export const getAttractions = asyncHandler(async (req, res, next) => {
   const geoDistParam = req.query['geo.dist'] ? `&geo.dist=${encodeURIComponent(req.query['geo.dist'])}` : '';
   const config = {
     method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}`,
+    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}${seasonFacetParam()}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'
@@ -228,7 +215,7 @@ export const searchAttractions = asyncHandler(async (req, res, next) => {
   const geoDistParam = req.query['geo.dist'] ? `&geo.dist=${encodeURIComponent(req.query['geo.dist'])}` : '';
   const config = {
     method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}`,
+    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}${seasonFacetParam()}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'

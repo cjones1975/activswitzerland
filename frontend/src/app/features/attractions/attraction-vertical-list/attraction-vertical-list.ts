@@ -1,7 +1,7 @@
 import { Component, DestroyRef, Input, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { of, startWith, switchMap, tap, map, catchError } from 'rxjs';
+import { of, startWith, switchMap, tap, catchError } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
 import { Message } from 'primeng/message';
 import { AttractionsService } from '../../../shared/services/attractions';
@@ -31,53 +31,22 @@ export class AttractionVerticalList implements OnInit {
   private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
 
+  private static readonly CARD_LIMIT = 5;
+
   attractions: Attraction[] = [];
   loading = signal(true);
   loadError = signal(false);
-  isTop = signal(true);
-  skeletons = Array(6);
+  skeletons = Array(5);
 
   ngOnInit(): void {
+    // Single fetch drives both the card list (first 5) and the map markers
+    // (every nearby attraction) - the two used to be separate requests, one
+    // via a "top" query, but "top" doesn't combine with the season facet
+    // filter on MySwitzerland's side, so there's no curated subset to fetch
+    // differently anymore.
     this.translate.onLangChange.pipe(
       startWith({ lang: this.langSvc.current }),
       tap(() => this.loading.set(true)),
-      switchMap(event => {
-        const base = {
-          language: event.lang,
-          page: 0,
-          geoDist: `${this.lat},${this.lon},${this.attractionMarkers.radiusKm() * 1000}`,
-          expand: false,
-          translate: true,
-          stripHtml: false,
-        };
-        return this.attractionsService.getTopAttractions({ ...base, hitsPerPage: 50, top: true }).pipe(
-          switchMap(hits => hits.length > 0
-            ? of({ attractions: hits, isTop: true })
-            : this.attractionsService.getTopAttractions({ ...base, hitsPerPage: 3, top: false }).pipe(
-                map(hits => ({ attractions: hits, isTop: false }))
-              )
-          ),
-          catchError(() => of(null)),
-        );
-      }),
-      takeUntilDestroyed(this.destroyRef),
-    ).subscribe(result => {
-      if (!result) {
-        this.loading.set(false);
-        this.loadError.set(true);
-        return;
-      }
-      this.loadError.set(false);
-      this.attractions = result.attractions;
-      this.isTop.set(result.isTop);
-      this.loading.set(false);
-    });
-
-    // Independent of the top-attractions list above: populates the map with
-    // every nearby attraction (not just the top picks), as soon as the
-    // destination loads — no click/selection required.
-    this.translate.onLangChange.pipe(
-      startWith({ lang: this.langSvc.current }),
       switchMap(event => this.attractionsService.getAttractions({
         language: event.lang,
         page: 0,
@@ -87,7 +56,15 @@ export class AttractionVerticalList implements OnInit {
       catchError(() => of(null)),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(result => {
-      if (!result) return;
+      if (!result) {
+        this.loading.set(false);
+        this.loadError.set(true);
+        return;
+      }
+      this.loadError.set(false);
+      this.attractions = result.attractions.slice(0, AttractionVerticalList.CARD_LIMIT);
+      this.loading.set(false);
+
       this.attractionMarkers.setHasAttractions(result.attractions.length > 0);
       const geoAttractions = result.attractions.filter(hasValidGeo);
       this.attractionMarkers.set(

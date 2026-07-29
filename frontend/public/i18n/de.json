@@ -300,8 +300,7 @@
     "comingSoonSubtitle": "Hotelsuche und -buchung werden in einem zukünftigen Update verfügbar sein."
   },
   "attractions": {
-    "title": "Beliebte Attraktionen",
-    "titleFallback": "Attraktionen in der Umgebung",
+    "title": "Attraktionen",
     "radius": "Umkreis",
     "seeAll": "Alle anzeigen",
     "backToDestination": "Zurück zu {{name}}",

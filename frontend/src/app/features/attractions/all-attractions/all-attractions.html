@@ -44,7 +44,7 @@
         @for (attraction of searchResults; track attraction.identifier) {
           <div class="attraction-card" [class.attraction-card--select]="mode() === 'select'" (click)="onAttractionClick(attraction)">
             <div class="card-row">
-              <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
+              <div class="card-photo" [style.background-image]="'url(' + (attraction.photo || '/assets/no_image.png') + ')'"></div>
               <div class="card-text">
                 <h3 class="card-name">{{ attraction.name }}</h3>
                 <p class="card-abstract">{{ attraction.abstract }}</p>
@@ -89,7 +89,7 @@
       @for (attraction of attractions; track attraction.identifier) {
         <div class="attraction-card" [class.attraction-card--select]="mode() === 'select'" (click)="onAttractionClick(attraction)">
           <div class="card-row">
-            <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
+            <div class="card-photo" [style.background-image]="'url(' + (attraction.photo || '/assets/no_image.png') + ')'"></div>
             <div class="card-text">
               <h3 class="card-name">{{ attraction.name }}</h3>
               <p class="card-abstract">{{ attraction.abstract }}</p>

@@ -21,34 +21,6 @@ export class AttractionsService {
   private http = inject(HttpClient);
   private baseUrl = `${environment.apiUrl}/api/v1/myswitzerland`;
 
-  getTopAttractions(params: {
-    language: string;
-    page: number;
-    hitsPerPage: number;
-    placeId?: string;
-    geoDist?: string; // "lat,lon,radiusMeters"
-    expand: boolean;
-    translate: boolean;
-    stripHtml: boolean;
-    top: boolean;
-  }): Observable<Attraction[]> {
-    let httpParams = new HttpParams()
-      .set('language', params.language)
-      .set('page', params.page)
-      .set('hitsPerPage', params.hitsPerPage)
-      .set('expand', String(params.expand))
-      .set('translate', String(params.translate))
-      .set('stripHtml', String(params.stripHtml))
-      .set('top', String(params.top));
-    if (params.placeId) httpParams = httpParams.set('placeId', params.placeId);
-    if (params.geoDist) httpParams = httpParams.set('geo.dist', params.geoDist);
-
-    return this.http
-      .get<AttractionsResponse>(this.baseUrl + '/topattractions', { params: httpParams })
-      .pipe(map(res => res.data.data));
-  }
-
-
   getAttractions(params: {
     language: string;
     page: number;

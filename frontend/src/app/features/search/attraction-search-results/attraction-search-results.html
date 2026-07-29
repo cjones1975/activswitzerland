@@ -12,7 +12,7 @@
   } @else {
     @for (attraction of results(); track attraction.identifier) {
       <div class="result-card" (click)="onResultClick(attraction)">
-        <div class="card-photo" [style.background-image]="'url(' + attraction.photo + ')'"></div>
+        <div class="card-photo" [style.background-image]="'url(' + (attraction.photo || '/assets/no_image.png') + ')'"></div>
         <div class="card-text">
           <h3 class="card-name">{{ attraction.name }}</h3>
           <p class="card-abstract">{{ attraction.abstract }}</p>

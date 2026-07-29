@@ -300,8 +300,7 @@
     "comingSoonSubtitle": "Hotel browsing and booking will be available in a future update."
   },
   "attractions": {
-    "title": "Popular attractions",
-    "titleFallback": "Attractions in the area",
+    "title": "Attractions",
     "radius": "Radius",
     "seeAll": "See all",
     "backToDestination": "Back to {{name}}",
