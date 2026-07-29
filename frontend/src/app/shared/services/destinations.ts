@@ -14,14 +14,13 @@ export class DestinationsService {
     page: number;
     hitsPerPage: number;
     facets: string;
-    expand: boolean;
   }): Observable<Destination[]> {
     const httpParams = new HttpParams()
       .set('language', params.language)
       .set('page', params.page)
       .set('hitsPerPage', params.hitsPerPage)
       .set('facets', params.facets)
-      .set('expand', String(params.expand))
+      .set('expand', 'true')
       .set('translate', 'true')
       .set('stripHtml', 'false')
       .set('top', 'false');
@@ -42,7 +41,7 @@ export class DestinationsService {
       .set('page', params.page)
       .set('search', params.search)
       .set('hitsPerPage', params.hitsPerPage)
-      .set('expand', 'false')
+      .set('expand', 'true')
       .set('translate', 'true')
       .set('stripHtml', 'false');
 

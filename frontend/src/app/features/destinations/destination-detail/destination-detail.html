@@ -12,16 +12,16 @@
           [showThumbnails]="dest.image!.length > 1"
           [numVisible]="4">
           <ng-template #item let-img>
-            <div class="galleria-img" [style.background-image]="'url(' + img.url + ')'"></div>
+            <div class="galleria-img" [style.background-image]="'url(' + img.url + ')'">
+              @if (img.publisher) {
+                <div class="galleria-caption">© {{ img.publisher }}</div>
+              }
+            </div>
           </ng-template>
           <ng-template #thumbnail let-img>
             <div class="galleria-thumb" [style.background-image]="'url(' + img.url + ')'"></div>
           </ng-template>
         </p-galleria>
-      </div>
-    } @else {
-      <div class="galleria-wrap">
-        <div class="galleria-img" [style.background-image]="'url(' + dest.photo + ')'"></div>
       </div>
     }
 

@@ -1,17 +1,9 @@
+import { MysImage } from './mys-image';
+
 export interface DestinationGeo {
   '@type': string;
   latitude: number;
   longitude: number;
-}
-
-export interface DestinationImage {
-  '@type'?: string;
-  url: string;
-  name?: string;
-  keywords?: string;
-  encodingFormat?: string;
-  width?: number;
-  height?: number;
 }
 
 export interface Destination {
@@ -23,7 +15,7 @@ export interface Destination {
   description?: string;
   url: string;
   photo: string;
-  image?: DestinationImage[];
+  image?: MysImage[];
   geo: DestinationGeo;
   links: { self: string };
 }

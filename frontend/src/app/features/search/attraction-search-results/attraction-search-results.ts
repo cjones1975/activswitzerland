@@ -45,10 +45,8 @@ export class AttractionSearchResults implements OnChanges {
       page: 0,
       search: this.query,
       hitsPerPage: 50,
-      expand: false,
       translate: true,
       stripHtml: false,
-      top: false,
     }).subscribe({
       next: page => {
         this.results.set(page.attractions);

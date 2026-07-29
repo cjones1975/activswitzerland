@@ -19,11 +19,24 @@
 }
 
 .galleria-img {
+  position: relative;
   width: 100%;
   height: 240px;
   background-size: cover;
   background-position: center;
   border-radius: 10px;
+}
+
+.galleria-caption {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 0.35rem 0.75rem;
+  background: rgba(229, 229, 229, 0.85);
+  color: var(--gray-700);
+  font-size: 0.7rem;
+  border-radius: 0 0 10px 10px;
 }
 
 .galleria-thumb {

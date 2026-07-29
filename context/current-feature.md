@@ -12,6 +12,26 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-29 — Image Copyright Compliance Implemented
+
+- Branch: `feature/image-copyright-compliance`; specced in `context/features/image-copyright-compliance-spec.md`
+- Backend `myswitzerland.js`: hardcoded `expand=true` on all 7 attraction/destination MySwitzerland queries, dropping the `req.query.expand` passthrough entirely (`getDestination` gained `expand=true` for the first time, though testing showed it made no difference to that endpoint's output); new `hasNamedCopyright`/`stripNonCompliantImages`/`stripNonCompliantImagesFromResponse` helpers (alongside the existing `hasValidGeo`/`stripInvalidGeo`) filter every response's `image[]` down to entries with a non-empty `copyrightHolder`, handling both list (array) and single-record (object) response shapes
+- New shared `models/mys-image.ts` (`MysImage`) replaces `DestinationImage` and attractions' bare `{url: string}[]` image type; `Attraction`/`Destination` both use it
+- Frontend services: `AttractionsService.getAttractions()`/`searchAttractions()` and `DestinationsService.getDestinations()`/`searchDestinations()` hardcode `expand=true`, dropping the now-pointless `expand` param from their signatures; also removed `getAttractionsNearby()`/`searchAttractionsNearby()` (dead code, never called) and the unused `top` param on `searchAttractions()` (backend never read it)
+- List cards (destinations + attractions, 6 templates) switched from `.photo` to `image?.[0]?.url`, falling back to `no_image.png` — destinations didn't have this fallback at all before this feature
+- Detail pages (`attraction-detail`/`destination-detail`): removed the `.photo` fallback branch entirely — no compliant image means no image section renders at all; galleria's main image gained a `© {{img.publisher}}` caption in a light-gray bar. Originally built against `img.name`, corrected mid-implementation per user feedback: `name` is often just a raw filename, `publisher` is the actual credited rights holder (consistently "Switzerland Tourism" in sampled data) and was the field actually intended
+- Real bug found while verifying live (not a code bug): a Redis cache key collision with a stale Docker-hosted backend instance (`activswitzerland_backend`, sharing the same Redis container as this session's local test server) made the compliance filter look broken during testing. Root-caused via `docker ps`/`redis-cli KEYS`; the specific cache keys poisoned during testing were deleted, the user's own Docker dev stack was left untouched
+- Verified via `tsc --noEmit`, `ng build --configuration production` (clean, only pre-existing bundle-size/CommonJS warnings), `node --check` on the backend controller, and live end-to-end testing against the real MySwitzerland API confirming every returned image has a non-empty `copyrightHolder`
+- Feature marked complete
+
+### 2026-07-29 — Image Copyright Compliance Specced
+
+- Investigated a user question about whether MySwitzerland's attractions/destinations queries return image copyright data — found `expand` was `false`/omitted on every list query, so only the bare `photo` string (no attribution) was ever available; single-record endpoints already return full `image[]` data regardless of `expand`
+- Live-tested the MySwitzerland API directly (list + single-record, attractions + destinations) to confirm the scope of the compliance gap: 46% of sampled images (98/213) have no `copyrightHolder` field
+- Confirmed compliance rule with the user: an image is displayable if `copyrightHolder` is present and non-empty, regardless of string content; filtering happens server-side so non-compliant images never reach the frontend
+- Scoped three changes: hardcode `expand=true` everywhere + server-side compliant-image filtering; `no_image.png` fallback on list cards (destinations didn't have this at all yet, attractions got it in a prior session); detail pages drop the `.photo` fallback entirely (no compliant image = no image section) and gain a `© {{image.name}}` galleria caption
+- Created `context/features/image-copyright-compliance-spec.md`; no feature branch created yet
+
 ### 2026-07-28 — Trip Planner Page Redesign Implemented
 
 - Branch: `feature/trip-planner-page-redesign`; specced in `context/features/trip-planner-page-redesign-spec.md` (see the `2026-07-27` entry below for the spec decisions)

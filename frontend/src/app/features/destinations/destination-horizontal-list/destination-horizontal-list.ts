@@ -43,7 +43,6 @@ export class DestinationHorizontalList implements OnInit {
         page: 0,
         hitsPerPage: 10,
         facets: this.facet,
-        expand: false,
       })),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(hits => {

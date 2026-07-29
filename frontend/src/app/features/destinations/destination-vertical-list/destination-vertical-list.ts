@@ -51,7 +51,6 @@ export class DestinationVerticalList implements OnInit {
         page: 0,
         hitsPerPage: 50,
         facets: this.config().facets,
-        expand: false,
       })),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(hits => {
