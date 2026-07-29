@@ -18,6 +18,26 @@ const stripInvalidGeo = (response) => {
   }
 };
 
+// MySwitzerland's terms require a named copyright holder for any image we
+// display. Response shape differs between list endpoints (data is an array)
+// and single-record endpoints (data is one object), so both are handled here.
+const hasNamedCopyright = (img) => typeof img?.copyrightHolder === 'string' && img.copyrightHolder.trim().length > 0;
+
+const stripNonCompliantImages = (record) => {
+  if (Array.isArray(record?.image)) {
+    record.image = record.image.filter(hasNamedCopyright);
+  }
+};
+
+const stripNonCompliantImagesFromResponse = (response) => {
+  const data = response.data?.data;
+  if (Array.isArray(data)) {
+    data.forEach(stripNonCompliantImages);
+  } else if (data) {
+    stripNonCompliantImages(data);
+  }
+};
+
 // Meteorological (calendar-month) seasons, Northern Hemisphere - matches
 // Switzerland. Attractions tagged with all four season values are available
 // year-round, so filtering on just the current one still surfaces them.
@@ -40,7 +60,7 @@ const seasonFacetParam = () => `&facet.filter=${encodeURIComponent(`[seasons:${g
 export const getDestinations = asyncHandler(async (req, res, next) => {
   const config = {
     method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}&facet.filter=${encodeURIComponent(req.query.facets)}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}&top=${req.query.top}`,
+    url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}&facet.filter=${encodeURIComponent(req.query.facets)}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}&top=${req.query.top}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'
@@ -52,6 +72,7 @@ export const getDestinations = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse(`No destination data found`, 404));
     }
     stripInvalidGeo(response);
+    stripNonCompliantImagesFromResponse(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -67,7 +88,7 @@ export const getDestinations = asyncHandler(async (req, res, next) => {
 export const getDestinationsByGeobBox = asyncHandler(async (req, res, next) => {
   const config = {
     method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}&geo.bbox=${encodeURIComponent(req.query.geobbox)}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}&top=${req.query.top}`,
+    url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}&geo.bbox=${encodeURIComponent(req.query.geobbox)}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}&top=${req.query.top}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'
@@ -79,6 +100,7 @@ export const getDestinationsByGeobBox = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse(`No destination data found`, 404));
     }
     stripInvalidGeo(response);
+    stripNonCompliantImagesFromResponse(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -96,7 +118,7 @@ export const getDestination = asyncHandler(async (req, res, next) => {
 
   const config = {
     method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/destinations/${id}?lang=${req.query.language}&striphtml=${req.query.stripHtml}`,
+    url: `${process.env.MYS_ENDPOINT}/v1/destinations/${id}?lang=${req.query.language}&expand=true&striphtml=${req.query.stripHtml}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'
@@ -109,6 +131,8 @@ export const getDestination = asyncHandler(async (req, res, next) => {
     if (!response.data) {
       return next(new ErrorResponse(`No destination data found for id ${id}`, 404));
     }
+
+    stripNonCompliantImagesFromResponse(response);
 
     res.status(200).json({
       success: true,
@@ -132,7 +156,7 @@ export const getDestination = asyncHandler(async (req, res, next) => {
 export const searchDestinations = asyncHandler(async (req, res, next) => {
   const config = {
     method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}`,
+    url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'
@@ -144,6 +168,7 @@ export const searchDestinations = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse(`No destination data found`, 404));
     }
     stripInvalidGeo(response);
+    stripNonCompliantImagesFromResponse(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -171,6 +196,7 @@ export const getAttraction = asyncHandler(async (req, res, next) => {
     if (!response.data) {
       return next(new ErrorResponse(`No attraction data found for id ${id}`, 404));
     }
+    stripNonCompliantImagesFromResponse(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -186,7 +212,7 @@ export const getAttractions = asyncHandler(async (req, res, next) => {
   const geoDistParam = req.query['geo.dist'] ? `&geo.dist=${encodeURIComponent(req.query['geo.dist'])}` : '';
   const config = {
     method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}${seasonFacetParam()}`,
+    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}${seasonFacetParam()}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'
@@ -198,6 +224,7 @@ export const getAttractions = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse(`No attraction data found`, 404));
     }
     stripInvalidGeo(response);
+    stripNonCompliantImagesFromResponse(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
@@ -215,7 +242,7 @@ export const searchAttractions = asyncHandler(async (req, res, next) => {
   const geoDistParam = req.query['geo.dist'] ? `&geo.dist=${encodeURIComponent(req.query['geo.dist'])}` : '';
   const config = {
     method: 'get',
-    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=${req.query.expand}&striphtml=${req.query.stripHtml}${seasonFacetParam()}`,
+    url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}${seasonFacetParam()}`,
     headers: {
       'x-api-key': process.env.MYS_KEY,
       accept: 'application/json'
@@ -227,6 +254,7 @@ export const searchAttractions = asyncHandler(async (req, res, next) => {
       return next(new ErrorResponse(`No attraction data found`, 404));
     }
     stripInvalidGeo(response);
+    stripNonCompliantImagesFromResponse(response);
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);

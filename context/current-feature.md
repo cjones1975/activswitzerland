@@ -2,31 +2,27 @@
 
 ## Feature
 
-Image Copyright Compliance (expand=true + no_image fallback + galleria caption)
-
 ## Status
-
-Specced — `context/features/image-copyright-compliance-spec.md`. No feature branch created yet; implementation not started.
 
 ## Goals
 
-- Request `expand=true` on every MySwitzerland query (list + single-record), replacing the current `expand=false`/omitted calls, so image attribution metadata (`copyrightHolder`) is available everywhere.
-- Enforce MySwitzerland's T&C: only ever display images with a non-empty `copyrightHolder`, filtered out server-side so a non-compliant image never reaches the frontend.
-- List cards (destinations + attractions) fall back to `no_image.png` when no compliant image exists for a record.
-- Detail pages (attraction + destination) show no image section at all when no compliant image exists — no `.photo` fallback, unlike list cards.
-- Add a `© {{image.name}}` caption overlay on the detail-page galleria's main image.
-
 ## Notes
-
-- Live-tested against the MySwitzerland API before speccing: 46% of images (98/213 sampled across real attractions/destinations) have no `copyrightHolder` field at all.
-- `expand` only changes behavior on list endpoints — single-record endpoints (`/attractions/:id`, `/destinations/:id`) already return full `image[]` data (including `copyrightHolder`) regardless of `expand`, confirmed live for `getDestination`; `getAttraction` already hardcodes `expand=true`.
-- Compliance rule is presence/non-empty of `copyrightHolder` only — no judgment of the string's content (e.g. "Editorial and touristic use" counts as compliant).
-- `encodingFormat` isn't needed — rendering is CSS `background-image: url(...)`, which doesn't need a MIME hint, and only `image/jpeg`/`image/png` were observed in sampled data.
-- Incidentally cleans up two pre-existing dead params while touching the same call sites: the now-pointless `expand` passthrough on list services, and an unused `top` param on `searchAttractions` (backend never read it).
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-07-29 — Image Copyright Compliance Implemented
+
+- Branch: `feature/image-copyright-compliance`; specced in `context/features/image-copyright-compliance-spec.md`
+- Backend `myswitzerland.js`: hardcoded `expand=true` on all 7 attraction/destination MySwitzerland queries, dropping the `req.query.expand` passthrough entirely (`getDestination` gained `expand=true` for the first time, though testing showed it made no difference to that endpoint's output); new `hasNamedCopyright`/`stripNonCompliantImages`/`stripNonCompliantImagesFromResponse` helpers (alongside the existing `hasValidGeo`/`stripInvalidGeo`) filter every response's `image[]` down to entries with a non-empty `copyrightHolder`, handling both list (array) and single-record (object) response shapes
+- New shared `models/mys-image.ts` (`MysImage`) replaces `DestinationImage` and attractions' bare `{url: string}[]` image type; `Attraction`/`Destination` both use it
+- Frontend services: `AttractionsService.getAttractions()`/`searchAttractions()` and `DestinationsService.getDestinations()`/`searchDestinations()` hardcode `expand=true`, dropping the now-pointless `expand` param from their signatures; also removed `getAttractionsNearby()`/`searchAttractionsNearby()` (dead code, never called) and the unused `top` param on `searchAttractions()` (backend never read it)
+- List cards (destinations + attractions, 6 templates) switched from `.photo` to `image?.[0]?.url`, falling back to `no_image.png` — destinations didn't have this fallback at all before this feature
+- Detail pages (`attraction-detail`/`destination-detail`): removed the `.photo` fallback branch entirely — no compliant image means no image section renders at all; galleria's main image gained a `© {{img.publisher}}` caption in a light-gray bar. Originally built against `img.name`, corrected mid-implementation per user feedback: `name` is often just a raw filename, `publisher` is the actual credited rights holder (consistently "Switzerland Tourism" in sampled data) and was the field actually intended
+- Real bug found while verifying live (not a code bug): a Redis cache key collision with a stale Docker-hosted backend instance (`activswitzerland_backend`, sharing the same Redis container as this session's local test server) made the compliance filter look broken during testing. Root-caused via `docker ps`/`redis-cli KEYS`; the specific cache keys poisoned during testing were deleted, the user's own Docker dev stack was left untouched
+- Verified via `tsc --noEmit`, `ng build --configuration production` (clean, only pre-existing bundle-size/CommonJS warnings), `node --check` on the backend controller, and live end-to-end testing against the real MySwitzerland API confirming every returned image has a non-empty `copyrightHolder`
+- Feature marked complete
 
 ### 2026-07-29 — Image Copyright Compliance Specced
 

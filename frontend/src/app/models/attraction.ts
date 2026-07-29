@@ -1,3 +1,5 @@
+import { MysImage } from './mys-image';
+
 export interface AttractionGeo {
   latitude: number;
   longitude: number;
@@ -39,7 +41,7 @@ export interface Attraction {
   name: string;
   abstract: string;
   photo: string;
-  image?: { url: string }[];
+  image?: MysImage[];
   geo: AttractionGeo;
   url?: string;
   description?: string;

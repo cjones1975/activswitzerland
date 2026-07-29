@@ -186,10 +186,8 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       search: this.searchQuery.trim(),
       hitsPerPage: 50,
       geoDist: `${locLat(dest)},${locLon(dest)},${this.attractionMarkers.radiusKm() * 1000}`,
-      expand: false,
       translate: true,
       stripHtml: false,
-      top: true,
     }).subscribe({
       next: ({ attractions }) => {
         if (attractions.length > 0) {

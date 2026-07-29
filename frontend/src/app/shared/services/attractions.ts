@@ -32,7 +32,7 @@ export class AttractionsService {
       .set('language', params.language)
       .set('page', params.page)
       .set('hitsPerPage', params.hitsPerPage)
-      .set('expand', 'false')
+      .set('expand', 'true')
       .set('translate', 'true')
       .set('stripHtml', 'false');
     if (params.placeId) httpParams = httpParams.set('placeId', params.placeId);
@@ -46,10 +46,6 @@ export class AttractionsService {
       })));
   }
 
-  getAttractionsNearby(lat: number, lon: number, language: string, page = 0, hitsPerPage = 20): Observable<AttractionsPage> {
-    return this.getAttractions({ language, page, hitsPerPage, geoDist: `${lat},${lon}` });
-  }
-
   searchAttractions(params: {
     language: string;
     page: number;
@@ -57,20 +53,17 @@ export class AttractionsService {
     hitsPerPage: number;
     placeId?: string;
     geoDist?: string; // "lat,lon,radiusMeters"
-    expand: boolean;
     translate: boolean;
     stripHtml: boolean;
-    top: boolean;
   }): Observable<AttractionsPage> {
     let httpParams = new HttpParams()
       .set('language', params.language)
       .set('page', params.page)
       .set('search', params.search)
       .set('hitsPerPage', params.hitsPerPage)
-      .set('expand', String(params.expand))
+      .set('expand', 'true')
       .set('translate', String(params.translate))
-      .set('stripHtml', String(params.stripHtml))
-      .set('top', String(params.top));
+      .set('stripHtml', String(params.stripHtml));
     if (params.placeId) httpParams = httpParams.set('placeId', params.placeId);
     if (params.geoDist) httpParams = httpParams.set('geo.dist', params.geoDist);
 
@@ -80,20 +73,6 @@ export class AttractionsService {
         attractions: res.data.data,
         totalElements: res.data.meta?.page?.totalElements ?? 0,
       })));
-  }
-
-  searchAttractionsNearby(lat: number, lon: number, language: string, search: string, page = 0, hitsPerPage = 20): Observable<AttractionsPage> {
-    return this.searchAttractions({
-      language,
-      page,
-      search,
-      hitsPerPage,
-      geoDist: `${lat},${lon}`,
-      expand: false,
-      translate: true,
-      stripHtml: false,
-      top: false,
-    });
   }
 
   getAttraction(id: string, language: string): Observable<Attraction> {

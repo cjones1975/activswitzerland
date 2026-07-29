@@ -64,6 +64,7 @@ export interface MysImage {
   '@type'?: string;
   url: string;
   name?: string;
+  publisher?: string;
   keywords?: string;
   encodingFormat?: string;
   width?: number;
@@ -148,14 +149,14 @@ Files (attractions already have the `no_image.png` fallback wired to `.photo` fr
 ```html
 <ng-template #item let-img>
   <div class="galleria-img" [style.background-image]="'url(' + img.url + ')'">
-    @if (img.name) {
-      <div class="galleria-caption">© {{ img.name }}</div>
+    @if (img.publisher) {
+      <div class="galleria-caption">© {{ img.publisher }}</div>
     }
   </div>
 </ng-template>
 ```
 
-  Note: `image.name` is used verbatim. It's inconsistent in the source data — sometimes a real caption ("Fribourg, Fryburg 1606"), sometimes a raw filename ("st.jpg") — that's a MySwitzerland data-quality issue, not something to normalize here.
+  Uses `image.publisher`, not `image.name` (an earlier version of this spec used `name`, which was the wrong field — `name` is often just a raw filename, `publisher` is the actual rights holder, e.g. "Switzerland Tourism").
 
 CSS (`@frontend/src/app/features/attractions/attraction-detail/attraction-detail.css` and `@frontend/src/app/features/destinations/destination-detail/destination-detail.css`, both currently have an identical `.galleria-img` rule):
 

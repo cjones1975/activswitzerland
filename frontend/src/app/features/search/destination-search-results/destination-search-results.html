@@ -12,7 +12,7 @@
   } @else {
     @for (dest of results(); track dest.identifier) {
       <div class="result-card" (click)="onResultClick(dest)">
-        <div class="card-photo" [style.background-image]="'url(' + dest.photo + ')'"></div>
+        <div class="card-photo" [style.background-image]="'url(' + (dest.image?.[0]?.url || '/assets/no_image.png') + ')'"></div>
         <div class="card-text">
           <h3 class="card-name">{{ dest.name }}</h3>
           <p class="card-abstract">{{ dest.abstract }}</p>

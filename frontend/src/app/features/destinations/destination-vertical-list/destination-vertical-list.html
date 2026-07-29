@@ -22,7 +22,7 @@
     } @else {
       @for (dest of destinations; track dest.identifier) {
         <a class="destination-card" [routerLink]="['/destinations', dest.identifier]" [queryParams]="{ category: categoryKey() }">
-          <div class="card-photo" [style.background-image]="'url(' + dest.photo + ')'">
+          <div class="card-photo" [style.background-image]="'url(' + (dest.image?.[0]?.url || '/assets/no_image.png') + ')'">
             <span class="card-type">{{ config().cardTitle }}</span>
             <span class="card-name">{{ dest.name }}</span>
           </div>
