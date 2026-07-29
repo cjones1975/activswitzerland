@@ -1,17 +1,20 @@
 import axios from 'axios';
 import ErrorResponse from '../utils/errorResponse.js';
 import asyncHandler from '../middleware/async.js';
+import { buildLocationInformationRequest, parseLocationInformationResponse } from '../utils/ojp.js';
 
 // @desc    GET locations
 // @route   GET /api/v1/locations
 // @access  Public
 export const getLocations = asyncHandler(async (req, res, next) => {
   const config = {
-    method: 'get',
-    url: `${process.env.TRP_ENDPOINT}/v1/locations`,
-    params: { query: req.query.location, type: req.query.type },
+    method: 'post',
+    url: process.env.OPENTRANSPORTDATA_ENDPOINT,
+    data: buildLocationInformationRequest(req.query.location, req.query.type),
     headers: {
-      accept: 'application/json'
+      accept: 'application/xml',
+      'Content-Type': 'application/xml',
+      Authorization: `Bearer ${process.env.TOKEN}`,
     },
   };
   try {
@@ -19,7 +22,8 @@ export const getLocations = asyncHandler(async (req, res, next) => {
     if (!response.data) {
       return next(new ErrorResponse(`No locations data found`, 404));
     }
-    res.status(200).json({ success: true, data: response.data });
+    const stations = parseLocationInformationResponse(response.data, req.query.type);
+    res.status(200).json({ success: true, data: { stations } });
   } catch (error) {
     console.error(error);
     next(
