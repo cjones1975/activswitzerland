@@ -12,6 +12,7 @@ import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TransportService, LocationSearchResult } from '../../../shared/services/transport';
 import { TripStop, TripDateRange } from '../../../models/trip';
 import { tripDayCount, stopDayRanges } from '../../../shared/utils/date-range';
+import { resultIcons } from '../../../shared/utils/transport-mode-icons';
 import { StartOverLink } from '../start-over-link/start-over-link';
 import { LocationSearchSheet } from './location-search-sheet/location-search-sheet';
 
@@ -70,6 +71,8 @@ export class Step2Itinerary {
   readonly destinationSuggestions = signal<LocationSearchResult[]>([]);
   readonly viaSuggestions = signal<LocationSearchResult[]>([]);
   readonly addStopSuggestions = signal<LocationSearchResult[]>([]);
+
+  readonly resultIcons = resultIcons;
 
   readonly routeLoading = signal(false);
   readonly routeError = signal(false);

@@ -12,6 +12,85 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-30 — Trip Planner Stop Search Language/TopographicPlace/Mode Icons marked Completed
+
+- Status field above set to `Completed` following the live-verified implementation on
+  `feature/trip-planner-stop-modes` (see the Implemented entry directly below)
+
+### 2026-07-30 — Trip Planner Stop Search Language/TopographicPlace/Mode Icons Implemented
+
+- Branch: `feature/trip-planner-stop-modes`; specced in `context/features/trip-planner-stop-modes-spec.md`
+- `backend/src/utils/ojp.js`: `OJP_PLACE_TYPE.address` changed `'address'`→`'topographicPlace'`;
+  `buildLocationInformationRequest` gained a third `lang` param (whitelisted against
+  `en`/`de`/`fr`/`it`, inserted as `<Language>` between `<Type>`/`<NumberOfResults>`); `isArray`
+  extended to force-array `Mode` (a stop with only one `Mode` would otherwise parse as a bare
+  object); `mapPlace` reworked around a shared `textOf()` helper and new `extractModes()`
+  (dedupes+orders `PtMode` values against a fixed `PT_MODE_ORDER` allowlist), gained a
+  `TopographicPlace` branch (name from `TopographicPlaceName`, `id` from `TopographicPlaceCode`),
+  kept the `Address` branch as a defensive fallback; `StopPlace` branch now reads
+  `StopPlaceName` instead of the generic `Name`, plus a new `modes` field
+- `backend/src/controllers/transport.js`: `getLocations` passes `req.query.lang` through as the
+  new third arg — the only controller change needed
+- Frontend: `LocationResult`/`LocationSearchResult` (`transport.ts`) both gained `type`/`modes`
+  fields (`LocationSearchResult` didn't carry `type` at all before — no caller needed per-result
+  rendering differences until now); `searchLocations()` injects `LangService` and sends `lang`;
+  new `shared/utils/transport-mode-icons.ts` (`MODE_ICON` table + `resultIcons()`) is the single
+  source of truth both `location-search-sheet.html` (mobile) and all four `p-autoComplete` item
+  templates in `step2-itinerary.html` (desktop — none had a custom item template before this
+  feature) render icons from
+- Live-testing round (isolated local backend, `NODE_ENV=test` port 3099, separate from the user's
+  Docker dev stack) surfaced three real findings the spec's "not yet verified" section had
+  flagged, all resolved before merge:
+  - `topographicPlace` behaves as cleanly as `address` did — a plain town-name query returns one
+    clean result, not a flood of nested regions
+  - `Restrictions/Language` does **not** appear to change returned name text — cycled a query
+    through all four languages (including searching the German exonym `Genf` while requesting
+    `lang=fr`) and always got back whichever alias the query text itself matched, never a
+    translation. Same "soft hint, not a hard rule" behavior `NumberOfResults` showed in the
+    original OJP feature. Left in the request anyway (harmless, schema-legal) but not relied on
+  - Real bug found via the Zermatt live example: the cable-car `PtMode` wire value is `telecabin`,
+    not `telecabine` as originally spec'd (an unverified guess) — surfaced as `Zermatt GGB`/
+    `Zermatt Schwarzsee` both coming back with `modes: []` under the wrong spelling. User also
+    clarified there's no separate `funicular` PtMode value; rack railways and aerial cabins both
+    use `telecabin`. Since FontAwesome has no dedicated telecabin/funicular icon, `telecabin` maps
+    to `fa-train-subway` per explicit user choice (not `fa-cable-car`, which stays reserved for the
+    distinct `cableway` PtMode)
+- Verified via `node --check` on both backend files, `tsc --noEmit`/`ng build --configuration
+  production` (both clean, only pre-existing bundle-size/CommonJS warnings), and the live-testing
+  round above; not yet exercised in a real browser session (no browser-automation tool available)
+- Feature marked complete
+
+### 2026-07-30 — Trip Planner Stop Search Language/TopographicPlace/Mode Icons Specced
+
+- Follow-on to the OJP Location Search feature below, prompted by user questions about what
+  `Restrictions/Type` values OJP 2.0 supports and whether a response language can be requested
+- Researched live against the OJP 2.0 XSD (`OJP_Locations.xsd`/`OJP_PlaceSupport.xsd` on
+  `github.com/VDVde/OJP`) rather than relying on the (previously found to be unreliable/OJP-1.0)
+  cookbook docs: confirmed `Restrictions/Language` (`xs:language`, ordered `Type`→`Language`→
+  `NumberOfResults`) and `PlaceTypeEnumeration`'s six values (`stop`/`address`/`poi`/`coord`
+  [deprecated]/`location`/`topographicPlace`), plus `TopographicPlaceStructure`'s
+  `TopographicPlaceName`/`TopographicPlaceCode` fields and `PlaceStructure`'s repeatable
+  `Mode`/`PtMode` element (the last confirmed live by the user via a real Geneva `StopPlace`
+  response with 5 `Mode` entries across 2 distinct `PtMode` values)
+- Scoped three changes: (1) send the app's `LangService.current` selection as OJP's
+  `Restrictions/Language`; (2) road trips restrict on `topographicPlace` instead of `address`
+  (display name switches to the type-specific `TopographicPlaceName`/`StopPlaceName` fields
+  instead of the generic `Place/Name` used today); (3) rail results show deduped mode icons
+  (bus/trolleybus/rail/tram/metro/water/telecabine/cableway/air, fixed render order, unrecognized
+  values silently dropped) read from `Place/Mode[]/PtMode`, road results get a single static
+  `fa-location-dot` instead since `TopographicPlace`/`Address` results carry no `Mode` data
+- Frontend impact wider than the original OJP feature: `LocationSearchResult` needs new
+  `type`/`modes` fields (didn't carry `type` at all before, since callers never needed to render
+  per-result differences), and both `location-search-sheet.html` (mobile) and all four
+  `p-autoComplete`s in `step2-itinerary.html` (desktop, none have a custom item template today)
+  need icon rendering added
+- Created `context/features/trip-planner-stop-modes-spec.md`; no feature branch created yet — user
+  hasn't confirmed whether to branch now or review the spec first. Several items flagged as
+  needing a live-verify pass before finalizing (matching the original OJP feature's own experience
+  of docs not matching live behavior): whether `topographicPlace` filters as cleanly as `address`
+  did, whether `Language` actually changes response text or is a soft hint like `NumberOfResults`
+  turned out to be, and the exact wire spelling of the cable-car `PtMode` value
+
 ### 2026-07-29 — OJP Location Search Specced
 
 - Brainstormed two trip-planner pain points; this spec covers item 1 only (item 2 — mobile UX for the stop dropdowns while scrolled — deferred to a later phase per user request)

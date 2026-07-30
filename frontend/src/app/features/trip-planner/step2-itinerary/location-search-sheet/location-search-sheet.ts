@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { Subject, debounceTime, distinctUntilChanged, filter, switchMap, tap } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { TransportService, LocationSearchResult } from '../../../../shared/services/transport';
+import { resultIcons } from '../../../../shared/utils/transport-mode-icons';
 
 const MIN_QUERY_LENGTH = 3;
 const DEBOUNCE_MS = 300;
@@ -34,6 +35,8 @@ export class LocationSearchSheet implements OnInit, AfterViewInit, OnDestroy {
   readonly loading = signal(false);
 
   private readonly queryChanges = new Subject<string>();
+
+  readonly resultIcons = resultIcons;
 
   ngOnInit(): void {
     // Moved to a direct child of <body> so `.lss-overlay`'s `position: fixed` can never be
