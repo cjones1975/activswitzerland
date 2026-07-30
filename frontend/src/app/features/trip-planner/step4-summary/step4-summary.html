@@ -38,14 +38,14 @@
     </button>
   </div>
 
-  @if (!visibleStops().length) {
+  @if (!timelineStops().length) {
     <p class="s4-empty">{{ 'trip.planner.step4.noActivities' | translate }}</p>
   }
 
-  @for (stop of visibleStops(); track stop.id; let i = $index) {
+  @for (stop of timelineStops(); track stop.id; let i = $index) {
     <div class="s4-stop-card">
       <div class="s4-stop-head">
-        <span class="s4-stop-index" [class.s4-stop-index--final]="i === visibleStops().length - 1">{{ i + 1 }}</span>
+        <span class="s4-stop-index" [class.s4-stop-index--final]="i === timelineStops().length - 1">{{ i + 1 }}</span>
         <div class="s4-stop-heading">
           <span class="s4-stop-name">{{ stop.name }}</span>
           <span class="s4-stop-role">{{ ('trip.planner.step2.' + stop.role) | translate }}</span>
@@ -83,17 +83,28 @@
         }
       }
     </div>
-  }
 
-  @if (type() === 'rail') {
-    @for (leg of unresolvedLegs(); track leg.from.id + leg.to.id) {
-      <div class="s4-connection-banner">
-        <i class="fa-light fa-triangle-exclamation"></i>
-        <span>{{ 'trip.planner.step4.connectionNeeded' | translate: { from: leg.from.name, to: leg.to.name } }}</span>
-        <button type="button" class="s4-fix-connection" (click)="fixConnection()">
-          {{ 'trip.planner.step4.fixConnection' | translate }}
-        </button>
-      </div>
+    @if (type() === 'rail' && i < timelineStops().length - 1) {
+      @let nextStop = timelineStops()[i + 1];
+      @let leg = legFor(stop, nextStop);
+      <button type="button" class="s4-conn-item"
+              [class.s4-conn-item--resolved]="leg?.connection"
+              [class.s4-conn-item--skipped]="leg?.skipped"
+              [class.s4-conn-item--needed]="!leg?.connection && !leg?.skipped"
+              (click)="openConnection(stop, nextStop)">
+        @if (leg?.connection; as conn) {
+          <i class="fa-solid fa-train"></i>
+          <span class="s4-conn-summary">{{ formatTime(conn.departure) }} → {{ formatTime(conn.arrival) }}</span>
+          <span class="s4-conn-meta">{{ conn.transfers }} {{ (conn.transfers === 1 ? 'trip.planner.transfer' : 'trip.planner.transfers') | translate }}</span>
+        } @else if (leg?.skipped) {
+          <i class="fa-light fa-circle-minus"></i>
+          <span class="s4-conn-summary">{{ 'trip.planner.step2.connectionSkipped' | translate }}</span>
+        } @else {
+          <i class="fa-light fa-triangle-exclamation"></i>
+          <span class="s4-conn-summary">{{ 'trip.planner.step2.connectionNeeded' | translate }}</span>
+        }
+        <i class="fa-light fa-chevron-right s4-conn-chevron"></i>
+      </button>
     }
   }
 

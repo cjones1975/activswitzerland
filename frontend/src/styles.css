@@ -102,6 +102,17 @@ body {
     border-radius: 8px;
 }
 
+.toast-warn .p-toast-message-content {
+    background: #dbeafe;
+    border-radius: 8px;
+}
+
+.toast-warn .custom-toast-icon,
+.toast-warn .toast-summary,
+.toast-warn .toast-detail {
+    color: #0f3a68;
+}
+
 .custom-toast {
     display: flex;
     align-items: center;

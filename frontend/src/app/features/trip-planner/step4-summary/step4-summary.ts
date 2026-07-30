@@ -1,11 +1,12 @@
 import { Component, computed, inject } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Button } from 'primeng/button';
 import { Drawer } from '../../../shared/services/drawer';
+import { Toast } from '../../../core/services/toast';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
-import { ActivityKind, TripStop, TripActivitySelection } from '../../../models/trip';
+import { ActivityKind, TripStop, TripActivitySelection, TripConnectionLeg } from '../../../models/trip';
 import { stopDayRanges, tripDayCount, formatDdMmYyyy } from '../../../shared/utils/date-range';
 import { StartOverLink } from '../start-over-link/start-over-link';
 
@@ -26,6 +27,8 @@ const ACTIVITY_GROUPS: ActivityGroup[] = [
 })
 export class Step4Summary {
   private drawerSvc = inject(Drawer);
+  private toast = inject(Toast);
+  private translate = inject(TranslateService);
   plannerSvc = inject(TripPlannerService);
 
   private readonly trip = toSignal(this.plannerSvc.trip$, { initialValue: this.plannerSvc.snapshot });
@@ -45,7 +48,8 @@ export class Step4Summary {
   readonly destinationCount = computed(() => this.trip().stops.length);
   readonly activityCount = computed(() => this.trip().activities.length);
 
-  readonly visibleStops = computed(() => this.trip().stops.filter(s => s.days > 0));
+  /** Every stop, including 0-day pass-throughs — a rail leg exists between every consecutive pair. */
+  readonly timelineStops = computed(() => this.trip().stops);
   readonly stopDayLabels = computed(() => stopDayRanges(this.trip().stops));
 
   readonly unresolvedLegs = computed(() => {
@@ -78,11 +82,26 @@ export class Step4Summary {
   }
 
   showMap(): void {
+    if (this.type() === 'rail' && !this.routeComplete()) {
+      this.toast.warn(this.translate.instant('trip.planner.step4.mapRequiresConnections'), undefined, 3000, 'toast-warn');
+      return;
+    }
     this.plannerSvc.hideWizard();
   }
 
-  fixConnection(): void {
-    this.drawerSvc.open('connections');
+  legFor(fromStop: TripStop, toStop: TripStop): TripConnectionLeg | undefined {
+    this.trip();
+    return this.plannerSvc.getConnectionLeg(fromStop.id, toStop.id);
+  }
+
+  openConnection(fromStop: TripStop, toStop: TripStop): void {
+    this.drawerSvc.open('connections', { focusLeg: `${fromStop.id}:${toStop.id}` });
+  }
+
+  formatTime(iso: string): string {
+    if (!iso) return '';
+    const d = new Date(iso);
+    return isNaN(d.getTime()) ? iso.slice(11, 16) : `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}`;
   }
 
   back(): void {

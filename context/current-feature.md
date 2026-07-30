@@ -12,6 +12,80 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-30 — Trip Planner Summary Inline Rail Connections Implemented
+
+- Branch: `feature/trip-planner-summary-connections`; specced in
+  `context/features/trip-planner-summary-connections-spec.md`
+- `step4-summary.ts`: `visibleStops` (filtered to `days > 0`) replaced with `timelineStops`
+  (all stops, unfiltered — 0-day pass-throughs now render as a slim card since `hasActivities()`
+  is naturally false for them); new `legFor()`/`openConnection()`; `showMap()` gained a
+  `type()==='rail' && !routeComplete()` gate showing `toast.warn(...)` instead of silently
+  proceeding; `fixConnection()` removed (superseded by `openConnection()`); new `formatTime()`
+  helper (mirrors `ConnectionLegPicker`'s) for the inline connection item's departure/arrival times
+- `step4-summary.html`: main `@for` now iterates `timelineStops()`; a new `.s4-conn-item` button
+  renders between every consecutive stop pair (rail trips only) via `@let leg = legFor(...)`,
+  showing resolved/skipped/needed state and opening the connections drawer on click; old
+  bottom-of-page unresolved-leg banner deleted
+- `connections-drawer.ts`: new `isFocused(fromStopId, toStopId)` reads
+  `drawerSvc.getPayload<{ focusLeg }>('connections')` and is passed to each
+  `ConnectionLegPicker` as `[autoExpand]`; `connections-drawer.html` updated to pass it
+- `connection-leg-picker.ts`: new `@Input() autoExpand`, implements `OnChanges` — `ngOnChanges`
+  sets the `expanded` signal from `autoExpand` on every change (not just a one-shot `ngOnInit`
+  read), so re-opening the drawer for a different leg correctly re-focuses regardless of whether
+  PrimeNG reuses or recreates the drawer's content between opens (the spec's flagged open question
+  — resolved by making the behavior reactive rather than depending on that lifecycle detail)
+- i18n: new `trip.planner.step4.mapRequiresConnections` across en/de/fr/it; removed the now-dead
+  `step4.connectionNeeded`/`step4.fixConnection` keys (connection-item state labels reuse the
+  existing generic `trip.planner.step2.connectionPicked`/`connectionSkipped`/`connectionNeeded`
+  keys instead, per the spec)
+- Verified via `tsc --noEmit` (clean) before handing off for a live browser check
+- UAT fixes in the same branch, found via the user checking live in the browser:
+  - Real bug: `.s4-conn-item` had `width: 100%` plus a `margin-left: 0.7rem` indent (to sit under
+    the stop-index circle), which pushed its right edge past the container — "Connection needed"
+    ran off-screen. Fixed with `width: calc(100% - 0.7rem)` + `box-sizing: border-box`
+  - Toast position changed app-wide from `top-center` to `center` (confirmed via AskUserQuestion
+    that this should apply to all toasts, not just the new map-gating warning, since PrimeNG's
+    `p-toast` position is a single global setting shared by every `Toast` service call in this app)
+  - New `.toast-warn` class (`styles.css`) — `#dbeafe` background / `#0f3a68` text — replacing the
+    default yellow `p-toast` warn styling for the map-gating toast specifically (existing
+    `.toast-success`/`.toast-error` classes were the precedent for this per-severity override
+    pattern)
+- Feature marked complete
+
+### 2026-07-30 — Trip Planner Summary Inline Rail Connections Specced
+
+- User flagged that rail-connection setup (Step 2's "Train Connections" drawer) is easy to miss on
+  mobile (below a scroll) and is what makes the Summary map preview meaningful — unresolved legs
+  today just draw a straight line between stops in `buildRailRoute()`
+- Presented two options: (1) force-resolve every leg on Step 2 before Step 3, removing "Skip for
+  now"; (2) leave Step 2 unchanged, show every leg inline in Summary's timeline (resolved/skipped/
+  needed, clickable to open the connection drawer), and gate the Map View toggle on all legs being
+  genuinely resolved with a warning toast. User chose option 2
+- Investigated `step4-summary.ts/html/css`, `connections-drawer.ts/html`, `connection-leg-picker.ts`,
+  and `TripPlannerService`'s `legPairs`/`getConnectionLeg`/`setConnectionLeg`/`skipConnectionLeg` —
+  confirmed `routeComplete()` already treats a skipped leg as unresolved (only `.connection`
+  presence counts), so it can drive the map gate as-is; confirmed `Drawer.open(key, payload?)`/
+  `getPayload<T>(key)` already supports passing which leg to auto-expand
+  Confirmed via `AskUserQuestion`: rail trips can have 0-day "pass-through" stops, which Summary's
+  timeline currently hides entirely (`visibleStops()` filters to `days > 0`) — since a leg exists
+  between every literally-consecutive stop pair, a hidden 0-day stop would leave a leg with nowhere
+  to attach. User chose to show a slim marker card for 0-day stops rather than combining their two
+  legs into one item; this falls out for free by iterating `trip().stops` directly instead of
+  `visibleStops()` (a 0-day stop naturally has no assignable day, so its activities section is
+  already empty — no new markup path needed)
+- Scoped: new inline `.s4-conn-item` (resolved/skipped/needed states, reusing existing
+  `trip.planner.step2.connectionPicked`/`connectionSkipped`/`connectionNeeded` i18n keys) between
+  every stop card for rail trips, replacing the old bottom-of-page unresolved-leg banner; clicking
+  one opens the `'connections'` drawer with a `{ focusLeg }` payload that `ConnectionsDrawer` passes
+  through as a new `autoExpand` input on the specific `ConnectionLegPicker`; `showMap()` gains a
+  `type()==='rail' && !routeComplete()` gate with `toast.warn('trip.planner.step4.
+  mapRequiresConnections')` (new i18n key, only new one needed) instead of silently disabling the
+  Map View button
+- Created `context/features/trip-planner-summary-connections-spec.md`; no feature branch created
+  yet. Flagged one thing needing live verification during implementation: whether PrimeNG's
+  `p-drawer` destroys/recreates `ConnectionsDrawer`'s content on each open (determines whether
+  `autoExpand` needs a one-shot `ngOnInit` read or a reactive `effect()`)
+
 ### 2026-07-30 — Trip Planner Stop Search Language/TopographicPlace/Mode Icons marked Completed
 
 - Status field above set to `Completed` following the live-verified implementation on

@@ -153,8 +153,7 @@
         "activities": "Activités",
         "timeline": "Chronologie",
         "mapView": "Vue carte",
-        "connectionNeeded": "Correspondance nécessaire : {{from}} → {{to}}",
-        "fixConnection": "Choisir une correspondance",
+        "mapRequiresConnections": "Les correspondances ferroviaires sont requises pour afficher la carte",
         "routeComplete": "Itinéraire complet !",
         "noActivities": "Aucune activité ajoutée pour l'instant.",
         "continue": "Enregistrer"
