@@ -153,8 +153,7 @@
         "activities": "Activities",
         "timeline": "Timeline",
         "mapView": "Map View",
-        "connectionNeeded": "Connection needed: {{from}} → {{to}}",
-        "fixConnection": "Fix connection",
+        "mapRequiresConnections": "Train connections are required to view the map",
         "routeComplete": "Route complete!",
         "noActivities": "No activities added yet.",
         "continue": "Save"

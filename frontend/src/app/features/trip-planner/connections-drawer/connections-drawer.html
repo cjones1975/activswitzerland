@@ -3,6 +3,6 @@
     <p class="cd-empty">{{ 'trip.planner.step2.noLegs' | translate }}</p>
   }
   @for (pair of plannerSvc.legPairs(); track pair.from.id + pair.to.id) {
-    <app-connection-leg-picker [fromStop]="pair.from" [toStop]="pair.to" (resolved)="onLegResolved()" />
+    <app-connection-leg-picker [fromStop]="pair.from" [toStop]="pair.to" [autoExpand]="isFocused(pair.from.id, pair.to.id)" (resolved)="onLegResolved()" />
   }
 </div>

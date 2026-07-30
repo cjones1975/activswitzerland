@@ -153,8 +153,7 @@
         "activities": "Aktivitäten",
         "timeline": "Zeitleiste",
         "mapView": "Kartenansicht",
-        "connectionNeeded": "Verbindung benötigt: {{from}} → {{to}}",
-        "fixConnection": "Verbindung festlegen",
+        "mapRequiresConnections": "Zugverbindungen sind erforderlich, um die Karte anzuzeigen",
         "routeComplete": "Route vollständig!",
         "noActivities": "Noch keine Aktivitäten hinzugefügt.",
         "continue": "Speichern"

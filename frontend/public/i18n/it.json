@@ -153,8 +153,7 @@
         "activities": "Attività",
         "timeline": "Cronologia",
         "mapView": "Vista mappa",
-        "connectionNeeded": "Coincidenza necessaria: {{from}} → {{to}}",
-        "fixConnection": "Scegli coincidenza",
+        "mapRequiresConnections": "Sono necessarie le coincidenze ferroviarie per visualizzare la mappa",
         "routeComplete": "Percorso completo!",
         "noActivities": "Nessuna attività ancora aggiunta.",
         "continue": "Salva"

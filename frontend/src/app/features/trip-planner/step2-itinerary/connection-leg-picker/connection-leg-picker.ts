@@ -1,4 +1,4 @@
-import { Component, DestroyRef, EventEmitter, Input, Output, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, EventEmitter, Input, OnChanges, Output, SimpleChanges, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -16,13 +16,15 @@ import { TripConnection, TripStop } from '../../../../models/trip';
   templateUrl: './connection-leg-picker.html',
   styleUrl: './connection-leg-picker.css',
 })
-export class ConnectionLegPicker {
+export class ConnectionLegPicker implements OnChanges {
   private plannerSvc = inject(TripPlannerService);
   private transportSvc = inject(TransportService);
   private destroyRef = inject(DestroyRef);
 
   @Input({ required: true }) fromStop!: TripStop;
   @Input({ required: true }) toStop!: TripStop;
+  /** Set by the Summary timeline's per-leg click so the right leg opens already expanded. */
+  @Input() autoExpand = false;
   @Output() resolved = new EventEmitter<void>();
 
   private readonly trip = toSignal(this.plannerSvc.trip$, { initialValue: this.plannerSvc.snapshot });
@@ -43,6 +45,12 @@ export class ConnectionLegPicker {
   readonly expandedDetailIndex = signal<number | null>(null);
   /** Whether the already-picked connection's journey detail is expanded. */
   readonly pickedDetailExpanded = signal(false);
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes['autoExpand']) {
+      this.expanded.set(this.autoExpand);
+    }
+  }
 
   toggle(): void {
     this.expanded.update(v => !v);
