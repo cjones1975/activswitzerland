@@ -20,7 +20,18 @@
     <p-autoComplete #depAuto class="s2-input s2-input--desktop" [ngModel]="departure()" optionLabel="name" [suggestions]="departureSuggestions()"
                      (completeMethod)="searchDeparture($event)" (onSelect)="onDepartureSelect($event)" (onClear)="onDepartureClear()"
                      (onBlur)="onDepartureCommit(depAuto)" (keydown.enter)="onDepartureCommit(depAuto)" [showClear]="true"
-                     [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+                     [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false">
+      <ng-template let-item pTemplate="item">
+        <div class="s2-ac-item">
+          <span>{{ item.name }}</span>
+          <span class="s2-ac-icons">
+            @for (icon of resultIcons(item); track icon) {
+              <i [class]="icon"></i>
+            }
+          </span>
+        </div>
+      </ng-template>
+    </p-autoComplete>
     <button type="button" class="s2-mobile-field" (click)="openMobilePicker('departure')">
       <span [class.s2-mobile-field-placeholder]="!departure()">{{ departure()?.name || ('trip.planner.step2.stop' | translate) }}</span>
       @if (departure()) {
@@ -56,7 +67,18 @@
         <p-autoComplete #viaAuto class="s2-input s2-input--desktop" [ngModel]="stop" optionLabel="name" [suggestions]="viaSuggestions()"
                          (completeMethod)="searchVia($event)" (onSelect)="onViaSelect($event, stop)" (onClear)="removeVia(stop.id)"
                          (onBlur)="onViaCommit(viaAuto, stop)" (keydown.enter)="onViaCommit(viaAuto, stop)" [showClear]="true"
-                         [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+                         [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false">
+          <ng-template let-item pTemplate="item">
+            <div class="s2-ac-item">
+              <span>{{ item.name }}</span>
+              <span class="s2-ac-icons">
+                @for (icon of resultIcons(item); track icon) {
+                  <i [class]="icon"></i>
+                }
+              </span>
+            </div>
+          </ng-template>
+        </p-autoComplete>
         <button type="button" class="s2-mobile-field" (click)="openMobilePicker({ via: stop.id })">
           <span [class.s2-mobile-field-placeholder]="!stop.name">{{ stop.name || ('trip.planner.step2.stop' | translate) }}</span>
           @if (stop.name) {
@@ -87,7 +109,18 @@
     <p-autoComplete #destAuto class="s2-input s2-input--desktop" [ngModel]="destination()" optionLabel="name" [suggestions]="destinationSuggestions()"
                      (completeMethod)="searchDestination($event)" (onSelect)="onDestinationSelect($event)" (onClear)="onDestinationClear()"
                      (onBlur)="onDestinationCommit(destAuto)" (keydown.enter)="onDestinationCommit(destAuto)" [showClear]="true"
-                     [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+                     [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false">
+      <ng-template let-item pTemplate="item">
+        <div class="s2-ac-item">
+          <span>{{ item.name }}</span>
+          <span class="s2-ac-icons">
+            @for (icon of resultIcons(item); track icon) {
+              <i [class]="icon"></i>
+            }
+          </span>
+        </div>
+      </ng-template>
+    </p-autoComplete>
     <button type="button" class="s2-mobile-field" (click)="openMobilePicker('destination')">
       <span [class.s2-mobile-field-placeholder]="!destination()">{{ destination()?.name || ('trip.planner.step2.stop' | translate) }}</span>
       @if (destination()) {
@@ -115,7 +148,18 @@
         <p-autoComplete #addAuto class="s2-input" optionLabel="name" [suggestions]="addStopSuggestions()"
                          (completeMethod)="searchAddStop($event)" (onSelect)="onAddStopSelect($event)"
                          (onBlur)="onAddStopCommit(addAuto)" (keydown.enter)="onAddStopCommit(addAuto)"
-                         [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false" />
+                         [placeholder]="'trip.planner.step2.stop' | translate" [dropdown]="false">
+          <ng-template let-item pTemplate="item">
+            <div class="s2-ac-item">
+              <span>{{ item.name }}</span>
+              <span class="s2-ac-icons">
+                @for (icon of resultIcons(item); track icon) {
+                  <i [class]="icon"></i>
+                }
+              </span>
+            </div>
+          </ng-template>
+        </p-autoComplete>
         <button type="button" class="s2-cancel-btn" (click)="cancelAddStop()">{{ 'trip.planner.step2.cancel' | translate }}</button>
       </div>
     }

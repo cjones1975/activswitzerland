@@ -10,7 +10,7 @@ export const getLocations = asyncHandler(async (req, res, next) => {
   const config = {
     method: 'post',
     url: process.env.OPENTRANSPORTDATA_ENDPOINT,
-    data: buildLocationInformationRequest(req.query.location, req.query.type),
+    data: buildLocationInformationRequest(req.query.location, req.query.type, req.query.lang),
     headers: {
       accept: 'application/xml',
       'Content-Type': 'application/xml',

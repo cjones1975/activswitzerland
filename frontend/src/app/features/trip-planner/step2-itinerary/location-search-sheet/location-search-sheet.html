@@ -19,7 +19,14 @@
       <div class="lss-state">{{ 'trip.planner.step2.noResults' | translate }}</div>
     } @else {
       @for (r of results(); track r.externalId) {
-        <button type="button" class="lss-result" (click)="pick(r)">{{ r.name }}</button>
+        <button type="button" class="lss-result" (click)="pick(r)">
+          <span>{{ r.name }}</span>
+          <span class="lss-result-icons">
+            @for (icon of resultIcons(r); track icon) {
+              <i [class]="icon"></i>
+            }
+          </span>
+        </button>
       }
     }
   </div>

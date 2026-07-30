@@ -3,6 +3,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable, map, catchError, of } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { TripStop, TripConnection, TripSection } from '../../models/trip';
+import { LangService } from './lang';
 
 /** Raw hit from the location search — callers turn this into a full TripStop (assigning id/role/range). */
 export interface LocationSearchResult {
@@ -10,13 +11,16 @@ export interface LocationSearchResult {
   name: string;
   lat: number;
   lon: number;
+  type: 'station' | 'address';
+  modes: string[];
 }
 
 interface LocationResult {
   id: string;
   name: string;
   coordinate: { x: number; y: number };
-  type: string;
+  type: 'station' | 'address';
+  modes: string[];
 }
 
 interface LocationsResponse {
@@ -81,11 +85,12 @@ interface JourneysResponse {
 @Injectable({ providedIn: 'root' })
 export class TransportService {
   private http = inject(HttpClient);
+  private langSvc = inject(LangService);
   private base = `${environment.apiUrl}/api/v1/transport`;
 
   searchLocations(query: string, tripType: 'road' | 'rail' = 'rail'): Observable<LocationSearchResult[]> {
     const type = tripType === 'road' ? 'address' : 'station';
-    const params = new HttpParams().set('location', query).set('type', type);
+    const params = new HttpParams().set('location', query).set('type', type).set('lang', this.langSvc.current);
     return this.http.get<LocationsResponse>(`${this.base}/locations`, { params }).pipe(
       map(res => (res.data.stations ?? [])
         .filter(s => s.coordinate?.x && s.coordinate?.y)
@@ -94,6 +99,8 @@ export class TransportService {
           name: s.name,
           lon: s.coordinate.y,
           lat: s.coordinate.x,
+          type: s.type,
+          modes: s.modes ?? [],
         }))
       )
     );
