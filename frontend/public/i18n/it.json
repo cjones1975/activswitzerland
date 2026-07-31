@@ -231,7 +231,8 @@
       "hikes": "Sentieri escursionistici",
       "bikeRides": "Percorsi ciclabili",
       "hotels": "Hotel",
-      "hotelsSubtitle": "Trova ottime sistemazioni nella zona."
+      "hotelsSubtitle": "Trova ottime sistemazioni nella zona.",
+      "loadError": "Impossibile caricare questa destinazione."
     }
   },
   "hikes": {
@@ -390,6 +391,24 @@
       "loadError": "Qualcosa è andato storto. Riprova.",
       "noDestinationResults": "Siamo spiacenti, non abbiamo trovato destinazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave.",
       "noAttractionResults": "Siamo spiacenti, non abbiamo trovato attrazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave."
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Pianifica la tua avventura svizzera",
+      "description": "Scopri i migliori sentieri escursionistici, percorsi ciclabili e destinazioni della Svizzera. Pianifica il tuo viaggio perfetto con informazioni in tempo reale su trasporti e alloggi."
+    },
+    "destinations": {
+      "title": "Destinazioni in Svizzera",
+      "description": "Esplora città, montagne, laghi e parchi naturali in tutta la Svizzera. Trova la destinazione perfetta per il tuo prossimo viaggio."
+    },
+    "exploreTrips": {
+      "title": "Scopri idee di viaggio",
+      "description": "Lasciati ispirare da idee di viaggio curate tra città, montagne e paesaggi svizzeri."
+    },
+    "search": {
+      "title": "Cerca",
+      "description": "Cerca destinazioni e attività in tutta la Svizzera."
     }
   }
 }

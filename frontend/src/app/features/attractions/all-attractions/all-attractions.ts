@@ -1,4 +1,5 @@
-import { Component, AfterViewInit, DestroyRef, ElementRef, OnDestroy, ViewChild, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Component, AfterViewInit, DestroyRef, ElementRef, OnDestroy, PLATFORM_ID, ViewChild, computed, effect, inject, signal, untracked } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -34,6 +35,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   radiusOptions = [5, 10, 20, 30];
 
@@ -95,12 +97,17 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit(): void {
-    this.observer = new IntersectionObserver(entries => {
-      if (entries[0].isIntersecting && !this.loading() && this.hasMore() && !this.isSearchMode()) {
-        this.loadMore();
-      }
-    }, { threshold: 0.1 });
-    this.observer.observe(this.sentinelRef.nativeElement);
+    // IntersectionObserver doesn't exist under Node SSR/prerendering — this
+    // component is always present in the DOM behind its drawer (visible or
+    // not, see drawer-host.html), so its lifecycle hooks run there too.
+    if (this.isBrowser) {
+      this.observer = new IntersectionObserver(entries => {
+        if (entries[0].isIntersecting && !this.loading() && this.hasMore() && !this.isSearchMode()) {
+          this.loadMore();
+        }
+      }, { threshold: 0.1 });
+      this.observer.observe(this.sentinelRef.nativeElement);
+    }
 
     this.translate.onLangChange.pipe(takeUntilDestroyed(this.destroyRef)).subscribe(e => {
       this.lang = e.lang;

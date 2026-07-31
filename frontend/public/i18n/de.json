@@ -231,7 +231,8 @@
       "hikes": "Wanderwege",
       "bikeRides": "Velowege",
       "hotels": "Hotels",
-      "hotelsSubtitle": "Finde tolle Unterkünfte in der Umgebung."
+      "hotelsSubtitle": "Finde tolle Unterkünfte in der Umgebung.",
+      "loadError": "Dieses Reiseziel konnte nicht geladen werden."
     }
   },
   "hikes": {
@@ -390,6 +391,24 @@
       "loadError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
       "noDestinationResults": "Es tut uns leid, wir konnten keine Reiseziele zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort.",
       "noAttractionResults": "Es tut uns leid, wir konnten keine Attraktionen zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort."
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Planen Sie Ihr Schweizer Abenteuer",
+      "description": "Entdecken Sie die schönsten Wanderwege, Velorouten und Reiseziele der Schweiz. Planen Sie Ihre perfekte Reise mit aktuellen Transport- und Unterkunftsinformationen."
+    },
+    "destinations": {
+      "title": "Reiseziele in der Schweiz",
+      "description": "Entdecken Sie Städte, Berge, Seen und Naturparks in der ganzen Schweiz. Finden Sie das perfekte Reiseziel für Ihre nächste Reise."
+    },
+    "exploreTrips": {
+      "title": "Reiseideen entdecken",
+      "description": "Lassen Sie sich von kuratierten Reiseideen zu Schweizer Städten, Bergen und der Landschaft inspirieren."
+    },
+    "search": {
+      "title": "Suche",
+      "description": "Suchen Sie Reiseziele und Aktivitäten in der ganzen Schweiz."
     }
   }
 }

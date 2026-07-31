@@ -37,6 +37,24 @@ services:
     networks:
       - app_network
 
+  frontend-ssr:
+    image: ghcr.io/cjones1975/activswitzerland-frontend-ssr:${IMAGE_TAG:-latest}
+    container_name: activswitzerland_frontend_ssr
+    restart: unless-stopped
+    environment:
+      # destinations, destinations/:id, explore-trips, and search render
+      # live per request — this is the compose-network address, distinct
+      # from whatever reached the backend at image build time.
+      SSR_API_URL: http://backend:3000
+      # Required — Angular's SSR host check rejects (silently falls back to
+      # CSR) any request whose Host header isn't listed here. See
+      # infra/.env.prod.example.
+      NG_ALLOWED_HOSTS: ${NG_ALLOWED_HOSTS}
+    depends_on:
+      - backend
+    networks:
+      - app_network
+
   frontend:
     image: ghcr.io/cjones1975/activswitzerland-frontend:${IMAGE_TAG:-latest}
     container_name: activswitzerland_frontend
@@ -45,6 +63,7 @@ services:
       - "127.0.0.1:8080:80"
     depends_on:
       - backend
+      - frontend-ssr
     networks:
       - app_network
 

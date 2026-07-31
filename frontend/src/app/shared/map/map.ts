@@ -8,10 +8,12 @@ import {
   OnDestroy,
   Output,
   ElementRef,
+  PLATFORM_ID,
   ViewChild,
   SimpleChanges,
   inject,
 } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import maplibregl, { Map as MapLibreMap, Marker, Popup } from 'maplibre-gl';
 
 export interface MapMarker {
@@ -65,12 +67,17 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @ViewChild('mapContainer', { static: true }) mapContainer!: ElementRef<HTMLDivElement>;
 
   private ngZone = inject(NgZone);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   private map?: MapLibreMap;
   private markerInstances = new Map<string, { marker: Marker; el: HTMLElement }>();
   private popupInstances = new Map<string, Popup>();
   private mapLoaded = false;
 
   ngAfterViewInit(): void {
+    // MapLibre GL needs a real WebGL/canvas context — never available under
+    // Node SSR/prerendering, so the map is simply omitted server-side; the
+    // page's indexable content (title/meta/text) doesn't depend on it.
+    if (!this.isBrowser) return;
     this.map = new maplibregl.Map({
       container: this.mapContainer.nativeElement,
       style: this.style,

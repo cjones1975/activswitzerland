@@ -231,7 +231,8 @@
       "hikes": "Hike Trails",
       "bikeRides": "Bike Trails",
       "hotels": "Hotels",
-      "hotelsSubtitle": "Find great places to stay in the area."
+      "hotelsSubtitle": "Find great places to stay in the area.",
+      "loadError": "Could not load this destination."
     }
   },
   "hikes": {
@@ -390,6 +391,24 @@
       "loadError": "Something went wrong. Please try again.",
       "noDestinationResults": "I'm sorry, we couldn't find any destinations matching your search query. Please try another keyword.",
       "noAttractionResults": "I'm sorry, we couldn't find any attractions matching your search query. Please try another keyword."
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Plan Your Swiss Adventure",
+      "description": "Discover Switzerland's best hiking trails, bike routes, and destinations. Plan your perfect trip with real-time transport and accommodation info."
+    },
+    "destinations": {
+      "title": "Destinations in Switzerland",
+      "description": "Browse cities, mountains, lakes, and nature parks across Switzerland. Find the perfect destination for your next trip."
+    },
+    "exploreTrips": {
+      "title": "Explore Trip Ideas",
+      "description": "Get inspired with curated trip ideas across Switzerland's cities, mountains, and countryside."
+    },
+    "search": {
+      "title": "Search",
+      "description": "Search destinations and things to do across Switzerland."
     }
   }
 }

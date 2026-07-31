@@ -1,7 +1,7 @@
 import { Component, DestroyRef, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
-import { startWith, switchMap, tap } from 'rxjs';
+import { catchError, of, startWith, switchMap, tap } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DestinationsService } from '../../shared/services/destinations';
 import { LangService } from '../../shared/services/lang';
@@ -15,6 +15,8 @@ import { HikeMarkersService } from '../../shared/services/hike-markers';
 import { BikeMarkersService } from '../../shared/services/bike-markers';
 import { TrailRoute, trailCategoryColor } from '../../models/trail-route';
 import { ActivityPickerPayload } from '../../models/geo-point';
+import { SeoService } from '../../shared/services/seo';
+import { Toast } from '../../core/services/toast';
 
 @Component({
   selector: 'app-destinations-layout',
@@ -34,6 +36,8 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   protected hikeMarkers = inject(HikeMarkersService);
   protected bikeMarkers = inject(BikeMarkersService);
   private activityMap = inject(ActivityMapService);
+  private seo = inject(SeoService);
+  private toast = inject(Toast);
 
   center = signal<[number, number] | undefined>(undefined);
   destination = signal<Destination | null>(null);
@@ -124,6 +128,15 @@ export class DestinationsLayout implements OnInit, OnDestroy {
     return stages.flatMap(s => s.geometryWgs84?.coordinates ?? []);
   }
 
+  // Destination copy comes from MySwitzerland with stripHtml=false (destinations.ts
+  // keeps markup for the detail page's own rendering), so a meta description needs
+  // its own plain-text pass rather than reusing the raw field directly.
+  private truncateDescription(html: string | undefined, maxLength = 160): string {
+    const text = (html ?? '').replace(/<[^>]*>/g, ' ').replace(/\s+/g, ' ').trim();
+    if (text.length <= maxLength) return text;
+    return text.slice(0, maxLength - 1).trimEnd() + '…';
+  }
+
   destinationMarker = computed<MapMarker | null>(() => {
     const dest = this.destination();
     if (!dest?.geo?.latitude || !dest?.geo?.longitude) return null;
@@ -196,15 +209,37 @@ export class DestinationsLayout implements OnInit, OnDestroy {
       switchMap(params =>
         this.translate.onLangChange.pipe(
           startWith({ lang: this.langSvc.current }),
-          switchMap(({ lang }) => this.destinationsService.getDestination(params['id'], lang)),
+          switchMap(({ lang }) => this.destinationsService.getDestination(params['id'], lang).pipe(
+            // Caught here (inside the inner switchMap), not left to reach
+            // subscribe's error callback — an uncaught error there would
+            // tear down this entire subscription permanently, silently
+            // breaking every future route/lang change on this component.
+            catchError(() => {
+              this.destination.set(null);
+              this.drawer.close('destination-detail');
+              this.seo.set({
+                title: this.translate.instant('destinations.detail.loadError'),
+                description: this.translate.instant('destinations.detail.loadError'),
+                noindex: true,
+              });
+              this.toast.error(this.translate.instant('destinations.detail.loadError'));
+              return of(null);
+            }),
+          )),
         )
       ),
       takeUntilDestroyed(this.destroyRef),
     ).subscribe(dest => {
+      if (!dest) return;
       this.destination.set(dest);
       if (dest.geo?.latitude && dest.geo?.longitude) {
         this.center.set([dest.geo.longitude, dest.geo.latitude]);
       }
+      this.seo.set({
+        title: dest.name,
+        description: this.truncateDescription(dest.description || dest.abstract),
+        image: dest.photo,
+      });
       clearTimeout(this.openDetailTimer);
       this.openDetailTimer = setTimeout(() => this.drawer.open('destination-detail', dest), 100);
     });
