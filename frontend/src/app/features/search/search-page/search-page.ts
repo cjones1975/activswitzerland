@@ -2,12 +2,15 @@ import { Component, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormsModule } from '@angular/forms';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+import { startWith } from 'rxjs';
 import { InputTextModule } from 'primeng/inputtext';
 import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { SearchTab } from '../search-box/search-box';
 import { DestinationSearchResults } from '../destination-search-results/destination-search-results';
 import { AttractionSearchResults } from '../attraction-search-results/attraction-search-results';
+import { LangService } from '../../../shared/services/lang';
+import { SeoService } from '../../../shared/services/seo';
 
 @Component({
   selector: 'app-search-page',
@@ -31,6 +34,9 @@ export class SearchPage {
   private route = inject(ActivatedRoute);
   private router = inject(Router);
   private destroyRef = inject(DestroyRef);
+  private translate = inject(TranslateService);
+  private langSvc = inject(LangService);
+  private seo = inject(SeoService);
 
   query = signal('');
   activeTab = signal<SearchTab>('places');
@@ -42,6 +48,16 @@ export class SearchPage {
       this.query.set(q);
       this.queryInput.set(q);
       this.activeTab.set(params.get('tab') === 'things' ? 'things' : 'places');
+    });
+
+    this.translate.onLangChange.pipe(
+      startWith({ lang: this.langSvc.current }),
+      takeUntilDestroyed(this.destroyRef),
+    ).subscribe(() => {
+      this.seo.set({
+        title: this.translate.instant('seo.search.title'),
+        description: this.translate.instant('seo.search.description'),
+      });
     });
   }
 

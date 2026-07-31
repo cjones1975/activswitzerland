@@ -18,6 +18,7 @@ import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { SavedTrip } from '../../../models/trip';
 import { HeaderNav } from '../../../shell/header-nav/header-nav';
 import { FooterNav } from '../../../shell/footer-nav/footer-nav';
+import { SeoService } from '../../../shared/services/seo';
 
 @Component({
   selector: 'app-profile',
@@ -35,6 +36,7 @@ export class Profile implements OnInit {
   private tripPlannerSvc = inject(TripPlannerService);
   private confirmSvc = inject(ConfirmationService);
   private destroyRef = inject(DestroyRef);
+  private seo = inject(SeoService);
 
   isEditing = signal(false);
   savedTrips = signal<SavedTrip[]>([]);
@@ -71,6 +73,9 @@ export class Profile implements OnInit {
   }
 
   ngOnInit(): void {
+    // Authenticated, personal content — not canonical, see
+    // context/features/seo-ssr-foundation-spec.md's Confirmed decisions.
+    this.seo.set({ title: 'Profile', description: 'Your ActivSwitzerland profile.', noindex: true });
     this.tripsSvc.getTrips()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(trips => {

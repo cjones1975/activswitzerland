@@ -1,4 +1,5 @@
-import { computed, inject, Injectable, signal } from '@angular/core';
+import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
+import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
@@ -25,8 +26,9 @@ export class Auth {
   private toast = inject(Toast);
   private router = inject(Router);
   private translate = inject(TranslateService);
+  private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
-  readonly token = signal<string | null>(localStorage.getItem('auth-token'));
+  readonly token = signal<string | null>(this.isBrowser ? localStorage.getItem('auth-token') : null);
   readonly isLoggedIn = computed(() => !!this.token());
 
   private t(key: string): string {
@@ -35,7 +37,7 @@ export class Auth {
 
   private storeToken(token: string): void {
     this.token.set(token);
-    localStorage.setItem('auth-token', token);
+    if (this.isBrowser) localStorage.setItem('auth-token', token);
   }
 
   async login(email: string, password: string): Promise<void> {
@@ -91,6 +93,6 @@ export class Auth {
 
   logout(): void {
     this.token.set(null);
-    localStorage.removeItem('auth-token');
+    if (this.isBrowser) localStorage.removeItem('auth-token');
   }
 }

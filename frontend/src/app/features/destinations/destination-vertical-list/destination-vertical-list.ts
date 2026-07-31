@@ -9,6 +9,7 @@ import { LangService } from '../../../shared/services/lang';
 import { Destination } from '../../../models/destination';
 import { MapComponent, MapMarker } from '../../../shared/map/map';
 import { CategoryConfig, CategoryKey, DESTINATION_CATEGORIES } from '../../../models/destination-category';
+import { SeoService } from '../../../shared/services/seo';
 
 @Component({
   selector: 'app-destination-vertical-list',
@@ -26,6 +27,7 @@ export class DestinationVerticalList implements OnInit {
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
+  private seo = inject(SeoService);
 
   destinations: Destination[] = [];
   loading = signal(true);
@@ -45,6 +47,10 @@ export class DestinationVerticalList implements OnInit {
         this.categoryKey.set(resolved);
         this.config.set(DESTINATION_CATEGORIES[resolved]);
         this.loading.set(true);
+        this.seo.set({
+          title: this.translate.instant(this.config().title),
+          description: this.translate.instant(this.config().subtitle),
+        });
       }),
       switchMap(([, event]) => this.destinationsService.getDestinations({
         language: event.lang,

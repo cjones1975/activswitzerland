@@ -12,6 +12,113 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-31 — SEO SSR Foundation (Phase 1) Implemented
+
+- Branch: `feature/seo-ssr-foundation`; specced in `context/features/seo-ssr-foundation-spec.md`.
+  Phase 1 of a 4-phase SEO plan (Phase 2: path-based locale routing/hreflang; Phase 3: JSON-LD;
+  Phase 4: Search Console/Bing/IndexNow) — the app was a pure client-side SPA with no SSR, no
+  per-page metadata, and no `robots.txt`/`sitemap.xml` before this
+- `ng add @angular/ssr` required bumping the whole Angular stack `21.2.9` → `21.2.19` first
+  (peer-dependency conflict between the latest `@angular/ssr` and the pinned core version);
+  `ng update`'s own install step crashed on a broken `listr2`/`log-update` dependency, resolved
+  with a clean `rm -rf node_modules && npm install` instead
+- SSR surfaced three real, pre-existing browser-global bugs (nothing related to prerendering
+  specifically — these would have broken any SSR approach), all fixed via `isPlatformBrowser`
+  guards: `core/services/auth.ts`/`shared/services/lang.ts` called `localStorage` directly in
+  field initializers, crashing immediately since `Auth` is injected by `footer-nav`/`menu-nav`
+  (rendered on every page); `shared/map/map.ts` called `new maplibregl.Map(...)` unconditionally
+  in `ngAfterViewInit` (no WebGL/canvas under Node); `features/attractions/all-attractions/
+  all-attractions.ts` used `IntersectionObserver` unconditionally — this component turned out to
+  be always instantiated in the DOM behind its drawer regardless of open/closed state
+- New `shared/services/seo.ts` (`SeoService`) wraps `Title`/`Meta`: title, description, canonical
+  link, OG/Twitter tags, `noindex` robots meta. Wired into `Home`, `DestinationVerticalList`,
+  `DestinationsLayout` (dynamic, from the fetched `Destination`), `TripPlannerLayout`/`Profile`
+  (`noindex`, personal/authenticated content), `ExploreTrips`/`SearchPage`. New `seo.*` i18n
+  namespace across en/de/fr/it
+- SSR-specific plumbing: new `shared/services/i18n-loader.ts` (`I18nLoader`) replaces
+  `provideTranslateHttpLoader` — browser still fetches `/i18n/{lang}.json` over HTTP, but the
+  server branch statically imports the same JSON files directly (`resolveJsonModule: true` added
+  to `tsconfig.json`) rather than trying to fetch them, since there's no live server to fetch
+  from during build-time prerendering; `provideHttpClient` gained `withFetch()` (SSR has no XHR
+  backend); new `core/interceptors/ssr-base-url.interceptor.ts` rewrites relative API URLs to an
+  absolute `SSR_API_URL`-sourced origin server-side, since relative-URL auto-resolution needs a
+  live incoming request to derive an origin from (doesn't exist during build-time prerendering)
+- New `scripts/generate-sitemap.mjs` (postbuild step in `package.json`'s `build` script) writes
+  `robots.txt`/`sitemap.xml` from a `SITE_URL` env var, paginating the backend's destination list
+  for the sitemap's URLs — generated rather than static so neither can ship with a placeholder
+  domain
+- Infra: `infra/docker/frontend/Dockerfile` split into a shared `builder` stage plus two
+  `--target`s — `frontend` (nginx, static assets + `robots.txt`/`sitemap.xml`, proxies everything
+  else to `frontend-ssr`) and `frontend-ssr` (Node running `dist/frontend/server/server.mjs`,
+  production-only `npm ci --omit=dev`); `frontend/nginx.conf`'s catch-all changed from
+  `try_files ... /index.html` to `try_files $uri $uri/ @ssr` (proxy to the new service);
+  `infra/docker-compose.prod.yml` gained a `frontend-ssr` service; `infra/build-and-push.ps1`
+  builds and pushes both images
+- **Real production-shaped bug found via live verification, not just build success**: the
+  original design prerendered `destinations`/`destinations/:id` at build time (per the spec's
+  "data changes rarely" reasoning). Prerendering all ~945 destinations fires that many data
+  fetches essentially at once — traced into `@angular/build`'s own source
+  (`utils/environment-options.js`/`utils/server-rendering/prerender.js`) to confirm this isn't
+  configurable (fixed `~4`-worker pool, no pacing between requests) — which reliably hit the real
+  MySwitzerland API's rate limit: a from-scratch build left 873 of 945 pages (92%) with the
+  generic fallback title, no real content. First mitigation attempt was retry-with-backoff on
+  429s; then the user raised a sharper question — prerendered pages are also permanently stale
+  until the next full rebuild+deploy (no scheduled rebuild exists in this repo), so a
+  MySwitzerland rename/removal would leave a stale or orphaned static page indexed indefinitely.
+  Weighing that against `RenderMode.Server` (bounded 24h-Redis-cache freshness, self-healing
+  per-request failures, real traffic naturally spread out instead of a synchronized build-time
+  burst), the user chose to switch `destinations`/`destinations/:id` to `RenderMode.Server` and
+  explicitly asked for the prerender-specific work to be cleaned up: removed
+  `getPrerenderParams`/`getDestinationIds()` from `app.routes.server.ts` entirely, removed the
+  429 retry/backoff interceptor logic (no longer needed once requests aren't a build-time burst),
+  renamed `PRERENDER_API_URL`/`PRERENDER_HITS_PER_PAGE` → `SSR_API_URL`/`SITEMAP_HITS_PER_PAGE`
+  everywhere (interceptor, sitemap script, Dockerfile, `build-and-push.ps1`) since the var is no
+  longer prerender-specific. Home stays `RenderMode.Prerender` (single page, low fetch volume)
+- **Second real bug found via live verification**: testing the switch to `RenderMode.Server`
+  locally (`node dist/frontend/server/server.mjs` against the real running local backend)
+  initially still returned the generic fallback title — root cause was `@angular/ssr`'s SSR
+  host-check (`angular.json`'s `security.allowedHosts`, defaulting to `[]` from the `ng add`
+  scaffold) rejecting every request's `Host` header and silently falling back to CSR (still a
+  `200`, no error surfaced anywhere) rather than throwing. Fixed via the runtime-read
+  `NG_ALLOWED_HOSTS` env var (`@angular/ssr/node`'s `getAllowedHostsFromEnv`, comma-separated,
+  read fresh per request rather than baked in at build time) — wired as a new required var in
+  `infra/docker-compose.prod.yml`'s `frontend-ssr` service (substituted from `infra/.env.prod`)
+  and documented in `infra/.env.prod.example`. Would have silently broken SSR for every real
+  visit in production with no obvious symptom if not caught here
+- Verified live end-to-end after both fixes: started the real SSR server locally and curled a
+  real destination page — correct title/description/canonical/`og:image`, all sourced from the
+  live backend; spot-checked `destinations` (list), `explore-trips`, and `trip-planner`
+  (`RenderMode.Client`, confirmed still 200s with the CSR shell)
+- **Noindex-on-fetch-failure fallback**: `shell/destinations-layout/destinations-layout.ts`'s
+  `ngOnInit` subscribe had no error handler — beyond the SEO gap (a failed fetch left whatever
+  title was already showing, `200` status, no `noindex`, looking like a normal indexable page to
+  a crawler unlucky enough to hit a transient failure), this was a real, independent reliability
+  bug: an uncaught RxJS error terminates the *entire* subscription permanently, not just that one
+  emission, so one failed destination fetch would silently break every subsequent route-param or
+  language change for that component instance. Fixed with `catchError` nested inside the
+  innermost `switchMap` (converts the error to a `null` emission instead of letting it propagate
+  and kill the subscription) — on failure: clears the stale `destination` signal, closes the
+  `destination-detail` drawer, calls `seo.set({ ..., noindex: true })` with a new
+  `destinations.detail.loadError` i18n key (en/de/fr/it) as both title and description, and shows
+  a toast via the existing `Toast` service. Verified live: an invalid destination id returns
+  `200` with `noindex, nofollow` and the fallback title/description; a valid destination
+  requested immediately after on the same running server still renders correctly
+- User manually edited `frontend/src/index.html`'s static `<title>`/`<meta name="description">`
+  (added a `keywords` tag too, initially) — reviewed and iterated together: title changed from
+  the bare `ActivSwitzerland` fallback to `ActivSwitzerland - Plan Your Swiss Adventure`;
+  description trimmed from ~690 characters (Google truncates/ignores past ~155-160) to ~155;
+  `keywords` tag removed entirely (ignored by Google/Bing for ranking since ~2009, and the
+  initial draft had two typos). This static tag is a last-resort fallback only — `SeoService`
+  overwrites it per-route for every real render — so its practical reach is narrower than a
+  typical "site description," but it's what a genuinely-unrendered state (or a CSR-only route
+  before hydration) would show
+- Verified throughout via `ng build`/`npm run build` (full production build including SSR
+  bundle + sitemap generation) after every change, plus the live-server `curl` checks described
+  above; **not yet deployed/tested against the real Docker/NAS production environment** — only
+  local `ng build` output and a locally-run `node dist/frontend/server/server.mjs` against the
+  real local backend were verified
+- Not yet committed
+
 ### 2026-07-30 — Trip Planner Summary Inline Rail Connections Implemented
 
 - Branch: `feature/trip-planner-summary-connections`; specced in

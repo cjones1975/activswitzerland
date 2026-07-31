@@ -18,6 +18,7 @@ import { AttractionDetailPayload } from '../../features/attractions/attraction-d
 import { HikeDetailPayload } from '../../features/hikes/hike-detail/hike-detail';
 import { BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
 import { TripPlannerWizard } from '../../features/trip-planner/trip-planner-wizard/trip-planner-wizard';
+import { SeoService } from '../../shared/services/seo';
 
 const ACTIVITY_MARKER_STYLE: Record<ActivityKind, { image: string }> = {
   attraction: { image: '/assets/attraction.png' },
@@ -82,8 +83,12 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   });
 
   private firstRouteEmission = true;
+  private seo = inject(SeoService);
 
   ngOnInit(): void {
+    // Personal, in-progress itineraries — not canonical content, see
+    // context/features/seo-ssr-foundation-spec.md's Confirmed decisions.
+    this.seo.set({ title: 'Trip Planner', description: 'Plan your trip.', noindex: true });
     this.tripPlanner.routeCoordinates$
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(coords => {
