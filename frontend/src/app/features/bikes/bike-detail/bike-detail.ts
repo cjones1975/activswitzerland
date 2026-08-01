@@ -8,9 +8,9 @@ import { Subject, switchMap, catchError, of } from 'rxjs';
 import { Drawer } from '../../../shared/services/drawer';
 import { TrailRoutesService } from '../../../shared/services/trail-routes';
 import { BikeMarkersService } from '../../../shared/services/bike-markers';
-import { TrailThumbnail } from '../../../shared/trail-thumbnail/trail-thumbnail';
+import { MapComponent } from '../../../shared/map/map';
 import { ElevationChart } from '../../../shared/elevation-chart/elevation-chart';
-import { TrailRoute } from '../../../models/trail-route';
+import { TrailRoute, trailCategoryColor } from '../../../models/trail-route';
 import { GeoLocation } from '../../../models/geo-point';
 import { ElevationProfile } from '../../../models/elevation-profile';
 
@@ -25,7 +25,7 @@ export interface BikeDetailPayload {
 @Component({
   selector: 'app-bike-detail',
   standalone: true,
-  imports: [DecimalPipe, TranslatePipe, TrailThumbnail, ElevationChart, SkeletonModule, Message],
+  imports: [DecimalPipe, TranslatePipe, MapComponent, ElevationChart, SkeletonModule, Message],
   templateUrl: './bike-detail.html',
   styleUrl: './bike-detail.css',
 })
@@ -39,6 +39,17 @@ export class BikeDetail implements OnDestroy {
     this.drawerSvc.list();
     return this.drawerSvc.getPayload<BikeDetailPayload>('bike-detail') ?? null;
   });
+
+  // Route line + color for the small embedded map, mirroring destinations-layout.ts's
+  // trailRoute/trailColor computeds for the full-page map's own selected-route line.
+  trailLines = computed<[number, number][][]>(() => {
+    const stages = this.payload()?.route.stages ?? [];
+    return stages.flatMap(s => s.geometryWgs84?.coordinates ?? []);
+  });
+
+  trailColor = computed(() => trailCategoryColor(this.payload()?.route.category ?? 'local'));
+
+  fitBoundsCoords = computed<[number, number][]>(() => this.trailLines().flat());
 
   downloading = signal(false);
 

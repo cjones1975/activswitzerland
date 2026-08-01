@@ -12,6 +12,60 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-01 — Trip Planner Step 2/3: Start/End Trip Relabel + Transit Checkbox Implemented
+
+- Branch: `feature/trip-planner-itinerary-transit`; spec: `context/features/trip-planner-itinerary-transit-spec.md`.
+  The hike/bike detail map change (entry below) ended up combined onto this same branch's working
+  tree mid-session, at the user's request, so both could be live-tested together in one running app
+- i18n: `trip.planner.step2.departure`/`destination` values changed "Departure"→"Start trip",
+  "Main Destination"→"End trip" across en/de/fr/it (keys unchanged, so Step 3's per-stop role
+  label — which reuses the same keys — picks up the rename for free); new
+  `trip.planner.step2.transit` key ("Transit", "Transito" in Italian)
+- `step2-itinerary.ts`: new `isTransit(stop)` (derived — checked iff `days === 0`, no new
+  `TripStop` model field) and `onTransitToggle()` (sets days to `0` when checked,
+  `DEFAULT_STOP_DAYS` when unchecked); `applyDeparture()`'s first-pick fallback changed from
+  `DEFAULT_STOP_DAYS` to `0` so a freshly-picked departure defaults Transit-checked (picking a
+  *different* location into an already-populated departure slot still leaves its existing days
+  untouched, same as before)
+- `step2-itinerary.html`: new Transit checkbox on the departure and via-stop cards only (not the
+  destination card, which already shows unconditionally in Step 3); Days-here input gains
+  `[disabled]="isTransit(stop)"`
+- `step3-activities.ts`: `visibleStops` changed from a blanket `days > 0` filter to role-aware —
+  departure still hides at 0 days, via/destination stops now always show even at 0 days, so they
+  stay addable as same-day pass-throughs
+- UAT round after the user tested live, two real bugs found and fixed:
+  - Requested gap tweak (checkbox closer to its "Transit" label, 5px) turned out to already be
+    ~correct (`0.3rem` ≈ 4.8px) — the real bug was `.s2-days-field input`/`label` being bare
+    descendant selectors that also matched the checkbox/label nested inside `.s2-transit-field`,
+    inheriting the days-count input's `width: 3.5rem`/padding and inflating the checkbox's own box
+    far beyond its visual glyph, which is what actually read as a big gap. Root-caused (rather than
+    guessed) by rendering the exact markup+CSS standalone in a headless browser (`npx playwright
+    screenshot`) and comparing bounding boxes before/after. Fixed by scoping both rules to
+    `.s2-days-field > input`/`> label` (direct-child selectors)
+  - See the hike/bike map entry below for the `MapComponent` `interactive` input revert, also found
+    via this same live-testing round
+- Verified via `tsc --noEmit` and `ng build` after every round; not yet committed
+
+### 2026-08-01 — Hike/Bike Detail: Real Map Instead of Gray Thumbnail Implemented
+
+- Branch: originally `feature/hike-bike-detail-map`; spec: `context/features/hike-bike-detail-map-spec.md`.
+  Ended up combined onto `feature/trip-planner-itinerary-transit`'s working tree (entry above) for
+  combined live testing, at the user's request — not yet split back into its own branch/commit
+- `hike-detail.ts`/`bike-detail.ts`: dropped `TrailThumbnail`, added `trailLines`/`trailColor`/
+  `fitBoundsCoords` computeds off `payload()`, mirroring `destinations-layout.ts`'s existing
+  `collectLines()`/`trailRoute` computed pattern for the full-page background map's own route line
+- `hike-detail.html`/`bike-detail.html`: `.trail-detail-thumb-wrap` now renders
+  `<app-map [trailRoute] [trailColor] [fitBounds]>` instead of `<app-trail-thumbnail>`;
+  `.trail-detail-thumb-wrap` CSS gained `position: relative` (`MapComponent`'s `:host` is
+  `position: absolute; inset: 0`, needs a positioned ancestor to fill)
+- Initially shipped with a new `MapComponent` `[interactive]` input (disabling scroll-zoom/drag-pan/
+  pinch and hiding `NavigationControl`) to keep the embedded map from fighting the drawer's own
+  scroll. User tested live and asked for pinch/pan back, so the whole `interactive` input was
+  reverted out of `map.ts` entirely (no caller ended up using `false`) rather than left as dead code
+  — both maps are now fully interactive, same as every other `app-map` usage in the app
+- `shared/trail-thumbnail/` untouched — still used by `hikes-list`/`bikes-list` card thumbnails
+- Verified via `tsc --noEmit` and `ng build` after each round; not yet committed
+
 ### 2026-07-31 — SEO Locale Routing + hreflang (Phase 2) Implemented
 
 - Branch: `feature/seo-locale-routing-hreflang`; specced in the entry directly below

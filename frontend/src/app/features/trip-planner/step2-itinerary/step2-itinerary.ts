@@ -125,7 +125,10 @@ export class Step2Itinerary {
       id: existing?.id ?? crypto.randomUUID(),
       role: 'departure',
       name: result.name, lat: result.lat, lon: result.lon, externalId: result.externalId,
-      days: existing?.days ?? DEFAULT_STOP_DAYS,
+      // Departure defaults to Transit-checked (0 days) on a first pick into an empty slot — most
+      // trips start from home/an airport with nothing to plan there. Via/destination stops keep
+      // DEFAULT_STOP_DAYS as their own first-pick default (see applyAddStop/applyDestination).
+      days: existing?.days ?? 0,
     });
     this.syncStops();
   }
@@ -290,6 +293,15 @@ export class Step2Itinerary {
   onDaysChange(stop: TripStop, value: number | null): void {
     if (value == null || value < 0) return;
     this.plannerSvc.updateStopDays(stop.id, value);
+  }
+
+  /** "Transit" checkbox state is derived from days rather than a stored field — checked iff Days here is 0. */
+  isTransit(stop: TripStop): boolean {
+    return this.daysFor(stop) === 0;
+  }
+
+  onTransitToggle(stop: TripStop, checked: boolean): void {
+    this.plannerSvc.updateStopDays(stop.id, checked ? 0 : DEFAULT_STOP_DAYS);
   }
 
   rangeLabel(range: TripDateRange): string {
