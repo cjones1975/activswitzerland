@@ -19,6 +19,7 @@ import { SavedTrip } from '../../../models/trip';
 import { HeaderNav } from '../../../shell/header-nav/header-nav';
 import { FooterNav } from '../../../shell/footer-nav/footer-nav';
 import { SeoService } from '../../../shared/services/seo';
+import { LangService } from '../../../shared/services/lang';
 
 @Component({
   selector: 'app-profile',
@@ -31,6 +32,7 @@ import { SeoService } from '../../../shared/services/seo';
 export class Profile implements OnInit {
   private auth = inject(Auth);
   private router = inject(Router);
+  private langSvc = inject(LangService);
   private fb = inject(FormBuilder);
   private tripsSvc = inject(TripsService);
   private tripPlannerSvc = inject(TripPlannerService);
@@ -97,18 +99,18 @@ export class Profile implements OnInit {
 
   signOut(): void {
     this.auth.logout();
-    this.router.navigate(['/']);
+    this.langSvc.navigate([]);
   }
 
   // ── Saved trips ────────────────────────────────────────────────────────────
   openTripPlanner(): void {
-    this.router.navigate(['/trip-planner'], { queryParams: { from: this.router.url } });
+    this.langSvc.navigate(['trip-planner'], { queryParams: { from: this.router.url } });
   }
 
   viewTrip(trip: SavedTrip): void {
     this.tripPlannerSvc.loadSavedTrip(trip);
     this.tripPlannerSvc.step.set(4);
-    this.router.navigate(['/trip-planner'], { queryParams: { from: this.router.url } });
+    this.langSvc.navigate(['trip-planner'], { queryParams: { from: this.router.url } });
   }
 
   confirmDeleteTrip(trip: SavedTrip): void {

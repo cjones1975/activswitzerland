@@ -2,6 +2,7 @@ import { DOCUMENT } from '@angular/common';
 import { Injectable, inject } from '@angular/core';
 import { Meta, Title } from '@angular/platform-browser';
 import { Router } from '@angular/router';
+import { DEFAULT_LANG, SUPPORTED_LANGS, stripLocalePrefix } from './lang';
 
 export interface SeoData {
   title: string;
@@ -58,6 +59,7 @@ export class SeoService {
     }
 
     this.setCanonical(canonicalUrl);
+    this.setHreflang(stripLocalePrefix(this.router.url.split('?')[0]));
   }
 
   private setCanonical(url: string): void {
@@ -68,5 +70,25 @@ export class SeoService {
       this.doc.head.appendChild(link);
     }
     link.setAttribute('href', url);
+  }
+
+  // strippedPath is the current path with its locale segment removed (e.g.
+  // `/destinations/abc`, or `/` for the home page) — the same page exists
+  // under every locale at `/{lang}${strippedPath}`.
+  private setHreflang(strippedPath: string): void {
+    const suffix = strippedPath === '/' ? '' : strippedPath;
+    this.doc.querySelectorAll('link[rel="alternate"][hreflang]').forEach(el => el.remove());
+    for (const lang of SUPPORTED_LANGS) {
+      this.appendAlternateLink(lang, `${SITE_URL}/${lang}${suffix}`);
+    }
+    this.appendAlternateLink('x-default', `${SITE_URL}/${DEFAULT_LANG}${suffix}`);
+  }
+
+  private appendAlternateLink(hreflang: string, href: string): void {
+    const link = this.doc.createElement('link');
+    link.setAttribute('rel', 'alternate');
+    link.setAttribute('hreflang', hreflang);
+    link.setAttribute('href', href);
+    this.doc.head.appendChild(link);
   }
 }

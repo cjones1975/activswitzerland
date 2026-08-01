@@ -3,6 +3,7 @@ import { RouterLink } from '@angular/router';
 import { Menubar } from 'primeng/menubar';
 import { Button } from 'primeng/button';
 import { Drawer } from '../../shared/services/drawer';
+import { LangService } from '../../shared/services/lang';
 
 @Component({
   selector: 'app-header-nav',
@@ -12,6 +13,7 @@ import { Drawer } from '../../shared/services/drawer';
 })
 export class HeaderNav {
 
+  protected langSvc = inject(LangService);
   private drawer = inject(Drawer);
 
   toggleMenu() {

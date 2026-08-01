@@ -27,12 +27,16 @@ export class DestinationHorizontalList implements OnInit {
 
   private destinationsService = inject(DestinationsService);
   private translate = inject(TranslateService);
-  private langSvc = inject(LangService);
+  protected langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
 
   destinations: Destination[] = [];
   loading = signal(true);
   skeletons = Array(6);
+
+  protected viewAllCommands(): string[] {
+    return this.viewAllRoute ? [this.viewAllRoute.replace(/^\//, '')] : [];
+  }
 
   ngOnInit(): void {
     this.translate.onLangChange.pipe(

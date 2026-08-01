@@ -79,7 +79,7 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
   private page = 0;
   private totalElements = 0;
   private observer?: IntersectionObserver;
-  private lang = this.langSvc.current;
+  private lang: string = this.langSvc.current;
   private currentDestId: string | null = null;
 
   constructor() {

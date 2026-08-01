@@ -2,7 +2,6 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
@@ -14,6 +13,7 @@ import { TripsService } from '../../../shared/services/trips';
 import { SavedTrip } from '../../../models/trip';
 import { tripDayCount, formatDdMmYyyy } from '../../../shared/utils/date-range';
 import { StartOverLink } from '../start-over-link/start-over-link';
+import { LangService } from '../../../shared/services/lang';
 
 @Component({
   selector: 'app-step5-save',
@@ -25,7 +25,7 @@ import { StartOverLink } from '../start-over-link/start-over-link';
 export class Step5Save {
   private drawerSvc = inject(Drawer);
   private toast = inject(Toast);
-  private router = inject(Router);
+  private langSvc = inject(LangService);
   private translate = inject(TranslateService);
   private tripsSvc = inject(TripsService);
   plannerSvc = inject(TripPlannerService);
@@ -92,7 +92,7 @@ export class Step5Save {
   }
 
   browseSavedTrips(): void {
-    this.router.navigate(['/auth/profile']);
+    this.langSvc.navigate(['auth', 'profile']);
   }
 
   back(): void {

@@ -1,5 +1,4 @@
 import { Component, Input, OnChanges, SimpleChanges, inject, signal } from '@angular/core';
-import { Router } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { SkeletonModule } from 'primeng/skeleton';
 import { DestinationsService } from '../../../shared/services/destinations';
@@ -18,7 +17,6 @@ export class DestinationSearchResults implements OnChanges {
 
   private destinationsService = inject(DestinationsService);
   private langSvc = inject(LangService);
-  private router = inject(Router);
 
   results = signal<Destination[]>([]);
   loading = signal(false);
@@ -57,7 +55,7 @@ export class DestinationSearchResults implements OnChanges {
   }
 
   onResultClick(dest: Destination): void {
-    this.router.navigate(['/destinations', dest.identifier], {
+    this.langSvc.navigate(['destinations', dest.identifier], {
       queryParams: { from: 'search', q: this.query, tab: 'places' },
     });
   }

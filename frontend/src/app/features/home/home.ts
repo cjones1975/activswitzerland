@@ -35,10 +35,10 @@ export class Home implements OnInit {
   }
 
   openTripPlanner(): void {
-    this.router.navigate(['/trip-planner'], { queryParams: { from: this.router.url } });
+    this.langSvc.navigate(['trip-planner'], { queryParams: { from: this.router.url } });
   }
 
   onSearch(event: { query: string; tab: 'places' | 'things' }): void {
-    this.router.navigate(['/search'], { queryParams: { q: event.query, tab: event.tab } });
+    this.langSvc.navigate(['search'], { queryParams: { q: event.query, tab: event.tab } });
   }
 }

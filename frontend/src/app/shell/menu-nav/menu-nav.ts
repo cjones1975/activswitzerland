@@ -4,7 +4,7 @@ import { Router, RouterLink } from '@angular/router';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Select } from 'primeng/select';
 import { Drawer } from '../../shared/services/drawer';
-import { LangService } from '../../shared/services/lang';
+import { Lang, LangService, stripLocalePrefix } from '../../shared/services/lang';
 import { Auth } from '../../core/services/auth';
 
 @Component({
@@ -15,7 +15,7 @@ import { Auth } from '../../core/services/auth';
   styleUrl: './menu-nav.css',
 })
 export class MenuNav {
-  private langSvc = inject(LangService);
+  protected langSvc = inject(LangService);
   private drawer = inject(Drawer);
   protected router = inject(Router);
   protected auth = inject(Auth);
@@ -29,16 +29,16 @@ export class MenuNav {
 
   selectedLang = this.langSvc.current;
 
-  constructor() {
-    this.langSvc.set(this.selectedLang);
-  }
-
   closeMenu(): void {
     this.drawer.close('menu-nav');
   }
 
-  changeLanguage(lang: string): void {
-    this.langSvc.set(lang);
+  /** Navigates to the locale-swapped equivalent of the current URL, rather than swapping the language in place. */
+  changeLanguage(lang: Lang): void {
+    const [path, query] = this.router.url.split('?');
+    const rest = stripLocalePrefix(path);
+    const newUrl = `/${lang}${rest === '/' ? '' : rest}${query ? '?' + query : ''}`;
+    this.router.navigateByUrl(newUrl);
     this.closeMenu();
   }
 
@@ -51,7 +51,7 @@ export class MenuNav {
     if (this.auth.isLoggedIn()) {
       this.auth.logout();
       this.closeMenu();
-      this.router.navigate(['/']);
+      this.langSvc.navigate([]);
     } else {
       this.openAuth();
     }
@@ -60,7 +60,7 @@ export class MenuNav {
   onProfileClick(): void {
     if (this.auth.isLoggedIn()) {
       this.closeMenu();
-      this.router.navigate(['/auth/profile']);
+      this.langSvc.navigate(['auth', 'profile']);
     } else {
       this.openAuth();
     }

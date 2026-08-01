@@ -4,6 +4,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { filter, map, startWith } from 'rxjs';
 import { Auth } from '../../core/services/auth';
 import { Drawer } from '../../shared/services/drawer';
+import { LangService, stripLocalePrefix } from '../../shared/services/lang';
 
 @Component({
   selector: 'app-footer-nav',
@@ -15,6 +16,7 @@ import { Drawer } from '../../shared/services/drawer';
 })
 export class FooterNav {
   protected router = inject(Router);
+  protected langSvc = inject(LangService);
   private auth = inject(Auth);
   private drawer = inject(Drawer);
 
@@ -28,14 +30,14 @@ export class FooterNav {
   );
 
   private isFooterNavRoute(url: string): boolean {
-    const path = url.split('?')[0];
+    const path = stripLocalePrefix(url.split('?')[0]);
     return path === '/' || path === '/destinations' || path === '/search'
       || /^\/destinations\/.+/.test(path) || /^\/trip-planner(\/.*)?$/.test(path);
   }
 
   onProfileClick(): void {
     if (this.auth.isLoggedIn()) {
-      this.router.navigate(['/auth/profile']);
+      this.langSvc.navigate(['auth', 'profile']);
     } else {
       this.drawer.open('auth');
     }

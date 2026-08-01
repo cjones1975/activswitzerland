@@ -1,11 +1,11 @@
 import { computed, inject, Injectable, PLATFORM_ID, signal } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { Toast } from './toast';
+import { LangService } from '../../shared/services/lang';
 
 interface AuthResponse {
   token: string;
@@ -24,7 +24,7 @@ interface RegisterPayload {
 export class Auth {
   private http = inject(HttpClient);
   private toast = inject(Toast);
-  private router = inject(Router);
+  private langSvc = inject(LangService);
   private translate = inject(TranslateService);
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
@@ -68,7 +68,7 @@ export class Auth {
       );
       this.storeToken(res.token);
       this.toast.success(this.t('auth.toast.register_success'), this.t('auth.toast.register_welcome'), 3000, 'toast-success');
-      this.router.navigate(['/']);
+      this.langSvc.navigate([]);
     } catch (err: any) {
       const detail = err?.error?.message ?? this.t('auth.toast.register_failed_detail');
       this.toast.error(this.t('auth.toast.register_failed'), detail, 3000, 'toast-error');

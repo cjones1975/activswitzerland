@@ -1,6 +1,6 @@
 <p-menubar class="header-nav">
   <ng-template #start>
-    <a class="brand" routerLink="/">ActivSwitzerland</a>
+    <a class="brand" [routerLink]="langSvc.localize([])">ActivSwitzerland</a>
   </ng-template>
 
   <ng-template #end>

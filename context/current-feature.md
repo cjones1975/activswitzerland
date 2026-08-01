@@ -12,6 +12,137 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-07-31 — SEO Locale Routing + hreflang (Phase 2) Implemented
+
+- Branch: `feature/seo-locale-routing-hreflang`; specced in the entry directly below
+- `shared/services/lang.ts` rewritten: exports `SUPPORTED_LANGS`/`DEFAULT_LANG`/`Lang` and a
+  `stripLocalePrefix()` helper; `LangService.current` now derives from `Router.url`'s first
+  segment instead of `localStorage`; `.set()` removed (nothing left to call it — the route
+  resolver now drives `translate.use()`); new `localize(commands)`/`navigate(commands, extras)`
+  centralize prepending the current locale onto route commands for the ~24 navigation call sites
+  identified in the spec (components inject `LangService` and call these instead of
+  `Router.navigate`/bare `routerLink`s)
+- New `core/guards/locale.ts`: `localeMatchGuard` (`CanMatchFn`, restricts `:lang` to real
+  `en`/`de`/`fr`/`it` segments), `bareLangMatcher` (the inverse, a `UrlMatcher` gating the
+  bare-path redirect — see the NG04014 bug below for why this is a matcher and not a guard),
+  `localeLangResolver` (`ResolveFn`, calls `translate.use(lang)` from the route's own resolved
+  `:lang` param — sidesteps any ordering risk from reading `LangService.current` mid-navigation)
+- `app.routes.ts` restructured: every route now sits under a `:lang` parent (`canMatch:
+  [localeMatchGuard]`, `resolve: { lang: localeLangResolver }`); a guarded top-level `**` redirects
+  anything without a real locale prefix (including bare `/`) to `/en/...`; `authGuard` now
+  redirects unauthenticated `/auth/profile` visits to `/${langSvc.current}` instead of always `/`
+- **Real bug found via live SSR testing, not caught by `ng build` or `tsc`**: an unmatched deep
+  path under a *valid* locale (e.g. `/en/xx`) initially fell out of the matched `:lang` route and
+  re-entered the top-level route array to be redirected back in with a locale prefix again —
+  empirically this sent Angular's router recognizer into a spin that hung the entire Node process
+  (every other in-flight and subsequent request on the same server timed out too, not just this
+  one URL — confirmed by killing and restarting the server and reproducing from a clean state).
+  Fixed by adding a `{ path: '**', redirectTo: '' }` *inside* `:lang`'s own children, so an unknown
+  path resolves to that locale's home entirely within the route it already matched, never
+  re-touching the top-level array. Also had to gate the top-level bare-path `**` so it doesn't
+  fire a second time for an already-locale-prefixed URL (which would have re-prepended `en`
+  forever, e.g. `/en/xx` → `/en/en/xx` → ...) — the two fixes together, verified by re-running the
+  exact repro after each change. (This gating was originally a `canMatch` guard; see the NG04014
+  bug below for why it became a `UrlMatcher` instead.)
+- `app.routes.server.ts`: Home prerenders once per locale (`getPrerenderParams` returning the 4
+  fixed codes); `destinations`/`explore-trips`/`search` stay `RenderMode.Server`,
+  `trip-planner`/`auth` stay `RenderMode.Client`, all now under `:lang/...` paths
+- `SeoService.set()` gains `hreflang` alternate-language `<link>` tags (one per locale + one
+  `x-default` → the `/en/...` version), built from `stripLocalePrefix(Router.url)` — removes and
+  re-appends all `link[rel="alternate"][hreflang]` tags on every `set()` call, mirroring the
+  existing canonical-tag upsert pattern
+- Navigation rewired across all ~24 call sites the spec enumerated: `MenuNav`/`FooterNav`/
+  `HeaderNav` `routerLink`s now call `langSvc.localize([...])`; `MenuNav.changeLanguage()` rebuilt
+  as a real `navigateByUrl()` to the locale-swapped equivalent of the current path+query (was an
+  in-place `LangService.set()`); `FooterNav.isFooterNavRoute()` strips the locale prefix before
+  its path checks (would otherwise never match once every real path gained a `/de/`-style prefix);
+  every imperative `Router.navigate()` in `drawer-host.ts`, `trip-planner-layout.ts`,
+  `step5-save.ts`, `home.ts`, `profile.ts`, `destination-vertical-list.ts`,
+  `destination-search-results.ts`, and `core/services/auth.ts` (register-redirect) switched to
+  `langSvc.navigate()`; `destination-horizontal-list.ts`'s `viewAllRoute` string `@Input` gets a
+  `viewAllCommands()` helper stripping its leading slash before `localize()`. `search-page.ts`'s
+  query-param-only `router.navigate([], { relativeTo: this.route, ... })` deliberately left
+  unchanged — relative navigation with empty commands preserves whatever locale segment is
+  already in the URL, no locale-awareness needed there
+- `scripts/generate-sitemap.mjs`: emits every URL once per locale (4x the entry count);
+  `robots.txt`'s `Disallow` rules changed from bare `/trip-planner`/`/auth` (dead now — no real
+  path is unprefixed, so a bare rule would never match again) to one explicit line per locale
+  (`/en/trip-planner`, `/de/trip-planner`, etc.) rather than relying on non-standard wildcard
+  support
+- Verified via `tsc --noEmit`, full `npm run build` (clean; only the pre-existing bundle-size/
+  CommonJS warnings; confirmed 4 prerendered locale homepages under `dist/frontend/browser/{en,
+  de,fr,it}/index.html`), and extensive live curl testing against the real local backend
+  (`activswitzerland_backend` on port 3000) running the built SSR server: bare `/` and bare
+  `/destinations` return real `302`s to `/en` and `/en/destinations`; a garbage locale
+  (`/xx/destinations`) and a valid-locale-unknown-path (`/en/xx`) both resolve cleanly (the bug
+  above, now fixed); `/en`, `/de`, `/fr/destinations` all `200`; the same destination UUID resolves
+  correctly with different-language content under `/en/` vs `/de/` (confirms the spec's
+  `Destination.identifier` assumption); hreflang tags render correctly with all 4 locales +
+  `x-default` plus a correct locale-aware canonical, on both an SSR destination page and the
+  static prerendered homepage
+- `nginx.conf` needed no changes (its catch-all `try_files` + `index` directive already serves
+  per-directory `index.html` transparently, same mechanism already serving root `/` today)
+- **Real bug found via the user's own `ng serve`, not caught by `tsc`/`ng build`/curl testing
+  above**: `NG04014` at app startup — `redirectTo and canMatch cannot be used together. Redirects
+  happen before guards are executed.` The guarded bare-path-redirect route (`{ path: '**',
+  canMatch: [bareLangMatchGuard], redirectTo: ... }`) is rejected outright by Angular's route
+  config validator; this only surfaces at runtime router construction, not at compile time, so
+  every curl check above happened to hit routes that never exercised this specific combination's
+  validation path before the server crashed on it for `ng serve` specifically. Root-caused by
+  reading the validator's actual source (`node_modules/@angular/router/fesm2022/_router-chunk.mjs`)
+  rather than guessing: the check is specifically `route.redirectTo && (route.canMatch ||
+  route.canActivate)` — `matcher` isn't part of that check. Fixed by replacing
+  `bareLangMatchGuard` (a `CanMatchFn`) with `bareLangMatcher` (a `UrlMatcher`, returning `null`
+  for already-locale-prefixed segments instead of gating via `canMatch`) — functionally identical
+  gating, just expressed as route-matching instead of a guard, which `redirectTo` is allowed to
+  combine with. Verified against the user's own live `ng serve` (which picked up the fix via its
+  existing watch process): bare `/` now 302s to `/en` and `/en` itself renders `200` with correct
+  content, no NG04014
+
+### 2026-07-31 — SEO Locale Routing + hreflang (Phase 2) Specced
+
+- Phase 2 of the 4-phase SEO plan (Phase 1: SSR foundation, directly above; Phase 3: JSON-LD;
+  Phase 4: Search Console/Bing/IndexNow). Phase 1 made pages crawlable but every URL still shares
+  one language (`ngx-translate` swaps strings client-side under a single shared route) — real
+  `hreflang` requires each language to be its own crawlable URL, which is where most of the
+  remaining SEO gain sits for a Swiss DE/FR/IT audience
+- Investigated current state: i18n is purely `ngx-translate` (no Angular built-in i18n to
+  reconcile); `LangService.current` today just reads `localStorage`/hardcoded `'en'` server-side
+  with zero URL involvement; `MenuNav.changeLanguage()` is an instant in-place string swap, no
+  navigation; every language-reactive component already listens via
+  `translate.onLangChange.pipe(startWith(...))` (wired in Phase 1), so calling `translate.use()`
+  from a route guard needs no changes there. Grepped exhaustively: ~24 internal navigation call
+  sites (9 `routerLink`s + 15 imperative `router.navigate()` calls) all need to carry the locale
+  forward
+- Confirmed decisions: all four locales get an explicit prefix including English (`/en/`, `/de/`,
+  `/fr/`, `/it/`) — symmetric rather than "English unprefixed" since almost nothing is indexed yet
+  post-Phase-1, so there's no continuity cost to avoid; bare paths redirect to `/en/...`
+  unconditionally (no `Accept-Language` sniffing — deferred, not required for indexability);
+  navigation goes through a new centralized helper (prepends the locale segment to route
+  commands) rather than relying on Angular's relative-routing resolution, since several call
+  sites (`footer-nav`, `menu-nav`, `drawer-host`) aren't routed components with a clean
+  `ActivatedRoute` context; `MenuNav.changeLanguage()` becomes a real navigation to the
+  locale-swapped equivalent of the current URL
+- Scope: every route gains a `:lang` parent segment (matcher restricted to `en|de|fr|it`, not an
+  unconstrained param) with a guard/resolver calling `translate.use(lang)`; `LangService.current`
+  switches from `localStorage` to reading the resolved `:lang` route param; Home prerenders once
+  per locale (4 fixed codes via `getPrerenderParams`), `destinations`/`explore-trips`/`search`
+  stay `RenderMode.Server`, `trip-planner`/`auth` stay `RenderMode.Client`, all now under every
+  locale prefix; `SeoService.set()` gains `hreflang` alternate-language link tags (one per locale
+  plus `x-default` → `/en/...`); `scripts/generate-sitemap.mjs` emits every URL once per locale
+  (4x current entries)
+- Out of scope this phase: `Accept-Language` smart redirect, JSON-LD (Phase 3), Search
+  Console/Bing/IndexNow (Phase 4), any new translation work, hike/bike standalone detail routes
+  (still don't exist)
+- Open items flagged as needing live verification during implementation, not guessable from
+  static analysis: whether `@angular/ssr` propagates the bare-`/` redirect as a genuine HTTP 30x
+  during SSR or just renders the target content at the original URL; whether
+  `Destination.identifier` (a bare UUID) resolves identically regardless of the `language` query
+  param; exact behavior of `robots.txt`'s existing `Disallow` path-substring rules once a
+  `/de/`-style prefix sits ahead of `/trip-planner`/`/auth`
+- Created `context/features/seo-locale-routing-hreflang-spec.md`; no feature branch created yet —
+  not yet reviewed/approved by the user, no implementation
+
 ### 2026-07-31 — SEO SSR Foundation (Phase 1) Implemented
 
 - Branch: `feature/seo-ssr-foundation`; specced in `context/features/seo-ssr-foundation-spec.md`.
