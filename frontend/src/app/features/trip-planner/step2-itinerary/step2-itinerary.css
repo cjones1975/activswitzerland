@@ -159,19 +159,48 @@
   gap: 0.5rem;
 }
 
-.s2-days-field label {
+.s2-days-field > label {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--navy-700, #3a5a7a);
 }
 
-.s2-days-field input {
-  width: 4.5rem;
+/* Direct-child selector, not a bare descendant one — .s2-transit-field's checkbox is nested
+   inside this same container and must not inherit the days-count input's width/padding/border. */
+.s2-days-field > input {
+  width: 3.5rem;
   padding: 0.4rem 0.5rem;
   border: 1px solid var(--gray-300, #cbd5e1);
   border-radius: 6px;
   font-size: 0.82rem;
   font-family: inherit;
+}
+
+.s2-days-field > input:disabled {
+  background: var(--gray-100, #f1f5f9);
+  color: var(--gray-500);
+}
+
+.s2-transit-field {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-left: auto;
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+
+.s2-transit-field input[type="checkbox"] {
+  margin: 0;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.s2-transit-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--navy-700, #3a5a7a);
+  cursor: pointer;
 }
 
 .s2-via-list { display: flex; flex-direction: column; }

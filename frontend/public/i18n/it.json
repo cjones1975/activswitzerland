@@ -109,10 +109,11 @@
       },
       "step2": {
         "tripRange": "Viaggio: {{range}}",
-        "departure": "Partenza",
-        "destination": "Destinazione principale",
+        "departure": "Inizio del viaggio",
+        "destination": "Fine del viaggio",
         "stop": "Luogo della tappa",
         "daysHere": "Giorni qui",
+        "transit": "Transito",
         "dayLabel": "Giorno {{start}}",
         "dayRangeLabel": "Giorni {{start}}–{{end}}",
         "dayRemaining": "Ancora {{count}} giorno da assegnare",

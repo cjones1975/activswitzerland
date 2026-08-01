@@ -38,7 +38,10 @@ export class Step3Activities {
 
   readonly categories = CATEGORIES;
 
-  readonly visibleStops = computed(() => this.trip().stops.filter(s => s.days > 0));
+  // Departure hides at 0 days (that's exactly what the Transit checkbox is for — a pure
+  // pass-through start point with nothing to plan). Via/destination stops always show, even at
+  // 0 days, so they stay addable even as same-day pass-throughs.
+  readonly visibleStops = computed(() => this.trip().stops.filter(s => s.role !== 'departure' || s.days > 0));
   readonly stopDayLabels = computed(() => stopDayRanges(this.trip().stops));
 
   activitiesFor(stop: TripStop, kind: ActivityKind): TripActivitySelection[] {

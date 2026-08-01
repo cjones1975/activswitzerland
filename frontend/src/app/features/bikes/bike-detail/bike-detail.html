@@ -4,7 +4,7 @@
     <h1 class="trail-detail-name">{{ p.route.name }}</h1>
 
     <div class="trail-detail-thumb-wrap">
-      <app-trail-thumbnail [stages]="p.route.stages" [category]="p.route.category" />
+      <app-map [trailRoute]="trailLines()" [trailColor]="trailColor()" [fitBounds]="fitBoundsCoords()" />
     </div>
 
     <div class="trail-detail-meta">
