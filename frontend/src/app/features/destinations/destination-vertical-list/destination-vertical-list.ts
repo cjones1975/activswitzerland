@@ -1,6 +1,6 @@
 import { Component, DestroyRef, ElementRef, OnInit, ViewChild, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { combineLatest, startWith, switchMap, tap } from 'rxjs';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -22,10 +22,9 @@ export class DestinationVerticalList implements OnInit {
   @ViewChild('mapSection') mapSectionRef!: ElementRef<HTMLDivElement>;
 
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
+  protected langSvc = inject(LangService);
   private destinationsService = inject(DestinationsService);
   private translate = inject(TranslateService);
-  private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
   private seo = inject(SeoService);
 
@@ -73,6 +72,6 @@ export class DestinationVerticalList implements OnInit {
 
   onMarkerClick(marker: MapMarker): void {
     if (!marker.id) return;
-    this.router.navigate(['/destinations', marker.id], { queryParams: { category: this.categoryKey() } });
+    this.langSvc.navigate(['destinations', marker.id], { queryParams: { category: this.categoryKey() } });
   }
 }

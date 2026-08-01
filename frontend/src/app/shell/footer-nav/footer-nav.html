@@ -1,20 +1,20 @@
 <nav class="footer-nav">
-    <a class="footer-btn" routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+    <a class="footer-btn" [routerLink]="langSvc.localize([])" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
         <span class="footer-icon-wrap">
             <i class="fa-light fa-house"></i>
         </span>
     </a>
-    <a class="footer-btn" routerLink="/search" routerLinkActive="active">
+    <a class="footer-btn" [routerLink]="langSvc.localize(['search'])" routerLinkActive="active">
         <span class="footer-icon-wrap">
             <i class="fa-light fa-magnifying-glass"></i>
         </span>
     </a>
-    <a class="footer-btn" routerLink="/trip-planner" [queryParams]="{ from: router.url }" routerLinkActive="active" [routerLinkActiveOptions]="{ paths: 'subset', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }">
+    <a class="footer-btn" [routerLink]="langSvc.localize(['trip-planner'])" [queryParams]="{ from: router.url }" routerLinkActive="active" [routerLinkActiveOptions]="{ paths: 'subset', queryParams: 'ignored', matrixParams: 'ignored', fragment: 'ignored' }">
         <span class="footer-icon-wrap">
             <i class="fa-light fa-route"></i>
         </span>
     </a>
-    <a class="footer-btn" routerLink="/explore-trips" routerLinkActive="active">
+    <a class="footer-btn" [routerLink]="langSvc.localize(['explore-trips'])" routerLinkActive="active">
         <span class="footer-icon-wrap">
             <i class="fa-light fa-compass"></i>
         </span>

@@ -1,6 +1,6 @@
 import { Component, DestroyRef, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute } from '@angular/router';
 import { of, startWith, switchMap } from 'rxjs';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { DestinationsService } from '../../shared/services/destinations';
@@ -35,7 +35,6 @@ const ACTIVITY_MARKER_STYLE: Record<ActivityKind, { image: string }> = {
 })
 export class TripPlannerLayout implements OnInit, OnDestroy {
   private route = inject(ActivatedRoute);
-  private router = inject(Router);
   private destinationsService = inject(DestinationsService);
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
@@ -144,7 +143,7 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   backToDestination(): void {
     const dest = this.destination();
     if (!dest) return;
-    this.router.navigate(['/destinations', dest.identifier]);
+    this.langSvc.navigate(['destinations', dest.identifier]);
   }
 
   reopenTripPlanner(): void {

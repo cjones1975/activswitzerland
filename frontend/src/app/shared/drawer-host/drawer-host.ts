@@ -23,6 +23,7 @@ import { BikeDetail, BikeDetailPayload } from '../../features/bikes/bike-detail/
 import { HotelsStub } from '../../features/hotels/hotels-stub/hotels-stub';
 import { ActivityPickerPayload } from '../../models/geo-point';
 import { WeatherPayload } from '../../models/weather';
+import { LangService } from '../services/lang';
 
 @Component({
   selector: 'app-drawer-host',
@@ -34,6 +35,7 @@ import { WeatherPayload } from '../../models/weather';
 export class DrawerHost {
   svc = inject(Drawer);
   private router = inject(Router);
+  private langSvc = inject(LangService);
   private attractionMarkers = inject(AttractionMarkersService);
   private tripPlanner = inject(TripPlannerService);
 
@@ -53,11 +55,11 @@ export class DrawerHost {
     this.svc.close('destination-detail');
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     if (queryParams['from'] === 'search') {
-      this.router.navigate(['/search'], { queryParams: { q: queryParams['q'], tab: queryParams['tab'] } });
+      this.langSvc.navigate(['search'], { queryParams: { q: queryParams['q'], tab: queryParams['tab'] } });
       return;
     }
     const category = queryParams['category'];
-    this.router.navigate(['/destinations'], category ? { queryParams: { category } } : {});
+    this.langSvc.navigate(['destinations'], category ? { queryParams: { category } } : {});
   }
 
   onAllAttractionsBack() {
@@ -115,7 +117,7 @@ export class DrawerHost {
       return;
     }
     if (payload.source === 'search') {
-      this.router.navigate(['/search'], { queryParams: { q: payload.searchQuery, tab: payload.searchTab ?? 'things' } });
+      this.langSvc.navigate(['search'], { queryParams: { q: payload.searchQuery, tab: payload.searchTab ?? 'things' } });
       return;
     }
     this.svc.open('all-attractions', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId, origin: payload.listOrigin });

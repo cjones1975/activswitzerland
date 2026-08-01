@@ -7,10 +7,12 @@
 // still needs the full destination list — purely to enumerate sitemap URLs,
 // unrelated to rendering. Kept as its own fetch rather than importing from
 // app code since this script runs outside Angular's build/TS pipeline
-// entirely.
+// entirely — SUPPORTED_LANGS is duplicated from shared/services/lang.ts for
+// the same reason.
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
+const SUPPORTED_LANGS = ['en', 'de', 'fr', 'it'];
 const SITE_URL = (process.env.SITE_URL ?? 'https://www.activswitzerland.com').replace(/\/$/, '');
 const API_URL = process.env.SSR_API_URL ?? 'http://localhost:3000';
 const HITS_PER_PAGE = Number(process.env.SITEMAP_HITS_PER_PAGE ?? 100);
@@ -49,8 +51,9 @@ async function getDestinationIds() {
 }
 
 function buildSitemap(destinationIds) {
-  const staticUrls = ['', '/destinations'];
-  const urls = [...staticUrls, ...destinationIds.map(id => `/destinations/${id}`)];
+  const staticPaths = ['', '/destinations'];
+  const paths = [...staticPaths, ...destinationIds.map(id => `/destinations/${id}`)];
+  const urls = SUPPORTED_LANGS.flatMap(lang => paths.map(path => `/${lang}${path}`));
   const entries = urls
     .map(path => `  <url><loc>${SITE_URL}${path}</loc></url>`)
     .join('\n');
@@ -58,11 +61,16 @@ function buildSitemap(destinationIds) {
 }
 
 function buildRobots() {
+  // Every real path now sits under a /en|de|fr|it prefix, so a bare
+  // `Disallow: /trip-planner` (which only matches paths starting with that
+  // exact string) would no longer match anything — one line per locale
+  // instead of relying on non-standard wildcard support.
+  const disallowPaths = ['/trip-planner', '/auth'];
+  const disallowLines = SUPPORTED_LANGS.flatMap(lang => disallowPaths.map(p => `Disallow: /${lang}${p}`));
   return [
     'User-agent: *',
     'Allow: /',
-    'Disallow: /trip-planner',
-    'Disallow: /auth',
+    ...disallowLines,
     '',
     `Sitemap: ${SITE_URL}/sitemap.xml`,
     '',
