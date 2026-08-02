@@ -10,9 +10,11 @@ This is the loop you'll use for every future release.
 2. Commit them (`git commit`).
 3. From the repo root, on your dev machine:
    ```powershell
+   $env:SITE_URL = "https://www.activswitzerland.com"
+   $env:SSR_API_URL = "https://www.activswitzerland.com"
    .\infra\build-and-push.ps1
    ```
-   Builds both images tagged with the current git short SHA (+ `:latest`), pushes both to `ghcr.io/cjones1975`. Requires `docker login ghcr.io` to already be done (PAT with `write:packages`, done once).
+   Builds all three images (`backend`, `frontend`, `frontend-ssr`) tagged with the current git short SHA (+ `:latest`), pushes to `ghcr.io/cjones1975`. Requires `docker login ghcr.io` to already be done (PAT with `write:packages`, done once). `SSR_API_URL` must be reachable from *this* dev machine at build time (used for the sitemap generator and Home's build-time prerender) — the live public domain works since the NAS backend itself isn't otherwise exposed; without it, the build still succeeds but with placeholder/incomplete sitemap data.
 4. SSH into the NAS, then:
    ```sh
    cd /volume1/docker/activswitzerland/infra
@@ -33,17 +35,22 @@ Internet ──443/80──▶ Router (port-forward, pre-existing) ──▶ NAS
                                                                 │
                                                                 ▼
                                          frontend container (nginx, 127.0.0.1:8080 → 80)
-                                         - serves Angular static build
-                                         - proxies /api/* to backend:3000 over the docker network
+                                         - serves the Angular static/prerendered build
+                                         - proxies /api/* to backend:3000
+                                         - proxies anything else (SSR routes, unknown paths) to frontend-ssr:4000
                                                                 │
                                                        docker network "app_network"
                                                                 │
-                                         backend container (NOT published to host)
-                                             │                          │
-                                         mongodb (bind-mounted data)   redis
+                                    ┌───────────────────────────┼───────────────────────────┐
+                                    │                           │                           │
+                          backend container              frontend-ssr container       (not published to host)
+                          (NOT published to host)         (Angular SSR Node server,
+                                    │            │         NOT published to host)
+                              mongodb          redis
+                        (bind-mounted data)
 ```
 
-Only `frontend` publishes a port, and only to `127.0.0.1` (DSM's reverse proxy runs on the same host). Backend/mongo/redis are internal-only — no direct internet exposure, no CORS friction (browser calls are same-origin through nginx).
+Only `frontend` publishes a port, and only to `127.0.0.1` (DSM's reverse proxy runs on the same host). Backend/mongo/redis/frontend-ssr are internal-only — no direct internet exposure, no CORS friction (browser calls are same-origin through nginx). `frontend-ssr` renders pages server-side per request (destinations, search, explore-trips); prerendered locale home pages (`/en`, `/de`, `/fr`, `/it`) and hashed static assets are served directly by nginx without hitting it.
 
 ## DNS (name.com)
 
@@ -56,8 +63,8 @@ This is transparent to everything else (Let's Encrypt, DSM reverse proxy, nginx)
 
 ## Key files (repo)
 
-- `infra/docker/frontend/Dockerfile` — multi-stage: builds the Angular prod bundle, serves via nginx.
-- `frontend/nginx.conf` — SPA fallback + `/api/` proxy to `backend:3000`.
+- `infra/docker/frontend/Dockerfile` — multi-stage, three named targets built from one `builder` stage: `frontend` (nginx serving the static/prerendered output) and `frontend-ssr` (the Node SSR server). Also runs `scripts/generate-sitemap.mjs` at build time.
+- `frontend/nginx.conf` — `/api/` proxy to `backend:3000`, everything else (SSR routes, unknown paths) proxied to `frontend-ssr:4000` via the `@ssr` named location.
 - `infra/docker-compose.prod.yml` — production stack. `mongo-express` is included but gated behind `--profile debug` and bound to `127.0.0.1` only — never runs by default.
 - `infra/.env.prod.example` — template only; the real `.env.prod` lives solely on the NAS, never committed.
 - `infra/build-and-push.ps1` / `infra/update.sh` — the two scripts in the update loop above.
@@ -81,6 +88,13 @@ This is transparent to everything else (Let's Encrypt, DSM reverse proxy, nginx)
 - **DSM reverse proxy: "This port is reserved for system only" on port 443`** when adding a second rule — not a real port conflict (DSM supports many hostnames sharing 443 via SNI). Almost always means the new rule's **Hostname** field was left blank/wildcard, colliding with an existing rule. Fill in the exact hostname (e.g. `www.activswitzerland.com`).
 - **Certificate reassignment isn't automatic.** Adding a new Let's Encrypt cert (e.g. to add a SAN) doesn't retroactively rewire existing reverse-proxy rules — go to Control Panel → Security → Certificate → **Configure** and explicitly map each hostname:port service to the right certificate.
 - **Verifying external access from inside your own home network can be misleading** — some routers don't support NAT hairpinning, so testing from home wifi isn't proof it works from the internet. Test from mobile data or another external network.
+- **nginx serving its own stock "Welcome to nginx!" page instead of the app**: happened when the Angular build switched to SSR mode, which emits `index.csr.html` instead of a root `index.html` — so nothing ever overwrote the base `nginx:1.27-alpine` image's baked-in default `index.html` at `/usr/share/nginx/html/`, and it just sat there being served. Fixed by `RUN rm -f /usr/share/nginx/html/index.html` in the Dockerfile before copying the build output over it. Diagnose this by `docker exec`'ing into the container and checking file dates in `/usr/share/nginx/html` — the stale file stands out immediately (differs from everything else, and is exactly 615 bytes).
+- **`try_files $uri $uri/ @ssr;` returning 403 for the bare root instead of falling through to SSR**: `$uri/` matches *any existing directory*, regardless of whether it has a usable index file inside — and the web root itself always trivially "exists," so `/` never reached the `@ssr` fallback (nginx's directory-index logic just found nothing and returned 403 instead, since autoindex is off by default). This only bit the bare root — locale routes like `/en` were unaffected since those directories have real prerendered `index.html` files. Fixed with an exact-match block that forces `/` straight to SSR, bypassing the directory check entirely:
+  ```
+  location = / {
+      try_files /this-path-never-exists @ssr;
+  }
+  ```
 
 ## Recurring theme: ISP/carrier/VPN content filtering, not our stack
 
