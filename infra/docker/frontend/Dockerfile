@@ -31,6 +31,12 @@ RUN npx ng build --configuration production && node scripts/generate-sitemap.mjs
 FROM nginx:1.27-alpine AS frontend
 
 COPY nginx.conf /etc/nginx/conf.d/default.conf
+# The SSR-enabled build no longer produces a root index.html (it emits
+# index.csr.html instead — see nginx.conf's `@ssr` fallback comment), so
+# nothing overwrites nginx's own stock placeholder at this path. Remove it
+# so requests to "/" correctly fall through to the SSR server instead of
+# silently matching nginx's leftover default page.
+RUN rm -f /usr/share/nginx/html/index.html
 COPY --from=builder /app/dist/frontend/browser /usr/share/nginx/html
 
 EXPOSE 80
