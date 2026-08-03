@@ -12,6 +12,90 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-03 — Auth: Header Restyle + Email Verification + Profile Email-Change Implemented
+
+- Branch: `feature/auth-email-verification`; specced in the entry directly below
+- Implemented the spec's `verificationCode.js`/`register`/`login`/`verifyEmail`/
+  `resendVerification`/`updateUser`/`verifyEmailChange` backend endpoints, the shared
+  `verify-code` component, and wired `profile.ts` to real `getMe`/`updateUser` calls (was 100%
+  hardcoded)
+- **Real bug found via live UAT, not caught by `tsc`/build**: editing the email on the profile
+  page 500'd with a raw SMTP error (`Invalid login: 535 Authentication failed`) instead of saving
+  anything — `updateUser` awaited `sendVerificationEmail` inline, so a mail-send failure (bad
+  local SMTP creds in `backend/config/.env`) threw before `user.save()` ran, losing valid
+  unrelated field edits (name/country/etc.) too, and `errorHandler` echoed nodemailer's raw
+  internal error text straight to the client. Fixed by wrapping the email-change
+  create-code+send-email step in `updateUser` in try/catch: other profile fields now always save;
+  on failure the response is a normal `200` with a new `emailUpdateError` string (server logs the
+  real error) instead of a `500`. Frontend (`UpdateUserResponse.emailUpdateError`,
+  `profile.ts`'s `saveEdit`/`onResendEmailChange`) surfaces it via toast. SMTP credentials
+  themselves were left to the user to fix in their local `.env` — not a code issue
+- **Real bug found via live UAT**: the nav-menu drawer wouldn't open from `/auth/profile` —
+  clicking the hamburger did nothing until navigating to another page, at which point it opened
+  immediately. Root cause: `auth/profile` was a sibling route of `MainLayout` instead of nested
+  under it, so `app-drawer-host` (only rendered inside `MainLayout`) was never in the DOM on that
+  route — `Drawer.toggle()` flipped shared service state with nothing listening; navigating into
+  a `MainLayout`-nested route then picked up the already-open state. Fixed by moving `auth/profile`
+  into `MainLayout`'s `children` in `app.routes.ts`, which also meant removing `profile.html`'s
+  own duplicate `<app-header-nav>`/`<app-footer-nav>` (previously needed since it wasn't inside
+  `MainLayout`) and the now-unused imports from `profile.ts`
+- forgot-password's drawer still used the pre-restyle light `.menu-header` (same as the nav-menu
+  drawer) instead of the navy `.auth-header` now used by login/register. Fixed in
+  `drawer-host.html`: added `styleClass="auth-drawer"` and swapped to the `.auth-header` markup —
+  incidentally also fixed a latent visual gap, since `forgot-password.css`'s `.fp-hero`/`.fp-card`
+  were already built for the flush-navy-header + overlapping-white-card pattern (matching
+  `auth-layout.css`'s `.auth-strip`/`.auth-card`) but weren't getting the padding-free header
+  needed to actually render that way
+- UAT polish on `forgot-password`: removed the key-icon circle above "Reset your password" (dead
+  `.fp-icon-circle` markup+CSS deleted); `.fp-hero` height reduced `200px` → `140px` to match the
+  lighter content now that the icon is gone
+- Investigated (not implemented, reverted): a desktop-responsive pass on the trip planner wizard
+  (`trip-planner-wizard.css`), live-tested at 640px and 1024px max-widths via headless-Chromium
+  screenshots. User's conclusion: widening the container alone doesn't fix "everything looks
+  small on desktop" — the cards/icons/type themselves are mobile-proportioned and need to reflow,
+  not just stretch, and doing that properly across all ~45 component stylesheets (only 12 have any
+  `@media` query today) is a separate, deliberate piece of work — explicitly not wanted on this
+  branch. Fully reverted, no diff landed
+- Verified via `tsc --noEmit` (frontend) and `node --check` (backend) after each change; live
+  browser-tested by the user throughout. Not yet committed
+
+### 2026-08-03 — Auth: Header Restyle + Email Verification + Profile Email-Change Specced
+
+- Explored current auth stack: `frontend/src/app/features/auth/*` (auth-layout, login, register,
+  profile), `core/services/auth.ts`, and the backend `auth` controller/routes/model. Found the
+  `auth-layout` hero is not routed — it's rendered globally in `shared/drawer-host` and toggled via
+  the `Drawer` service's `'auth'` key. Found `profile.ts`'s `user` object and `saveEdit()` are
+  entirely hardcoded, no `getMe`/`updateUser` wiring exists yet. Found the backend already has
+  Redis (`redis@6`, connected, used today for response caching) and nodemailer/Mailgun email
+  sending fully configured — confirmed as reusable, not new infra
+- Found a real pre-existing gap: `User.isValid` defaults `false` and gates `login()` with a 403,
+  but nothing anywhere ever sets it `true`, and `register()` issues a full JWT immediately
+  regardless — an inert/self-contradicting half-built email-confirmation stub
+- Asked the user via `AskUserQuestion` whether the new code-based verification should be one-time
+  (fixing the dead `isValid` gate) or full 2FA-on-every-login; user asked for a recommendation,
+  advised one-time is the standard pattern for a consumer trip-planning site (2FA-every-login is
+  disproportionate friction for this type of app) — user agreed on one-time
+- Asked whether profile's email-change verification should also include wiring `profile.ts` to a
+  real `getMe`/`updateUser` backend call (previously entirely hardcoded) as prerequisite scope —
+  user confirmed yes
+- Designed (via a Plan sub-agent, cross-checked directly against `errorResponse.js`/`error.js`,
+  `rateLimiter.js`, `redis.js`, `cache.js`, `sendEmail.js`, `auth.ts`, `drawer.ts`, `profile.ts`):
+  a generic `backend/src/utils/verificationCode.js` (Redis-keyed `verify:{prefix}:{id}`, 5-min TTL,
+  5-attempt cap before forcing a resend) reused by both flows; rewritten `register`/`login`/
+  `updateUser` controllers plus new `verifyEmail`/`resendVerification`/`verifyEmailChange`
+  endpoints; a new shared `verify-code` frontend component (PrimeNG `p-inputotp`) used both inside
+  `auth-layout` (register/login) and inline on the profile page (email-change)
+- Real correction caught during design: the plan initially assumed `next(new ErrorResponse(...))`
+  could carry extra response fields (`verificationRequired`, `email`) on the 403 login-unverified
+  path — reading `errorResponse.js`/`error.js` directly showed the error middleware only ever
+  echoes `{ success:false, err:message }`, discarding anything else. Fixed by sending that specific
+  response directly via `res.status(403).json(...)` instead of going through `next()`
+- User asked for one consolidated spec file rather than the three separate layout/wireup-style
+  specs initially proposed (matching this repo's usual split convention) — created
+  `context/features/auth-email-verification-spec.md` covering all three changes together. User
+  also asked to hold off on creating the feature branch until told to
+- No feature branch created yet; no implementation started
+
 ### 2026-08-01 — Trip Planner Step 2/3: Start/End Trip Relabel + Transit Checkbox Implemented
 
 - Branch: `feature/trip-planner-itinerary-transit`; spec: `context/features/trip-planner-itinerary-transit-spec.md`.

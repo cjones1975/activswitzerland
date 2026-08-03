@@ -28,15 +28,15 @@ export const routes: Routes = [
           { path: 'trip-planner/:id', component: TripPlannerLayout },
           { path: 'explore-trips', component: ExploreTrips },
           { path: 'search', component: SearchPage },
+          {
+            path: 'auth/profile',
+            component: Profile,
+            canActivate: [authGuard],
+          },
         ]
       },
       { path: 'auth', redirectTo: '', pathMatch: 'full' },
       { path: 'auth/forgot-password', redirectTo: '', pathMatch: 'full' },
-      {
-        path: 'auth/profile',
-        component: Profile,
-        canActivate: [authGuard],
-      },
       // Real locale, unknown path beneath it (e.g. /en/xx) — resolves to
       // that locale's home *within* this route's own children, rather than
       // falling out to the top-level `**` below. Found live: letting an

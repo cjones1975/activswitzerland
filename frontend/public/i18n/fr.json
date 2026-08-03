@@ -29,11 +29,14 @@
       "forgot_success_detail": "Nous vous avons envoyé un lien pour réinitialiser votre mot de passe.",
       "forgot_failed": "Demande échouée",
       "forgot_no_user": "Aucun utilisateur trouvé avec l'adresse e-mail fournie.",
-      "generic_error": "Oups, une erreur s'est produite. Veuillez réessayer."
-    },
-    "hero": {
-      "title": "Bon retour",
-      "subtitle": "Connectez-vous pour accéder à vos voyages et avis enregistrés"
+      "generic_error": "Oups, une erreur s'est produite. Veuillez réessayer.",
+      "verify_sent": "Nous vous avons envoyé un code de vérification par e-mail.",
+      "verify_required": "Vérification requise",
+      "verify_success": "E-mail vérifié",
+      "verify_failed": "Échec de la vérification",
+      "resend_success": "Code renvoyé",
+      "resend_failed": "Échec du renvoi",
+      "update_failed": "Échec de la mise à jour"
     },
     "tabs": {
       "login": "Connexion",

@@ -29,7 +29,9 @@ export class Login {
     try {
       const { email, password } = this.form.getRawValue();
       await this.auth.login(email, password);
-      this.drawer.close('auth');
+      // login() resolves without throwing even when it instead triggered the
+      // verify-code step (403 + verificationRequired) — only close once actually logged in.
+      if (this.auth.isLoggedIn()) this.drawer.close('auth');
     } finally {
       this.submitting.set(false);
     }

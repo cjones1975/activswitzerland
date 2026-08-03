@@ -83,6 +83,66 @@
     margin: 0;
 }
 
+/* Auth drawer: navy header (matches auth-layout's .auth-strip below it, no gap,
+   full width) instead of the default light .menu-header */
+::ng-deep .auth-drawer .p-drawer-header {
+    background: var(--navy-900);
+}
+
+::ng-deep .auth-drawer .p-drawer-content {
+    padding: 0;
+}
+
+.auth-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.auth-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.auth-header-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--amber-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.auth-header-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-white);
+}
+
+.auth-header-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.1rem;
+    padding: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.auth-header-close:hover {
+    color: var(--color-white);
+    background: rgba(255, 255, 255, 0.15);
+}
+
 /* Destination detail drawer */
 .dest-header {
     display: flex;

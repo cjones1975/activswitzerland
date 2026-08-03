@@ -1,14 +1,15 @@
 <p-toast position="bottom-center" />
 <p-confirmDialog />
-<app-header-nav></app-header-nav>
 
 <div class="profile-page">
+
+@if (user(); as u) {
 
     <!-- Hero -->
     <div class="profile-hero">
         <div class="profile-avatar">{{ initials }}</div>
-        <h1 class="profile-name">{{ user.firstName }} {{ user.lastName }}</h1>
-        <p class="profile-email">{{ user.email }}</p>
+        <h1 class="profile-name">{{ u.firstName }} {{ u.lastName }}</h1>
+        <p class="profile-email">{{ u.email }}</p>
     </div>
 
     <!-- Stat cards -->
@@ -52,7 +53,7 @@
             <div class="detail-content">
                 <span class="detail-label">{{ 'profile.details.firstname' | translate }}</span>
                 @if (!isEditing()) {
-                    <span class="detail-value">{{ user.firstName }}</span>
+                    <span class="detail-value">{{ u.firstName }}</span>
                 } @else {
                     <input pInputText class="detail-input" formControlName="firstName"
                            [class.invalid]="editForm.controls.firstName.invalid && editForm.controls.firstName.touched" />
@@ -65,7 +66,7 @@
             <div class="detail-content">
                 <span class="detail-label">{{ 'profile.details.lastname' | translate }}</span>
                 @if (!isEditing()) {
-                    <span class="detail-value">{{ user.lastName }}</span>
+                    <span class="detail-value">{{ u.lastName }}</span>
                 } @else {
                     <input pInputText class="detail-input" formControlName="lastName"
                            [class.invalid]="editForm.controls.lastName.invalid && editForm.controls.lastName.touched" />
@@ -78,7 +79,7 @@
             <div class="detail-content">
                 <span class="detail-label">{{ 'profile.details.country' | translate }}</span>
                 @if (!isEditing()) {
-                    <span class="detail-value">{{ user.country }}</span>
+                    <span class="detail-value">{{ u.country }}</span>
                 } @else {
                     <p-select
                         class="detail-select"
@@ -98,7 +99,7 @@
             <div class="detail-content">
                 <span class="detail-label">{{ 'profile.details.email' | translate }}</span>
                 @if (!isEditing()) {
-                    <span class="detail-value">{{ user.email }}</span>
+                    <span class="detail-value">{{ u.email }}</span>
                 } @else {
                     <input pInputText class="detail-input" formControlName="email" type="email"
                            [class.invalid]="editForm.controls.email.invalid && editForm.controls.email.touched" />
@@ -111,8 +112,8 @@
             <div class="detail-content">
                 <span class="detail-label">{{ 'profile.details.newsletter' | translate }}</span>
                 @if (!isEditing()) {
-                    <span class="detail-value" [class.subscribed]="user.emailUpdates">
-                        {{ (user.emailUpdates ? 'profile.details.subscribed' : 'profile.details.not_subscribed') | translate }}
+                    <span class="detail-value" [class.subscribed]="u.emailUpdates">
+                        {{ (u.emailUpdates ? 'profile.details.subscribed' : 'profile.details.not_subscribed') | translate }}
                     </span>
                 } @else {
                     <p-toggleswitch formControlName="emailUpdates" />
@@ -120,6 +121,16 @@
             </div>
         </div>
     </div>
+
+    @if (pendingEmailVerification(); as pendingEmail) {
+        <app-verify-code
+            [email]="pendingEmail"
+            [submitting]="verifySubmitting()"
+            (submitCode)="onVerifyEmailChange($event)"
+            (resend)="onResendEmailChange()"
+            (cancel)="pendingEmailVerification.set(null)">
+        </app-verify-code>
+    }
 
     <!-- Saved trips -->
     <div class="saved-trips-section">
@@ -174,6 +185,6 @@
         </button>
     </div>
 
-</div>
+}
 
-<app-footer-nav></app-footer-nav>
+</div>

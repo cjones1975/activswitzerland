@@ -1,0 +1,115 @@
+.verify-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 1.5rem 1rem 0.5rem;
+}
+
+.verify-icon-circle {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--amber-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    font-size: 1.35rem;
+    margin-bottom: 0.75rem;
+}
+
+.verify-title {
+    margin: 0 0 0.4rem;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--gray-900);
+}
+
+.verify-subtitle {
+    margin: 0 0 1.5rem;
+    font-size: 0.85rem;
+    color: var(--gray-500);
+    line-height: 1.4;
+}
+
+.otp-wrap {
+    margin-bottom: 1.5rem;
+}
+
+::ng-deep .otp-wrap .p-inputotp {
+    gap: 0.5rem;
+}
+
+::ng-deep .otp-wrap .p-inputotp-input {
+    width: 2.5rem;
+    height: 3rem;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: 700;
+    background: var(--gray-50);
+    border: 1px solid var(--gray-200);
+    border-radius: 10px;
+    color: var(--gray-900);
+}
+
+::ng-deep .otp-wrap .p-inputotp-input:focus {
+    border-color: var(--navy-500);
+    outline: none;
+}
+
+.submit-btn {
+    width: 100%;
+    padding: 0.9rem;
+    background: var(--navy-900);
+    color: var(--color-white);
+    border: none;
+    border-radius: 10px;
+    font-size: 1rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.submit-btn:hover:not(:disabled) {
+    background: var(--navy-500);
+}
+
+.submit-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.verify-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.25rem;
+    margin-top: 1rem;
+}
+
+.resend-link,
+.cancel-link {
+    font-size: 0.82rem;
+    font-weight: 500;
+    color: var(--navy-500);
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.resend-link:hover:not(:disabled),
+.cancel-link:hover {
+    text-decoration: underline;
+}
+
+.resend-link:disabled {
+    color: var(--gray-400);
+    cursor: not-allowed;
+    text-decoration: none;
+}
+
+.cancel-link {
+    color: var(--gray-500);
+}

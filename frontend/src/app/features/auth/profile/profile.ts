@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
-import { TranslatePipe } from '@ngx-translate/core';
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { ToggleSwitch } from 'primeng/toggleswitch';
@@ -12,25 +12,27 @@ import { Tag } from 'primeng/tag';
 import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ConfirmationService, MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
-import { Auth } from '../../../core/services/auth';
+import { Auth, CurrentUser } from '../../../core/services/auth';
+import { Toast as ToastService } from '../../../core/services/toast';
 import { TripsService } from '../../../shared/services/trips';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { SavedTrip } from '../../../models/trip';
-import { HeaderNav } from '../../../shell/header-nav/header-nav';
-import { FooterNav } from '../../../shell/footer-nav/footer-nav';
 import { SeoService } from '../../../shared/services/seo';
 import { LangService } from '../../../shared/services/lang';
+import { VerifyCode } from '../verify-code/verify-code';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, InputText, Select, ToggleSwitch, Button, Tag, ConfirmDialog, Toast, HeaderNav, FooterNav],
+  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, InputText, Select, ToggleSwitch, Button, Tag, ConfirmDialog, Toast, VerifyCode],
   providers: [ConfirmationService, MessageService],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
 export class Profile implements OnInit {
-  private auth = inject(Auth);
+  auth = inject(Auth);
+  private toast = inject(ToastService);
+  private translate = inject(TranslateService);
   private router = inject(Router);
   private langSvc = inject(LangService);
   private fb = inject(FormBuilder);
@@ -43,14 +45,9 @@ export class Profile implements OnInit {
   isEditing = signal(false);
   savedTrips = signal<SavedTrip[]>([]);
 
-  // Hardcoded — replaced when getMe API is wired
-  user = {
-    firstName: 'Sophie',
-    lastName: 'Müller',
-    email: 'sophie.muller@email.com',
-    country: 'Switzerland',
-    emailUpdates: true,
-  };
+  user = signal<CurrentUser | null>(null);
+  pendingEmailVerification = signal<string | null>(null);
+  verifySubmitting = signal(false);
 
   stats = signal({ savedTrips: 0, reviewsWritten: 7, reviewsLiked: 34 });
 
@@ -71,13 +68,18 @@ export class Profile implements OnInit {
   });
 
   get initials(): string {
-    return ((this.user.firstName[0] ?? '') + (this.user.lastName[0] ?? '')).toUpperCase();
+    const u = this.user();
+    if (!u) return '';
+    return ((u.firstName[0] ?? '') + (u.lastName[0] ?? '')).toUpperCase();
   }
 
   ngOnInit(): void {
     // Authenticated, personal content — not canonical, see
     // context/features/seo-ssr-foundation-spec.md's Confirmed decisions.
     this.seo.set({ title: 'Profile', description: 'Your ActivSwitzerland profile.', noindex: true });
+    this.auth.getMe()
+      .then(u => this.user.set(u))
+      .catch(() => {});
     this.tripsSvc.getTrips()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(trips => {
@@ -87,14 +89,46 @@ export class Profile implements OnInit {
   }
 
   toggleEdit(): void {
-    this.editForm.patchValue({ ...this.user });
+    this.editForm.patchValue({ ...this.user() });
     this.isEditing.set(true);
   }
 
-  saveEdit(): void {
+  async saveEdit(): Promise<void> {
     if (this.editForm.invalid) return;
-    this.user = { ...this.user, ...this.editForm.getRawValue() };
+    const res = await this.auth.updateUser(this.editForm.getRawValue());
+    this.user.set(res.data);
     this.isEditing.set(false);
+    if (res.emailVerificationPending && res.pendingEmail) {
+      this.pendingEmailVerification.set(res.pendingEmail);
+    }
+    if (res.emailUpdateError) {
+      this.toast.error(this.translate.instant('auth.toast.verify_failed'), res.emailUpdateError, 4000, 'toast-error');
+    }
+  }
+
+  async onVerifyEmailChange(code: string): Promise<void> {
+    this.verifySubmitting.set(true);
+    try {
+      const updated = await this.auth.verifyEmailChange(code);
+      this.user.set(updated);
+      this.pendingEmailVerification.set(null);
+    } finally {
+      this.verifySubmitting.set(false);
+    }
+  }
+
+  async onResendEmailChange(): Promise<void> {
+    const pendingEmail = this.pendingEmailVerification();
+    if (!pendingEmail) return;
+    // Re-running updateUser with the same pending email regenerates+resends the code —
+    // no separate resend-email-change endpoint needed, this path is already idempotent.
+    const res = await this.auth.updateUser({ email: pendingEmail });
+    if (res.emailVerificationPending && res.pendingEmail) {
+      this.pendingEmailVerification.set(res.pendingEmail);
+    }
+    if (res.emailUpdateError) {
+      this.toast.error(this.translate.instant('auth.toast.verify_failed'), res.emailUpdateError, 4000, 'toast-error');
+    }
   }
 
   signOut(): void {
