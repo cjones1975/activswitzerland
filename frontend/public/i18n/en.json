@@ -29,11 +29,14 @@
       "forgot_success_detail": "We have sent you a link to your email address to reset your password.",
       "forgot_failed": "Request failed",
       "forgot_no_user": "No user with the provided email was found.",
-      "generic_error": "Oops something went wrong. Please try again."
-    },
-    "hero": {
-      "title": "Welcome Back",
-      "subtitle": "Log in to access your saved trips and reviews"
+      "generic_error": "Oops something went wrong. Please try again.",
+      "verify_sent": "We've sent a verification code to your email.",
+      "verify_required": "Verification required",
+      "verify_success": "Email verified",
+      "verify_failed": "Verification failed",
+      "resend_success": "Code resent",
+      "resend_failed": "Resend failed",
+      "update_failed": "Update failed"
     },
     "tabs": {
       "login": "Login",

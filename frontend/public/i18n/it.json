@@ -29,11 +29,14 @@
       "forgot_success_detail": "Ti abbiamo inviato un link per reimpostare la password.",
       "forgot_failed": "Richiesta non riuscita",
       "forgot_no_user": "Nessun utente trovato con l'email fornita.",
-      "generic_error": "Qualcosa è andato storto. Riprova."
-    },
-    "hero": {
-      "title": "Bentornato",
-      "subtitle": "Accedi per visualizzare i tuoi viaggi e le recensioni salvate"
+      "generic_error": "Qualcosa è andato storto. Riprova.",
+      "verify_sent": "Ti abbiamo inviato un codice di verifica via email.",
+      "verify_required": "Verifica richiesta",
+      "verify_success": "Email verificata",
+      "verify_failed": "Verifica non riuscita",
+      "resend_success": "Codice reinviato",
+      "resend_failed": "Reinvio non riuscito",
+      "update_failed": "Aggiornamento non riuscito"
     },
     "tabs": {
       "login": "Accedi",

@@ -37,16 +37,14 @@
     [style]="{ width: 'min(420px, 100vw)' }"
     styleClass="auth-drawer">
     <ng-template #header>
-        <div class="menu-header">
-            <div class="menu-brand">
-                <div class="menu-avatar">
+        <div class="auth-header">
+            <div class="auth-header-brand">
+                <div class="auth-header-avatar">
                     <i class="fa-light fa-lock"></i>
                 </div>
-                <div class="menu-brand-text">
-                    <span class="menu-brand-name">ActivSwitzerland</span>
-                </div>
+                <span class="auth-header-name">ActivSwitzerland</span>
             </div>
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('auth')">
+            <button class="auth-header-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('auth')">
                 <i class="pi pi-times"></i>
             </button>
         </div>
@@ -62,18 +60,17 @@
     position="right"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('forgot-password')"
-    [style]="{ width: 'min(420px, 100vw)' }">
+    [style]="{ width: 'min(420px, 100vw)' }"
+    styleClass="auth-drawer">
     <ng-template #header>
-        <div class="menu-header">
-            <div class="menu-brand">
-                <div class="menu-avatar">
+        <div class="auth-header">
+            <div class="auth-header-brand">
+                <div class="auth-header-avatar">
                     <i class="fa-light fa-key"></i>
                 </div>
-                <div class="menu-brand-text">
-                    <span class="menu-brand-name">Reset Password</span>
-                </div>
+                <span class="auth-header-name">ActivSwitzerland</span>
             </div>
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('forgot-password')">
+            <button class="auth-header-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('forgot-password')">
                 <i class="pi pi-times"></i>
             </button>
         </div>

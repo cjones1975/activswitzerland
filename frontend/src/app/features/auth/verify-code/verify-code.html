@@ -1,0 +1,31 @@
+<div class="verify-wrap">
+
+    <div class="verify-icon-circle">
+        <i class="fa-light fa-envelope-open-text"></i>
+    </div>
+
+    <h2 class="verify-title">Check your email</h2>
+    <p class="verify-subtitle">
+        We've sent a 5-digit code to <strong>{{ email }}</strong>. It expires in 5 minutes.
+    </p>
+
+    <div class="otp-wrap">
+        <p-inputotp [formControl]="codeControl" [length]="5" [integerOnly]="true" />
+    </div>
+
+    <button
+        class="submit-btn"
+        type="button"
+        [disabled]="codeControl.value.length !== 5 || submitting"
+        (click)="onSubmit()">
+        {{ submitting ? 'Verifying...' : 'Verify' }}
+    </button>
+
+    <div class="verify-actions">
+        <button class="resend-link" type="button" [disabled]="resendCooldown() > 0" (click)="onResend()">
+            {{ resendCooldown() > 0 ? 'Resend code (' + resendCooldown() + 's)' : 'Resend code' }}
+        </button>
+        <button class="cancel-link" type="button" (click)="cancel.emit()">Cancel</button>
+    </div>
+
+</div>
