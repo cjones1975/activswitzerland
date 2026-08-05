@@ -85,9 +85,23 @@ export interface PlannedTrip {
   activities: TripActivitySelection[]; // Step 3
   routeCoordinates?: [number, number][];
   name?: string;
+  isPublic?: boolean;
+  anonymous?: boolean;   // defaults true when isPublic is first switched on
+  review?: string;
+  distanceKm?: number;   // server-computed, present once saved
 }
 
 export interface SavedTrip extends PlannedTrip {
   _id?: string;
   createdAt?: string;
+  likes?: string[];      // user ids, present once saved
+}
+
+// Shape returned by GET /trips/public — a SavedTrip plus the derived fields the list view
+// needs and privacy-filtered creator info (see explore-trips-spec.md Phase B).
+export interface PublicTrip extends Omit<SavedTrip, 'likes'> {
+  creatorName: string | null;    // null when the trip's creator chose to stay anonymous
+  creatorCountry: string | null; // null when anonymous
+  likeCount: number;
+  likedByMe: boolean;
 }

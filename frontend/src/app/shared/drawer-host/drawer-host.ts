@@ -21,6 +21,7 @@ import { HikeDetail, HikeDetailPayload } from '../../features/hikes/hike-detail/
 import { BikesList } from '../../features/bikes/bikes-list/bikes-list';
 import { BikeDetail, BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
 import { HotelsStub } from '../../features/hotels/hotels-stub/hotels-stub';
+import { ExploreTripsFilter } from '../../features/explore-trips/explore-trips-filter/explore-trips-filter';
 import { ActivityPickerPayload } from '../../models/geo-point';
 import { WeatherPayload } from '../../models/weather';
 import { LangService } from '../services/lang';
@@ -28,7 +29,7 @@ import { LangService } from '../services/lang';
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub, ExploreTripsFilter],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -227,4 +228,14 @@ export class DrawerHost {
     this.svc.list();
     return this.svc.getPayload<ActivityPickerPayload>('hotels')?.destination?.name ?? '';
   });
+
+  // Dismissing this drawer without hitting Apply/Reset (X button, backdrop tap) must not lose
+  // ExploreTrips' currently-applied filters — see Drawer.closePreservingPayload().
+  onExploreTripsFilterVisibleChange(visible: boolean): void {
+    if (visible) {
+      this.svc.open('explore-trips-filter');
+      return;
+    }
+    this.svc.closePreservingPayload('explore-trips-filter');
+  }
 }

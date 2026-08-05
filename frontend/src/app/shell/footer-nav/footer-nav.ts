@@ -31,7 +31,7 @@ export class FooterNav {
 
   private isFooterNavRoute(url: string): boolean {
     const path = stripLocalePrefix(url.split('?')[0]);
-    return path === '/' || path === '/destinations' || path === '/search'
+    return path === '/' || path === '/destinations' || path === '/search' || path === '/explore-trips'
       || /^\/destinations\/.+/.test(path) || /^\/trip-planner(\/.*)?$/.test(path);
   }
 

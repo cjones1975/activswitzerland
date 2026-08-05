@@ -1,3 +1,77 @@
-.explore-trips-page {
-  padding: 2rem;
+.et-page {
+  min-height: 100svh;
+  background: var(--gray-50);
+  padding: 80px 1rem 72px;
+}
+
+.et-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.25rem;
+}
+
+.et-header h1 {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: var(--navy-900);
+  margin: 0;
+}
+
+.et-filter-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 8px;
+  border: 1px solid var(--gray-200, #e2e8f0);
+  background: var(--color-white);
+  color: var(--navy-800);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.et-empty {
+  font-size: 0.875rem;
+  color: #94a3b8;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.et-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+}
+
+@media (min-width: 768px) {
+  .et-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1100px) {
+  .et-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.et-loading {
+  display: flex;
+  justify-content: center;
+  padding: 1.25rem;
+  font-size: 1.25rem;
+  color: var(--navy-500, #6b90b8);
+}
+
+.et-end {
+  text-align: center;
+  font-size: 0.78rem;
+  color: #94a3b8;
+  padding: 1rem 0;
+}
+
+.et-sentinel {
+  height: 1px;
 }

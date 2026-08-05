@@ -1,7 +1,7 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, Validators } from '@angular/forms';
+import { ReactiveFormsModule, FormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InputText } from 'primeng/inputtext';
@@ -19,17 +19,20 @@ import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { SavedTrip } from '../../../models/trip';
 import { SeoService } from '../../../shared/services/seo';
 import { LangService } from '../../../shared/services/lang';
+import { formatDistance } from '../../../shared/utils/distance';
 import { VerifyCode } from '../verify-code/verify-code';
 
 @Component({
   selector: 'app-profile',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, TranslatePipe, InputText, Select, ToggleSwitch, Button, Tag, ConfirmDialog, Toast, VerifyCode],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TranslatePipe, InputText, Select, ToggleSwitch, Button, Tag, ConfirmDialog, Toast, VerifyCode],
   providers: [ConfirmationService, MessageService],
   templateUrl: './profile.html',
   styleUrl: './profile.css',
 })
 export class Profile implements OnInit {
+  readonly formatDistance = formatDistance;
+
   auth = inject(Auth);
   private toast = inject(ToastService);
   private translate = inject(TranslateService);
@@ -49,7 +52,12 @@ export class Profile implements OnInit {
   pendingEmailVerification = signal<string | null>(null);
   verifySubmitting = signal(false);
 
-  stats = signal({ savedTrips: 0, reviewsWritten: 7, reviewsLiked: 34 });
+  stats = signal({ savedTrips: 0, reviewsWritten: 0, likesReceived: 0 });
+
+  // ── Trip reviews (Explore Trips Phase A) ────────────────────────────────
+  openReviewIds = signal<Set<string>>(new Set());
+  editingReviewId = signal<string | null>(null);
+  reviewDraft = signal('');
 
   countries = [
     { label: 'Switzerland', value: 'Switzerland' },
@@ -84,8 +92,16 @@ export class Profile implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(trips => {
         this.savedTrips.set(trips);
-        this.stats.set({ ...this.stats(), savedTrips: trips.length });
+        this.recomputeStats(trips);
       });
+  }
+
+  private recomputeStats(trips: SavedTrip[]): void {
+    this.stats.set({
+      savedTrips: trips.length,
+      reviewsWritten: trips.filter(t => t.review?.trim()).length,
+      likesReceived: trips.reduce((sum, t) => sum + (t.likes?.length ?? 0), 0),
+    });
   }
 
   toggleEdit(): void {
@@ -162,7 +178,7 @@ export class Profile implements OnInit {
           .subscribe(() => {
             const updated = this.savedTrips().filter(t => t._id !== trip._id);
             this.savedTrips.set(updated);
-            this.stats.set({ ...this.stats(), savedTrips: updated.length });
+            this.recomputeStats(updated);
           });
       },
     });
@@ -177,5 +193,40 @@ export class Profile implements OnInit {
     if (!iso) return '';
     const d = new Date(iso);
     return d.toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' });
+  }
+
+  // ── Trip reviews ──────────────────────────────────────────────────────────
+  isReviewOpen(trip: SavedTrip): boolean {
+    return !!trip._id && this.openReviewIds().has(trip._id);
+  }
+
+  toggleReview(trip: SavedTrip): void {
+    if (!trip._id) return;
+    const open = new Set(this.openReviewIds());
+    if (open.has(trip._id)) {
+      open.delete(trip._id);
+    } else {
+      open.add(trip._id);
+    }
+    this.openReviewIds.set(open);
+  }
+
+  startEditReview(trip: SavedTrip): void {
+    if (!trip._id) return;
+    this.reviewDraft.set(trip.review ?? '');
+    this.editingReviewId.set(trip._id);
+  }
+
+  saveReview(trip: SavedTrip): void {
+    if (!trip._id) return;
+    const review = this.reviewDraft().trim();
+    this.tripsSvc.updateTrip(trip._id, { review })
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(saved => {
+        const updated = this.savedTrips().map(t => t._id === trip._id ? { ...t, review: saved.review } : t);
+        this.savedTrips.set(updated);
+        this.recomputeStats(updated);
+        this.editingReviewId.set(null);
+      });
   }
 }

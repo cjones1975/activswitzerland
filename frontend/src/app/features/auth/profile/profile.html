@@ -26,7 +26,7 @@
         </div>
         <div class="stat-card">
             <i class="fa-light fa-thumbs-up stat-icon" style="color: var(--amber-700)"></i>
-            <span class="stat-count">{{ stats().reviewsLiked }}</span>
+            <span class="stat-count">{{ stats().likesReceived }}</span>
             <span class="stat-label">{{ 'profile.stats.likes' | translate }}</span>
         </div>
     </div>
@@ -154,17 +154,25 @@
                             <span class="trip-card-name">{{ trip.name }}</span>
                             <p-tag
                                 [value]="trip.type === 'road' ? ('trip.planner.typeRoad' | translate) : ('trip.planner.typeRail' | translate)"
-                                [severity]="trip.type === 'road' ? 'success' : 'info'" />
+                                [severity]="trip.type === 'road' ? 'info' : 'success'" />
                         </div>
-                        <p class="trip-card-stops">{{ tripStopSummary(trip) }}</p>
+                        <p class="trip-card-stops">
+                            <span>{{ tripStopSummary(trip) }}</span>
+                            <span class="trip-card-distance">{{ formatDistance(trip.distanceKm ?? 0) }}</span>
+                        </p>
                         <p class="trip-card-date">{{ formatDate(trip.createdAt) }}</p>
                         <div class="trip-card-actions">
-                            <p-button
-                                [label]="'profile.savedTrips.view' | translate"
-                                [outlined]="true"
-                                severity="secondary"
-                                size="small"
-                                (onClick)="viewTrip(trip)" />
+                            <div class="trip-card-actions-left">
+                                <p-button
+                                    [label]="'profile.savedTrips.view' | translate"
+                                    [outlined]="true"
+                                    severity="secondary"
+                                    size="small"
+                                    (onClick)="viewTrip(trip)" />
+                                <span class="trip-card-likes">
+                                    <i class="fa-solid fa-thumbs-up"></i>{{ trip.likes?.length ?? 0 }}
+                                </span>
+                            </div>
                             <p-button
                                 icon="fa-light fa-trash"
                                 [text]="true"
@@ -172,6 +180,24 @@
                                 size="small"
                                 (onClick)="confirmDeleteTrip(trip)" />
                         </div>
+
+                        <button class="trip-card-review-toggle" type="button" (click)="toggleReview(trip)">
+                            <i class="fa-light" [class.fa-chevron-down]="!isReviewOpen(trip)" [class.fa-chevron-up]="isReviewOpen(trip)"></i>
+                            {{ 'profile.savedTrips.review' | translate }}
+                        </button>
+                        @if (isReviewOpen(trip)) {
+                            <div class="trip-card-review-body">
+                                @if (editingReviewId() === trip._id) {
+                                    <textarea class="trip-card-review-input" rows="3"
+                                              [ngModel]="reviewDraft()" (ngModelChange)="reviewDraft.set($event)"
+                                              [placeholder]="'profile.savedTrips.reviewPlaceholder' | translate"></textarea>
+                                    <p-button [label]="'profile.savedTrips.saveReview' | translate" size="small" (onClick)="saveReview(trip)" />
+                                } @else {
+                                    <p class="trip-card-review-text">{{ trip.review || ('profile.savedTrips.noReview' | translate) }}</p>
+                                    <p-button [label]="'profile.savedTrips.editReview' | translate" [text]="true" size="small" (onClick)="startEditReview(trip)" />
+                                }
+                            </div>
+                        }
                     </div>
                 }
             </div>

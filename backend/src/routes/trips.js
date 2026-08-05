@@ -1,12 +1,14 @@
 import express from 'express';
-import { getTrips, createTrip, updateTrip, deleteTrip } from '../controllers/trips.js';
-import protect from '../middleware/auth.js';
+import { getTrips, createTrip, updateTrip, deleteTrip, getPublicTrips, toggleLike } from '../controllers/trips.js';
+import protect, { optionalAuth } from '../middleware/auth.js';
 
 const router = express.Router();
 
-router.use(protect);
+// Must be registered before '/:id'-shaped routes below, or '/public' would be swallowed as an :id.
+router.get('/public', optionalAuth, getPublicTrips);
+router.post('/:id/like', protect, toggleLike);
 
-router.route('/').get(getTrips).post(createTrip);
-router.route('/:id').put(updateTrip).delete(deleteTrip);
+router.route('/').get(protect, getTrips).post(protect, createTrip);
+router.route('/:id').put(protect, updateTrip).delete(protect, deleteTrip);
 
 export default router;

@@ -172,7 +172,11 @@
         "update": "Mettre à jour le voyage",
         "browseSavedTrips": "Parcourir les voyages enregistrés",
         "backToSummary": "Retour à l'aperçu",
-        "saveError": "Impossible d'enregistrer votre voyage. Veuillez réessayer."
+        "saveError": "Impossible d'enregistrer votre voyage. Veuillez réessayer.",
+        "makePublic": "Rendre le voyage public",
+        "makePublicHint": "Les autres voyageurs pourront voir ce voyage dans Explorer les voyages",
+        "stayAnonymous": "Rester anonyme",
+        "stayAnonymousHint": "Votre nom et votre pays ne seront pas affichés"
       }
     }
   },
@@ -180,12 +184,17 @@
     "savedTrips": {
       "title": "Voyages enregistrés",
       "view": "Voir",
-      "empty": "Vous n'avez pas encore enregistré de voyages."
+      "empty": "Vous n'avez pas encore enregistré de voyages.",
+      "review": "Avis",
+      "reviewPlaceholder": "Décrivez comment cela s'est passé, ce que vous avez aimé ou non...",
+      "noReview": "Pas encore d'avis.",
+      "editReview": "Modifier l'avis",
+      "saveReview": "Enregistrer l'avis"
     },
     "stats": {
       "trips": "Voyages enregistrés",
       "reviews": "Avis rédigés",
-      "likes": "Avis aimés"
+      "likes": "Mentions J'aime reçues"
     },
     "details": {
       "title": "Détails du profil",
@@ -395,6 +404,32 @@
       "loadError": "Une erreur s'est produite. Veuillez réessayer.",
       "noDestinationResults": "Désolé, nous n'avons trouvé aucune destination correspondant à votre recherche. Veuillez essayer un autre mot-clé.",
       "noAttractionResults": "Désolé, nous n'avons trouvé aucune attraction correspondant à votre recherche. Veuillez essayer un autre mot-clé."
+    }
+  },
+  "exploreTrips": {
+    "anonymous": "Voyageur anonyme",
+    "empty": "Aucun voyage public pour le moment.",
+    "endOfList": "Vous avez atteint la fin.",
+    "flip": "Retourner la carte",
+    "noReview": "Aucun avis disponible.",
+    "travellerReview": "Avis du voyageur",
+    "filter": {
+      "title": "Filtrer les voyages",
+      "tripType": "Type de voyage",
+      "type": {
+        "all": "Tous",
+        "road": "Road trips",
+        "rail": "Voyages en train"
+      },
+      "createdOrder": "Ordre de création",
+      "order": {
+        "desc": "Décroissant",
+        "asc": "Croissant"
+      },
+      "mostLiked": "Trier par nombre de mentions J'aime",
+      "distance": "Distance",
+      "apply": "Appliquer",
+      "reset": "Réinitialiser"
     }
   },
   "seo": {

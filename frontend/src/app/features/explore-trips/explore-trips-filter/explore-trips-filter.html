@@ -1,0 +1,34 @@
+<div class="etf-content">
+  <div class="etf-field">
+    <label>{{ 'exploreTrips.filter.tripType' | translate }}</label>
+    <p-selectButton [options]="typeOptions" [ngModel]="type()" (ngModelChange)="type.set($event)" [allowEmpty]="false">
+      <ng-template #item let-v>
+        <span>{{ ('exploreTrips.filter.type.' + v) | translate }}</span>
+      </ng-template>
+    </p-selectButton>
+  </div>
+
+  <div class="etf-field">
+    <label>{{ 'exploreTrips.filter.createdOrder' | translate }}</label>
+    <p-selectButton [options]="orderOptions" [ngModel]="order()" (ngModelChange)="order.set($event)" [allowEmpty]="false">
+      <ng-template #item let-v>
+        <span>{{ ('exploreTrips.filter.order.' + v) | translate }}</span>
+      </ng-template>
+    </p-selectButton>
+  </div>
+
+  <div class="etf-field etf-field--row">
+    <label>{{ 'exploreTrips.filter.mostLiked' | translate }}</label>
+    <p-toggleswitch [ngModel]="sortByLikes()" (ngModelChange)="sortByLikes.set($event)" />
+  </div>
+
+  <div class="etf-field">
+    <label>{{ 'exploreTrips.filter.distance' | translate }} ({{ distanceRange()[0] }}–{{ distanceRange()[1] }} km)</label>
+    <p-slider class="etf-slider" [ngModel]="distanceRange()" (ngModelChange)="distanceRange.set($event)" [range]="true" [min]="0" [max]="1000" />
+  </div>
+
+  <div class="etf-actions">
+    <p-button [label]="'exploreTrips.filter.reset' | translate" severity="secondary" [outlined]="true" styleClass="w-full" (onClick)="resetFilters()" />
+    <p-button [label]="'exploreTrips.filter.apply' | translate" styleClass="w-full" (onClick)="apply()" />
+  </div>
+</div>

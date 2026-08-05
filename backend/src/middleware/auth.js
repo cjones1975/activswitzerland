@@ -12,7 +12,7 @@ export const protect = asyncHandler(async (req, res, next) => {
     req.headers.authorization.startsWith('Bearer')
   ) {
     token = req.headers.authorization.split(' ')[1];
-  } else if (req.cookies.token) {
+  } else if (req.cookies?.token) {
     token = req.cookies.token;
   }
 
@@ -31,6 +31,35 @@ export const protect = asyncHandler(async (req, res, next) => {
   } catch (err) {
     return next(new ErrorResponse('Not authorised to access this route', 401));
   }
+});
+
+// Optional auth: decodes a token if present, but never blocks the request when one is
+// absent or invalid — req.user is left undefined instead of 401ing. Used by routes that must
+// stay reachable logged-out but still want to know who's asking when a token is present.
+export const optionalAuth = asyncHandler(async (req, res, next) => {
+  let token;
+
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith('Bearer')
+  ) {
+    token = req.headers.authorization.split(' ')[1];
+  } else if (req.cookies?.token) {
+    token = req.cookies.token;
+  }
+
+  if (!token) {
+    return next();
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    req.user = await User.findById(decoded.id);
+  } catch (err) {
+    // invalid/expired token on an optional route — proceed logged-out rather than 401
+  }
+
+  next();
 });
 
 // Grant access to specific roles

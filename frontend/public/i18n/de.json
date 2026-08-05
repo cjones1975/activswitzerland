@@ -172,7 +172,11 @@
         "update": "Reise aktualisieren",
         "browseSavedTrips": "Gespeicherte Reisen durchsuchen",
         "backToSummary": "Zurück zur Übersicht",
-        "saveError": "Ihre Reise konnte nicht gespeichert werden. Bitte versuchen Sie es erneut."
+        "saveError": "Ihre Reise konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+        "makePublic": "Reise öffentlich machen",
+        "makePublicHint": "Andere Reisende können diese Reise unter „Reisen entdecken\" sehen",
+        "stayAnonymous": "Anonym bleiben",
+        "stayAnonymousHint": "Ihr Name und Ihr Land werden nicht angezeigt"
       }
     }
   },
@@ -180,12 +184,17 @@
     "savedTrips": {
       "title": "Gespeicherte Reisen",
       "view": "Anzeigen",
-      "empty": "Sie haben noch keine Reisen gespeichert."
+      "empty": "Sie haben noch keine Reisen gespeichert.",
+      "review": "Bewertung",
+      "reviewPlaceholder": "Beschreiben Sie, wie es war, was Ihnen gefallen hat oder nicht...",
+      "noReview": "Noch keine Bewertung.",
+      "editReview": "Bewertung bearbeiten",
+      "saveReview": "Bewertung speichern"
     },
     "stats": {
       "trips": "Gespeicherte Reisen",
       "reviews": "Geschriebene Bewertungen",
-      "likes": "Bewertungen geliked"
+      "likes": "Erhaltene Likes"
     },
     "details": {
       "title": "Profildetails",
@@ -395,6 +404,32 @@
       "loadError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
       "noDestinationResults": "Es tut uns leid, wir konnten keine Reiseziele zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort.",
       "noAttractionResults": "Es tut uns leid, wir konnten keine Attraktionen zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort."
+    }
+  },
+  "exploreTrips": {
+    "anonymous": "Anonymer Reisender",
+    "empty": "Noch keine öffentlichen Reisen.",
+    "endOfList": "Sie haben das Ende erreicht.",
+    "flip": "Karte umdrehen",
+    "noReview": "Keine Bewertung verfügbar.",
+    "travellerReview": "Reisebewertung",
+    "filter": {
+      "title": "Reisen filtern",
+      "tripType": "Reiseart",
+      "type": {
+        "all": "Alle",
+        "road": "Autoreisen",
+        "rail": "Bahnreisen"
+      },
+      "createdOrder": "Erstellungsreihenfolge",
+      "order": {
+        "desc": "Absteigend",
+        "asc": "Aufsteigend"
+      },
+      "mostLiked": "Nach den meisten Likes sortieren",
+      "distance": "Distanz",
+      "apply": "Anwenden",
+      "reset": "Zurücksetzen"
     }
   },
   "seo": {

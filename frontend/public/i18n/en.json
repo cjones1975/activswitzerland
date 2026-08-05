@@ -172,7 +172,11 @@
         "update": "Update Trip",
         "browseSavedTrips": "Browse Saved Trips",
         "backToSummary": "Back to Summary",
-        "saveError": "Could not save your trip. Please try again."
+        "saveError": "Could not save your trip. Please try again.",
+        "makePublic": "Make trip public",
+        "makePublicHint": "Other travelers will be able to see this trip on Explore Trips",
+        "stayAnonymous": "Stay anonymous",
+        "stayAnonymousHint": "Your name and country won't be shown"
       }
     }
   },
@@ -180,12 +184,17 @@
     "savedTrips": {
       "title": "Saved trips",
       "view": "View",
-      "empty": "You haven't saved any trips yet."
+      "empty": "You haven't saved any trips yet.",
+      "review": "Review",
+      "reviewPlaceholder": "Describe how it went, what you liked or didn't like...",
+      "noReview": "No review yet.",
+      "editReview": "Edit review",
+      "saveReview": "Save review"
     },
     "stats": {
       "trips": "Saved trips",
       "reviews": "Reviews written",
-      "likes": "Reviews liked"
+      "likes": "Likes received"
     },
     "details": {
       "title": "Profile details",
@@ -395,6 +404,32 @@
       "loadError": "Something went wrong. Please try again.",
       "noDestinationResults": "I'm sorry, we couldn't find any destinations matching your search query. Please try another keyword.",
       "noAttractionResults": "I'm sorry, we couldn't find any attractions matching your search query. Please try another keyword."
+    }
+  },
+  "exploreTrips": {
+    "anonymous": "Anonymous traveler",
+    "empty": "No public trips yet.",
+    "endOfList": "You've reached the end.",
+    "flip": "Flip card",
+    "noReview": "No review available.",
+    "travellerReview": "Traveller review",
+    "filter": {
+      "title": "Filter trips",
+      "tripType": "Trip type",
+      "type": {
+        "all": "All",
+        "road": "Road trips",
+        "rail": "Rail trips"
+      },
+      "createdOrder": "Created order",
+      "order": {
+        "desc": "Descending",
+        "asc": "Ascending"
+      },
+      "mostLiked": "Sort by most liked",
+      "distance": "Distance",
+      "apply": "Apply",
+      "reset": "Reset"
     }
   },
   "seo": {

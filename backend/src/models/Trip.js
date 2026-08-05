@@ -82,6 +82,11 @@ const TripSchema = new mongoose.Schema({
     connections:      { type: [TripConnectionLegSchema], default: [] },
     activities:       { type: [TripActivitySchema], default: [] },
     routeCoordinates: { type: [[Number]], default: [] },
+    isPublic:         { type: Boolean, default: false },
+    anonymous:        { type: Boolean, default: true },
+    review:           { type: String, default: '', trim: true },
+    likes:            { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] },
+    distanceKm:       { type: Number, default: 0 },
     createdAt:        { type: Date, default: Date.now },
 });
 

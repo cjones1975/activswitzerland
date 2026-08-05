@@ -1,6 +1,7 @@
 import asyncHandler from '../middleware/async.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import Trip from '../models/Trip.js';
+import { routeDistanceKm } from '../utils/geo.js';
 
 // @desc   Get all trips for the logged-in user
 // @route  GET /api/v1/trips
@@ -14,7 +15,7 @@ export const getTrips = asyncHandler(async (req, res) => {
 // @route  POST /api/v1/trips
 // @access Private
 export const createTrip = asyncHandler(async (req, res) => {
-    const { name, type, dateMode, range, stops, connections, activities, routeCoordinates } = req.body;
+    const { name, type, dateMode, range, stops, connections, activities, routeCoordinates, isPublic, anonymous } = req.body;
     const trip = await Trip.create({
         user: req.user.id,
         name,
@@ -25,6 +26,9 @@ export const createTrip = asyncHandler(async (req, res) => {
         connections: connections ?? [],
         activities: activities ?? [],
         routeCoordinates: routeCoordinates ?? [],
+        isPublic: isPublic ?? false,
+        anonymous: anonymous ?? true,
+        distanceKm: routeDistanceKm(routeCoordinates ?? []),
     });
     res.status(201).json({ success: true, data: trip });
 });
@@ -38,7 +42,14 @@ export const updateTrip = asyncHandler(async (req, res, next) => {
     if (trip.user.toString() !== req.user.id) {
         return next(new ErrorResponse('Not authorised to update this trip', 401));
     }
-    trip = await Trip.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+
+    // likes only ever change through the dedicated like-toggle endpoint, never a direct trip edit
+    const { likes, ...updates } = req.body;
+    if (updates.routeCoordinates) {
+        updates.distanceKm = routeDistanceKm(updates.routeCoordinates);
+    }
+
+    trip = await Trip.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
     res.status(200).json({ success: true, data: trip });
 });
 
@@ -53,4 +64,67 @@ export const deleteTrip = asyncHandler(async (req, res, next) => {
     }
     await trip.deleteOne();
     res.status(200).json({ success: true, data: {} });
+});
+
+// @desc   Browse public trips — reachable with or without auth; skip/limit paginated
+// @route  GET /api/v1/trips/public
+// @access Public (optionalAuth — likedByMe is only accurate when a valid token is sent)
+export const getPublicTrips = asyncHandler(async (req, res) => {
+    const skip = Math.max(parseInt(req.query.skip, 10) || 0, 0);
+    const limit = Math.min(Math.max(parseInt(req.query.limit, 10) || 50, 1), 50);
+    const type = ['road', 'rail'].includes(req.query.type) ? req.query.type : null;
+    const sortByLikes = req.query.sort === 'likes';
+    const sortDir = req.query.order === 'asc' ? 1 : -1;
+    const minDistance = req.query.minDistance !== undefined ? Number(req.query.minDistance) : null;
+    const maxDistance = req.query.maxDistance !== undefined ? Number(req.query.maxDistance) : null;
+
+    const match = { isPublic: true };
+    if (type) match.type = type;
+    if (minDistance !== null || maxDistance !== null) {
+        match.distanceKm = {};
+        if (minDistance !== null) match.distanceKm.$gte = minDistance;
+        if (maxDistance !== null) match.distanceKm.$lte = maxDistance;
+    }
+
+    const [trips, total] = await Promise.all([
+        Trip.aggregate([
+            { $match: match },
+            { $addFields: { likeCount: { $size: '$likes' } } },
+            // sort can't order by array length directly, hence likeCount above
+            { $sort: { [sortByLikes ? 'likeCount' : 'createdAt']: sortDir } },
+            { $skip: skip },
+            { $limit: limit },
+            { $lookup: { from: 'users', localField: 'user', foreignField: '_id', as: 'creator' } },
+            { $unwind: '$creator' },
+        ]),
+        Trip.countDocuments(match),
+    ]);
+
+    const requesterId = req.user?.id;
+    const data = trips.map(({ creator, likes, user, ...trip }) => ({
+        ...trip,
+        creatorName: trip.anonymous ? null : `${creator.firstName} ${creator.lastName}`,
+        creatorCountry: trip.anonymous ? null : creator.country,
+        likeCount: trip.likeCount,
+        likedByMe: requesterId ? likes.some(id => id.toString() === requesterId) : false,
+    }));
+
+    res.status(200).json({ success: true, count: data.length, hasMore: skip + data.length < total, data });
+});
+
+// @desc   Like/unlike a public trip (toggle)
+// @route  POST /api/v1/trips/:id/like
+// @access Private
+export const toggleLike = asyncHandler(async (req, res, next) => {
+    const trip = await Trip.findById(req.params.id);
+    if (!trip || !trip.isPublic) return next(new ErrorResponse('Trip not found', 404));
+
+    const userId = req.user.id;
+    const alreadyLiked = trip.likes.some(id => id.toString() === userId);
+    trip.likes = alreadyLiked
+        ? trip.likes.filter(id => id.toString() !== userId)
+        : [...trip.likes, userId];
+    await trip.save();
+
+    res.status(200).json({ success: true, data: { likeCount: trip.likes.length, liked: !alreadyLiked } });
 });

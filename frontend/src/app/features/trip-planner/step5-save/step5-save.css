@@ -60,6 +60,32 @@
   width: 100%;
 }
 
+.s5-visibility-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.6rem 0;
+  border-bottom: 1px solid var(--gray-100, #f1f5f9);
+}
+
+.s5-visibility-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.s5-visibility-label {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy-900);
+}
+
+.s5-visibility-hint {
+  font-size: 0.72rem;
+  color: var(--gray-500);
+}
+
 .s5-signin-hint {
   display: flex;
   align-items: center;

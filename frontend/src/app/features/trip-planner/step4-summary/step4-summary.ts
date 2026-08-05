@@ -8,11 +8,12 @@ import { Toast } from '../../../core/services/toast';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { ActivityKind, TripStop, TripActivitySelection, TripConnectionLeg } from '../../../models/trip';
 import { stopDayRanges, tripDayCount, formatDdMmYyyy } from '../../../shared/utils/date-range';
+import { routeDistanceKm, formatDistance } from '../../../shared/utils/distance';
 import { StartOverLink } from '../start-over-link/start-over-link';
 
-interface ActivityGroup { kind: ActivityKind; icon: string; labelKey: string; }
+export interface ActivityGroup { kind: ActivityKind; icon: string; labelKey: string; }
 
-const ACTIVITY_GROUPS: ActivityGroup[] = [
+export const ACTIVITY_GROUPS: ActivityGroup[] = [
   { kind: 'attraction', icon: '/assets/attraction.png', labelKey: 'trip.planner.step3.placesToVisit' },
   { kind: 'hike', icon: '/assets/hike.png', labelKey: 'trip.planner.step3.hikesNearby' },
   { kind: 'bike', icon: '/assets/bike.png', labelKey: 'trip.planner.step3.bikesNearby' },
@@ -66,6 +67,10 @@ export class Step4Summary {
     const stops = this.trip().stops;
     return stops.length >= 2 ? `${stops[0].name} → ${stops[stops.length - 1].name}` : '';
   });
+
+  /** Client-side, since Step 4 runs before the trip is ever saved and gains a server-computed
+   * `distanceKm` — mirrors the backend's `routeDistanceKm` exactly so the two never disagree. */
+  readonly distanceLabel = computed(() => formatDistance(routeDistanceKm(this.trip().routeCoordinates ?? [])));
 
   activitiesFor(stop: TripStop, kind: ActivityKind): TripActivitySelection[] {
     this.trip();

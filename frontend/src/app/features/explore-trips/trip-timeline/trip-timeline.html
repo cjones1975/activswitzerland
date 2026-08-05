@@ -1,0 +1,45 @@
+<p-timeline [value]="trip.stops" class="tt-timeline">
+  <ng-template #content let-stop>
+    <div class="tt-entry">
+      <span class="tt-stop-name">{{ stop.name }}</span>
+
+      @if (isDatesMode()) {
+        @if (dateRangeFor(stop).startDate; as startDate) {
+          <span class="tt-date-label">
+            {{ formatDdMmYyyy(startDate) }}@if (dateRangeFor(stop).endDate && dateRangeFor(stop).endDate !== startDate) { – {{ formatDdMmYyyy(dateRangeFor(stop).endDate!) }} }
+          </span>
+        }
+      } @else if (dayRangeFor(stop); as range) {
+        <span class="tt-date-label">
+          {{ (range.start === range.end ? 'trip.planner.step2.dayLabel' : 'trip.planner.step2.dayRangeLabel') | translate: range }}
+        </span>
+      }
+
+      <div class="tt-card">
+        @if (!hasActivities(stop)) {
+          @if (isTransit(stop)) {
+            <span class="tt-transit"><i class="fa-light fa-arrow-right-arrow-left"></i>{{ 'trip.planner.step2.transit' | translate }}</span>
+          } @else {
+            <span class="tt-empty">{{ 'trip.planner.step4.noActivities' | translate }}</span>
+          }
+        } @else {
+          @for (group of groups; track group.kind) {
+            @if (activitiesFor(stop, group.kind); as items) {
+              @if (items.length) {
+                <div class="tt-group">
+                  <div class="tt-group-head">
+                    <img [src]="group.icon" alt="" class="tt-group-icon" />
+                    <span>{{ group.labelKey | translate }}</span>
+                  </div>
+                  @for (activity of items; track activity.id) {
+                    <span class="tt-activity-name">{{ activity.name }}</span>
+                  }
+                </div>
+              }
+            }
+          }
+        }
+      </div>
+    </div>
+  </ng-template>
+</p-timeline>

@@ -1,3 +1,30 @@
-<div class="explore-trips-page">
-  <h1>{{ 'nav.exploreTrips' | translate }}</h1>
+<div class="et-page">
+  <div class="et-header">
+    <h1>{{ 'nav.exploreTrips' | translate }}</h1>
+    <button type="button" class="et-filter-btn" (click)="openFilterDrawer()" [attr.aria-label]="'exploreTrips.filter.title' | translate">
+      <i class="fa-light fa-sliders"></i>
+    </button>
+  </div>
+
+  @if (!loading() && trips().length === 0) {
+    <p class="et-empty">{{ 'exploreTrips.empty' | translate }}</p>
+  }
+
+  <div class="et-grid">
+    @for (trip of trips(); track trip._id) {
+      <app-trip-card [trip]="trip" />
+    }
+  </div>
+
+  @if (loading()) {
+    <div class="et-loading">
+      <i class="fa-light fa-spinner-third fa-spin"></i>
+    </div>
+  }
+
+  @if (!hasMore() && trips().length > 0) {
+    <p class="et-end">{{ 'exploreTrips.endOfList' | translate }}</p>
+  }
+
+  <div #sentinel class="et-sentinel"></div>
 </div>

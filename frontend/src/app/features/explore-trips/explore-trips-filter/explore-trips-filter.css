@@ -1,0 +1,37 @@
+.etf-content {
+  padding: 0.5rem 1rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+}
+
+.etf-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.etf-field--row {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.etf-field label {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--gray-500);
+}
+
+.etf-slider {
+  margin: 0.5rem 0.4rem 0;
+}
+
+.etf-actions {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-top: 0.5rem;
+}

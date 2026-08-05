@@ -356,3 +356,24 @@
     <hr class="header-divider" />
     <app-hotels-stub></app-hotels-stub>
 </p-drawer>
+
+<!-- EXPLORE TRIPS FILTER -->
+<p-drawer
+    [visible]="svc.isOpen('explore-trips-filter')"
+    [closable]="false"
+    (visibleChange)="onExploreTripsFilterVisibleChange($event)"
+    position="bottom"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('explore-trips-filter')"
+    [style]="{ height: 'auto', maxHeight: '85vh' }"
+    styleClass="explore-filter-drawer">
+    <ng-template #header>
+        <div class="menu-header">
+            <span class="menu-brand-name">{{ 'exploreTrips.filter.title' | translate }}</span>
+            <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onExploreTripsFilterVisibleChange(false)">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+    </ng-template>
+    <app-explore-trips-filter></app-explore-trips-filter>
+</p-drawer>

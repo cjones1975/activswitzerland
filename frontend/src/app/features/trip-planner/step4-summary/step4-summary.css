@@ -293,11 +293,24 @@
   font-size: 1.1rem;
 }
 
+.s4-complete-banner > div {
+  flex: 1;
+  min-width: 0;
+}
+
 .s4-route-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
   font-size: 0.72rem;
   font-weight: 500;
   color: #166534;
   opacity: 0.85;
+}
+
+.s4-route-distance {
+  flex-shrink: 0;
 }
 
 .s4-footer {

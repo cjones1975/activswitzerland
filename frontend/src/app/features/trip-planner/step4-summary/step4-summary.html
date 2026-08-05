@@ -113,7 +113,10 @@
       <i class="fa-solid fa-circle-check"></i>
       <div>
         <div>{{ 'trip.planner.step4.routeComplete' | translate }}</div>
-        <div class="s4-route-summary">{{ routeSummary() }}</div>
+        <div class="s4-route-summary">
+          <span>{{ routeSummary() }}</span>
+          <span class="s4-route-distance">{{ distanceLabel() }}</span>
+        </div>
       </div>
     </div>
   }

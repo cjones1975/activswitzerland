@@ -61,10 +61,10 @@ export function stopDayOptions(trip: PlannedTrip, stopId: string): StopDayOption
   });
 }
 
-/** "2026-07-22" -> "22-07-2026" */
+/** "2026-07-22" -> "22.07.2026" */
 export function formatDdMmYyyy(iso: string): string {
   const [y, m, d] = iso.split('-');
-  return `${d}-${m}-${y}`;
+  return `${d}.${m}.${y}`;
 }
 
 /** Translation key + params for a day choice's display label — "Day N" in 'days' mode, "Day N - DD-MM-YYYY" in 'dates' mode. */

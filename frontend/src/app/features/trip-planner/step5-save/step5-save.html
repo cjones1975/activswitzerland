@@ -9,6 +9,23 @@
            [ngModel]="name()" (ngModelChange)="setName($event)" />
   </div>
 
+  <div class="s5-visibility-field">
+    <div class="s5-visibility-text">
+      <span class="s5-visibility-label">{{ 'trip.planner.step5.makePublic' | translate }}</span>
+      <span class="s5-visibility-hint">{{ 'trip.planner.step5.makePublicHint' | translate }}</span>
+    </div>
+    <p-toggleswitch [ngModel]="isPublic()" (ngModelChange)="isPublic.set($event)" />
+  </div>
+  @if (isPublic()) {
+    <div class="s5-visibility-field">
+      <div class="s5-visibility-text">
+        <span class="s5-visibility-label">{{ 'trip.planner.step5.stayAnonymous' | translate }}</span>
+        <span class="s5-visibility-hint">{{ 'trip.planner.step5.stayAnonymousHint' | translate }}</span>
+      </div>
+      <p-toggleswitch [ngModel]="anonymous()" (ngModelChange)="anonymous.set($event)" />
+    </div>
+  }
+
   @if (!auth.isLoggedIn()) {
     <p class="s5-signin-hint">
       <i class="fa-light fa-circle-info"></i>

@@ -16,6 +16,7 @@ export type DrawerKey =
   | 'bikes'
   | 'bike-detail'
   | 'hotels'
+  | 'explore-trips-filter'
 
 
 const DRAWER_BASE_Z = 4000;
@@ -51,6 +52,20 @@ export class Drawer {
     this.stack.set(this.stack().filter(k => k !== key));
     this.payloads.delete(key);
     this.collapsedKeys.set(this.collapsedKeys().filter(k => k !== key));
+  }
+
+  /**
+   * Close a drawer without discarding its payload — for drawers (like the Explore Trips filter
+   * sheet) where the payload IS the applied state and must outlive the drawer's own open/closed
+   * lifecycle, not just exist while it happens to be open. Plain close() always deletes the
+   * payload, which silently reverts state set via setPayload() immediately before closing —
+   * found this the hard way: `setPayload(key, x); close(key);` leaves getPayload(key) undefined,
+   * not x.
+   */
+  closePreservingPayload(key: DrawerKey) {
+    const payload = this.payloads.get(key);
+    this.close(key);
+    if (payload !== undefined) this.payloads.set(key, payload);
   }
 
   /** Remove from stack but keep payload so it can be reopened. */

@@ -172,7 +172,11 @@
         "update": "Aggiorna viaggio",
         "browseSavedTrips": "Sfoglia viaggi salvati",
         "backToSummary": "Torna al riepilogo",
-        "saveError": "Impossibile salvare il viaggio. Riprova."
+        "saveError": "Impossibile salvare il viaggio. Riprova.",
+        "makePublic": "Rendi il viaggio pubblico",
+        "makePublicHint": "Altri viaggiatori potranno vedere questo viaggio in Esplora viaggi",
+        "stayAnonymous": "Resta anonimo",
+        "stayAnonymousHint": "Il tuo nome e il tuo paese non verranno mostrati"
       }
     }
   },
@@ -180,12 +184,17 @@
     "savedTrips": {
       "title": "Viaggi salvati",
       "view": "Visualizza",
-      "empty": "Non hai ancora salvato nessun viaggio."
+      "empty": "Non hai ancora salvato nessun viaggio.",
+      "review": "Recensione",
+      "reviewPlaceholder": "Descrivi come è andata, cosa ti è piaciuto o no...",
+      "noReview": "Nessuna recensione ancora.",
+      "editReview": "Modifica recensione",
+      "saveReview": "Salva recensione"
     },
     "stats": {
       "trips": "Viaggi salvati",
       "reviews": "Recensioni scritte",
-      "likes": "Recensioni apprezzate"
+      "likes": "Mi piace ricevuti"
     },
     "details": {
       "title": "Dettagli profilo",
@@ -395,6 +404,32 @@
       "loadError": "Qualcosa è andato storto. Riprova.",
       "noDestinationResults": "Siamo spiacenti, non abbiamo trovato destinazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave.",
       "noAttractionResults": "Siamo spiacenti, non abbiamo trovato attrazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave."
+    }
+  },
+  "exploreTrips": {
+    "anonymous": "Viaggiatore anonimo",
+    "empty": "Nessun viaggio pubblico ancora.",
+    "endOfList": "Hai raggiunto la fine.",
+    "flip": "Gira la scheda",
+    "noReview": "Nessuna recensione disponibile.",
+    "travellerReview": "Recensione del viaggiatore",
+    "filter": {
+      "title": "Filtra viaggi",
+      "tripType": "Tipo di viaggio",
+      "type": {
+        "all": "Tutti",
+        "road": "Viaggi in auto",
+        "rail": "Viaggi in treno"
+      },
+      "createdOrder": "Ordine di creazione",
+      "order": {
+        "desc": "Decrescente",
+        "asc": "Crescente"
+      },
+      "mostLiked": "Ordina per più apprezzati",
+      "distance": "Distanza",
+      "apply": "Applica",
+      "reset": "Reimposta"
     }
   },
   "seo": {

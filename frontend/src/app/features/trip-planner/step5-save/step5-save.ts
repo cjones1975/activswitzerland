@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Button } from 'primeng/button';
 import { InputText } from 'primeng/inputtext';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Drawer } from '../../../shared/services/drawer';
 import { Toast } from '../../../core/services/toast';
 import { Auth } from '../../../core/services/auth';
@@ -18,7 +19,7 @@ import { LangService } from '../../../shared/services/lang';
 @Component({
   selector: 'app-step5-save',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, Button, InputText, StartOverLink],
+  imports: [CommonModule, FormsModule, TranslatePipe, Button, InputText, ToggleSwitch, StartOverLink],
   templateUrl: './step5-save.html',
   styleUrl: './step5-save.css',
 })
@@ -48,6 +49,8 @@ export class Step5Save {
   readonly isEditing = computed(() => this.plannerSvc.loadedTripId() !== null);
 
   readonly name = signal(this.initialName());
+  readonly isPublic = signal(this.plannerSvc.snapshot.isPublic ?? false);
+  readonly anonymous = signal(this.plannerSvc.snapshot.anonymous ?? true);
   readonly saving = signal(false);
 
   private initialName(): string {
@@ -72,7 +75,7 @@ export class Step5Save {
     if (!name) return;
 
     this.saving.set(true);
-    const payload: SavedTrip = { ...this.plannerSvc.snapshot, name };
+    const payload: SavedTrip = { ...this.plannerSvc.snapshot, name, isPublic: this.isPublic(), anonymous: this.anonymous() };
     const id = this.plannerSvc.loadedTripId();
     const req$ = id ? this.tripsSvc.updateTrip(id, payload) : this.tripsSvc.saveTrip(payload);
 

@@ -6,13 +6,83 @@
 
 ## Goals
 
+## Phase breakdown
+
 ## Notes
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
 
-### 2026-08-05 — Trip Planner Step 2: Nights Here Relabel + Day-0 Fix Implemented
+### 2026-08-05 — Explore Trips (Phases A–D) Implemented
+
+- Branch: `feature/explore-trips`; spec: `context/features/explore-trips-spec.md`. Built all four
+  phases on this one branch rather than the spec's original per-phase-branch plan — asked the user
+  when Phase B was starting whether to merge Phase A to `main` first (matching the nights-here
+  precedent) or keep going on the same branch; user chose to keep building on one branch and merge
+  once, so Phases B–D landed on top of Phase A's uncommitted work instead of each getting its own
+  branch off `main`
+- **Phase A** — `backend/src/models/Trip.js` gained `isPublic`/`anonymous`/`review`/`likes`/
+  `distanceKm`; new `backend/src/utils/geo.js` (haversine) computes `distanceKm` server-side in
+  `createTrip`/`updateTrip`, `updateTrip` also strips any `likes` field from the request body
+  (only the Phase B like-toggle endpoint may change it). Step 5 Save gained "Make trip public"/
+  "Stay anonymous" toggles. Profile's Saved Trips cards gained a review section (collapsed by
+  default at first, later changed to open by default in Phase D's UAT round) and a like-count
+  badge; the old hardcoded "Reviews liked: 34" stat was replaced with a real `likesReceived` (sum
+  of likes across the user's own trips) at the user's explicit request, to incentivize going public
+- **Phase B** — new `optionalAuth` middleware; `backend/src/routes/trips.js` restructured off the
+  blanket `router.use(protect)` to per-route auth; `GET /trips/public` (paginated, privacy-filtered
+  creator info) and `POST /trips/:id/like` (toggle). **Real bug found via manual testing**:
+  `req.cookies.token` threw `Cannot read properties of undefined` — `cookie-parser` was never
+  registered in `server.js` (not even a dependency); `protect` had the same latent bug but never
+  hit it since every real request already carries an `Authorization` header, while `optionalAuth`
+  is the first code path that legitimately runs with neither. Fixed both call sites with
+  `req.cookies?.token`
+- **Phase C** — rewrote the `ExploreTrips` stub into an `IntersectionObserver`-driven infinite
+  scroll grid (50/batch) plus a bottom-position filter drawer (`'explore-trips-filter'` — the
+  app's first `position="bottom"` drawer)
+- **Phase D** — new `trip-card` (CSS 3D flip, map front face, `trip-timeline` back face) and
+  `trip-timeline` (PrimeNG `p-timeline`) components
+- **Real bug found via user testing, twice**: `Drawer.close()` unconditionally deletes a drawer's
+  payload. First hit on the filter drawer's X-button/backdrop dismiss (fixed inline in
+  `drawer-host.ts`); then the user reported "none of the filters do anything" — turned out
+  `explore-trips-filter.ts`'s `apply()`/`resetFilters()` had the *exact same* bug
+  (`setPayload(newFilters); close();` — the close() call immediately erased what setPayload() just
+  set), just missed applying the same fix there. Fixed properly this time with a new
+  `Drawer.closePreservingPayload()` on the shared service instead of patching each call site, and
+  switched both existing call sites to use it
+- **UAT round** (after Phases C/D first went live) produced a long list of fixes: header/filter-icon
+  spacing (`.et-page` top padding 56px → 80px); dates switched from dashes to dots app-wide
+  (`formatDdMmYyyy()` in `shared/utils/date-range.ts` itself changed to `.` separators — user
+  clarified they wanted this everywhere, not just Explore Trips, after an initial
+  Explore-Trips-only `formatDdMmYyyyDot()` variant was removed again in favor of one shared
+  function); map activity markers switched from a generic star icon to the same attraction/hike/
+  bike PNG icon set used elsewhere (`ACTIVITY_GROUPS` from `step4-summary.ts`, exported for reuse);
+  review expanded by default (was collapsed) with a new "No review available." fallback string;
+  like icon color fixed to `#d97706`; tapping anywhere on the card now flips it (not just the flip
+  button — click on `.tc-card` bubbles to `toggleFlip()`, with `stopPropagation()` on the like
+  button/review toggle/map so those don't also flip); timeline rebuilt from a two-column
+  opposite/content layout to a single column (marker/line flush left, destination+date+activities
+  stacked in one right-hand column — required `::ng-deep` hiding `.p-timeline-event-opposite`,
+  which PrimeNG always renders at `flex:1` even with no template supplied) and day-number labels
+  now only show in 'days'-mode trips, never alongside a real calendar date; road/rail badge colors
+  swapped site-wide (green=rail, blue=road — matches the map's own route-line colors, which were
+  already correct) in both `profile.html` and `trip-card.html`; Explore Trips' review-toggle label
+  changed to "Traveller review" (Explore-Trips-only key, profile page's own "Review" label left
+  alone); footer-nav fixed to show on `/explore-trips` — turned out `FooterNav.isFooterNavRoute()`
+  gates the whole footer behind an explicit route allowlist (`/`, `/destinations`, `/search`,
+  `/trip-planner`) that `/explore-trips` had simply never been added to
+- Verified via `tsc --noEmit`/`node --check` after every change, plus extensive live verification
+  using a headless Chromium instance (network-request inspection, DOM/computed-style checks,
+  screenshots) to confirm fixes before handing back to the user rather than guessing — this is how
+  the two Drawer payload-deletion bugs and the stale-dev-server issue (see below) were root-caused
+  precisely rather than by trial and error
+- **Also found, unrelated to Explore Trips' own code**: early in Phase D's UAT the user reported
+  seeing nothing at `/explore-trips` at all — traced to their running `ng serve` simply not having
+  picked up the source changes (confirmed by loading the page headlessly and finding the literal
+  old stub markup still being served); resolved by the user restarting their dev server, not a
+  code fix
+- Not yet committed
 
 - Branch: `feature/trip-planner-nights-here`; specced in the entry directly below
 - `shared/utils/date-range.ts`'s `stopDayRanges()`: day pointer now starts at `1` (was `0`); a real
