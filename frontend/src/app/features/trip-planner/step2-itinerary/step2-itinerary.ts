@@ -121,6 +121,7 @@ export class Step2Itinerary {
 
   private applyDeparture(result: LocationSearchResult): void {
     const existing = this.departure();
+    this.clearStaleStopData(existing, result);
     this.departure.set({
       id: existing?.id ?? crypto.randomUUID(),
       role: 'departure',
@@ -139,6 +140,7 @@ export class Step2Itinerary {
 
   private applyDestination(result: LocationSearchResult): void {
     const existing = this.destination();
+    this.clearStaleStopData(existing, result);
     this.destination.set({
       id: existing?.id ?? crypto.randomUUID(),
       role: 'destination',
@@ -153,17 +155,35 @@ export class Step2Itinerary {
   }
 
   private applyVia(result: LocationSearchResult, stop: TripStop): void {
+    this.clearStaleStopData(stop, result);
     const updated: TripStop = { ...stop, name: result.name, lat: result.lat, lon: result.lon, externalId: result.externalId };
     this.viaStops.update(v => v.map(s => s.id === stop.id ? updated : s));
     this.syncStops();
   }
 
+  /**
+   * Re-picking a new place into an already-populated slot keeps the same `TripStop.id` (so its
+   * days/role/order survive the swap) — but that also means any activities/rail connections keyed
+   * by that id from the *old* place would otherwise silently carry over and appear to belong to the
+   * new one. Clear them whenever the coordinates actually change; a no-op re-pick of the same
+   * suggestion isn't a change and leaves them alone.
+   */
+  private clearStaleStopData(existing: TripStop | null, result: LocationSearchResult): void {
+    if (!existing || (existing.lat === result.lat && existing.lon === result.lon)) return;
+    this.plannerSvc.removeActivitiesForStop(existing.id);
+    this.plannerSvc.removeConnectionsForStop(existing.id);
+  }
+
   onDepartureClear(): void {
+    const existing = this.departure();
+    if (existing) this.plannerSvc.removeActivitiesForStop(existing.id);
     this.departure.set(null);
     this.syncStops();
   }
 
   onDestinationClear(): void {
+    const existing = this.destination();
+    if (existing) this.plannerSvc.removeActivitiesForStop(existing.id);
     this.destination.set(null);
     this.syncStops();
   }
@@ -273,6 +293,7 @@ export class Step2Itinerary {
   }
 
   removeVia(id: string): void {
+    this.plannerSvc.removeActivitiesForStop(id);
     this.viaStops.update(v => v.filter(s => s.id !== id));
     this.syncStops();
   }

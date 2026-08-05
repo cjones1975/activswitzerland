@@ -169,6 +169,19 @@ export class TripPlannerService {
     return this._trip$.value.activities.filter(a => a.stopId === stopId);
   }
 
+  /** A stop's activities are only meaningful for the place they were picked at — call whenever a stop is removed or its location is swapped out from under its id (see Step2Itinerary's `clearStaleStopData`). */
+  removeActivitiesForStop(stopId: string): void {
+    const activities = this._trip$.value.activities.filter(a => a.stopId !== stopId);
+    this._trip$.next({ ...this._trip$.value, activities });
+  }
+
+  /** Same reasoning as `removeActivitiesForStop`, for resolved/skipped rail connections touching that stop. */
+  removeConnectionsForStop(stopId: string): void {
+    const connections = (this._trip$.value.connections ?? [])
+      .filter(l => l.fromStopId !== stopId && l.toStopId !== stopId);
+    this._trip$.next({ ...this._trip$.value, connections });
+  }
+
   // ── Route ─────────────────────────────────────────────────────────────
   buildRoadRoute(stops: TripStop[]): Observable<[number, number][]> {
     if (stops.length < 2) return of([]);

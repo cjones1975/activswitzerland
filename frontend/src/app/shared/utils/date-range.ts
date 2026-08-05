@@ -13,20 +13,23 @@ export function tripDayCount(range: TripDateRange): number | null {
 }
 
 /**
- * "Day N" / "Days N–M" per stop, derived by walking the itinerary and accumulating days spent.
- * A 0-day stop (same-day pass-through, or a non-day departure point like "home") doesn't get an
- * exclusive day of its own — it's labeled with whatever day is already "current" at that point:
- * Day 0 if nothing has been allocated yet, otherwise the same day as the stop before it.
+ * "Day N" / "Days N–M" per stop, derived by walking the itinerary and accumulating nights spent.
+ * `stop.days` is entered by the user as nights, not calendar days — a stop with N>0 nights spans
+ * N calendar days starting at the current day pointer. A 0-night stop (transit / pass-through)
+ * doesn't advance the pointer — it's labeled with whichever day is already in progress: Day 1 if
+ * nothing has been allocated yet, otherwise the same day the next real stay starts on. This means
+ * a leading or mid-trip transit stop always shares a day with the stay it leads into, never gets
+ * an orphan day of its own, and never reads "Day 0."
  */
 export function stopDayRanges(stops: TripStop[]): Map<string, { start: number; end: number }> {
   const ranges = new Map<string, { start: number; end: number }>();
-  let currentDay = 0;
+  let currentDay = 1;
   for (const stop of stops) {
     if (stop.days > 0) {
-      const start = currentDay + 1;
-      const end = currentDay + stop.days;
+      const start = currentDay;
+      const end = currentDay + stop.days - 1;
       ranges.set(stop.id, { start, end });
-      currentDay = end;
+      currentDay = end + 1;
     } else {
       ranges.set(stop.id, { start: currentDay, end: currentDay });
     }

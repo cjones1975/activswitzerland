@@ -12,6 +12,56 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-05 — Trip Planner Step 2: Nights Here Relabel + Day-0 Fix Implemented
+
+- Branch: `feature/trip-planner-nights-here`; specced in the entry directly below
+- `shared/utils/date-range.ts`'s `stopDayRanges()`: day pointer now starts at `1` (was `0`); a real
+  (>0 night) stop's span now starts *at* the pointer rather than *after* it. Matches the spec's
+  worked example — a leading or mid-trip transit stop shares a day with the stay it leads into
+  instead of getting an orphan "Day 0"/day of its own; every no-transit case is byte-for-byte
+  identical to the old output
+- i18n value-only changes across en/de/fr/it: `daysHere` → "Nights here" family;
+  `dayRemaining`/`daysRemaining`/`dayOverBudget`/`daysOverBudget` → "night(s)" wording. Keys
+  unchanged, so `stopDayOptions()` and every `stopDayRanges()` caller (Step 2/3/4) inherited the fix
+  with no other file changes needed, as planned
+- Extra fix bundled into the same working tree, not in the original spec: `step2-itinerary.ts`
+  re-picking a new place into an already-populated departure/via/destination slot keeps the same
+  `TripStop.id` (so its days/role/order survive the swap), which meant any activities or rail
+  connections keyed by that id from the *old* place would silently carry over and appear to belong
+  to the new one. Fixed with a new `clearStaleStopData()` (clears activities+connections for the
+  stop only when the picked coordinates actually change, not on a no-op re-pick of the same
+  suggestion) called from `applyDeparture`/`applyDestination`/`applyVia`, plus explicit
+  `removeActivitiesForStop()` calls on `onDepartureClear`/`onDestinationClear`/`removeVia`. New
+  `TripPlannerService.removeActivitiesForStop()`/`removeConnectionsForStop()` helpers backing this
+- No `TripStop`/`PlannedTrip` model changes; no markup/CSS changes
+- Verified via `tsc --noEmit` (clean); not yet live-tested in-browser or committed
+
+### 2026-08-04 — Trip Planner Step 2: Nights Here Relabel + Day-0 Fix Specced
+
+- User flagged that "Day 0" (shown when a transit/pass-through stop has nothing allocated before
+  it) reads wrong — a trip's starting point is Day 1 even when the traveler isn't sleeping there.
+  Proposed switching Step 2's "Days here" input to "Nights here" framing, both to resolve the Day-0
+  labeling and because nights-per-stop is the unit the planned hotel-selection feature will need
+  (checkout = arrival + nights)
+- Investigated `stopDayRanges()` (`shared/utils/date-range.ts`): the existing algorithm already
+  treats a 0-day stop correctly in spirit (borrows the "current day" instead of claiming one of its
+  own) — the only real defect is the day pointer starting at `0`. Traced every consumer
+  (`stopDayOptions()`, Step 2/3/4's `stopDayLabels`) and confirmed they all read `stopDayRanges()`'s
+  `{start, end}` output as-is, so the fix is fully contained to that one function
+- Designed the fix: pointer starts at `1`; a real (>0 night) stop's span starts *at* the pointer
+  rather than *after* it, so a leading or mid-trip transit stop shares a day with the stay it leads
+  into instead of getting its own orphan day. Verified against a worked 5-night example (transit →
+  Lucerne(2) → transit → Interlaken(3)) and confirmed the no-transit case is byte-for-byte identical
+  to today's output
+- Scoped the i18n relabel: `daysHere` and the four remaining/over-budget keys switch to "night(s)"
+  wording across en/de/fr/it (value-only, keys unchanged); `tripRange`/`daysTrip`/`dayLabel`/
+  `dayRangeLabel`/`dayDateLabel` explicitly left alone since they describe the trip's overall length
+  or the resolved calendar-day output, not the per-stop night count
+- No `TripStop` model changes (field stays `days`), no Step 3/4 code changes (inherit the fix via
+  the shared `stopDayRanges()` import), no CSS changes expected
+- Created `context/features/trip-planner-nights-here-spec.md` and branch
+  `feature/trip-planner-nights-here`; no implementation started
+
 ### 2026-08-03 — Auth: Header Restyle + Email Verification + Profile Email-Change Implemented
 
 - Branch: `feature/auth-email-verification`; specced in the entry directly below
