@@ -70,3 +70,38 @@
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
 }
+
+/* Desktop (Phase 3 of the desktop responsive redesign, see
+   context/features/desktop-responsive-redesign-spec.md): taller rows (bigger images — .card-photo's
+   width is a % of the row, so it also grows for free as .search-page's container widens at the same
+   1536px tier) and slightly larger text, on top of the wider container from search-page.css. */
+@media (min-width: 1024px) {
+  .skeleton-card,
+  .result-card {
+    height: 140px;
+  }
+
+  .card-name {
+    font-size: 1rem;
+  }
+
+  .card-abstract {
+    font-size: 0.85rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .skeleton-card,
+  .result-card {
+    height: 170px;
+  }
+
+  .card-name {
+    font-size: 1.1rem;
+  }
+
+  .card-abstract {
+    font-size: 0.9rem;
+    -webkit-line-clamp: 4;
+  }
+}

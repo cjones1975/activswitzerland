@@ -7,6 +7,26 @@
     flex-direction: column;
 }
 
+/* Desktop (Phase 3 of the desktop responsive redesign, see
+   context/features/desktop-responsive-redesign-spec.md): same container tiers used on the homepage
+   rails/search/Explore Trips (destination-horizontal-list.css, search-page.css, explore-trips.css),
+   so the whole content area (stat cards, details, saved trips, sign out) stops stretching edge to
+   edge and stays legible on a wide screen — everything in it already has its own 1rem side margins,
+   which now read as the gutter inside this container instead of the raw viewport edge. The hero
+   banner above it (.profile-hero) is deliberately left full-bleed, unchanged. */
+@media (min-width: 1024px) {
+    .profile-content {
+        max-width: 900px;
+        margin: 0 auto;
+    }
+}
+
+@media (min-width: 1536px) {
+    .profile-content {
+        max-width: 1300px;
+    }
+}
+
 /* Hero */
 .profile-hero {
     height: 200px;

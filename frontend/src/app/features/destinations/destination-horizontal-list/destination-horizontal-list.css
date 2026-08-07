@@ -125,3 +125,64 @@
     height: 240px;
   }
 }
+
+/* Desktop (Phase 3 of the desktop responsive redesign, see
+   context/features/desktop-responsive-redesign-spec.md): below this, unchanged horizontal-scroll
+   strip of fixed 200px cards forever, even at 1920px+. Switches to a grid in a max-width container
+   instead, with cards growing to ~4x the 160px mobile card width at the top tier (both tiers use
+   `auto-fit`/`minmax` so the column count adapts on its own rather than being hand-picked per
+   breakpoint — the max-width cap is what actually controls how big/how many columns settle out). */
+@media (min-width: 1024px) {
+  .list-header {
+    max-width: 900px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .scroll-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 1.5rem;
+    overflow: visible;
+    padding-bottom: 0;
+    max-width: 900px;
+    margin: 0 auto;
+  }
+
+  .skeleton-card,
+  .destination-card {
+    width: 100%;
+    height: 360px;
+  }
+
+  .card-name {
+    font-size: 1.15rem;
+  }
+}
+
+@media (min-width: 1536px) {
+  .list-header {
+    max-width: 1300px;
+  }
+
+  .scroll-strip {
+    grid-template-columns: repeat(auto-fit, minmax(560px, 1fr));
+    gap: 2rem;
+    max-width: 1300px;
+  }
+
+  .skeleton-card,
+  .destination-card {
+    height: 480px;
+  }
+
+  .card-type {
+    font-size: 0.7rem;
+    padding: 4px 10px;
+  }
+
+  .card-name {
+    font-size: 1.4rem;
+    padding: 2.5rem 1rem 1rem;
+  }
+}

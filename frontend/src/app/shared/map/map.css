@@ -180,6 +180,10 @@
   text-overflow: ellipsis;
 }
 
-:host ::ng-deep .maplibregl-ctrl-bottom-right {
-  bottom: 64px;
+/* Footer nav is fixed (64px tall) and stays visible below 600px (footer-nav.css hides the whole
+   bar at >=600px) — clear it there so the zoom control doesn't sit underneath it. */
+@media (max-width: 599px) {
+  :host ::ng-deep .maplibregl-ctrl-bottom-right {
+    bottom: 64px;
+  }
 }

@@ -175,8 +175,11 @@
     padding: 2rem 1.5rem 2.5rem;
 }
 
-/* Footer nav is fixed (64px tall) and stays visible on the homepage, so the
-   last section needs extra clearance or its bottom content sits underneath it. */
-.home-section:last-of-type .section-inner {
-    padding-bottom: 6rem;
+/* Footer nav is fixed (64px tall) and stays visible on the homepage below 600px, so the
+   last section needs extra clearance there or its bottom content sits underneath it.
+   footer-nav.css hides the whole bar at >=600px, so no extra clearance is needed above that. */
+@media (max-width: 599px) {
+    .home-section:last-of-type .section-inner {
+        padding-bottom: 6rem;
+    }
 }

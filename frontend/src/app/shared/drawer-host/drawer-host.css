@@ -184,6 +184,32 @@
     overflow-y: auto;
 }
 
+/* Every drawer this app can host: desktop split-view (Phase 0/1 of the desktop responsive redesign,
+   see context/features/desktop-redesign-phase0-foundations-spec.md). [modal]="false" above this same
+   1280px breakpoint (drawer-host.ts's Breakpoint service) already removes PrimeNG's scrim, leaving
+   a plain fixed-position panel; this docks it below the header (top: 4.5rem, the value confirmed via
+   live testing to actually clear header-nav — trip-planner-layout.css's `.tp-wizard-host--docked`
+   uses the same value, for the same reason, after `connections` briefly used a different 3.5rem
+   value here and was found to overlap the header too) instead of covering it, and swaps the floating
+   drawer's shadow for a flush border. */
+@media (min-width: 1280px) {
+    ::ng-deep .dest-detail-drawer,
+    ::ng-deep .all-attractions-drawer,
+    ::ng-deep .attraction-detail-drawer,
+    ::ng-deep .weather-drawer,
+    ::ng-deep .hikes-drawer,
+    ::ng-deep .hike-detail-drawer,
+    ::ng-deep .bikes-drawer,
+    ::ng-deep .bike-detail-drawer,
+    ::ng-deep .hotels-drawer,
+    ::ng-deep .connections-drawer {
+        top: 4.5rem !important;
+        height: calc(100% - 4.5rem) !important;
+        box-shadow: none !important;
+        border-inline-end: 1px solid var(--gray-200) !important;
+    }
+}
+
 /* Connections, destination-detail & auth drawers: full-width on mobile */
 @media (max-width: 767px) {
     ::ng-deep .connections-drawer,

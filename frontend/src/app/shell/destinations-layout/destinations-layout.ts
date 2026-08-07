@@ -9,6 +9,7 @@ import { Destination } from '../../models/destination';
 import { MapComponent } from '../../shared/map/map';
 import type { MapMarker } from '../../shared/map/map';
 import { Drawer } from '../../shared/services/drawer';
+import { Breakpoint } from '../../shared/services/breakpoint';
 import { AttractionMarkersService } from '../../shared/services/attraction-markers';
 import { ActivityMapService } from '../../shared/services/activity-map';
 import { HikeMarkersService } from '../../shared/services/hike-markers';
@@ -31,6 +32,7 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
   protected drawer = inject(Drawer);
+  protected breakpoint = inject(Breakpoint);
   private destroyRef = inject(DestroyRef);
   protected attractionMarkers = inject(AttractionMarkersService);
   protected hikeMarkers = inject(HikeMarkersService);
@@ -41,6 +43,26 @@ export class DestinationsLayout implements OnInit, OnDestroy {
 
   center = signal<[number, number] | undefined>(undefined);
   destination = signal<Destination | null>(null);
+
+  // Desktop split-view (Phase 0/1 of the desktop responsive redesign): every drawer destinations-layout
+  // can host docks non-modally beside the map at >=1280px instead of overlaying it (drawer-host.ts
+  // drives each panel itself via the same Breakpoint signal) — this computed shifts the map's own
+  // left inset to match, so the map visibly makes room for whichever one is open instead of just
+  // sitting underneath it. These keys are mutually exclusive in practice (each flow closes/collapses
+  // the previous drawer before opening the next — see e.g. listAllAttractions()/onMarkerClick()
+  // below), so at most one of these is ever open at a time.
+  sidebarDocked = computed(() => {
+    if (!this.breakpoint.isDesktopSplitView()) return false;
+    return this.drawer.isOpen('destination-detail')
+      || this.drawer.isOpen('all-attractions')
+      || this.drawer.isOpen('attraction-detail')
+      || this.drawer.isOpen('weather')
+      || this.drawer.isOpen('hikes')
+      || this.drawer.isOpen('hike-detail')
+      || this.drawer.isOpen('bikes')
+      || this.drawer.isOpen('bike-detail')
+      || this.drawer.isOpen('hotels');
+  });
 
   // Attraction markers are populated as soon as the destination page loads
   // (attraction-vertical-list's all-attractions fetch) and shown unconditionally
@@ -330,7 +352,19 @@ export class DestinationsLayout implements OnInit, OnDestroy {
 
 ngOnDestroy(): void {
     clearTimeout(this.openDetailTimer);
+    // Every drawer this page can open (not just destination-detail) — otherwise navigating away
+    // (e.g. the header brand link, which is a plain routerLink with no drawer-aware click handler)
+    // while one of these is open leaves it rendered on top of whatever page comes next, since
+    // DrawerHost is a single global singleton with no route-awareness of its own.
     this.drawer.close('destination-detail');
+    this.drawer.close('all-attractions');
+    this.drawer.close('attraction-detail');
+    this.drawer.close('weather');
+    this.drawer.close('hikes');
+    this.drawer.close('hike-detail');
+    this.drawer.close('bikes');
+    this.drawer.close('bike-detail');
+    this.drawer.close('hotels');
     this.attractionMarkers.clear();
     this.hikeMarkers.clear();
     this.bikeMarkers.clear();

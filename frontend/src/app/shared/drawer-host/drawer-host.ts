@@ -1,4 +1,4 @@
-import { Component, computed, inject } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { Drawer, DrawerKey } from '../services/drawer';
@@ -25,6 +25,7 @@ import { ExploreTripsFilter } from '../../features/explore-trips/explore-trips-f
 import { ActivityPickerPayload } from '../../models/geo-point';
 import { WeatherPayload } from '../../models/weather';
 import { LangService } from '../services/lang';
+import { Breakpoint } from '../services/breakpoint';
 
 @Component({
   selector: 'app-drawer-host',
@@ -35,6 +36,7 @@ import { LangService } from '../services/lang';
 })
 export class DrawerHost {
   svc = inject(Drawer);
+  protected breakpoint = inject(Breakpoint);
   private router = inject(Router);
   private langSvc = inject(LangService);
   private attractionMarkers = inject(AttractionMarkersService);
@@ -238,4 +240,34 @@ export class DrawerHost {
     }
     this.svc.closePreservingPayload('explore-trips-filter');
   }
+
+  /**
+   * A `[modal]` binding that only recomputes while `key`'s drawer is actually open, never during
+   * its close transition. Needed because `Drawer.close()` deletes the drawer's payload in the same
+   * synchronous call that hides it — a naive `[modal]="isXTripPlanner() || ..."` binding (reading
+   * that payload reactively) flips to a new value in the very same change-detection cycle that sets
+   * `[visible]="false"`. PrimeNG's `p-drawer` only removes its scrim mask via `hide()`'s
+   * `if (this.modal) this.disableModality()` — if Angular has already pushed the new (stale-false)
+   * `modal` value into the component before that animation-driven `hide()` call reads it, the mask
+   * is never removed: left in the DOM, invisible, permanently blocking clicks on whatever renders
+   * underneath. Found via live testing: closing a trip-planner Activities picker left the docked
+   * wizard behind it unclickable. Holding the value steady while `isOpen(key)` is false sidesteps
+   * the race — what it's left at during close doesn't matter, since the drawer is hiding either way.
+   */
+  private stickyModal(key: DrawerKey, isTripPlannerMode: () => boolean) {
+    const modal = signal(true);
+    effect(() => {
+      if (this.svc.isOpen(key)) {
+        modal.set(isTripPlannerMode() || !this.breakpoint.isDesktopSplitView());
+      }
+    });
+    return modal;
+  }
+
+  allAttractionsModal = this.stickyModal('all-attractions', () => this.isAllAttractionsTripPlanner());
+  attractionDetailModal = this.stickyModal('attraction-detail', () => this.isAttractionDetailTripPlanner());
+  hikesModal = this.stickyModal('hikes', () => this.isHikesTripPlanner());
+  hikeDetailModal = this.stickyModal('hike-detail', () => this.isHikeDetailTripPlanner());
+  bikesModal = this.stickyModal('bikes', () => this.isBikesTripPlanner());
+  bikeDetailModal = this.stickyModal('bike-detail', () => this.isBikeDetailTripPlanner());
 }

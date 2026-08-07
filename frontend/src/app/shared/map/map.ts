@@ -72,6 +72,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   private markerInstances = new Map<string, { marker: Marker; el: HTMLElement }>();
   private popupInstances = new Map<string, Popup>();
   private mapLoaded = false;
+  private resizeObserver?: ResizeObserver;
 
   ngAfterViewInit(): void {
     // MapLibre GL needs a real WebGL/canvas context — never available under
@@ -107,6 +108,12 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.map?.flyTo({ center: this.center, zoom: this.zoom, duration: 800 });
       }
     });
+
+    // MapLibre doesn't watch its container for size changes on its own — needed here since the
+    // desktop split-view (destinations-layout's docked destination-detail panel) resizes this
+    // component's container via CSS, not an Angular @Input, so ngOnChanges never fires for it.
+    this.resizeObserver = new ResizeObserver(() => this.map?.resize());
+    this.resizeObserver.observe(this.mapContainer.nativeElement);
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -464,6 +471,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.resizeObserver?.disconnect();
     this.markerInstances.forEach(({ marker }) => marker.remove());
     this.stageOverviewMarkers.forEach(m => m.remove());
     this.map?.remove();

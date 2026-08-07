@@ -11,6 +11,7 @@ import { Destination } from '../../models/destination';
 import { MapComponent } from '../../shared/map/map';
 import type { MapMarker } from '../../shared/map/map';
 import { Drawer } from '../../shared/services/drawer';
+import { Breakpoint } from '../../shared/services/breakpoint';
 import { TripPlannerService } from '../../shared/services/trip-planner';
 import { PlannedTrip, ActivityKind } from '../../models/trip';
 import { GeoPoint } from '../../models/geo-point';
@@ -39,6 +40,7 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
   protected drawer = inject(Drawer);
+  protected breakpoint = inject(Breakpoint);
   private destroyRef = inject(DestroyRef);
   protected tripPlanner = inject(TripPlannerService);
   private attractionsService = inject(AttractionsService);
@@ -47,6 +49,19 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
   center = signal<[number, number] | undefined>([8.2275, 46.8182]);
   mapZoom = signal(7);
   destination = signal<Destination | null>(null);
+
+  // Desktop split-view (Phase 1 of the desktop responsive redesign, continuing
+  // destinations-layout's pattern): the wizard docks non-modally beside the map at >=1280px
+  // instead of fully replacing it (today's/mobile's @if-@else behavior, unchanged below that
+  // breakpoint). The Connections drawer (drawer-host.html) is opened while the wizard stays
+  // visible, so it renders in this same docked slot, on top of the wizard — same "replace in
+  // place" effect the mobile modal overlay already has today, just non-modal at desktop.
+  wizardDocked = computed(() => this.tripPlanner.wizardVisible() && this.breakpoint.isDesktopSplitView());
+
+  // The map is always shown at desktop width once split-view is available (docked beside the
+  // wizard whenever it's visible), but stays lazily mounted below that breakpoint — only once the
+  // wizard is hidden via the existing "Map View" toggle, same as before this phase.
+  showMap = computed(() => !this.tripPlanner.wizardVisible() || this.breakpoint.isDesktopSplitView());
 
   tripRoute = signal<[number, number][] | null>(null);
   tripType = signal<'road' | 'rail' | null>(null);
@@ -184,5 +199,16 @@ export class TripPlannerLayout implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.tripPlanner.reset();
+    // Every drawer this page (or its wizard/step4-summary) can open — same bug class fixed in
+    // destinations-layout.ts's ngOnDestroy: DrawerHost is a global singleton with no route
+    // awareness, so any of these left open when navigating away would render on top of whatever
+    // page comes next. TripPlannerService.reset() only resets the wizard's own internal state.
+    this.drawer.close('all-attractions');
+    this.drawer.close('attraction-detail');
+    this.drawer.close('hikes');
+    this.drawer.close('hike-detail');
+    this.drawer.close('bikes');
+    this.drawer.close('bike-detail');
+    this.drawer.close('connections');
   }
 }

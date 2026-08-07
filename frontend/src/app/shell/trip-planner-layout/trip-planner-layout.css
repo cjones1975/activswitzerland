@@ -10,6 +10,26 @@
 .map-wrapper {
   position: absolute;
   inset: 0;
+  transition: left 0.2s ease;
+}
+
+/* Desktop split-view: top: 4.5rem (not inset: 0's top: 0), matching destinations-layout.css's own
+   fix — the map's box starts below the fixed header rather than relying on z-index alone to hide any
+   overlap. Scoped to desktop only — applying this unconditionally regressed mobile's "Map View"
+   toggle (the one place this map mounts below 1280px): the map's box started 72px down at every
+   width, leaving an empty gap between the header and the map with the reopen-buttons/markers
+   stranded in it, something mobile never had a problem with before this change. */
+@media (min-width: 1280px) {
+  .map-wrapper {
+    top: 4.5rem;
+  }
+}
+
+/* Desktop split-view (Phase 1, see context/features/desktop-redesign-phase1-drawer-rollout-spec.md):
+   shifts the map's left edge to match the docked wizard's width (600px, see .tp-wizard-host--docked
+   below), so the map visibly reflows to make room instead of sitting hidden underneath it. */
+.map-wrapper--docked {
+  left: 600px;
 }
 
 .reopen-btns {
@@ -64,10 +84,35 @@
 .tp-wizard-host {
   position: fixed;
   top: 3.5rem;
-  bottom: 64px;
+  bottom: 0;
   left: 0;
   right: 0;
   z-index: 110;
   background: var(--color-white);
   overflow: hidden;
+}
+
+/* Desktop split-view: docks the wizard as a fixed-width panel instead of the full-viewport-width
+   host used below the split-view breakpoint (unchanged there, still top: 3.5rem). Matches the same
+   600px width used by every other docked panel (drawer-host.css) — the Connections drawer (opened
+   from within this same wizard, while it's still visible) is widened to match too, so it fully
+   covers this panel rather than leaving a sliver of it visible on its right edge when both are
+   "open" at once. top overridden to 4.5rem here (not the base rule's 3.5rem) to match
+   destinations-layout.css's confirmed-working header clearance — 3.5rem was fine when this host was
+   always full-viewport-width behind the equally-full-viewport-width header (any gap was inside the
+   header's own painted area regardless of the exact value), but docked at a fixed width the gap is
+   real and needs to actually clear the header. */
+.tp-wizard-host--docked {
+  top: 4.5rem;
+  right: auto;
+  width: 600px;
+  border-inline-end: 1px solid var(--gray-200);
+}
+
+/* Footer nav is fixed (64px tall) and stays visible below 600px (footer-nav.css hides the whole
+   bar at >=600px) — clear it there so it doesn't cover the wizard's own bottom content/buttons. */
+@media (max-width: 599px) {
+  .tp-wizard-host {
+    bottom: 64px;
+  }
 }

@@ -1,4 +1,4 @@
-<div class="map-wrapper">
+<div class="map-wrapper" [class.map-wrapper--docked]="sidebarDocked()">
   <app-map
     [markers]="displayMarkers()"
     [zoom]="10"
@@ -12,7 +12,7 @@
     (markerClick)="onMarkerClick($event)"></app-map>
 </div>
 
-<div class="reopen-btns">
+<div class="reopen-btns" [class.reopen-btns--docked]="sidebarDocked()">
   @if (!drawer.isOpen('destination-detail') && destination(); as dest) {
     <button class="reopen-btn reopen-btn-img-only" type="button" [attr.aria-label]="'destinations.detail.open' | translate: { name: dest.name }" (click)="openDetail()">
       <img class="reopen-btn-img" src="/assets/destination.png" [attr.alt]="'destinations.detail.open' | translate: { name: dest.name }" />

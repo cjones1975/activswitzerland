@@ -1,5 +1,5 @@
-@if (!tripPlanner.wizardVisible()) {
-  <div class="map-wrapper">
+@if (showMap()) {
+  <div class="map-wrapper" [class.map-wrapper--docked]="wizardDocked()">
     <app-map
       [markers]="tripActivityMarkers()"
       [center]="center()"
@@ -10,7 +10,9 @@
       [fitBounds]="tripBounds()"
       (markerClick)="onActivityMarkerClick($event)"></app-map>
   </div>
+}
 
+@if (!tripPlanner.wizardVisible()) {
   <div class="reopen-btns">
     @if (destination()) {
       <button class="reopen-btn" type="button" (click)="backToDestination()">
@@ -22,8 +24,10 @@
       <img class="reopen-btn-img" src="/assets/trip.png" [attr.alt]="'trip.planner.open' | translate" />
     </button>
   </div>
-} @else {
-  <div class="tp-wizard-host">
+}
+
+@if (tripPlanner.wizardVisible()) {
+  <div class="tp-wizard-host" [class.tp-wizard-host--docked]="wizardDocked()">
     <app-trip-planner-wizard></app-trip-planner-wizard>
   </div>
 }

@@ -10,6 +10,29 @@
 .map-wrapper {
   position: absolute;
   inset: 0;
+  transition: left 0.2s ease;
+}
+
+/* Desktop split-view (Phase 0, see context/features/desktop-redesign-phase0-foundations-spec.md):
+   top: 4.5rem (not inset: 0's top: 0) so the map's own box starts below the fixed header instead of
+   merely being painted-over by it — z-index alone (header is 200 vs this host's 101) already
+   prevented any visible bleed-through, but this removes the reliance on that and matches
+   .reopen-btns' existing below-the-header clearance below. Scoped to desktop only — applying this
+   unconditionally regressed mobile (reported via live testing): the map's box started 72px down at
+   every width, leaving an empty gap between the header and the map with the reopen-button/markers
+   stranded in it, something mobile never had a problem with before this change. */
+@media (min-width: 1280px) {
+  .map-wrapper {
+    top: 4.5rem;
+  }
+}
+
+/* Desktop split-view (Phase 0, see context/features/desktop-redesign-phase0-foundations-spec.md):
+   shifts the map's left edge to match the docked destination-detail panel's width
+   (min(600px, calc(100vw - 20px)) in drawer-host.html, which is a flat 600px at any desktop
+   viewport), so the map visibly reflows to make room instead of sitting hidden underneath it. */
+.map-wrapper--docked {
+  left: 600px;
 }
 
 .reopen-btns {
@@ -21,6 +44,11 @@
   flex-direction: column;
   align-items: flex-start;
   gap: 4px;
+  transition: left 0.2s ease;
+}
+
+.reopen-btns--docked {
+  left: calc(600px + 1rem);
 }
 
 .reopen-btn {

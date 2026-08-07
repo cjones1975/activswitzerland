@@ -4,6 +4,17 @@
   padding: calc(3.5rem + 1.5rem) 1.5rem 3rem;
 }
 
+/* Desktop (Phase 3 of the desktop responsive redesign, see
+   context/features/desktop-responsive-redesign-spec.md): matches the homepage destination-card
+   rails' second container tier (destination-horizontal-list.css) so the two pages read consistently
+   at the same viewport width. The 900px default above already matches that rail's first tier, so no
+   change is needed below this breakpoint. */
+@media (min-width: 1536px) {
+  .search-page {
+    max-width: 1300px;
+  }
+}
+
 .search-page-input-row {
   display: flex;
   align-items: center;

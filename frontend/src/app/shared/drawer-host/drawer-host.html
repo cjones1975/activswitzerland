@@ -84,6 +84,7 @@
     [closable]="false"
     [dismissible]="false"
     [closeOnEscape]="false"
+    [modal]="allAttractionsModal()"
     (visibleChange)="onVisibleChange('all-attractions', $event)"
     position="left"
     appendTo="body"
@@ -112,6 +113,7 @@
     [closable]="false"
     [dismissible]="false"
     [closeOnEscape]="false"
+    [modal]="attractionDetailModal()"
     (visibleChange)="onVisibleChange('attraction-detail', $event)"
     position="left"
     appendTo="body"
@@ -148,12 +150,13 @@
     [closable]="false"
     [dismissible]="false"
     [closeOnEscape]="false"
+    [modal]="!breakpoint.isDesktopSplitView()"
     (visibleChange)="onVisibleChange('weather', $event)"
     position="left"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('weather')"
     [style]="{ width: 'min(600px, 100vw)' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer weather-drawer">
     <ng-template #header>
         <div class="weather-drawer-header">
             <div class="weather-drawer-top-row">
@@ -175,11 +178,12 @@
     [closable]="false"
     [dismissible]="false"
     [closeOnEscape]="false"
+    [modal]="!breakpoint.isDesktopSplitView()"
     (visibleChange)="onVisibleChange('connections', $event)"
     position="left"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('connections')"
-    [style]="{ width: 'min(480px, calc(100vw - 20px))' }"
+    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
     styleClass="dest-drawer connections-drawer">
     <ng-template #header>
         <div class="dest-header">
@@ -200,6 +204,7 @@
 <p-drawer
     [visible]="svc.isOpen('destination-detail')"
     [closable]="false"
+    [modal]="!breakpoint.isDesktopSplitView()"
     (visibleChange)="onVisibleChange('destination-detail', $event)"
     position="left"
     appendTo="body"
@@ -226,6 +231,7 @@
     [closable]="false"
     [dismissible]="false"
     [closeOnEscape]="false"
+    [modal]="hikesModal()"
     (visibleChange)="onVisibleChange('hikes', $event)"
     position="left"
     appendTo="body"
@@ -254,6 +260,7 @@
     [closable]="false"
     [dismissible]="false"
     [closeOnEscape]="false"
+    [modal]="hikeDetailModal()"
     (visibleChange)="onVisibleChange('hike-detail', $event)"
     position="left"
     appendTo="body"
@@ -282,6 +289,7 @@
     [closable]="false"
     [dismissible]="false"
     [closeOnEscape]="false"
+    [modal]="bikesModal()"
     (visibleChange)="onVisibleChange('bikes', $event)"
     position="left"
     appendTo="body"
@@ -310,6 +318,7 @@
     [closable]="false"
     [dismissible]="false"
     [closeOnEscape]="false"
+    [modal]="bikeDetailModal()"
     (visibleChange)="onVisibleChange('bike-detail', $event)"
     position="left"
     appendTo="body"
@@ -336,12 +345,13 @@
 <p-drawer
     [visible]="svc.isOpen('hotels')"
     [closable]="false"
+    [modal]="!breakpoint.isDesktopSplitView()"
     (visibleChange)="onVisibleChange('hotels', $event)"
     position="left"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('hotels')"
     [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer">
+    styleClass="dest-drawer hotels-drawer">
     <ng-template #header>
         <div class="dest-header">
             <button class="dest-back" type="button" (click)="onHotelsBack()">

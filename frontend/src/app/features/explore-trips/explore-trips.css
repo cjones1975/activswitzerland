@@ -4,6 +4,25 @@
   padding: 80px 1rem 72px;
 }
 
+/* Desktop (Phase 3 of the desktop responsive redesign, see
+   context/features/desktop-responsive-redesign-spec.md): same container tiers as the homepage
+   destination-card rails and /search (destination-horizontal-list.css, search-page.css), so all
+   three read consistently at the same viewport width. Cards themselves (trip-card.css) are
+   unchanged — width already comes from the grid column, not a fixed value, so centering/capping the
+   grid's container is enough on its own. */
+@media (min-width: 1024px) {
+  .et-page {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+
+@media (min-width: 1536px) {
+  .et-page {
+    max-width: 1300px;
+  }
+}
+
 .et-header {
   display: flex;
   align-items: center;
@@ -48,12 +67,6 @@
 @media (min-width: 768px) {
   .et-grid {
     grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-@media (min-width: 1100px) {
-  .et-grid {
-    grid-template-columns: repeat(3, 1fr);
   }
 }
 

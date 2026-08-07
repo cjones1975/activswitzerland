@@ -14,6 +14,75 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-07 — Desktop Responsive Redesign: Phases 0, 1 (full), 3 (partial) Implemented
+
+- Branch: `feature/desktop-split-view-foundations`; master plan
+  `context/features/desktop-responsive-redesign-spec.md`, phase specs
+  `desktop-redesign-phase0-foundations-spec.md`, `desktop-redesign-phase1-drawer-rollout-spec.md`,
+  `desktop-redesign-phase3-homepage-cards-spec.md` (all under `context/features/`)
+- Preceded by a full-app desktop-responsiveness audit (spawned Explore agent) and the master plan
+  itself, drafted before any code changes. Two confirmed decisions via `AskUserQuestion` before
+  starting implementation: map/content drawers become a persistent non-modal split-view sidebar at
+  desktop (not just a wider overlay drawer); layout code adopts Tailwind v4 responsive utilities
+  where practical (existing PrimeNG-portal CSS overrides stayed plain CSS where Tailwind isn't a
+  good fit, e.g. `::ng-deep` targeting)
+- **Phase 0** — new `Breakpoint` service (`shared/services/breakpoint.ts`, `SPLIT_VIEW_MIN_WIDTH =
+  1280`, matches Tailwind's `xl`, SSR-safe via `isPlatformBrowser`). Prototyped the split-view
+  mechanism on `destination-detail`: read PrimeNG's own source (`primeng-drawer.mjs`) to confirm
+  `[modal]="false"` skips creating the scrim entirely (no mask ever appended to `<body>`), so toggling
+  it off at desktop docks the panel non-modally below the header instead of overlaying the whole
+  screen — no map-layout rebuild needed. First pass only removed the scrim (map stayed full-bleed,
+  hidden behind the panel); user tested live and expected the map to visibly reflow too, so
+  `destinations-layout`'s map container also shifts its left edge 600px when docked (new
+  `sidebarDocked` computed), backed by a new `ResizeObserver` in `shared/map/map.ts` (MapLibre doesn't
+  watch its own container, and this resize isn't driven by an `@Input`)
+- **Phase 1** — rolled the identical mechanism out to every other drawer `destinations-layout` hosts
+  (All-Attractions, Attraction Detail, Weather, Hikes, Hike Detail, Bikes, Bike Detail, Hotels), then
+  to `trip-planner-layout` (map and wizard used to be mutually exclusive in the template — `@if
+  (!wizardVisible) map @else wizard, full-viewport-width`; now both mount together at desktop, wizard
+  docked at a fixed 600px via new `wizardDocked`/`showMap` computeds) and its Connections drawer
+  (widened 480px→600px to match, since it's always opened while the wizard stays visible and needs to
+  fully cover the same docked slot)
+- Four real bugs found via live user testing on this branch, all fixed:
+  - Map/header seam on both `destinations-layout` and `trip-planner-layout` — `.map-wrapper`'s
+    `inset: 0` replaced with an explicit `top: 4.5rem`/`3.5rem` respectively instead of relying on
+    z-index alone to hide any overlap behind the header
+  - `footer-nav.css` only ever hid the footer's *buttons* at ≥600px, never the bar itself, leaving an
+    empty navy strip at the bottom of every desktop page — fixed to hide the whole `.footer-nav`, plus
+    cleaned up three now-dead footer-clearance offsets that were reserving space for it
+    (`home.css`, `trip-planner-layout.css`, `map.css`'s zoom-control offset)
+  - Leftover-open-drawer-on-navigate: both layout components' `ngOnDestroy()` only ever closed one
+    drawer key each (`destination-detail` / none at all), so any other drawer left open when
+    navigating away (e.g. the header brand link) kept rendering on top of the next page — fixed by
+    closing every key each page can open
+  - Stuck-modal-mask race: the six `[modal]` bindings gated on `isXTripPlanner()` (a computed reading
+    a drawer's own payload) flipped to a stale `false` in the same change-detection cycle
+    `Drawer.close()` synchronously deletes that payload, so PrimeNG's `hide()` sometimes read the
+    already-updated value and skipped `disableModality()`, leaving an invisible mask permanently
+    blocking clicks on whatever rendered underneath — fixed with a `stickyModal()` helper
+    (`drawer-host.ts`) that only updates a drawer's modal flag while it's actually open, never during
+    its own close transition
+- **Phase 3 (partial)** — pulled forward ahead of Phase 2 at the user's choice, once Phase 0/1 were
+  confirmed working. Established a shared container-tier convention (900px at ≥1024px, 1300px at
+  ≥1536px) reused across four pages: homepage destination-card rails (`destination-horizontal-list`,
+  all 3 rails — horizontal-scroll strip capped at 200px replaced with an `auto-fit`/`minmax` grid,
+  settling at 2 columns, ~640px cards at the top tier, confirmed by the user as the intended "~4x
+  mobile size" result); `/search` (container gained the 1300px tier, result rows grow
+  110px→140px→170px with matching text-size bumps, `.card-photo` grows for free as a % of the row);
+  Explore Trips (gained the container itself — previously full-width/uncapped — and had its 1100px
+  3-column jump removed outright, staying at 2 columns/"pairs" per the user's request; `trip-card`
+  untouched since its width already came from the grid column); profile page (new `.profile-content`
+  wrapper in `profile.html` around everything below the hero banner — hero itself deliberately left
+  full-bleed, not asked to be contained)
+- Verified via `tsc --noEmit` after every change (always clean) plus confirming each change was
+  actually present in the live dev server's served bundle (`curl` the running `ng serve` + `grep`
+  against `main.js`/`styles.css`) before asking the user to browser-test, rather than assuming a save
+  had taken effect; user live-tested and confirmed (or reported real bugs from) each round in turn
+- Not yet committed. Remaining master-plan scope: Phase 2 (trip-planner wizard steps 1–5 internal
+  spacing/typography tuning), rest of Phase 3 (`destination-vertical-list`, profile's saved-trips grid
+  column count), Phase 4 (shared component library, dedupe `.reopen-btn`/`.destination-card`), Phase 5
+  (global desktop nav bar for `header-nav`)
+
 ### 2026-08-05 — Explore Trips (Phases A–D) Implemented
 
 - Branch: `feature/explore-trips`; spec: `context/features/explore-trips-spec.md`. Built all four
