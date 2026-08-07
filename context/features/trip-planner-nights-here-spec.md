@@ -74,9 +74,11 @@ same arithmetic once there's no `0`-night stop to borrow a day from. `stopDayOpt
 visibility filter, Step 4's timeline — consume its `{start, end}` output as-is and need no changes
 of their own; they inherit the fix automatically.
 
-Trip-completion math is unaffected: `allocatedDays`/`remainingDays` in `step2-itinerary.ts` already
-sum `stop.days` and compare against `totalTripDays()` — that invariant (sum of nights across all
-stops === total trip days) holds under both the old and new formula, so no change there either.
+Correction (found post-implementation): trip-completion math was *not* unaffected. Sum of nights
+across all stops === total trip days − 1, not total trip days — `remainingDays` in
+`step2-itinerary.ts` was comparing `allocatedDays()` (nights) against `totalTripDays()` (calendar
+days), always leaving exactly 1 falsely "unallocated" night on any fully-allocated itinerary. Fixed
+by introducing `totalTripNights` (`totalTripDays() - 1`) and comparing against that instead.
 
 ## 2. i18n relabel
 

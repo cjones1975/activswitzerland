@@ -41,9 +41,14 @@ export class Step2Itinerary {
   readonly overallRange = computed(() => this.trip().range);
 
   readonly totalTripDays = computed(() => tripDayCount(this.overallRange()));
+  /** Stop `days` are nights, not calendar days — an N-day trip has N-1 nights to allocate. */
+  readonly totalTripNights = computed(() => {
+    const total = this.totalTripDays();
+    return total == null ? null : Math.max(total - 1, 0);
+  });
   readonly allocatedDays = computed(() => this.trip().stops.reduce((sum, s) => sum + (s.days ?? 0), 0));
   readonly remainingDays = computed(() => {
-    const total = this.totalTripDays();
+    const total = this.totalTripNights();
     return total == null ? null : total - this.allocatedDays();
   });
   readonly allocationMessage = computed(() => {

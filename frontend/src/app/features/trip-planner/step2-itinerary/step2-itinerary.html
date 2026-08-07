@@ -43,7 +43,7 @@
     @if (departure(); as stop) {
       <div class="s2-days-field">
         <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
-        <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" [disabled]="isTransit(stop)" />
+        <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripNights()" [disabled]="isTransit(stop)" />
         <span class="s2-transit-field">
           <input type="checkbox" id="transit-{{stop.id}}" [ngModel]="isTransit(stop)" (ngModelChange)="onTransitToggle(stop, $event)" />
           <label for="transit-{{stop.id}}">{{ 'trip.planner.step2.transit' | translate }}</label>
@@ -93,7 +93,7 @@
         </button>
         <div class="s2-days-field">
           <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
-          <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" [disabled]="isTransit(stop)" />
+          <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripNights()" [disabled]="isTransit(stop)" />
           <span class="s2-transit-field">
             <input type="checkbox" id="transit-{{stop.id}}" [ngModel]="isTransit(stop)" (ngModelChange)="onTransitToggle(stop, $event)" />
             <label for="transit-{{stop.id}}">{{ 'trip.planner.step2.transit' | translate }}</label>
@@ -140,7 +140,7 @@
     @if (destination(); as stop) {
       <div class="s2-days-field">
         <label>{{ 'trip.planner.step2.daysHere' | translate }}</label>
-        <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripDays()" />
+        <input type="number" [ngModel]="daysFor(stop)" (ngModelChange)="onDaysChange(stop, $event)" min="0" [attr.max]="totalTripNights()" />
       </div>
     }
   </div>

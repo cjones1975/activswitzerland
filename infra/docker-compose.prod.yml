@@ -5,6 +5,11 @@ services:
     restart: unless-stopped
     env_file:
       - .env.prod
+    # Loopback-only — never reachable from the LAN/internet directly. Lets
+    # you reach Mongo from a dev machine via an SSH tunnel (e.g. for Compass)
+    # without exposing it more broadly. Safe to remove if unused for a while.
+    ports:
+      - "127.0.0.1:27017:27017"
     volumes:
       - ${MONGO_DATA_PATH:-./data/mongodb}:/data/db
     healthcheck:

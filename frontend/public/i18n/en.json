@@ -276,7 +276,8 @@
       "stageRangeNoTotal": "Stages {{start}}–{{end}}",
       "seeAllStages": "See all stages",
       "singleRoute": "Single route"
-    }
+    },
+    "attribution": "© SwitzerlandMobility"
   },
   "bikes": {
     "loadError": "Could not load bike routes.",
@@ -310,7 +311,8 @@
       "stageRangeNoTotal": "Stages {{start}}–{{end}}",
       "seeAllStages": "See all stages",
       "singleRoute": "Single route"
-    }
+    },
+    "attribution": "© SwitzerlandMobility"
   },
   "hotels": {
     "comingSoon": "Coming soon",

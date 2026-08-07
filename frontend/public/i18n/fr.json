@@ -276,7 +276,8 @@
       "stageRangeNoTotal": "Étapes {{start}}–{{end}}",
       "seeAllStages": "Voir toutes les étapes",
       "singleRoute": "Itinéraire unique"
-    }
+    },
+    "attribution": "© SuisseMobile"
   },
   "bikes": {
     "loadError": "Impossible de charger les balades à vélo.",
@@ -310,7 +311,8 @@
       "stageRangeNoTotal": "Étapes {{start}}–{{end}}",
       "seeAllStages": "Voir toutes les étapes",
       "singleRoute": "Itinéraire unique"
-    }
+    },
+    "attribution": "© SuisseMobile"
   },
   "hotels": {
     "comingSoon": "Bientôt disponible",

@@ -276,7 +276,8 @@
       "stageRangeNoTotal": "Etappen {{start}}–{{end}}",
       "seeAllStages": "Alle Etappen anzeigen",
       "singleRoute": "Einzelroute"
-    }
+    },
+    "attribution": "© SchweizMobil"
   },
   "bikes": {
     "loadError": "Velotouren konnten nicht geladen werden.",
@@ -310,7 +311,8 @@
       "stageRangeNoTotal": "Etappen {{start}}–{{end}}",
       "seeAllStages": "Alle Etappen anzeigen",
       "singleRoute": "Einzelroute"
-    }
+    },
+    "attribution": "© SchweizMobil"
   },
   "hotels": {
     "comingSoon": "Demnächst verfügbar",

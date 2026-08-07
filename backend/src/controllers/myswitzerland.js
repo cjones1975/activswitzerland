@@ -29,13 +29,16 @@ const stripNonCompliantImages = (record) => {
   }
 };
 
+// Filtering disabled: accepted the risk of showing images without a named
+// copyrightHolder, used in the same context as myswitzerland.ch itself.
+// Uncomment the body below to re-enable stripping non-compliant images.
 const stripNonCompliantImagesFromResponse = (response) => {
-  const data = response.data?.data;
-  if (Array.isArray(data)) {
-    data.forEach(stripNonCompliantImages);
-  } else if (data) {
-    stripNonCompliantImages(data);
-  }
+  // const data = response.data?.data;
+  // if (Array.isArray(data)) {
+  //   data.forEach(stripNonCompliantImages);
+  // } else if (data) {
+  //   stripNonCompliantImages(data);
+  // }
 };
 
 // Meteorological (calendar-month) seasons, Northern Hemisphere - matches

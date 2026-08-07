@@ -14,6 +14,45 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-07 — SchweizMobil Attribution, MySwitzerland Copyright Risk Decision, Image Loading Perf
+
+- No feature branch/spec — three independent, user-directed changes made directly on `main` in one session
+- **SchweizMobil/ASTRA attribution**: verified live against geo.admin.ch's `layersConfig` endpoint
+  that `ch.astra.wanderland`/`veloland`/`mountainbikeland` all attribute to `"ASTRA + Kanton"` (not
+  "SchweizMobil" as first assumed — that's the trail-network brand, not the geodata's own citation).
+  User chose to credit the brand name anyway, localized per UI language. Added
+  `hikes.attribution`/`bikes.attribution` i18n keys (en: "© SwitzerlandMobility", de: "© SchweizMobil",
+  fr: "© SuisseMobile", it: "© SvizzeraMobile") and a full-width, right-aligned `.trail-attribution`
+  strip (darker `--gray-200` background) on every card in `hikes-list.html`/`bikes-list.html`. Noted
+  for later: this is unconditional today since every route currently comes from geo.admin.ch — will
+  need gating on a route `source` field once DB-backed hikes are added
+- **MySwitzerland image copyright risk accepted**: user re-read the Open Data API ToS (uncredited
+  images assumed copyrighted; usage confined to "the respective data set") and decided to accept the
+  risk of showing images without a `copyrightHolder`, matching myswitzerland.ch's own usage context.
+  `stripNonCompliantImagesFromResponse` in `backend/src/controllers/myswitzerland.js` is now a no-op
+  (body commented out, single toggle point, all 7 call sites untouched) rather than deleted, so the
+  `feature/image-copyright-compliance` filter can be restored in one uncomment if MySwitzerland
+  objects. Frontend needed no change — the `© {{img.publisher}}` caption already no-ops when absent
+- **Image loading performance**: confirmed via a live API call that MySwitzerland images ship at full
+  original resolution (3000px+ wide) with no documented resize/variant parameter (checked against the
+  API's own published `ImageObject` schema). Converted every CSS `background-image` usage for
+  MySwitzerland-sourced images to real `<img loading="lazy" decoding="async">` elements across
+  `destination-detail`/`attraction-detail` (galleria + thumbnails, main image gets `eager`+
+  `fetchpriority="high"`), `destination-vertical-list`, `destination-horizontal-list`,
+  `destination-search-results`, `attraction-search-results`, `attraction-vertical-list`,
+  `all-attractions` — `object-fit: cover` replacing `background-size: cover`. Three of these
+  (`destination-vertical-list`'s card badges, `destination-horizontal-list`'s card badges, both
+  galleria captions) overlay text on top of the image: restructured with the image
+  `position: absolute` behind the text, text given explicit `z-index: 1`; `.galleria-img` additionally
+  needed `overflow: hidden` added since border-radius no longer auto-clips a separate `<img>` child
+  the way it did a CSS background. Actually reducing bytes transferred (server-side resizing) was
+  explicitly deferred as a separate decision — would mean proxying/caching resized copies ourselves,
+  a more active form of reproduction than linking straight to MySwitzerland's own CDN
+- Verified via `tsc --noEmit` and `ng build --configuration production` (clean, same pre-existing
+  bundle-size/CommonJS warnings) after each change; user browser-verifying the image-loading visual
+  result themselves
+- Not yet committed
+
 ### 2026-08-07 — Desktop Responsive Redesign: Phases 0, 1 (full), 3 (partial) Implemented
 
 - Branch: `feature/desktop-split-view-foundations`; master plan

@@ -22,14 +22,15 @@
           [showThumbnails]="fullAttraction()!.image!.length > 1"
           [numVisible]="4">
           <ng-template #item let-img>
-            <div class="galleria-img" [style.background-image]="'url(' + img.url + ')'">
+            <div class="galleria-img">
+              <img class="galleria-bg" [src]="img.url" [alt]="img.name || ''" loading="eager" fetchpriority="high" decoding="async">
               @if (img.publisher) {
                 <div class="galleria-caption">© {{ img.publisher }}</div>
               }
             </div>
           </ng-template>
           <ng-template #thumbnail let-img>
-            <div class="galleria-thumb" [style.background-image]="'url(' + img.url + ')'"></div>
+            <img class="galleria-thumb" [src]="img.url" [alt]="img.name || ''" loading="lazy" decoding="async">
           </ng-template>
         </p-galleria>
       </div>

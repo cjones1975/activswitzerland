@@ -124,6 +124,14 @@
   background: var(--gray-200, #e2e8f0);
 }
 
+.trail-attribution {
+  font-size: 0.65rem;
+  color: var(--gray-500, #64748b);
+  text-align: right;
+  padding: 0.3rem 0.75rem;
+  background: var(--gray-200, #e5e7eb);
+}
+
 .trail-seeall-link {
   flex-shrink: 0;
   margin-left: auto;

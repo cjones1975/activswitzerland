@@ -35,10 +35,12 @@
 }
 
 .card-photo {
+  display: block;
   width: 36%;
+  height: 100%;
   flex-shrink: 0;
-  background-size: cover;
-  background-position: center;
+  object-fit: cover;
+  object-position: center;
 }
 
 .card-text {

@@ -276,7 +276,8 @@
       "stageRangeNoTotal": "Tappe {{start}}–{{end}}",
       "seeAllStages": "Vedi tutte le tappe",
       "singleRoute": "Percorso singolo"
-    }
+    },
+    "attribution": "© SvizzeraMobile"
   },
   "bikes": {
     "loadError": "Impossibile caricare i percorsi in bici.",
@@ -310,7 +311,8 @@
       "stageRangeNoTotal": "Tappe {{start}}–{{end}}",
       "seeAllStages": "Vedi tutte le tappe",
       "singleRoute": "Percorso singolo"
-    }
+    },
+    "attribution": "© SvizzeraMobile"
   },
   "hotels": {
     "comingSoon": "Prossimamente",

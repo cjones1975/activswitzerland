@@ -17,7 +17,7 @@ export interface TripStop {
   lat: number;
   lon: number;
   externalId?: string;              // present if picked via rail station search
-  days: number;                     // whole days spent here; 0 = same-day pass-through (or a non-day departure point like "home")
+  days: number;                     // nights spent here; 0 = same-day pass-through (or a non-day departure point like "home")
 }
 
 export interface TripSectionStop {

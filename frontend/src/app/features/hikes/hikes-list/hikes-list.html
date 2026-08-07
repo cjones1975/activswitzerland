@@ -77,6 +77,7 @@
               <span class="trail-single-badge">{{ 'hikes.multiDay.singleRoute' | translate }}</span>
             }
           </div>
+          <div class="trail-attribution">{{ 'hikes.attribution' | translate }}</div>
           @if (mode() === 'select') {
             <div class="trail-select-row" (click)="$event.stopPropagation()">
               @if (dayOptions().length > 1) {
