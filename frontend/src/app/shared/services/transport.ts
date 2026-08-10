@@ -109,11 +109,8 @@ export class TransportService {
   getConnections(stops: TripStop[], date: string, time: string): Observable<TripConnection[]> {
     let params = new HttpParams()
       .set('limit', 6)
-      .set('from', stops[0].name)
-      .set('to', stops[stops.length - 1].name);
-
-    const via = stops.slice(1, -1).map(s => s.name);
-    via.forEach(v => { params = params.append('via[]', v); });
+      .set('from', stops[0].externalId ?? stops[0].name)
+      .set('to', stops[stops.length - 1].externalId ?? stops[stops.length - 1].name);
 
     if (date) params = params.set('date', date);
     if (time) params = params.set('time', time);
@@ -137,11 +134,7 @@ export class TransportService {
     let params = new HttpParams()
       .set('from', stops[0].externalId ?? stops[0].name)
       .set('to', stops[stops.length - 1].externalId ?? stops[stops.length - 1].name)
-      .set('fields[]', 'connections/sections/journey/passList/station')
       .set('isArrivalTime', 'false');
-
-    const via = stops.slice(1, -1).map(s => s.externalId ?? s.name);
-    via.forEach(v => { params = params.append('via', v); });
 
     if (date) params = params.set('date', date);
     if (time) params = params.set('time', time);
