@@ -14,6 +14,83 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-10 — OJP TripRequest: Connections Migration Implemented, UAT Passed
+
+- Branch `feature/ojp-trip-request` created (target of the Specced entry directly below) and the
+  spec implemented in full: `backend/src/utils/ojp.js` gained `buildTripRequest()`/
+  `parseTripResponse()` plus ISO-8601 duration helpers and a DST-correct Zurich-local→UTC time
+  converter (OJP needs a real UTC instant; the UI picks Swiss wall-clock time).
+  `backend/src/controllers/transport.js`'s `getConnections`/`getConnectionJourneys` rewritten to
+  call OJP via a new `resolveStopRef()` (uses `TripStop.externalId` directly when it's already an
+  OJP ref, falls back to a location lookup for a plain name). Frontend: one line in
+  `transport.ts`'s `getConnections()` — `from`/`to` now send `externalId ?? name`, matching what
+  `getConnectionJourneys()` already did
+- Verified before considering it done, not just written: `node --check`/`tsc --noEmit` clean, then
+  the *actual* controller functions (not a standalone reimplementation) called live against the
+  real API with fake req/res objects — covering ref-based lookup, name-fallback lookup, the
+  sections-only `getConnectionJourneys` shape, and `isArrivalTime=true` (previously flagged as
+  untested — confirmed working: placing `DepArrTime` under `Destination` genuinely changes the
+  result set). Found and fixed a real bug this way: `fast-xml-parser` auto-types purely-numeric
+  platform text (`"15"` → JS number `15`) while codes like `"3CD"` stay strings — inconsistent
+  with the frontend's `platform?: string`. Fixed with explicit `String()` coercion in
+  `platformOf()`, re-verified every platform value came back quoted after the fix
+- **User UAT**: first attempt (Rolle → Lugano, 25.08.26 09:30) came back with no routes found —
+  turned out to be the running Docker backend container still serving pre-migration code, not a
+  real bug (self-diagnosed by the user, matches the exact same class of issue hit during the
+  location-search phase). After rebuilding the container, UAT passed
+- **Post-UAT cleanup pass, before commit**: found and removed dead config —
+  `TRP_ENDPOINT`/`transport.opendata.ch` was no longer read by any code anywhere but still sat in
+  `backend/config/.env`, `infra/.env`, `infra/.env.prod`, and the committed
+  `infra/.env.prod.example`; removed from all four and re-labeled the now-broader
+  `# opentransportdata.swiss (OJP location search)` comment to `(OJP — locations, connections)`.
+  Also found the frontend's `TransportService.getConnections()`/`getConnectionJourneys()` were
+  still building `via[]`/`via`/`fields[]` query params the new backend never reads at all —
+  removed; `tsc --noEmit` re-confirmed clean after. `infra/.env.prod` edited was the local copy —
+  flagged to the user that the NAS-hosted real file (if a separate deploy artifact) still needs
+  the same edit
+- Not yet committed at time of writing this entry
+
+### 2026-08-10 — OJP TripRequest: Connections Migration Specced
+
+- User raised reliability concerns about `transport.opendata.ch` (no published rate limit/SLA,
+  just "constrained by timetable.search.ch's rate limit") for the rail trip planner's connection
+  search, and asked whether opentransportdata.swiss's GTFS-RT could replace it instead, worried
+  about a 5 calls/minute cap
+- Investigated both APIs directly (fetched official docs) before answering: **GTFS-RT is the
+  wrong tool** — it's a real-time delay/alert overlay on a static GTFS schedule, not a
+  point-to-point journey planner, so it can't do what `/connections` does. The 5/min limit is
+  real but specific to GTFS-RT; confirmed via opentransportdata.swiss's own
+  [limits-and-costs page](https://opentransportdata.swiss/en/limits-and-costs/) that **OJP 2.0**
+  — the same API already used for location search (`ojp-location-search-spec.md`, implemented)
+  — gets 50 req/min / 20k/day free, and its `TripRequest` operation does full point-to-point
+  search with real-time data merged in
+- **Live-tested before committing to a design**, using the existing `TOKEN`/
+  `OPENTRANSPORTDATA_ENDPOINT` from `backend/config/.env` (no new key needed): a real
+  `OJPTripRequest` Zürich HB → Bern returned 3 full itineraries in ~150ms with genuine live-delay
+  data (`TimetabledTime` vs `EstimatedTime` differing per stop), live platform, and per-fare-class
+  occupancy — confirmed richer than transport.opendata.ch's data. Then checked whether the XML
+  maps onto the existing `TripConnection`/`TripSection` model (`models/trip.ts`) field-by-field
+  against the live response — confirmed it maps cleanly with only one small frontend change
+  needed (`getConnections()` sending `externalId` instead of `name` for `from`/`to`)
+- **Also live-tested OJP's `Via` element** (three request shapes: cookbook-documented,
+  `PlaceRef`-wrapped, minimal — against both a terminus and a through-station) since
+  `transport.opendata.ch`'s `/connections` supports multiple via stops today — all three
+  attempts returned an identical `HTTP 500 "ODMCH OJP Service Unavailable"`. Turned out moot:
+  confirmed via code search that `ConnectionLegPicker` (the only caller of `getConnections`/
+  `getConnectionJourneys`) always passes exactly `[fromStop, toStop]` — the current trip planner
+  has no via-stop UI at all, so the new design drops via support entirely rather than working
+  around the 500
+- **Found a latent existing bug in passing**: `getConnectionJourneys` already sends
+  `stops[0].externalId ?? stops[0].name` to transport.opendata.ch's HAFAS-based `/connections`,
+  but since the location-search migration `externalId` is an OJP `sloid` ref, not a HAFAS id —
+  likely broken today. Migrating `getConnections`/`getConnectionJourneys` onto OJP fixes this by
+  construction; flagged to verify once implemented, not fixed retroactively
+- Wrote `context/features/ojp-trip-request-spec.md` (Phase 2 of `ojp-location-search-spec.md`,
+  which explicitly deferred rail connection-building). Target branch `feature/ojp-trip-request`,
+  not yet created. **Status: proposed, not started** — spec only, no implementation yet
+- No temporary test scripts or code changes committed — all live testing done via throwaway
+  `.mjs` scripts run from `backend/` (for `node_modules` resolution) and deleted after
+
 ### 2026-08-10 — SEO Phase 3: Structured Data, `html lang` Fix, Sitemap Metadata Implemented
 
 - Branch: `feature/seo-structured-data-lang`; spec: `context/features/seo-structured-data-lang-spec.md`.
