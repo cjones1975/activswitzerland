@@ -57,8 +57,7 @@
       "typeRail": "Viaggio in treno",
       "addStop": "Aggiungi tappa",
       "viewTrip": "Visualizza viaggio",
-      "date": "Data",
-      "time": "Orario",
+      "dateTime": "Data e ora",
       "connections": "Collegamenti ferroviari",
       "transfer": "cambio",
       "transfers": "cambi",
@@ -104,8 +103,7 @@
         "datesSubtitle": "Scegli date esatte",
         "daysTitle": "Numero di giorni",
         "daysSubtitle": "Giorni di viaggio flessibili",
-        "startDate": "Data di inizio",
-        "endDate": "Data di fine",
+        "dateRange": "Date",
         "numDays": "Numero di giorni",
         "daysTrip": "Viaggio di {{count}} giorni",
         "continue": "Continua verso l'itinerario"
@@ -114,7 +112,7 @@
         "tripRange": "Viaggio: {{range}}",
         "departure": "Inizio del viaggio",
         "destination": "Fine del viaggio",
-        "stop": "Luogo della tappa",
+        "stop": "Seleziona un luogo",
         "daysHere": "Notti qui",
         "transit": "Transito",
         "dayLabel": "Giorno {{start}}",
@@ -170,7 +168,6 @@
         "suggestedRoad": "Il mio viaggio in auto in Svizzera",
         "suggestedRail": "Il mio viaggio in treno in Svizzera",
         "update": "Aggiorna viaggio",
-        "browseSavedTrips": "Sfoglia viaggi salvati",
         "backToSummary": "Torna al riepilogo",
         "saveError": "Impossibile salvare il viaggio. Riprova.",
         "makePublic": "Rendi il viaggio pubblico",
@@ -255,6 +252,7 @@
     "backToList": "Torna alle escursioni",
     "reopen": "Mostra escursioni",
     "downloadGpx": "Scarica GPX",
+    "downloadGpxSignInHint": "Accedi per scaricare il file GPX",
     "distance": "Distanza",
     "radius": "Raggio",
     "category": {
@@ -290,6 +288,7 @@
     "backToList": "Torna ai percorsi in bici",
     "reopen": "Mostra percorsi in bici",
     "downloadGpx": "Scarica GPX",
+    "downloadGpxSignInHint": "Accedi per scaricare il file GPX",
     "distance": "Distanza",
     "radius": "Raggio",
     "category": {
@@ -385,7 +384,6 @@
     }
   },
   "hero": {
-    "badge": "Il meglio della Svizzera",
     "title": "Benvenuto in Svizzera",
     "subtitle": "Scopri gite giornaliere, luoghi iconici e gemme nascoste.",
     "cta": "Pianifica un viaggio",

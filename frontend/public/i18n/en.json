@@ -57,8 +57,7 @@
       "typeRail": "Rail Trip",
       "addStop": "Add stop",
       "viewTrip": "View trip",
-      "date": "Date",
-      "time": "Time",
+      "dateTime": "Date & Time",
       "connections": "Train Connections",
       "transfer": "transfer",
       "transfers": "transfers",
@@ -104,8 +103,7 @@
         "datesSubtitle": "Choose exact dates",
         "daysTitle": "Number of Days",
         "daysSubtitle": "Flexible travel days",
-        "startDate": "Start Date",
-        "endDate": "End Date",
+        "dateRange": "Dates",
         "numDays": "Number of days",
         "daysTrip": "{{count}} days trip",
         "continue": "Continue to Itinerary"
@@ -114,7 +112,7 @@
         "tripRange": "Trip: {{range}}",
         "departure": "Start trip",
         "destination": "End trip",
-        "stop": "Stop location",
+        "stop": "Select a location",
         "daysHere": "Nights here",
         "transit": "Transit",
         "dayLabel": "Day {{start}}",
@@ -170,7 +168,6 @@
         "suggestedRoad": "My Swiss Road Trip",
         "suggestedRail": "My Swiss Rail Trip",
         "update": "Update Trip",
-        "browseSavedTrips": "Browse Saved Trips",
         "backToSummary": "Back to Summary",
         "saveError": "Could not save your trip. Please try again.",
         "makePublic": "Make trip public",
@@ -255,6 +252,7 @@
     "backToList": "Back to hikes",
     "reopen": "Show hikes",
     "downloadGpx": "Download GPX",
+    "downloadGpxSignInHint": "Sign in to download the GPX file",
     "distance": "Distance",
     "radius": "Radius",
     "category": {
@@ -290,6 +288,7 @@
     "backToList": "Back to bike rides",
     "reopen": "Show bike rides",
     "downloadGpx": "Download GPX",
+    "downloadGpxSignInHint": "Sign in to download the GPX file",
     "distance": "Distance",
     "radius": "Radius",
     "category": {
@@ -385,7 +384,6 @@
     }
   },
   "hero": {
-    "badge": "Switzerland's finest experiences",
     "title": "Welcome to Switzerland",
     "subtitle": "Discover day trips, iconic landmarks, and hidden gems.",
     "cta": "Plan a trip",

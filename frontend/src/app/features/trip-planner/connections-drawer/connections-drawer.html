@@ -1,4 +1,13 @@
 <div class="cd-content">
+  <span class="cd-date-badge">
+    <i class="fa-light fa-calendar"></i>
+    @if (dateMode() === 'dates' && formattedDateRange(); as range) {
+      {{ range }}
+    } @else {
+      {{ 'trip.planner.step1.daysTrip' | translate: { count: dayCount() } }}
+    }
+  </span>
+
   @if (plannerSvc.legPairs().length === 0) {
     <p class="cd-empty">{{ 'trip.planner.step2.noLegs' | translate }}</p>
   }

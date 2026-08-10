@@ -14,7 +14,96 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
-### 2026-08-07 — SchweizMobil Attribution, MySwitzerland Copyright Risk Decision, Image Loading Perf
+### 2026-08-10 — Misc UI Fixes, Hike/Bike Distance Display, GPX Auth Gate, Bundle Size Optimization
+
+- Branch: `misc-fixes3`. No spec — a long running session of independent, user-directed small changes
+  and fixes, similar in spirit to `misc-fixes`/`misc-fixes2` before it
+- **Trip planner Step 1**: two separate date `<input type="date">` fields replaced with a single
+  `p-datepicker` (`selectionMode="range"`, `styleClass="w-full"`). **Real bug found via live testing**:
+  the picker's `[ngModel]` was bound to a `computed()` re-derived from the service on every emission,
+  so a fresh `Date[]` reference fed back into the picker after the *first* click, resetting its
+  in-progress range selection before a second date could be picked — fixed with a local signal as the
+  picker's own source of truth, only re-synced from the service when the iso values actually diverge.
+  **Second bug, same feature**: the "empty" state was `[null, null]` (truthy, length 2) rather than
+  `null` — PrimeNG's `selectDate()` reads `value[0]` as the existing start date whenever `value.length`
+  is truthy, and calling `.getTime()` on that `null` threw, silently breaking the very first click.
+  Fixed by making the empty/no-selection state genuinely `null`
+- **Connection date/time picker** (`connection-leg-picker`): separate date+time inputs replaced with
+  one `p-datepicker` (`showTime`, `hourFormat="24"`). Needed `appendTo="body"` (plus a
+  `panelStyleClass="leg-datetime-panel"` with `max-height:90vh; overflow-y:auto` in `styles.css`) since
+  the connections drawer's own scroll container was clipping the calendar+time panel on mobile —
+  matches this codebase's existing `appendTo="body"` convention for portalled PrimeNG overlays
+- **Connections drawer**: added a date-range/day-count badge at the top of `connections-drawer.html`,
+  mirroring the badge already used in Step 4/5 (`dateMode`/`formattedDateRange`/`dayCount` computeds)
+- **Step 2** stop-location placeholder text (`trip.planner.step2.stop`, used both as literal
+  `[placeholder]` and as the mobile-view fallback span) changed "Stop location" → "Select a location"
+- **Homepage hero**: removed the `hero-badge` (map-marker icon + "Switzerland's finest experiences")
+  entirely; later lightened `.hero-overlay`'s gradient (0.45→0.85 opacity down to 0.25→0.65) per
+  separate user feedback that the mask read too dark over the photo
+- **Header brand**: added `as_logo.png` before the "ActivSwitzerland" text (`.brand` → inline-flex,
+  new `.brand-logo`); hamburger toggle swapped from PrimeNG `p-button`/`pi-bars` to a plain
+  `<button><i class="fa-solid fa-bars-staggered">` — removed the `!important` background/hover
+  overrides in the same pass since a plain button needed no PrimeNG-class fighting to stay transparent
+- **Favicon**: confirmed `frontend/public/favicon.ico` (not `src/assets/`) is the one `index.html`
+  actually references, since `public/**` copies to the build root while `src/assets/**` copies under
+  `/assets/`. User replaced the file directly (16×16 `.ico`)
+- **Hike/bike distance display** — iterated a few rounds based on live feedback:
+  - New `formatDistanceKmMi()` (`shared/utils/distance.ts`, 1-decimal "35.3 km / 21.9 mi", kept
+    separate from the existing whole-number `formatDistance()` used by trip cards) put on the far left
+    of the `.trail-attribution` row on `hikes-list`/`bikes-list` cards (a `.trail-distance` span that
+    used to sit next to the category badge was removed per correction — distance only shows in the
+    attribution row now)
+  - Added a `distanceLabel` input to the shared `MapComponent` (bottom-left overlay badge). First pass
+    only wired it into `hike-detail`/`bike-detail`'s small embedded thumbnail map and the user
+    correctly reported not seeing it — the map users actually browse on is a *separate*, primary
+    full-screen `<app-map>` in `destinations-layout.ts`, driven by its own `trailRoute`/`trailColor`
+    computeds (selected marker or "see all stages" overview). Added a matching `distanceLabel`
+    computed there too, resolving from whichever is active — `TrailRoute.distanceKm` already sums
+    every stage of a multi-day route, so this is correct for stage-overview mode with no extra work.
+    Mobile media query bump (`bottom: 74px` under 599px) added to clear the fixed footer nav, mirroring
+    the existing zoom-control offset
+  - Hike/bike detail cards' `.trail-detail-distance` switched from km-only to the same
+    `formatDistanceKmMi()`-backed `distanceLabel()` used by the map badge, adding mi there too
+- **GPX download auth gate**: `hike-detail.ts`/`bike-detail.ts`'s `downloadGpx()` now checks
+  `auth.isLoggedIn()` first and opens the `'auth'` drawer if not, mirroring the existing
+  `step5-save`/`trip-card` pattern; lock icon + sign-in hint shown under the button when logged out
+  (new `hikes.downloadGpxSignInHint`/`bikes.downloadGpxSignInHint` i18n keys)
+- **Step 5**: removed the "Browse Saved Trips" button/`browseSavedTrips()`/now-unused `LangService`
+  injection and i18n key
+- **Bundle size optimization** — a `budgets`-warning investigation that turned into real work across
+  three rounds:
+  1. Converted `destinations/:id` and `trip-planner`(`/:id`) from eager `component:` to
+     `loadComponent()` in `app.routes.ts`, plus `withPreloading(PreloadAllModules)` in `app.config.ts`
+     — initial bundle 2.72MB→2.48MB. Not enough on its own: `MainLayout` (wraps every route) always
+     renders `<app-drawer-host>`, which eagerly imported `HikeDetail`/`BikeDetail` (pulling in
+     `MapComponent`→maplibre-gl) regardless of which route was active
+  2. Wrapped `HikesList`/`HikeDetail`/`BikesList`/`BikeDetail` in `@defer (on idle; when
+     svc.isOpen(...))` blocks in `drawer-host.html` (new `.drawer-defer-loading` spinner placeholder).
+     `HikesList`/`BikesList` split into lazy chunks immediately; `HikeDetail`/`BikeDetail` didn't —
+     root-caused to `drawer-host.ts` importing them in the *same statement* as their `*Payload` types
+     (`import { HikeDetail, HikeDetailPayload } from ...`), which made Angular's compiler conservatively
+     keep the class eager since the type was referenced outside the defer block. Fixed by splitting
+     into separate `import`/`import type` statements — verified by rebuilding and confirming named
+     `hike-detail`/`bike-detail` lazy chunks appeared
+  3. Bundle only dropped ~20KB despite that fix — traced to two more unrelated eager consumers of
+     `MapComponent`: `destination-vertical-list.ts` (`/destinations` list, one embedded map per card)
+     and `trip-card.ts` (`/explore-trips`), both still eager `component:` routes. Converted both to
+     `loadComponent()` too — **initial bundle 2.43MB→1.58MB**, confirming maplibre-gl really was the
+     dominant contributor once every consumer was accounted for
+  - Final cleanup once the user confirmed both remaining warnings were expected, not regressions:
+    `angular.json` budget raised 1MB→1.75MB (reflects the new real baseline with headroom) and
+    `"allowedCommonJsDependencies": ["maplibre-gl"]` added (acknowledges the CJS-tree-shaking warning
+    as an accepted, unavoidable characteristic of the library rather than an oversight)
+- Also fixed in passing: unused `DecimalPipe` import removed from `hikes-list.ts`/`bikes-list.ts`
+  (NG8113 warning) after the `.trail-distance` span using the `number` pipe was deleted
+- Verified via `ng build` (dev config after most changes; full production build, checking actual chunk
+  names/sizes, for the bundle-optimization work specifically) after every round; user live-tested each
+  round in the browser and reported real bugs/corrections back in turn (the range-picker null-state
+  bug, the map-badge-on-wrong-map miss, the distance-value/mi corrections) rather than everything
+  landing right first try
+- Not yet committed at time of writing this entry; branch to be merged to `main` and deleted after
+
+
 
 - No feature branch/spec — three independent, user-directed changes made directly on `main` in one session
 - **SchweizMobil/ASTRA attribution**: verified live against geo.admin.ch's `layersConfig` endpoint

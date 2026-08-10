@@ -4,7 +4,7 @@
     <h1 class="trail-detail-name">{{ p.route.name }}</h1>
 
     <div class="trail-detail-thumb-wrap">
-      <app-map [trailRoute]="trailLines()" [trailColor]="trailColor()" [fitBounds]="fitBoundsCoords()" />
+      <app-map [trailRoute]="trailLines()" [trailColor]="trailColor()" [fitBounds]="fitBoundsCoords()" [distanceLabel]="distanceLabel()" />
     </div>
 
     <div class="trail-detail-meta">
@@ -12,7 +12,7 @@
         {{ ('hikes.category.' + p.route.category) | translate }}
       </span>
       <span class="trail-detail-distance">
-        {{ 'hikes.distance' | translate }}: {{ p.route.distanceKm | number:'1.0-1' }} km
+        {{ 'hikes.distance' | translate }}: {{ distanceLabel() }}
       </span>
     </div>
 
@@ -41,9 +41,15 @@
     </div>
 
     <button class="gpx-btn" type="button" [disabled]="downloading()" (click)="downloadGpx()">
-      <i class="fa-solid fa-download"></i>
+      <i class="fa-solid" [class.fa-download]="auth.isLoggedIn()" [class.fa-lock]="!auth.isLoggedIn()"></i>
       {{ 'hikes.downloadGpx' | translate }}
     </button>
+    @if (!auth.isLoggedIn()) {
+      <p class="gpx-signin-hint">
+        <i class="fa-light fa-circle-info"></i>
+        {{ 'hikes.downloadGpxSignInHint' | translate }}
+      </p>
+    }
 
   </div>
 }

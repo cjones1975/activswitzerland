@@ -16,6 +16,7 @@ import { HikeMarkersService } from '../../shared/services/hike-markers';
 import { BikeMarkersService } from '../../shared/services/bike-markers';
 import { TrailRoute, trailCategoryColor } from '../../models/trail-route';
 import { ActivityPickerPayload } from '../../models/geo-point';
+import { formatDistanceKmMi } from '../../shared/utils/distance';
 import { SeoService } from '../../shared/services/seo';
 import { Toast } from '../../core/services/toast';
 
@@ -149,6 +150,26 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   private collectLines(stages: TrailRoute['stages']): [number, number][][] {
     return stages.flatMap(s => s.geometryWgs84?.coordinates ?? []);
   }
+
+  // Same route resolution as trailRoute()/trailColor() above, plus the "see all stages"
+  // overview — TrailRoute.distanceKm already sums every stage of a multi-day route, so this
+  // is correct in both the single-selection and stage-overview cases without extra work.
+  distanceLabel = computed<string | null>(() => {
+    const stageRoute = this.stageOverviewRoute();
+    if (stageRoute) return formatDistanceKmMi(stageRoute.distanceKm);
+
+    const selectedHikeId = this.hikeMarkers.selectedId();
+    if (selectedHikeId) {
+      const route = this.hikeMarkers.routeMap().get(selectedHikeId);
+      if (route) return formatDistanceKmMi(route.distanceKm);
+    }
+    const selectedBikeId = this.bikeMarkers.selectedId();
+    if (selectedBikeId) {
+      const route = this.bikeMarkers.routeMap().get(selectedBikeId);
+      if (route) return formatDistanceKmMi(route.distanceKm);
+    }
+    return null;
+  });
 
   // Destination copy comes from MySwitzerland with stripHtml=false (destinations.ts
   // keeps markup for the detail page's own rendering), so a meta description needs

@@ -5,7 +5,7 @@ import {
 } from '@angular/core';
 import { provideHttpClient, withFetch, withInterceptors } from '@angular/common/http';
 import { TranslateLoader, provideTranslateService } from '@ngx-translate/core';
-import { provideRouter } from '@angular/router';
+import { PreloadAllModules, provideRouter, withPreloading } from '@angular/router';
 import { I18nLoader } from './shared/services/i18n-loader';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
@@ -46,7 +46,7 @@ export const appConfig: ApplicationConfig = {
       lang: 'en',
     }),
     provideHttpClient(withFetch(), withInterceptors([ssrBaseUrlInterceptor, tokenInterceptor])),
-    provideRouter(routes),
+    provideRouter(routes, withPreloading(PreloadAllModules)),
     provideAnimationsAsync(),
     MessageService,
     providePrimeNG({

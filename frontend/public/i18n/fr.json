@@ -57,8 +57,7 @@
       "typeRail": "Voyage en train",
       "addStop": "Ajouter un arrêt",
       "viewTrip": "Voir le voyage",
-      "date": "Date",
-      "time": "Heure",
+      "dateTime": "Date et heure",
       "connections": "Correspondances ferroviaires",
       "transfer": "correspondance",
       "transfers": "correspondances",
@@ -104,8 +103,7 @@
         "datesSubtitle": "Choisir des dates exactes",
         "daysTitle": "Nombre de jours",
         "daysSubtitle": "Jours de voyage flexibles",
-        "startDate": "Date de début",
-        "endDate": "Date de fin",
+        "dateRange": "Dates",
         "numDays": "Nombre de jours",
         "daysTrip": "Voyage de {{count}} jours",
         "continue": "Continuer vers l'itinéraire"
@@ -114,7 +112,7 @@
         "tripRange": "Voyage : {{range}}",
         "departure": "Début du voyage",
         "destination": "Fin du voyage",
-        "stop": "Lieu d'arrêt",
+        "stop": "Sélectionner un lieu",
         "daysHere": "Nuits ici",
         "transit": "Transit",
         "dayLabel": "Jour {{start}}",
@@ -170,7 +168,6 @@
         "suggestedRoad": "Mon road trip suisse",
         "suggestedRail": "Mon voyage en train suisse",
         "update": "Mettre à jour le voyage",
-        "browseSavedTrips": "Parcourir les voyages enregistrés",
         "backToSummary": "Retour à l'aperçu",
         "saveError": "Impossible d'enregistrer votre voyage. Veuillez réessayer.",
         "makePublic": "Rendre le voyage public",
@@ -255,6 +252,7 @@
     "backToList": "Retour aux randonnées",
     "reopen": "Afficher les randonnées",
     "downloadGpx": "Télécharger le GPX",
+    "downloadGpxSignInHint": "Connectez-vous pour télécharger le fichier GPX",
     "distance": "Distance",
     "radius": "Rayon",
     "category": {
@@ -290,6 +288,7 @@
     "backToList": "Retour aux balades à vélo",
     "reopen": "Afficher les balades à vélo",
     "downloadGpx": "Télécharger le GPX",
+    "downloadGpxSignInHint": "Connectez-vous pour télécharger le fichier GPX",
     "distance": "Distance",
     "radius": "Rayon",
     "category": {
@@ -385,7 +384,6 @@
     }
   },
   "hero": {
-    "badge": "Le meilleur de la Suisse",
     "title": "Bienvenue en Suisse",
     "subtitle": "Découvrez des excursions, des sites incontournables et des trésors cachés.",
     "cta": "Planifier un voyage",

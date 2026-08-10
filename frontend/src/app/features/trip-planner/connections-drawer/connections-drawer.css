@@ -2,6 +2,19 @@
   padding: 1rem;
 }
 
+.cd-date-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--navy-800);
+  background: var(--navy-100, #eef3f8);
+  padding: 0.3rem 0.65rem;
+  border-radius: 999px;
+  margin-bottom: 0.75rem;
+}
+
 .cd-empty {
   color: var(--gray-500);
   font-size: 0.85rem;

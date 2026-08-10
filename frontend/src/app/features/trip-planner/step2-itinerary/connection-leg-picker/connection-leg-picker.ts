@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { forkJoin } from 'rxjs';
 import { TranslatePipe } from '@ngx-translate/core';
 import { Button } from 'primeng/button';
+import { DatePicker } from 'primeng/datepicker';
 import { TripPlannerService } from '../../../../shared/services/trip-planner';
 import { TransportService } from '../../../../shared/services/transport';
 import { TripConnection, TripStop } from '../../../../models/trip';
@@ -12,7 +13,7 @@ import { TripConnection, TripStop } from '../../../../models/trip';
 @Component({
   selector: 'app-connection-leg-picker',
   standalone: true,
-  imports: [CommonModule, FormsModule, TranslatePipe, Button],
+  imports: [CommonModule, FormsModule, TranslatePipe, Button, DatePicker],
   templateUrl: './connection-leg-picker.html',
   styleUrl: './connection-leg-picker.css',
 })
@@ -36,6 +37,13 @@ export class ConnectionLegPicker implements OnChanges {
   readonly expanded = signal(false);
   readonly date = signal('');
   readonly time = signal('09:00');
+  readonly dateTimeValue = computed<Date | null>(() => {
+    const d = this.date();
+    if (!d) return null;
+    const [y, m, day] = d.split('-').map(Number);
+    const [h, min] = (this.time() || '00:00').split(':').map(Number);
+    return new Date(y, m - 1, day, h, min);
+  });
   readonly connections = signal<TripConnection[]>([]);
   readonly loading = signal(false);
   readonly searched = signal(false);
@@ -50,6 +58,20 @@ export class ConnectionLegPicker implements OnChanges {
     if (changes['autoExpand']) {
       this.expanded.set(this.autoExpand);
     }
+  }
+
+  onDateTimeChange(value: Date | null): void {
+    if (!value) {
+      this.date.set('');
+      return;
+    }
+    const y = value.getFullYear();
+    const m = String(value.getMonth() + 1).padStart(2, '0');
+    const day = String(value.getDate()).padStart(2, '0');
+    const h = String(value.getHours()).padStart(2, '0');
+    const min = String(value.getMinutes()).padStart(2, '0');
+    this.date.set(`${y}-${m}-${day}`);
+    this.time.set(`${h}:${min}`);
   }
 
   toggle(): void {

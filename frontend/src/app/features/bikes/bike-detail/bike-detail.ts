@@ -6,6 +6,7 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { Message } from 'primeng/message';
 import { Subject, switchMap, catchError, of } from 'rxjs';
 import { Drawer } from '../../../shared/services/drawer';
+import { Auth } from '../../../core/services/auth';
 import { TrailRoutesService } from '../../../shared/services/trail-routes';
 import { BikeMarkersService } from '../../../shared/services/bike-markers';
 import { MapComponent } from '../../../shared/map/map';
@@ -13,6 +14,7 @@ import { ElevationChart } from '../../../shared/elevation-chart/elevation-chart'
 import { TrailRoute, trailCategoryColor } from '../../../models/trail-route';
 import { GeoLocation } from '../../../models/geo-point';
 import { ElevationProfile } from '../../../models/elevation-profile';
+import { formatDistanceKmMi } from '../../../shared/utils/distance';
 
 export interface BikeDetailPayload {
   route: TrailRoute;
@@ -34,6 +36,7 @@ export class BikeDetail implements OnDestroy {
   private trailRoutesService = inject(TrailRoutesService);
   private bikeMarkers = inject(BikeMarkersService);
   private destroyRef = inject(DestroyRef);
+  auth = inject(Auth);
 
   payload = computed(() => {
     this.drawerSvc.list();
@@ -50,6 +53,12 @@ export class BikeDetail implements OnDestroy {
   trailColor = computed(() => trailCategoryColor(this.payload()?.route.category ?? 'local'));
 
   fitBoundsCoords = computed<[number, number][]>(() => this.trailLines().flat());
+
+  /** Sums every stage of a multi-day route already (see TrailRoute.distanceKm), so this is correct for all stages, not just single-stage routes. */
+  distanceLabel = computed<string | null>(() => {
+    const km = this.payload()?.route.distanceKm;
+    return km != null ? formatDistanceKmMi(km) : null;
+  });
 
   downloading = signal(false);
 
@@ -88,6 +97,10 @@ export class BikeDetail implements OnDestroy {
   }
 
   downloadGpx(): void {
+    if (!this.auth.isLoggedIn()) {
+      this.drawerSvc.open('auth');
+      return;
+    }
     const route = this.payload()?.route;
     if (!route) return;
     this.downloading.set(true);

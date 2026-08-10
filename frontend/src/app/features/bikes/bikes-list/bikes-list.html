@@ -66,7 +66,6 @@
                 <span class="trail-category-badge" [class]="'badge--' + route.category">
                   {{ ('bikes.category.' + route.category) | translate }}
                 </span>
-                <span class="trail-distance">{{ route.distanceKm | number:'1.0-1' }} km</span>
               </div>
             </div>
           </div>
@@ -86,7 +85,10 @@
               <span class="trail-single-badge">{{ 'bikes.multiDay.singleRoute' | translate }}</span>
             }
           </div>
-          <div class="trail-attribution">{{ 'bikes.attribution' | translate }}</div>
+          <div class="trail-attribution">
+            <span class="trail-attribution-distance">{{ formatDistanceKmMi(route.distanceKm) }}</span>
+            <span>{{ 'bikes.attribution' | translate }}</span>
+          </div>
           @if (mode() === 'select') {
             <div class="trail-select-row" (click)="$event.stopPropagation()">
               @if (dayOptions().length > 1) {

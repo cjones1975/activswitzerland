@@ -61,6 +61,9 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   @Input() stageOverviewLines: [number, number][][] | null = null;
   @Input() stageOverviewStages: { lng: number; lat: number; stageNumber: number }[] = [];
   @Input() stageOverviewColor = '#d97706';
+  // Pre-formatted "35.3 km / 21.9 mi" readout shown bottom-left — caller owns the
+  // formatting so this component stays agnostic of hike/bike-specific distance logic.
+  @Input() distanceLabel: string | null = null;
 
   @Output() markerClick = new EventEmitter<MapMarker>();
 

@@ -57,7 +57,6 @@
                 <span class="trail-category-badge" [class]="'badge--' + route.category">
                   {{ ('hikes.category.' + route.category) | translate }}
                 </span>
-                <span class="trail-distance">{{ route.distanceKm | number:'1.0-1' }} km</span>
               </div>
             </div>
           </div>
@@ -77,7 +76,10 @@
               <span class="trail-single-badge">{{ 'hikes.multiDay.singleRoute' | translate }}</span>
             }
           </div>
-          <div class="trail-attribution">{{ 'hikes.attribution' | translate }}</div>
+          <div class="trail-attribution">
+            <span class="trail-attribution-distance">{{ formatDistanceKmMi(route.distanceKm) }}</span>
+            <span>{{ 'hikes.attribution' | translate }}</span>
+          </div>
           @if (mode() === 'select') {
             <div class="trail-select-row" (click)="$event.stopPropagation()">
               @if (dayOptions().length > 1) {

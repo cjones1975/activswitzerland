@@ -251,7 +251,11 @@
         </div>
     </ng-template>
     <hr class="header-divider" />
-    <app-hikes-list></app-hikes-list>
+    @defer (on idle; when svc.isOpen('hikes')) {
+        <app-hikes-list></app-hikes-list>
+    } @placeholder {
+        <div class="drawer-defer-loading"><i class="fa-light fa-spinner-third fa-spin"></i></div>
+    }
 </p-drawer>
 
 <!-- HIKE DETAIL -->
@@ -280,7 +284,11 @@
         </div>
     </ng-template>
     <hr class="header-divider" />
-    <app-hike-detail></app-hike-detail>
+    @defer (on idle; when svc.isOpen('hike-detail')) {
+        <app-hike-detail></app-hike-detail>
+    } @placeholder {
+        <div class="drawer-defer-loading"><i class="fa-light fa-spinner-third fa-spin"></i></div>
+    }
 </p-drawer>
 
 <!-- BIKES -->
@@ -309,7 +317,11 @@
         </div>
     </ng-template>
     <hr class="header-divider" />
-    <app-bikes-list></app-bikes-list>
+    @defer (on idle; when svc.isOpen('bikes')) {
+        <app-bikes-list></app-bikes-list>
+    } @placeholder {
+        <div class="drawer-defer-loading"><i class="fa-light fa-spinner-third fa-spin"></i></div>
+    }
 </p-drawer>
 
 <!-- BIKE DETAIL -->
@@ -338,7 +350,11 @@
         </div>
     </ng-template>
     <hr class="header-divider" />
-    <app-bike-detail></app-bike-detail>
+    @defer (on idle; when svc.isOpen('bike-detail')) {
+        <app-bike-detail></app-bike-detail>
+    } @placeholder {
+        <div class="drawer-defer-loading"><i class="fa-light fa-spinner-third fa-spin"></i></div>
+    }
 </p-drawer>
 
 <!-- HOTELS -->

@@ -1,6 +1,5 @@
 import { Component, DestroyRef, OnDestroy, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
-import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
 import { SkeletonModule } from 'primeng/skeleton';
@@ -17,16 +16,19 @@ import { TrailRoute } from '../../../models/trail-route';
 import { GeoLocation, ActivityPickerPayload } from '../../../models/geo-point';
 import { locLat, locLon } from '../../../shared/utils/geo-location';
 import { stopDayOptions, dayChoiceLabelParams } from '../../../shared/utils/date-range';
+import { formatDistanceKmMi } from '../../../shared/utils/distance';
 import { HikeDetailPayload } from '../hike-detail/hike-detail';
 
 @Component({
   selector: 'app-hikes-list',
   standalone: true,
-  imports: [DecimalPipe, FormsModule, SkeletonModule, SelectButton, Select, Message, TranslatePipe, TrailThumbnail],
+  imports: [FormsModule, SkeletonModule, SelectButton, Select, Message, TranslatePipe, TrailThumbnail],
   templateUrl: './hikes-list.html',
   styleUrl: './hikes-list.css',
 })
 export class HikesList implements OnDestroy {
+  readonly formatDistanceKmMi = formatDistanceKmMi;
+
   private drawerSvc = inject(Drawer);
   private trailRoutesService = inject(TrailRoutesService);
   // Protected: filter state (radiusKm/selectedCategory) lives on this service,

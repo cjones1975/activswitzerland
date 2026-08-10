@@ -14,7 +14,6 @@ import { TripsService } from '../../../shared/services/trips';
 import { SavedTrip } from '../../../models/trip';
 import { tripDayCount, formatDdMmYyyy } from '../../../shared/utils/date-range';
 import { StartOverLink } from '../start-over-link/start-over-link';
-import { LangService } from '../../../shared/services/lang';
 
 @Component({
   selector: 'app-step5-save',
@@ -26,7 +25,6 @@ import { LangService } from '../../../shared/services/lang';
 export class Step5Save {
   private drawerSvc = inject(Drawer);
   private toast = inject(Toast);
-  private langSvc = inject(LangService);
   private translate = inject(TranslateService);
   private tripsSvc = inject(TripsService);
   plannerSvc = inject(TripPlannerService);
@@ -92,10 +90,6 @@ export class Step5Save {
         this.toast.error(this.translate.instant('trip.planner.step5.saveError'), undefined, 3000, 'toast-error');
       },
     });
-  }
-
-  browseSavedTrips(): void {
-    this.langSvc.navigate(['auth', 'profile']);
   }
 
   back(): void {

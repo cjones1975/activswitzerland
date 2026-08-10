@@ -1,11 +1,7 @@
 import { Routes } from '@angular/router';
 import { MainLayout } from './shell/main-layout/main-layout';
 import { Home } from './features/home/home';
-import { DestinationVerticalList } from './features/destinations/destination-vertical-list/destination-vertical-list';
-import { DestinationsLayout } from './shell/destinations-layout/destinations-layout';
-import { TripPlannerLayout } from './shell/trip-planner-layout/trip-planner-layout';
 import { Profile } from './features/auth/profile/profile';
-import { ExploreTrips } from './features/explore-trips/explore-trips';
 import { SearchPage } from './features/search/search-page/search-page';
 import { authGuard } from './core/guards/auth';
 import { bareLangMatcher, localeLangResolver, localeMatchGuard } from './core/guards/locale';
@@ -22,11 +18,26 @@ export const routes: Routes = [
         component: MainLayout,
         children: [
           { path: '', component: Home },
-          { path: 'destinations', component: DestinationVerticalList },
-          { path: 'destinations/:id', component: DestinationsLayout },
-          { path: 'trip-planner', component: TripPlannerLayout },
-          { path: 'trip-planner/:id', component: TripPlannerLayout },
-          { path: 'explore-trips', component: ExploreTrips },
+          {
+            path: 'destinations',
+            loadComponent: () => import('./features/destinations/destination-vertical-list/destination-vertical-list').then(m => m.DestinationVerticalList),
+          },
+          {
+            path: 'destinations/:id',
+            loadComponent: () => import('./shell/destinations-layout/destinations-layout').then(m => m.DestinationsLayout),
+          },
+          {
+            path: 'trip-planner',
+            loadComponent: () => import('./shell/trip-planner-layout/trip-planner-layout').then(m => m.TripPlannerLayout),
+          },
+          {
+            path: 'trip-planner/:id',
+            loadComponent: () => import('./shell/trip-planner-layout/trip-planner-layout').then(m => m.TripPlannerLayout),
+          },
+          {
+            path: 'explore-trips',
+            loadComponent: () => import('./features/explore-trips/explore-trips').then(m => m.ExploreTrips),
+          },
           { path: 'search', component: SearchPage },
           {
             path: 'auth/profile',
