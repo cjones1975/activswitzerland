@@ -1,3 +1,4 @@
+import { DOCUMENT } from '@angular/common';
 import { inject } from '@angular/core';
 import { CanMatchFn, ResolveFn, UrlMatcher, UrlSegment } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -24,7 +25,9 @@ export const bareLangMatcher: UrlMatcher = segments =>
 /** Activates the matched `:lang` segment's translations before any child route renders. */
 export const localeLangResolver: ResolveFn<string> = route => {
   const translate = inject(TranslateService);
+  const document = inject(DOCUMENT);
   const lang = route.paramMap.get('lang') ?? DEFAULT_LANG;
   translate.use(lang);
+  document.documentElement.lang = lang;
   return lang;
 };

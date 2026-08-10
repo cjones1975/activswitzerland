@@ -62,6 +62,11 @@ export class SeoService {
     this.setHreflang(stripLocalePrefix(this.router.url.split('?')[0]));
   }
 
+  /** The current page's canonical absolute URL — same computation `set()` uses for `canonical`/`og:url`. */
+  currentUrl(): string {
+    return `${SITE_URL}${this.router.url.split('?')[0]}`;
+  }
+
   private setCanonical(url: string): void {
     let link: HTMLLinkElement | null = this.doc.querySelector('link[rel="canonical"]');
     if (!link) {
@@ -90,5 +95,44 @@ export class SeoService {
     link.setAttribute('hreflang', hreflang);
     link.setAttribute('href', href);
     this.doc.head.appendChild(link);
+  }
+
+  /** Sitewide `WebSite` JSON-LD (unlocks Google's sitelinks searchbox). Called once from the app root, not per route. */
+  setWebsite(): void {
+    this.writeJsonLd('ld-website', {
+      '@context': 'https://schema.org',
+      '@type': 'WebSite',
+      name: SITE_NAME,
+      url: SITE_URL,
+      potentialAction: {
+        '@type': 'SearchAction',
+        target: `${SITE_URL}/${DEFAULT_LANG}/search?q={search_term_string}`,
+        'query-input': 'required name=search_term_string',
+      },
+    });
+  }
+
+  /**
+   * Per-page structured data (e.g. `TouristDestination`/`Place`). Pass `null` to clear it —
+   * needed on routes that load then fail (destination-detail's error path), so a stale previous
+   * page's structured data doesn't linger in the DOM.
+   */
+  setStructuredData(data: Record<string, unknown> | null): void {
+    if (!data) {
+      this.doc.getElementById('ld-page')?.remove();
+      return;
+    }
+    this.writeJsonLd('ld-page', data);
+  }
+
+  private writeJsonLd(id: string, data: Record<string, unknown>): void {
+    let script = this.doc.getElementById(id) as HTMLScriptElement | null;
+    if (!script) {
+      script = this.doc.createElement('script');
+      script.id = id;
+      script.type = 'application/ld+json';
+      this.doc.head.appendChild(script);
+    }
+    script.textContent = JSON.stringify(data);
   }
 }
