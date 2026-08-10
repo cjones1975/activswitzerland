@@ -68,14 +68,6 @@
     [disabled]="!name().trim()"
     (onClick)="save()" />
 
-  <p-button
-    [label]="'trip.planner.step5.browseSavedTrips' | translate"
-    icon="fa-light fa-clock-rotate-left"
-    severity="secondary"
-    [outlined]="true"
-    styleClass="w-full s5-browse-btn"
-    (onClick)="browseSavedTrips()" />
-
   <button type="button" class="s5-back-link" (click)="back()">
     <i class="fa-light fa-chevron-left"></i>
     {{ 'trip.planner.step5.backToSummary' | translate }}

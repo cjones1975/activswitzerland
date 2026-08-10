@@ -73,6 +73,18 @@
   cursor: default;
 }
 
+.gpx-signin-hint {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+  font-size: 0.78rem;
+  color: var(--navy-700, #3a5a7a);
+  background: var(--navy-100, #eef3f8);
+  border-radius: 8px;
+  padding: 0.5rem 0.65rem;
+  margin: 0;
+}
+
 .elevation-section {
   display: flex;
   flex-direction: column;

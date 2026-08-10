@@ -96,12 +96,18 @@
     <div class="leg-body">
       <div class="leg-form">
         <div class="leg-field">
-          <label>{{ 'trip.planner.date' | translate }}</label>
-          <input type="date" [ngModel]="date()" (ngModelChange)="date.set($event)" />
-        </div>
-        <div class="leg-field">
-          <label>{{ 'trip.planner.time' | translate }}</label>
-          <input type="time" [ngModel]="time()" (ngModelChange)="time.set($event)" />
+          <label>{{ 'trip.planner.dateTime' | translate }}</label>
+          <p-datepicker
+            [ngModel]="dateTimeValue()"
+            (ngModelChange)="onDateTimeChange($event)"
+            [showTime]="true"
+            hourFormat="24"
+            [showIcon]="true"
+            dateFormat="dd.mm.yy"
+            styleClass="w-full"
+            appendTo="body"
+            panelStyleClass="leg-datetime-panel"
+          />
         </div>
         <p-button [label]="'trip.planner.step2.searchConnection' | translate" size="small" [disabled]="!date() || !time()" (onClick)="search()" />
       </div>

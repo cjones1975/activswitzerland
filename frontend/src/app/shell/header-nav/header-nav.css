@@ -27,27 +27,31 @@
   flex: 0 0 auto;
 }
 
-:host ::ng-deep .toggle-btn .p-button {
+.toggle-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: none;
   color: var(--color-white);
-}
-
-:host ::ng-deep .toggle-btn .p-button {
-  background: var(--navy-300) !important;
-  border-radius: 8px;
-  box-shadow: none;
-}
-
-:host ::ng-deep .toggle-btn .p-button:focus,
-:host ::ng-deep .toggle-btn .p-button:focus-visible,
-:host ::ng-deep .toggle-btn .p-button:hover {
-  background: var(--navy-100) !important;
+  font-size: 1.25rem;
+  padding: 0.5rem;
+  cursor: pointer;
 }
 
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
   font-size: 1.4rem;
   font-weight: 600;
   color: var(--color-white);
   letter-spacing: 0.01em;
   text-decoration: none;
   cursor: pointer;
+}
+
+.brand-logo {
+  height: 1.8rem;
+  width: auto;
 }

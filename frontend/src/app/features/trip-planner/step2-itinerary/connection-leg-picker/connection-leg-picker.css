@@ -67,30 +67,22 @@
 
 .leg-form {
   display: flex;
-  align-items: flex-end;
+  flex-direction: column;
   gap: 0.5rem;
   margin-bottom: 0.75rem;
-  flex-wrap: wrap;
 }
 
 .leg-field {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  width: 100%;
 }
 
 .leg-field label {
   font-size: 0.72rem;
   font-weight: 600;
   color: var(--navy-700, #3a5a7a);
-}
-
-.leg-field input {
-  padding: 0.4rem 0.5rem;
-  border: 1px solid var(--gray-300, #cbd5e1);
-  border-radius: 6px;
-  font-size: 0.82rem;
-  font-family: inherit;
 }
 
 .leg-loading, .leg-empty {

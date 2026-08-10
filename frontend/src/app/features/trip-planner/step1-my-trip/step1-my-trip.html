@@ -28,15 +28,19 @@
   </div>
 
   @if (dateMode() === 'dates') {
-    <div class="s1-date-row">
-      <div class="s1-field">
-        <label for="s1-start">{{ 'trip.planner.step1.startDate' | translate }}</label>
-        <input id="s1-start" type="date" class="s1-date-input" [ngModel]="startDate()" (ngModelChange)="onStartDateChange($event)" [attr.min]="todayIso" />
-      </div>
-      <div class="s1-field">
-        <label for="s1-end">{{ 'trip.planner.step1.endDate' | translate }}</label>
-        <input id="s1-end" type="date" class="s1-date-input" [ngModel]="endDate()" (ngModelChange)="onEndDateChange($event)" [attr.min]="startDate() || todayIso" />
-      </div>
+    <div class="s1-field">
+      <label for="s1-daterange">{{ 'trip.planner.step1.dateRange' | translate }}</label>
+      <p-datepicker
+        inputId="s1-daterange"
+        selectionMode="range"
+        [ngModel]="dateRangeValue()"
+        (ngModelChange)="onDateRangeChange($event)"
+        [minDate]="minDate"
+        [showIcon]="true"
+        [readonlyInput]="true"
+        dateFormat="dd.mm.yy"
+        styleClass="w-full"
+      />
     </div>
   } @else {
     <div class="s1-field">

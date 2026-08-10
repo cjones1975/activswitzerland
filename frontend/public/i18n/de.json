@@ -57,8 +57,7 @@
       "typeRail": "Bahnreise",
       "addStop": "Halt hinzufügen",
       "viewTrip": "Reise anzeigen",
-      "date": "Datum",
-      "time": "Uhrzeit",
+      "dateTime": "Datum & Uhrzeit",
       "connections": "Zugverbindungen",
       "transfer": "Umstieg",
       "transfers": "Umstiege",
@@ -104,8 +103,7 @@
         "datesSubtitle": "Genaue Daten wählen",
         "daysTitle": "Anzahl Tage",
         "daysSubtitle": "Flexible Reisetage",
-        "startDate": "Startdatum",
-        "endDate": "Enddatum",
+        "dateRange": "Daten",
         "numDays": "Anzahl der Tage",
         "daysTrip": "{{count}} Tage Reise",
         "continue": "Weiter zur Reiseroute"
@@ -114,7 +112,7 @@
         "tripRange": "Reise: {{range}}",
         "departure": "Reisebeginn",
         "destination": "Reiseende",
-        "stop": "Haltepunkt",
+        "stop": "Ort auswählen",
         "daysHere": "Nächte hier",
         "transit": "Transit",
         "dayLabel": "Tag {{start}}",
@@ -170,7 +168,6 @@
         "suggestedRoad": "Meine Schweizer Autoreise",
         "suggestedRail": "Meine Schweizer Bahnreise",
         "update": "Reise aktualisieren",
-        "browseSavedTrips": "Gespeicherte Reisen durchsuchen",
         "backToSummary": "Zurück zur Übersicht",
         "saveError": "Ihre Reise konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
         "makePublic": "Reise öffentlich machen",
@@ -255,6 +252,7 @@
     "backToList": "Zurück zu den Wanderungen",
     "reopen": "Wanderungen anzeigen",
     "downloadGpx": "GPX herunterladen",
+    "downloadGpxSignInHint": "Melde dich an, um die GPX-Datei herunterzuladen",
     "distance": "Distanz",
     "radius": "Umkreis",
     "category": {
@@ -290,6 +288,7 @@
     "backToList": "Zurück zu den Velotouren",
     "reopen": "Velotouren anzeigen",
     "downloadGpx": "GPX herunterladen",
+    "downloadGpxSignInHint": "Melde dich an, um die GPX-Datei herunterzuladen",
     "distance": "Distanz",
     "radius": "Umkreis",
     "category": {
@@ -385,7 +384,6 @@
     }
   },
   "hero": {
-    "badge": "Das Beste der Schweiz",
     "title": "Willkommen in der Schweiz",
     "subtitle": "Entdecken Sie Tagesausflüge, Wahrzeichen und versteckte Juwelen.",
     "cta": "Reise planen",

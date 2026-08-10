@@ -1,13 +1,12 @@
 import { Component, inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { Menubar } from 'primeng/menubar';
-import { Button } from 'primeng/button';
 import { Drawer } from '../../shared/services/drawer';
 import { LangService } from '../../shared/services/lang';
 
 @Component({
   selector: 'app-header-nav',
-  imports: [Menubar, Button, RouterLink],
+  imports: [Menubar, RouterLink],
   templateUrl: './header-nav.html',
   styleUrl: './header-nav.css',
 })

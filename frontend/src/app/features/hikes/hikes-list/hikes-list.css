@@ -101,11 +101,19 @@
 }
 
 .trail-attribution {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
   font-size: 0.65rem;
   color: var(--gray-500, #64748b);
-  text-align: right;
   padding: 0.3rem 0.75rem;
   background: var(--gray-200, #e5e7eb);
+}
+
+.trail-attribution-distance {
+  font-weight: 600;
+  color: var(--gray-700, #334155);
 }
 
 .trail-seeall-link {
@@ -208,8 +216,3 @@
 .badge--national { background: #e53e3e; }
 .badge--regional { background: #2563eb; }
 .badge--local { background: #d97706; }
-
-.trail-distance {
-  font-size: 0.75rem;
-  color: var(--gray-600);
-}

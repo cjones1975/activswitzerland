@@ -1,16 +1,14 @@
 <p-menubar class="header-nav">
   <ng-template #start>
-    <a class="brand" [routerLink]="langSvc.localize([])">ActivSwitzerland</a>
+    <a class="brand" [routerLink]="langSvc.localize([])">
+      <img class="brand-logo" src="/assets/as_logo.png" alt="" />
+      ActivSwitzerland
+    </a>
   </ng-template>
 
   <ng-template #end>
-    <p-button
-      icon="pi pi-bars"
-      [text]="true"
-      severity="contrast"
-      aria-label="Toggle menu"
-      class="toggle-btn"
-      (onClick)="toggleMenu()"
-    />
+    <button type="button" class="toggle-btn" aria-label="Toggle menu" (click)="toggleMenu()">
+      <i class="fa-solid fa-bars-staggered"></i>
+    </button>
   </ng-template>
 </p-menubar>

@@ -25,3 +25,8 @@ export function kmToMi(km: number): number {
 export function formatDistance(km: number): string {
   return `${Math.round(km)} km / ${Math.round(kmToMi(km))} mi`;
 }
+
+/** "35.3 km / 21.9 mi" — one decimal place, used for hike/bike route distances. */
+export function formatDistanceKmMi(km: number): string {
+  return `${km.toFixed(1)} km / ${kmToMi(km).toFixed(1)} mi`;
+}
