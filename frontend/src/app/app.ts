@@ -1,7 +1,8 @@
-import { Component, signal } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { Toast } from 'primeng/toast';
 import { PrimeTemplate } from 'primeng/api';
+import { SeoService } from './shared/services/seo';
 
 @Component({
   selector: 'app-root',
@@ -11,4 +12,8 @@ import { PrimeTemplate } from 'primeng/api';
 })
 export class App {
   protected readonly title = signal('frontend');
+
+  constructor() {
+    inject(SeoService).setWebsite();
+  }
 }

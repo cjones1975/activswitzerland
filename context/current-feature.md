@@ -14,7 +14,59 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
-### 2026-08-10 — Misc UI Fixes, Hike/Bike Distance Display, GPX Auth Gate, Bundle Size Optimization
+### 2026-08-10 — SEO Phase 3: Structured Data, `html lang` Fix, Sitemap Metadata Implemented
+
+- Branch: `feature/seo-structured-data-lang`; spec: `context/features/seo-structured-data-lang-spec.md`.
+  Preceded by a full SEO-setup audit (spawned Explore agent) requested by the user, which found
+  Phases 1/2 (SSR, per-page metadata, locale routing/hreflang — see 2026-07-31 entries below) were
+  already solid, but surfaced three remaining gaps bundled into this one branch
+- Two decisions confirmed via `AskUserQuestion` before writing the spec: attractions/hikes/bikes
+  stay drawer-only — declined to reopen the Phase-0 trip-planner-rebuild decision to make them
+  independently routable, since that's a routing/product change in its own right, not a pure SEO
+  fix; JSON-LD scope limited to `WebSite` (sitewide) + destination-detail only (no
+  `BreadcrumbList`/`LodgingBusiness`, nothing for attractions/hikes/bikes). A third question (sitemap
+  `<lastmod>` for destination pages: omit vs. fake with build timestamp) was left open in the spec
+  and the user confirmed "omit" in a follow-up turn, before implementation started
+- `core/guards/locale.ts`'s `localeLangResolver` now also sets
+  `inject(DOCUMENT).documentElement.lang = lang` alongside the existing `translate.use(lang)` call
+  — runs on every route activation, server and client, so it lands in prerendered/SSR output the
+  same way canonical/hreflang already do. `index.html`'s static `lang="en"` left as-is (pre-hydration
+  fallback, same pattern as its static title/description)
+- `shared/services/seo.ts` gained `setWebsite()` (sitewide `WebSite` + `SearchAction` JSON-LD,
+  called once from `app.ts`'s constructor, target `/en/search?q={search_term_string}`) and
+  `setStructuredData(data | null)` (per-page JSON-LD, `null` clears it — wired into
+  `destinations-layout.ts`'s error path so a stale previous destination's structured data doesn't
+  linger after a failed load), both backed by a shared `writeJsonLd(id, data)` helper that
+  creates-or-updates a `<script type="application/ld+json">` by element id, matching the
+  create-if-missing pattern `setCanonical`/`setHreflang` already used for `<link>` tags. New
+  `currentUrl()` getter exposes the same canonical-URL computation `set()` already used internally,
+  reused for the JSON-LD `url` field
+- **Real finding during implementation, not assumed from the spec**: the spec flagged live-checking
+  whether `Destination`'s `@type`/`@context` fields (present in the model, passed through unchanged
+  from MySwitzerland) were genuine schema.org values or the API's own internal vocabulary. Curled
+  the running local backend directly and confirmed real values —
+  `"@context":"https://schema.org/"`, `"@type":"TouristDestination"` (a real, more specific
+  schema.org type than the `Place`/`TouristAttraction` fallback the spec had planned to hardcode) —
+  so `destinations-layout.ts`'s JSON-LD block uses `dest['@context']`/`dest['@type']` directly, with
+  `'https://schema.org'`/`'Place'` only as a fallback if either field is ever missing
+- `scripts/generate-sitemap.mjs`'s `buildSitemap()` restructured from a flat path list to an array
+  of `{ path, priority, lastmod }` entries: home `1.0`/`/destinations` `0.8` (both get a build-date
+  `<lastmod>`), destination-detail `0.6` (no `<lastmod>` — per the confirmed decision, no
+  per-destination modification date exists anywhere in the data path, and Google's own guidance is
+  that a faked/always-fresh value trains crawlers to ignore the field site-wide)
+- Verified via `tsc --noEmit` (clean) and a full `npm run build` (production build + postbuild
+  sitemap script, `SSR_API_URL` pointed at the local backend) — inspected the actual `dist/`
+  output directly rather than trusting the diff: confirmed `<html lang>` correct per locale in
+  `en/index.html`/`de/index.html`/`fr/index.html`, `WebSite` JSON-LD present, `sitemap.xml`
+  entries carrying `<lastmod>`/`<priority>` exactly as scoped (945 real destination ids). Also
+  ran the built SSR server locally (`node dist/frontend/server/server.mjs`) to fetch a live
+  `destinations/:id` page and confirm the `TouristDestination` JSON-LD renders correctly with real
+  data (name, description, image, geo, canonical url) — hit the `NG_ALLOWED_HOSTS` SSRF guard from
+  Phase 1 along the way (needs the bare hostname, not `host:port`, to match) and confirmed a
+  passing request end-to-end once set correctly
+- Not yet committed at time of writing this entry
+
+
 
 - Branch: `misc-fixes3`. No spec — a long running session of independent, user-directed small changes
   and fixes, similar in spirit to `misc-fixes`/`misc-fixes2` before it

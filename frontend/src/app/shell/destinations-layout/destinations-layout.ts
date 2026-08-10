@@ -265,6 +265,7 @@ export class DestinationsLayout implements OnInit, OnDestroy {
                 description: this.translate.instant('destinations.detail.loadError'),
                 noindex: true,
               });
+              this.seo.setStructuredData(null);
               this.toast.error(this.translate.instant('destinations.detail.loadError'));
               return of(null);
             }),
@@ -282,6 +283,15 @@ export class DestinationsLayout implements OnInit, OnDestroy {
         title: dest.name,
         description: this.truncateDescription(dest.description || dest.abstract),
         image: dest.photo,
+      });
+      this.seo.setStructuredData({
+        '@context': dest['@context'] || 'https://schema.org',
+        '@type': dest['@type'] || 'Place',
+        name: dest.name,
+        description: this.truncateDescription(dest.description || dest.abstract),
+        image: dest.photo,
+        url: this.seo.currentUrl(),
+        ...(dest.geo?.latitude && dest.geo?.longitude ? { geo: dest.geo } : {}),
       });
       clearTimeout(this.openDetailTimer);
       this.openDetailTimer = setTimeout(() => this.drawer.open('destination-detail', dest), 100);

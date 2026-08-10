@@ -51,12 +51,20 @@ async function getDestinationIds() {
 }
 
 function buildSitemap(destinationIds) {
-  const staticPaths = ['', '/destinations'];
-  const paths = [...staticPaths, ...destinationIds.map(id => `/destinations/${id}`)];
-  const urls = SUPPORTED_LANGS.flatMap(lang => paths.map(path => `/${lang}${path}`));
-  const entries = urls
-    .map(path => `  <url><loc>${SITE_URL}${path}</loc></url>`)
-    .join('\n');
+  // lastmod is only meaningful for the two static pages (a build genuinely just happened).
+  // Destination-detail pages get no lastmod at all — the MySwitzerland API exposes no
+  // per-destination modification date, and a faked/always-fresh value is worse than none:
+  // it trains crawlers to stop trusting the field site-wide (Google's own guidance).
+  const buildDate = new Date().toISOString().slice(0, 10);
+  const pages = [
+    { path: '', priority: '1.0', lastmod: buildDate },
+    { path: '/destinations', priority: '0.8', lastmod: buildDate },
+    ...destinationIds.map(id => ({ path: `/destinations/${id}`, priority: '0.6' })),
+  ];
+  const entries = SUPPORTED_LANGS.flatMap(lang => pages.map(({ path, priority, lastmod }) => {
+    const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : '';
+    return `  <url><loc>${SITE_URL}/${lang}${path}</loc>${lastmodTag}<priority>${priority}</priority></url>`;
+  })).join('\n');
   return `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${entries}\n</urlset>\n`;
 }
 
