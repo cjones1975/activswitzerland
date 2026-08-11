@@ -32,4 +32,24 @@
   }
 </div>
 
-<p-confirmDialog />
+<p-toast [key]="startOverKey" position="center" [style]="{ width: '340px' }">
+  <ng-template let-message pTemplate="message">
+    <div class="custom-toast">
+      <i class="fa-light fa-circle-info custom-toast-icon"></i>
+      <div class="toast-text">
+        <span class="toast-summary">{{ message.summary }}</span>
+        @if (message.detail) {
+          <span class="toast-detail">{{ message.detail }}</span>
+        }
+        <div class="start-over-toast-actions">
+          <button type="button" class="start-over-toast-cancel" (click)="message.data.onReject()">
+            {{ 'trip.planner.cancel' | translate }}
+          </button>
+          <button type="button" class="start-over-toast-accept" (click)="message.data.onAccept()">
+            {{ 'trip.planner.startOver' | translate }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-toast>

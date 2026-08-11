@@ -3,6 +3,7 @@ import { TranslatePipe } from '@ngx-translate/core';
 import { Timeline } from 'primeng/timeline';
 import { PublicTrip, TripStop, ActivityKind, TripActivitySelection } from '../../../models/trip';
 import { stopDayRanges, formatDdMmYyyy } from '../../../shared/utils/date-range';
+import { formatDistanceKmMi } from '../../../shared/utils/distance';
 import { ACTIVITY_GROUPS } from '../../trip-planner/step4-summary/step4-summary';
 
 @Component({
@@ -36,6 +37,7 @@ export class TripTimeline {
   }
 
   formatDdMmYyyy = formatDdMmYyyy;
+  formatDistanceKmMi = formatDistanceKmMi;
 
   /** Day labels ("Day N") are redundant once a real calendar date is shown — only relevant when
    * the trip was built in 'days' mode, which has no calendar date to show instead. */

@@ -93,6 +93,7 @@ export interface PlannedTrip {
 
 export interface SavedTrip extends PlannedTrip {
   _id?: string;
+  slug?: string;          // set once, the first time isPublic goes true — never regenerated after
   createdAt?: string;
   likes?: string[];      // user ids, present once saved
 }

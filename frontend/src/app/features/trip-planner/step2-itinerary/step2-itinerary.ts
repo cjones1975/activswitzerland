@@ -16,7 +16,7 @@ import { resultIcons } from '../../../shared/utils/transport-mode-icons';
 import { StartOverLink } from '../start-over-link/start-over-link';
 import { LocationSearchSheet } from './location-search-sheet/location-search-sheet';
 
-const MAX_VIA_STOPS = 6;
+const MAX_VIA_STOPS = 8;
 const DEFAULT_STOP_DAYS = 1;
 
 /** Which stop slot the mobile full-screen search sheet is currently editing, if any. */

@@ -18,7 +18,7 @@
       <div class="tt-card">
         @if (!hasActivities(stop)) {
           @if (isTransit(stop)) {
-            <span class="tt-transit"><i class="fa-light fa-arrow-right-arrow-left"></i>{{ 'trip.planner.step2.transit' | translate }}</span>
+            <span class="tt-transit"><i class="fa-light fa-arrow-right-arrow-left"></i>{{ (trip.type === 'road' ? 'exploreTrips.transitRoad' : 'exploreTrips.transitRail') | translate }}</span>
           } @else {
             <span class="tt-empty">{{ 'trip.planner.step4.noActivities' | translate }}</span>
           }
@@ -33,6 +33,9 @@
                   </div>
                   @for (activity of items; track activity.id) {
                     <span class="tt-activity-name">{{ activity.name }}</span>
+                    @if (activity.distanceKm != null) {
+                      <span class="tt-activity-distance">{{ formatDistanceKmMi(activity.distanceKm) }}</span>
+                    }
                   }
                 </div>
               }

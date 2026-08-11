@@ -2,6 +2,9 @@ import asyncHandler from '../middleware/async.js';
 import ErrorResponse from '../utils/errorResponse.js';
 import Trip from '../models/Trip.js';
 import { routeDistanceKm } from '../utils/geo.js';
+import { generateUniqueSlug, tripDurationLabel } from '../utils/slug.js';
+
+const isSlugTaken = slug => Trip.exists({ slug }).then(Boolean);
 
 // @desc   Get all trips for the logged-in user
 // @route  GET /api/v1/trips
@@ -16,6 +19,9 @@ export const getTrips = asyncHandler(async (req, res) => {
 // @access Private
 export const createTrip = asyncHandler(async (req, res) => {
     const { name, type, dateMode, range, stops, connections, activities, routeCoordinates, isPublic, anonymous } = req.body;
+    const slug = isPublic
+        ? await generateUniqueSlug(`${name} ${tripDurationLabel(range)}`, isSlugTaken)
+        : undefined;
     const trip = await Trip.create({
         user: req.user.id,
         name,
@@ -29,6 +35,7 @@ export const createTrip = asyncHandler(async (req, res) => {
         isPublic: isPublic ?? false,
         anonymous: anonymous ?? true,
         distanceKm: routeDistanceKm(routeCoordinates ?? []),
+        ...(slug ? { slug } : {}),
     });
     res.status(201).json({ success: true, data: trip });
 });
@@ -43,10 +50,18 @@ export const updateTrip = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Not authorised to update this trip', 401));
     }
 
-    // likes only ever change through the dedicated like-toggle endpoint, never a direct trip edit
-    const { likes, ...updates } = req.body;
+    // likes only ever change through the dedicated like-toggle endpoint, and slug is
+    // server-derived only — neither is ever accepted from a direct trip edit
+    const { likes, slug, ...updates } = req.body;
     if (updates.routeCoordinates) {
         updates.distanceKm = routeDistanceKm(updates.routeCoordinates);
+    }
+    // Slug is assigned once, the first time a trip goes public, and never touched again
+    // (even by a later rename) — see trip-detail-pages-spec.md's "Confirmed decisions".
+    if (!trip.slug && updates.isPublic === true) {
+        const name = updates.name ?? trip.name;
+        const range = updates.range ?? trip.range;
+        updates.slug = await generateUniqueSlug(`${name} ${tripDurationLabel(range)}`, isSlugTaken);
     }
 
     trip = await Trip.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
@@ -110,6 +125,26 @@ export const getPublicTrips = asyncHandler(async (req, res) => {
     }));
 
     res.status(200).json({ success: true, count: data.length, hasMore: skip + data.length < total, data });
+});
+
+// @desc   Fetch a single public trip by its SEO slug, for the standalone trip-detail page
+// @route  GET /api/v1/trips/slug/:slug
+// @access Public (optionalAuth — likedByMe is only accurate when a valid token is sent)
+export const getTripBySlug = asyncHandler(async (req, res, next) => {
+    const trip = await Trip.findOne({ slug: req.params.slug, isPublic: true })
+        .populate('user', 'firstName lastName country');
+    if (!trip) return next(new ErrorResponse('Trip not found', 404));
+
+    const requesterId = req.user?.id;
+    const { likes, user, ...rest } = trip.toObject();
+    const data = {
+        ...rest,
+        creatorName: trip.anonymous ? null : `${user.firstName} ${user.lastName}`,
+        creatorCountry: trip.anonymous ? null : user.country,
+        likeCount: likes.length,
+        likedByMe: requesterId ? likes.some(id => id.toString() === requesterId) : false,
+    };
+    res.status(200).json({ success: true, data });
 });
 
 // @desc   Like/unlike a public trip (toggle)

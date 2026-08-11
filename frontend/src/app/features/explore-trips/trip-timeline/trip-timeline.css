@@ -73,7 +73,14 @@
   display: block;
   font-size: 0.75rem;
   color: var(--navy-900);
-  padding: 0.1rem 0;
+  padding: 0.1rem 0 0;
+}
+
+.tt-activity-distance {
+  display: block;
+  font-size: 0.68rem;
+  color: var(--gray-500);
+  padding: 0 0 0.1rem;
 }
 
 /*

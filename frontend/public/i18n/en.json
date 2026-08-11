@@ -413,6 +413,8 @@
     "flip": "Flip card",
     "noReview": "No review available.",
     "travellerReview": "Traveller review",
+    "transitRoad": "Transit by road",
+    "transitRail": "Transit by rail",
     "filter": {
       "title": "Filter trips",
       "tripType": "Trip type",
@@ -431,6 +433,13 @@
       "apply": "Apply",
       "reset": "Reset"
     }
+  },
+  "tripDetail": {
+    "notFoundTitle": "Trip not found",
+    "notFoundMessage": "This trip isn't available anymore, or the link is incorrect.",
+    "backToExplore": "Back to Explore Trips",
+    "descriptionWithDuration": "A {{count}}-day trip through {{stops}}.",
+    "descriptionNoDuration": "A trip through {{stops}}."
   },
   "seo": {
     "home": {

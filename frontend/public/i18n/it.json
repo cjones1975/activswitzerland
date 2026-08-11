@@ -413,6 +413,8 @@
     "flip": "Gira la scheda",
     "noReview": "Nessuna recensione disponibile.",
     "travellerReview": "Recensione del viaggiatore",
+    "transitRoad": "Transito in auto",
+    "transitRail": "Transito in treno",
     "filter": {
       "title": "Filtra viaggi",
       "tripType": "Tipo di viaggio",
@@ -431,6 +433,13 @@
       "apply": "Applica",
       "reset": "Reimposta"
     }
+  },
+  "tripDetail": {
+    "notFoundTitle": "Viaggio non trovato",
+    "notFoundMessage": "Questo viaggio non è più disponibile, oppure il link non è corretto.",
+    "backToExplore": "Torna a Scopri idee di viaggio",
+    "descriptionWithDuration": "Un viaggio di {{count}} giorni attraverso {{stops}}.",
+    "descriptionNoDuration": "Un viaggio attraverso {{stops}}."
   },
   "seo": {
     "home": {

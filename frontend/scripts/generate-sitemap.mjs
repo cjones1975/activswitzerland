@@ -19,6 +19,34 @@ const HITS_PER_PAGE = Number(process.env.SITEMAP_HITS_PER_PAGE ?? 100);
 const MAX_PAGES = 20;
 const OUT_DIR = join(import.meta.dirname, '..', 'dist', 'frontend', 'browser');
 
+async function getTripSlugs() {
+  const slugs = [];
+  let skip = 0;
+  const limit = 50; // matches the API's own cap (backend/src/controllers/trips.js's getPublicTrips)
+
+  for (let page = 0; page < MAX_PAGES; page++) {
+    const url = `${API_URL}/api/v1/trips/public?skip=${skip}&limit=${limit}`;
+
+    let json;
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      json = await res.json();
+    } catch (err) {
+      console.error(`[sitemap] Failed to fetch public trips (skip=${skip}) from ${API_URL}: ${err.message}. Falling back to ${slugs.length} trip(s) collected so far.`);
+      break;
+    }
+
+    const hits = json.data ?? [];
+    hits.forEach(t => { if (t.slug) slugs.push(t.slug); });
+
+    skip += hits.length;
+    if (!json.hasMore || hits.length === 0) break;
+  }
+
+  return slugs;
+}
+
 async function getDestinationIds() {
   const ids = new Set();
 
@@ -50,16 +78,18 @@ async function getDestinationIds() {
   return Array.from(ids);
 }
 
-function buildSitemap(destinationIds) {
+function buildSitemap(destinationIds, tripSlugs) {
   // lastmod is only meaningful for the two static pages (a build genuinely just happened).
   // Destination-detail pages get no lastmod at all — the MySwitzerland API exposes no
   // per-destination modification date, and a faked/always-fresh value is worse than none:
   // it trains crawlers to stop trusting the field site-wide (Google's own guidance).
+  // Same reasoning applies to trip pages — no per-trip modification date is tracked either.
   const buildDate = new Date().toISOString().slice(0, 10);
   const pages = [
     { path: '', priority: '1.0', lastmod: buildDate },
     { path: '/destinations', priority: '0.8', lastmod: buildDate },
     ...destinationIds.map(id => ({ path: `/destinations/${id}`, priority: '0.6' })),
+    ...tripSlugs.map(slug => ({ path: `/trips/${slug}`, priority: '0.6' })),
   ];
   const entries = SUPPORTED_LANGS.flatMap(lang => pages.map(({ path, priority, lastmod }) => {
     const lastmodTag = lastmod ? `<lastmod>${lastmod}</lastmod>` : '';
@@ -85,8 +115,8 @@ function buildRobots() {
   ].join('\n');
 }
 
-const destinationIds = await getDestinationIds();
+const [destinationIds, tripSlugs] = await Promise.all([getDestinationIds(), getTripSlugs()]);
 await mkdir(OUT_DIR, { recursive: true });
-await writeFile(join(OUT_DIR, 'sitemap.xml'), buildSitemap(destinationIds), 'utf8');
+await writeFile(join(OUT_DIR, 'sitemap.xml'), buildSitemap(destinationIds, tripSlugs), 'utf8');
 await writeFile(join(OUT_DIR, 'robots.txt'), buildRobots(), 'utf8');
-console.log(`[sitemap] Wrote sitemap.xml (${destinationIds.length} destination(s)) and robots.txt to ${OUT_DIR}`);
+console.log(`[sitemap] Wrote sitemap.xml (${destinationIds.length} destination(s), ${tripSlugs.length} trip(s)) and robots.txt to ${OUT_DIR}`);

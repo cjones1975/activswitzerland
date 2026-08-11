@@ -24,6 +24,7 @@ export const serverRoutes: ServerRoute[] = [
   { path: ':lang/destinations', renderMode: RenderMode.Server },
   { path: ':lang/destinations/:id', renderMode: RenderMode.Server },
   { path: ':lang/explore-trips', renderMode: RenderMode.Server },
+  { path: ':lang/trips/:slug', renderMode: RenderMode.Server },
   { path: ':lang/search', renderMode: RenderMode.Server },
   // Personal/authenticated content, not canonical — client-render only, no
   // SSR/prerender spent here (see the spec's Confirmed decisions).
