@@ -87,3 +87,39 @@
   color: var(--gray-500);
   font-size: 0.9rem;
 }
+
+.start-over-toast-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.6rem;
+  margin-top: 0.6rem;
+}
+
+.start-over-toast-cancel {
+  background: none;
+  border: none;
+  padding: 0.35rem 0.6rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #6b7280;
+  cursor: pointer;
+}
+
+.start-over-toast-cancel:hover {
+  color: var(--navy-800);
+}
+
+.start-over-toast-accept {
+  background: #1a6b3c;
+  border: none;
+  border-radius: 6px;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--color-white);
+  cursor: pointer;
+}
+
+.start-over-toast-accept:hover {
+  background: #174f2f;
+}

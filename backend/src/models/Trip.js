@@ -87,6 +87,9 @@ const TripSchema = new mongoose.Schema({
     review:           { type: String, default: '', trim: true },
     likes:            { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] },
     distanceKm:       { type: Number, default: 0 },
+    // Assigned once, on the isPublic false->true transition (see utils/slug.js); never
+    // regenerated afterward, even if `name` later changes — see trip-detail-pages-spec.md.
+    slug:             { type: String, unique: true, sparse: true, index: true },
     createdAt:        { type: Date, default: Date.now },
 });
 

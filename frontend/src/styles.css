@@ -81,72 +81,93 @@ body {
   overflow-y: auto;
 }
 
-/* Trip Planner "Start over" confirm dialog accept button — p-confirmDialog defaults to
-   appendTo="body" too, so this can't be scoped to start-over-link's own component styles. */
-.start-over-accept-btn.p-button {
-  background: #1a6b3c !important;
-  border-color: #1a6b3c !important;
-  color: var(--color-white) !important;
-}
-
-.start-over-accept-btn.p-button:hover {
-  background: #174f2f !important;
-  border-color: #174f2f !important;
-  color: var(--color-white) !important;
-}
-
 /* Toast */
 .p-toast {
-    max-width: 300px;
+    max-width: 340px;
 }
 
-.toast-success .p-toast-message-content {
-    background: var(--navy-900);
+.p-toast-message-content {
     border-radius: 8px;
+    border: 1px solid transparent;
 }
 
-.toast-error .p-toast-message-content {
-    background: var(--color-error);
-    border-radius: 8px;
+/* Keyed off PrimeNG's own severity class (set automatically from Toast.show()'s `severity`
+   argument) rather than the manually-passed `styleClass` string, so a call site can't
+   accidentally show e.g. a success toast styled as an error by passing the wrong class. */
+.p-toast-message-success .p-toast-message-content {
+    background: #f0fdf4;
+    border-color: #86efac;
 }
 
-.toast-warn .p-toast-message-content {
-    background: #dbeafe;
-    border-radius: 8px;
+.p-toast-message-warn .p-toast-message-content {
+    background: #fffbeb;
+    border-color: #fde68a;
 }
 
-.toast-warn .custom-toast-icon,
-.toast-warn .toast-summary,
-.toast-warn .toast-detail {
-    color: #0f3a68;
+.p-toast-message-error .p-toast-message-content {
+    background: #fef2f2;
+    border-color: #fecaca;
+}
+
+.p-toast-message-info .p-toast-message-content {
+    background: #eff6ff;
+    border-color: #bfdbfe;
+}
+
+.p-toast-message-success .custom-toast-icon,
+.p-toast-message-success .toast-summary {
+    color: #16a34a;
+}
+
+.p-toast-message-warn .custom-toast-icon,
+.p-toast-message-warn .toast-summary {
+    color: #d97706;
+}
+
+.p-toast-message-error .custom-toast-icon,
+.p-toast-message-error .toast-summary {
+    color: #dc2626;
+}
+
+.p-toast-message-info .custom-toast-icon,
+.p-toast-message-info .toast-summary {
+    color: #2563eb;
 }
 
 .custom-toast {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     gap: 0.75rem;
-    padding: 0.25rem;
+    padding: 0.35rem 0.25rem;
 }
 
 .custom-toast-icon {
     font-size: 1.2rem;
-    color: var(--color-white);
     flex-shrink: 0;
+    margin-top: 0.15rem;
 }
 
 .toast-text {
     display: flex;
     flex-direction: column;
-    gap: 0.1rem;
+    gap: 0.2rem;
 }
 
 .toast-summary {
     font-weight: 600;
     font-size: 0.9rem;
-    color: var(--color-white);
 }
 
 .toast-detail {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.85);
+    color: #6b7280;
+}
+
+.p-toast-close-button {
+    color: #9ca3af;
+}
+
+.p-toast-close-button:hover {
+    color: #6b7280;
+    background: transparent;
 }

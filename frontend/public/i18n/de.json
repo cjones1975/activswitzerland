@@ -413,6 +413,8 @@
     "flip": "Karte umdrehen",
     "noReview": "Keine Bewertung verfügbar.",
     "travellerReview": "Reisebewertung",
+    "transitRoad": "Transit mit dem Auto",
+    "transitRail": "Transit mit der Bahn",
     "filter": {
       "title": "Reisen filtern",
       "tripType": "Reiseart",
@@ -431,6 +433,13 @@
       "apply": "Anwenden",
       "reset": "Zurücksetzen"
     }
+  },
+  "tripDetail": {
+    "notFoundTitle": "Reise nicht gefunden",
+    "notFoundMessage": "Diese Reise ist nicht mehr verfügbar, oder der Link ist falsch.",
+    "backToExplore": "Zurück zu Reiseideen",
+    "descriptionWithDuration": "Eine {{count}}-tägige Reise durch {{stops}}.",
+    "descriptionNoDuration": "Eine Reise durch {{stops}}."
   },
   "seo": {
     "home": {

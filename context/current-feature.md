@@ -14,6 +14,58 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-11 — Toast Redesign + Start-Over Modal Replaced with Action Toast
+
+- No feature branch/spec — user-directed design/UX changes made directly, following on from an
+  earlier full audit of every toast call site in the app (`core/services/toast.ts` wrapper,
+  `app.html`'s global `<p-toast>`, and every `.success()`/`.info()`/`.warn()`/`.error()` call
+  across `auth.ts`, `destinations-layout.ts`, `step4-summary.ts`, `step5-save.ts`, `profile.ts`)
+- **Toast visual redesign**: user shared three mockup screenshots (info/error/warn) and asked to
+  match them, including colors, with explicit icon classes for success/warn/error
+  (`fa-thumbs-up`/`fa-circle-exclamation`/`fa-circle-xmark`). `styles.css`'s toast section
+  rewritten from solid dark backgrounds (navy/red, plus a warn variant that was wrongly styled
+  blue) to pale tinted backgrounds + matching colored border + colored bold heading + neutral
+  gray body text, one palette per severity (success green, warn amber, error red, info blue —
+  info icon `fa-circle-info` chosen by inference, not specified in the mockups, flagged to the
+  user as a guess). `app.html`'s icon template extended from a two-way (success/else) branch to
+  all four severities
+- **Real bug found and fixed as a side effect**: CSS was keyed off a manually-passed `styleClass`
+  string (`'toast-success'`/`'toast-error'`/etc.) that every call site has to remember to pass
+  correctly — `step5-save.ts`'s *success* toast was passing `'toast-error'` (copy-paste mistake),
+  so a successful trip save rendered with error styling. Fixed at the root by rekeying every CSS
+  rule off PrimeNG's own automatic `.p-toast-message-{severity}` class instead (derived directly
+  from the `severity` argument, can't drift from it) — the stray manually-passed classes are now
+  harmless no-ops at every call site, none needed touching
+- **Start-over confirmation**: user asked to replace the trip planner's "Start over" link
+  confirmation — previously a `p-confirmDialog` modal (`ConfirmationService`) — with a toast
+  that has action buttons, in the light-blue (info) palette just built. Investigated PrimeNG's
+  `MessageService`/`Toast` internals first (`canAdd()` requires `this.key === message.key`,
+  `clear(key)` only clears a matching-key instance) to confirm a second, `key`-scoped `<p-toast>`
+  is the correct mechanism for an isolated action toast that can be dismissed without touching
+  any other toast in the app. `start-over-link.ts` now calls `MessageService.add()` directly
+  (bypassing the simple `Toast` wrapper, which has no support for `sticky`/`key`/`data`) with
+  `severity: 'info'`, `sticky: true`, and `data: { onAccept, onReject }` callbacks; confirmed via
+  code search that `trip-planner-wizard`'s `<p-confirmDialog>`/`ConfirmationService` provider
+  were used *only* for this one confirmation (untouched: `profile.ts`'s separate
+  `ConfirmationService`/`<p-confirmDialog>`, a different, unrelated confirmation)
+  - New `<p-toast [key]="startOverKey">` + message template added to `trip-planner-wizard.html`
+    (replacing the old `<p-confirmDialog />`), with Cancel/Start-Over buttons wired to
+    `message.data.onReject()`/`onAccept()`. Old `ConfirmDialog`/`ConfirmationService`
+    imports+provider removed from `trip-planner-wizard.ts`
+  - Reused the *exact* old accept-button colors (`#1a6b3c`, hover `#174f2f`) for visual
+    continuity, discovered by re-reading the dead `.start-over-accept-btn` CSS being deleted
+    rather than guessing a new color — first draft used `var(--navy-900)` which would have been
+    an inconsistent navy-base/green-hover mismatch
+  - User follow-up correction: initial toast position `top-center` didn't match — changed to
+    `position="center"` to match the global app-wide toast's position exactly
+- Verified via `tsc --noEmit` (doesn't check templates) **and a full `ng build`** (does, via
+  Angular's `strictTemplates`) — confirms `message.data.onAccept()`/`onReject()` and the new
+  `pTemplate`/`[key]` bindings all type-check correctly, not just the `.ts` files
+- Not yet committed. Also still open from the earlier toast-audit conversation, not acted on:
+  `profile.html` has its own second global `<p-toast position="bottom-center" />` in addition to
+  `app.html`'s, with no `key` scoping either — any toast fired while on `/auth/profile` likely
+  renders twice
+
 ### 2026-08-10 — OJP TripRequest: Connections Migration Implemented, UAT Passed
 
 - Branch `feature/ojp-trip-request` created (target of the Specced entry directly below) and the

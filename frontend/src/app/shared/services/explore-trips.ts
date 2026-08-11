@@ -39,4 +39,9 @@ export class ExploreTripsService {
   toggleLike(id: string): Observable<{ likeCount: number; liked: boolean }> {
     return this.http.post<LikeResponse>(`${this.base}/${id}/like`, {}).pipe(map(r => r.data));
   }
+
+  getTripBySlug(slug: string): Observable<PublicTrip> {
+    return this.http.get<{ success: boolean; data: PublicTrip }>(`${this.base}/slug/${slug}`)
+      .pipe(map(r => r.data));
+  }
 }

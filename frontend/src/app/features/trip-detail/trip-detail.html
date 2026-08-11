@@ -1,0 +1,49 @@
+@if (notFound()) {
+  <div class="td-not-found">
+    <p>{{ 'tripDetail.notFoundMessage' | translate }}</p>
+    <a [routerLink]="langSvc.localize(['explore-trips'])">{{ 'tripDetail.backToExplore' | translate }}</a>
+  </div>
+} @else if (trip(); as trip) {
+  <div class="td-page">
+    <div class="td-header">
+      <h1 class="td-name">{{ trip.name }}</h1>
+      <p-tag
+        [value]="trip.type === 'road' ? ('trip.planner.typeRoad' | translate) : ('trip.planner.typeRail' | translate)"
+        [severity]="trip.type === 'road' ? 'info' : 'success'" />
+    </div>
+
+    <p class="td-creator">
+      <i class="fa-light fa-user"></i>
+      {{ trip.creatorName ? (trip.creatorName + ' · ' + trip.creatorCountry) : ('exploreTrips.anonymous' | translate) }}
+    </p>
+
+    <div class="td-stats">
+      <span>
+        <i class="fa-light fa-calendar"></i>
+        @if (formattedDateRange(); as range) {
+          {{ range }}
+        } @else {
+          {{ 'trip.planner.step1.daysTrip' | translate: { count: dayCount() } }}
+        }
+      </span>
+      <span><i class="fa-light fa-location-dot"></i>{{ trip.stops.length }}</span>
+      <span><i class="fa-light fa-eye"></i>{{ trip.activities.length }}</span>
+      <span><i class="fa-light fa-route"></i>{{ formatDistance(trip.distanceKm ?? 0) }}</span>
+    </div>
+
+    <div class="td-map-wrap">
+      <app-map
+        [tripRoute]="trip.routeCoordinates ?? []"
+        [tripType]="trip.type"
+        [tripStopPoints]="stopPoints()"
+        [markers]="activityMarkers()"
+        [fitBounds]="(trip.routeCoordinates?.length ?? 0) >= 2 ? trip.routeCoordinates! : null" />
+    </div>
+
+    @if (trip.review?.trim()) {
+      <p class="td-review">{{ trip.review }}</p>
+    }
+
+    <app-trip-timeline [trip]="trip" />
+  </div>
+}

@@ -38,6 +38,10 @@ export const routes: Routes = [
             path: 'explore-trips',
             loadComponent: () => import('./features/explore-trips/explore-trips').then(m => m.ExploreTrips),
           },
+          {
+            path: 'trips/:slug',
+            loadComponent: () => import('./features/trip-detail/trip-detail').then(m => m.TripDetail),
+          },
           { path: 'search', component: SearchPage },
           {
             path: 'auth/profile',

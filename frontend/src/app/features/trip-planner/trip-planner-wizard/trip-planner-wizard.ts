@@ -2,8 +2,8 @@ import { Component, DestroyRef, computed, effect, inject, untracked } from '@ang
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { CommonModule } from '@angular/common';
 import { TranslatePipe } from '@ngx-translate/core';
-import { ConfirmDialog } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { Toast } from 'primeng/toast';
+import { PrimeTemplate } from 'primeng/api';
 import { TransportService } from '../../../shared/services/transport';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TripStop } from '../../../models/trip';
@@ -12,6 +12,7 @@ import { Step2Itinerary } from '../step2-itinerary/step2-itinerary';
 import { Step3Activities } from '../step3-activities/step3-activities';
 import { Step4Summary } from '../step4-summary/step4-summary';
 import { Step5Save } from '../step5-save/step5-save';
+import { START_OVER_KEY } from '../start-over-link/start-over-link';
 
 interface TripPlannerPrefill {
   name: string;
@@ -25,8 +26,7 @@ const STEP_KEYS = ['myTrip', 'itinerary', 'activities', 'summary', 'save'] as co
 @Component({
   selector: 'app-trip-planner-wizard',
   standalone: true,
-  imports: [CommonModule, TranslatePipe, ConfirmDialog, Step1MyTrip, Step2Itinerary, Step3Activities, Step4Summary, Step5Save],
-  providers: [ConfirmationService],
+  imports: [CommonModule, TranslatePipe, Toast, PrimeTemplate, Step1MyTrip, Step2Itinerary, Step3Activities, Step4Summary, Step5Save],
   templateUrl: './trip-planner-wizard.html',
   styleUrl: './trip-planner-wizard.css',
 })
@@ -34,6 +34,8 @@ export class TripPlannerWizard {
   private transportSvc = inject(TransportService);
   plannerSvc = inject(TripPlannerService);
   private destroyRef = inject(DestroyRef);
+
+  readonly startOverKey = START_OVER_KEY;
 
   readonly stepKeys = STEP_KEYS;
 

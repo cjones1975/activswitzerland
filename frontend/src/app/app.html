@@ -1,10 +1,14 @@
-<p-toast position="center" [style]="{ width: '300px' }">
+<p-toast position="center" [style]="{ width: '340px' }">
     <ng-template let-message pTemplate="message">
         <div class="custom-toast">
             @if (message.severity === 'success') {
                 <i class="fa-light fa-thumbs-up custom-toast-icon"></i>
+            } @else if (message.severity === 'warn') {
+                <i class="fa-light fa-circle-exclamation custom-toast-icon"></i>
+            } @else if (message.severity === 'error') {
+                <i class="fa-light fa-circle-xmark custom-toast-icon"></i>
             } @else {
-                <i class="fa-sharp fa-light fa-circle-exclamation custom-toast-icon"></i>
+                <i class="fa-light fa-circle-info custom-toast-icon"></i>
             }
             <div class="toast-text">
                 <span class="toast-summary">{{ message.summary }}</span>
