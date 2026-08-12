@@ -104,6 +104,7 @@ export class ExploreTrips implements OnInit, AfterViewInit, OnDestroy {
       order: f.order,
       minDistance: f.minDistance,
       maxDistance: f.maxDistance,
+      reviewLang: f.reviewLang,
     }).pipe(takeUntilDestroyed(this.destroyRef)).subscribe({
       next: ({ trips, hasMore }) => {
         this.trips.set([...this.trips(), ...trips]);

@@ -10,9 +10,9 @@
     <!-- FRONT -->
     <div class="tc-face tc-front">
       <div class="tc-header">
-        <span class="tc-name">{{ trip.name }}</span>
+        <span class="tc-name">{{ localizedName(trip, langSvc.current) }}</span>
         <p-tag
-          [value]="trip.type === 'road' ? ('trip.planner.typeRoad' | translate) : ('trip.planner.typeRail' | translate)"
+          [value]="trip.type === 'road' ? ('trip.planner.typeRoadShort' | translate) : ('trip.planner.typeRailShort' | translate)"
           [severity]="trip.type === 'road' ? 'info' : 'success'" />
       </div>
 
@@ -49,7 +49,7 @@
         {{ 'exploreTrips.travellerReview' | translate }}
       </button>
       @if (reviewOpen()) {
-        <p class="tc-review-text">{{ trip.review || ('exploreTrips.noReview' | translate) }}</p>
+        <p class="tc-review-text">{{ localizedReview(trip, langSvc.current) || ('exploreTrips.noReview' | translate) }}</p>
       }
 
       <div class="tc-footer">
@@ -65,7 +65,7 @@
     <!-- BACK -->
     <div class="tc-face tc-back">
       <div class="tc-header">
-        <span class="tc-name">{{ trip.name }}</span>
+        <span class="tc-name">{{ localizedName(trip, langSvc.current) }}</span>
         <button class="tc-flip-btn" type="button" [attr.aria-label]="'exploreTrips.flip' | translate">
           <i class="fa-solid fa-arrow-rotate-right"></i>
         </button>

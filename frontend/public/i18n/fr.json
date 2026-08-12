@@ -55,6 +55,8 @@
       "subtitle": "Planifiez un itinéraire en train ou en voiture, trouvez des correspondances et découvrez des activités à chaque destination.",
       "typeRoad": "Road trip",
       "typeRail": "Voyage en train",
+      "typeRoadShort": "Voiture",
+      "typeRailShort": "Train",
       "addStop": "Ajouter un arrêt",
       "viewTrip": "Voir le voyage",
       "dateTime": "Date et heure",
@@ -186,7 +188,9 @@
       "reviewPlaceholder": "Décrivez comment cela s'est passé, ce que vous avez aimé ou non...",
       "noReview": "Pas encore d'avis.",
       "editReview": "Modifier l'avis",
-      "saveReview": "Enregistrer l'avis"
+      "saveReview": "Enregistrer l'avis",
+      "statusPublic": "Public",
+      "statusPrivate": "Privé"
     },
     "stats": {
       "trips": "Voyages enregistrés",
@@ -430,6 +434,15 @@
       },
       "mostLiked": "Trier par nombre de mentions J'aime",
       "distance": "Distance",
+      "reviewLang": "Langue de l'avis",
+      "reviewLangOption": {
+        "all": "Toutes",
+        "en": "Anglais",
+        "de": "Allemand",
+        "fr": "Français",
+        "it": "Italien",
+        "other": "Autre(s) langue(s)"
+      },
       "apply": "Appliquer",
       "reset": "Réinitialiser"
     }

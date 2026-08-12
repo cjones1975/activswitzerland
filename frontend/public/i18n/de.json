@@ -55,6 +55,8 @@
       "subtitle": "Planen Sie eine Route per Bahn oder Auto, finden Sie Verbindungen und entdecken Sie Aktivitäten an jedem Ziel.",
       "typeRoad": "Autoreise",
       "typeRail": "Bahnreise",
+      "typeRoadShort": "Auto",
+      "typeRailShort": "Zug",
       "addStop": "Halt hinzufügen",
       "viewTrip": "Reise anzeigen",
       "dateTime": "Datum & Uhrzeit",
@@ -186,7 +188,9 @@
       "reviewPlaceholder": "Beschreiben Sie, wie es war, was Ihnen gefallen hat oder nicht...",
       "noReview": "Noch keine Bewertung.",
       "editReview": "Bewertung bearbeiten",
-      "saveReview": "Bewertung speichern"
+      "saveReview": "Bewertung speichern",
+      "statusPublic": "Öffentlich",
+      "statusPrivate": "Privat"
     },
     "stats": {
       "trips": "Gespeicherte Reisen",
@@ -430,6 +434,15 @@
       },
       "mostLiked": "Nach den meisten Likes sortieren",
       "distance": "Distanz",
+      "reviewLang": "Sprache der Bewertung",
+      "reviewLangOption": {
+        "all": "Alle",
+        "en": "Englisch",
+        "de": "Deutsch",
+        "fr": "Französisch",
+        "it": "Italienisch",
+        "other": "Andere Sprache(n)"
+      },
       "apply": "Anwenden",
       "reset": "Zurücksetzen"
     }

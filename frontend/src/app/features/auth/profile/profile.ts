@@ -18,8 +18,9 @@ import { TripsService } from '../../../shared/services/trips';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { SavedTrip } from '../../../models/trip';
 import { SeoService } from '../../../shared/services/seo';
-import { LangService } from '../../../shared/services/lang';
+import { Lang, LangService, SUPPORTED_LANGS } from '../../../shared/services/lang';
 import { formatDistance } from '../../../shared/utils/distance';
+import { localizedName, localizedReview } from '../../../shared/utils/localized-text';
 import { VerifyCode } from '../verify-code/verify-code';
 
 @Component({
@@ -58,6 +59,12 @@ export class Profile implements OnInit {
   openReviewIds = signal<Set<string>>(new Set());
   editingReviewId = signal<string | null>(null);
   reviewDraft = signal('');
+  // ── Translation review/edit (trip-content-translation-spec.md Phase C) ─────
+  readonly localeTabs: readonly Lang[] = SUPPORTED_LANGS;
+  reviewEditLocale = signal<Lang>('en');
+  editingNameId = signal<string | null>(null);
+  nameDraft = signal('');
+  nameEditLocale = signal<Lang>('en');
 
   countries = [
     { label: 'Switzerland', value: 'Switzerland' },
@@ -213,20 +220,70 @@ export class Profile implements OnInit {
 
   startEditReview(trip: SavedTrip): void {
     if (!trip._id) return;
-    this.reviewDraft.set(trip.review ?? '');
+    this.reviewEditLocale.set('en');
+    this.reviewDraft.set(localizedReview(trip, 'en'));
     this.editingReviewId.set(trip._id);
+  }
+
+  // Switching locale discards any in-progress unsaved edit for the previous locale, in favour
+  // of that locale's currently-stored (translated or English-fallback) text — see Phase C's
+  // verification plan, "simpler acceptable behavior" option.
+  selectReviewLocale(trip: SavedTrip, locale: Lang): void {
+    this.reviewEditLocale.set(locale);
+    this.reviewDraft.set(localizedReview(trip, locale));
   }
 
   saveReview(trip: SavedTrip): void {
     if (!trip._id) return;
-    const review = this.reviewDraft().trim();
-    this.tripsSvc.updateTrip(trip._id, { review })
+    const locale = this.reviewEditLocale();
+    const draft = this.reviewDraft().trim();
+    // A direct field patch, not a re-translation — editing a locale's stored text overrides
+    // that locale's translation without re-triggering the backend's regeneration logic, since
+    // the English source (`review`) didn't change when `locale !== 'en'`.
+    const updates = locale === 'en'
+      ? { review: draft }
+      : { reviewTranslations: { ...trip.reviewTranslations, [locale]: draft } };
+    this.tripsSvc.updateTrip(trip._id, updates)
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(saved => {
-        const updated = this.savedTrips().map(t => t._id === trip._id ? { ...t, review: saved.review } : t);
+        const updated = this.savedTrips().map(t => t._id === trip._id ? { ...t, ...saved } : t);
         this.savedTrips.set(updated);
         this.recomputeStats(updated);
         this.editingReviewId.set(null);
       });
+  }
+
+  // ── Trip name translations ──────────────────────────────────────────────
+  startEditName(trip: SavedTrip): void {
+    if (!trip._id) return;
+    this.nameEditLocale.set('en');
+    this.nameDraft.set(localizedName(trip, 'en'));
+    this.editingNameId.set(trip._id);
+  }
+
+  selectNameLocale(trip: SavedTrip, locale: Lang): void {
+    this.nameEditLocale.set(locale);
+    this.nameDraft.set(localizedName(trip, locale));
+  }
+
+  saveName(trip: SavedTrip): void {
+    if (!trip._id) return;
+    const locale = this.nameEditLocale();
+    const draft = this.nameDraft().trim();
+    const updates = locale === 'en'
+      ? { name: draft }
+      : { nameTranslations: { ...trip.nameTranslations, [locale]: draft } };
+    this.tripsSvc.updateTrip(trip._id, updates)
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(saved => {
+        const updated = this.savedTrips().map(t => t._id === trip._id ? { ...t, ...saved } : t);
+        this.savedTrips.set(updated);
+        this.recomputeStats(updated);
+        this.editingNameId.set(null);
+      });
+  }
+
+  cancelEditName(): void {
+    this.editingNameId.set(null);
   }
 }
