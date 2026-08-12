@@ -11,6 +11,7 @@ import { ExploreTripsService } from '../../shared/services/explore-trips';
 import { PublicTrip } from '../../models/trip';
 import { tripDayCount, formatDdMmYyyy } from '../../shared/utils/date-range';
 import { formatDistance } from '../../shared/utils/distance';
+import { localizedName, localizedReview } from '../../shared/utils/localized-text';
 import { TripTimeline } from '../explore-trips/trip-timeline/trip-timeline';
 import { ACTIVITY_GROUPS } from '../trip-planner/step4-summary/step4-summary';
 
@@ -34,6 +35,8 @@ export class TripDetail implements OnInit {
   private destroyRef = inject(DestroyRef);
 
   readonly formatDistance = formatDistance;
+  readonly localizedName = localizedName;
+  readonly localizedReview = localizedReview;
 
   trip = signal<PublicTrip | null>(null);
   notFound = signal(false);
@@ -96,7 +99,7 @@ export class TripDetail implements OnInit {
       this.notFound.set(false);
       this.trip.set(trip);
       const description = this.buildDescription(trip);
-      const name = trip.name ?? ''; // always present on a saved/published trip; `name` is only optional pre-save
+      const name = this.localizedName(trip, this.langSvc.current);
       this.seo.set({ title: name, description });
       this.seo.setStructuredData({
         '@context': 'https://schema.org',
@@ -114,7 +117,8 @@ export class TripDetail implements OnInit {
   }
 
   private buildDescription(trip: PublicTrip): string {
-    if (trip.review?.trim()) return trip.review.trim().slice(0, 160);
+    const review = this.localizedReview(trip, this.langSvc.current);
+    if (review.trim()) return review.trim().slice(0, 160);
     const stopNames = trip.stops.map(s => s.name).join(', ');
     const days = this.dayCount();
     return days

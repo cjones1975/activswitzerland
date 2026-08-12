@@ -55,6 +55,8 @@
       "subtitle": "Plan a route by rail or road, find connections, and discover things to do at each destination.",
       "typeRoad": "Road Trip",
       "typeRail": "Rail Trip",
+      "typeRoadShort": "Road",
+      "typeRailShort": "Train",
       "addStop": "Add stop",
       "viewTrip": "View trip",
       "dateTime": "Date & Time",
@@ -186,7 +188,9 @@
       "reviewPlaceholder": "Describe how it went, what you liked or didn't like...",
       "noReview": "No review yet.",
       "editReview": "Edit review",
-      "saveReview": "Save review"
+      "saveReview": "Save review",
+      "statusPublic": "Public",
+      "statusPrivate": "Private"
     },
     "stats": {
       "trips": "Saved trips",
@@ -430,6 +434,15 @@
       },
       "mostLiked": "Sort by most liked",
       "distance": "Distance",
+      "reviewLang": "Review language",
+      "reviewLangOption": {
+        "all": "All",
+        "en": "English",
+        "de": "German",
+        "fr": "French",
+        "it": "Italian",
+        "other": "Other language(s)"
+      },
       "apply": "Apply",
       "reset": "Reset"
     }

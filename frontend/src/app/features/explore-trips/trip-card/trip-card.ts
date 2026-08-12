@@ -5,9 +5,11 @@ import { MapComponent, MapMarker } from '../../../shared/map/map';
 import { Auth } from '../../../core/services/auth';
 import { Drawer } from '../../../shared/services/drawer';
 import { ExploreTripsService } from '../../../shared/services/explore-trips';
+import { LangService } from '../../../shared/services/lang';
 import { PublicTrip } from '../../../models/trip';
 import { tripDayCount, formatDdMmYyyy } from '../../../shared/utils/date-range';
 import { formatDistance } from '../../../shared/utils/distance';
+import { localizedName, localizedReview } from '../../../shared/utils/localized-text';
 import { TripTimeline } from '../trip-timeline/trip-timeline';
 import { ACTIVITY_GROUPS } from '../../trip-planner/step4-summary/step4-summary';
 
@@ -24,8 +26,11 @@ export class TripCard implements OnInit {
   private auth = inject(Auth);
   private drawerSvc = inject(Drawer);
   private tripsSvc = inject(ExploreTripsService);
+  protected langSvc = inject(LangService);
 
   readonly formatDistance = formatDistance;
+  readonly localizedName = localizedName;
+  readonly localizedReview = localizedReview;
 
   flipped = signal(false);
   reviewOpen = signal(true);

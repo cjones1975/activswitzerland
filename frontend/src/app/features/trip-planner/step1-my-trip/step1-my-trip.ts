@@ -89,7 +89,11 @@ export class Step1MyTrip {
   }
 
   selectDateMode(mode: TripDateMode): void {
-    if (mode !== this.dateMode()) this.plannerSvc.setDateMode(mode);
+    if (mode === this.dateMode()) return;
+    this.plannerSvc.setDateMode(mode);
+    // setDateMode resets range to just { mode }, so 'days' would otherwise start blank
+    // (no default day count) and block Continue until the traveler types one in.
+    if (mode === 'days') this.plannerSvc.setOverallRange({ mode: 'days', startDay: 1, endDay: 1 });
   }
 
   onDateRangeChange(value: (Date | null)[] | null): void {

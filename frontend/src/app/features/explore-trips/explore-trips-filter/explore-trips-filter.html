@@ -27,6 +27,15 @@
     <p-slider class="etf-slider" [ngModel]="distanceRange()" (ngModelChange)="distanceRange.set($event)" [range]="true" [min]="0" [max]="1000" />
   </div>
 
+  <div class="etf-field">
+    <label>{{ 'exploreTrips.filter.reviewLang' | translate }}</label>
+    <p-selectButton [options]="reviewLangOptions" [ngModel]="reviewLang()" (ngModelChange)="reviewLang.set($event)" [allowEmpty]="false">
+      <ng-template #item let-v>
+        <span>{{ ('exploreTrips.filter.reviewLangOption.' + v) | translate }}</span>
+      </ng-template>
+    </p-selectButton>
+  </div>
+
   <div class="etf-actions">
     <p-button [label]="'exploreTrips.filter.reset' | translate" severity="secondary" [outlined]="true" styleClass="w-full" (onClick)="resetFilters()" />
     <p-button [label]="'exploreTrips.filter.apply' | translate" styleClass="w-full" (onClick)="apply()" />

@@ -13,6 +13,7 @@ export interface ExploreTripsFilters {
   sortByLikes: boolean;
   minDistance: number;
   maxDistance: number;
+  reviewLang: 'all' | 'en' | 'de' | 'fr' | 'it' | 'other';
 }
 
 // Stable references (not recreated per call) — ExploreTrips reads this through a `computed()`
@@ -25,6 +26,7 @@ export const DEFAULT_EXPLORE_TRIPS_FILTERS: ExploreTripsFilters = {
   sortByLikes: false,
   minDistance: 0,
   maxDistance: 1000,
+  reviewLang: 'all',
 };
 
 const DRAWER_KEY = 'explore-trips-filter';
@@ -41,11 +43,13 @@ export class ExploreTripsFilter implements OnInit {
 
   readonly typeOptions: ExploreTripsFilters['type'][] = ['all', 'road', 'rail'];
   readonly orderOptions: ExploreTripsFilters['order'][] = ['desc', 'asc'];
+  readonly reviewLangOptions: ExploreTripsFilters['reviewLang'][] = ['all', 'en', 'de', 'fr', 'it', 'other'];
 
   type = signal<ExploreTripsFilters['type']>(DEFAULT_EXPLORE_TRIPS_FILTERS.type);
   order = signal<ExploreTripsFilters['order']>(DEFAULT_EXPLORE_TRIPS_FILTERS.order);
   sortByLikes = signal(DEFAULT_EXPLORE_TRIPS_FILTERS.sortByLikes);
   distanceRange = signal<[number, number]>([DEFAULT_EXPLORE_TRIPS_FILTERS.minDistance, DEFAULT_EXPLORE_TRIPS_FILTERS.maxDistance]);
+  reviewLang = signal<ExploreTripsFilters['reviewLang']>(DEFAULT_EXPLORE_TRIPS_FILTERS.reviewLang);
 
   // Seeded from whatever ExploreTrips currently has applied (passed in as the drawer's open
   // payload) rather than always resetting to defaults, so reopening the filter sheet shows the
@@ -56,6 +60,7 @@ export class ExploreTripsFilter implements OnInit {
     this.order.set(current.order);
     this.sortByLikes.set(current.sortByLikes);
     this.distanceRange.set([current.minDistance, current.maxDistance]);
+    this.reviewLang.set(current.reviewLang);
   }
 
   apply(): void {
@@ -66,6 +71,7 @@ export class ExploreTripsFilter implements OnInit {
       sortByLikes: this.sortByLikes(),
       minDistance,
       maxDistance,
+      reviewLang: this.reviewLang(),
     };
     this.drawerSvc.setPayload(DRAWER_KEY, filters);
     this.drawerSvc.closePreservingPayload(DRAWER_KEY);

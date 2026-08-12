@@ -12,6 +12,7 @@ export interface ExploreTripsFilter {
   order?: 'asc' | 'desc';
   minDistance?: number;
   maxDistance?: number;
+  reviewLang?: 'all' | 'en' | 'de' | 'fr' | 'it' | 'other';
 }
 
 interface PublicTripsResponse { success: boolean; hasMore: boolean; data: PublicTrip[]; }
@@ -31,6 +32,7 @@ export class ExploreTripsService {
     if (filter.order) params = params.set('order', filter.order);
     if (filter.minDistance != null) params = params.set('minDistance', filter.minDistance);
     if (filter.maxDistance != null) params = params.set('maxDistance', filter.maxDistance);
+    if (filter.reviewLang && filter.reviewLang !== 'all') params = params.set('reviewLang', filter.reviewLang);
 
     return this.http.get<PublicTripsResponse>(`${this.base}/public`, { params })
       .pipe(map(r => ({ trips: r.data, hasMore: r.hasMore })));

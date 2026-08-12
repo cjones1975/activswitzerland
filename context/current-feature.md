@@ -14,6 +14,87 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-12 — Trip Content Translation (Claude API) Implemented
+
+- Branch `feature/trip-content-translation`; spec: `context/features/trip-content-translation-spec.md`.
+  All four phases built in one session, directly off the spec with no plan-mode detour
+- **Phase A** — `Trip.js` gained `nameTranslations`/`reviewTranslations`/`reviewLang`; new
+  `utils/detect-lang.js` (franc-based) and `utils/translate.js` (Claude Opus 5, adaptive thinking,
+  `effort: 'low'`, structured JSON output, `stop_reason === 'refusal'` + try/catch both degrading to
+  `null`). `controllers/trips.js`'s `createTrip`/`updateTrip` gate translation to
+  `CURATED_TRIPS_USER_ID`, run detection unconditionally, strip client-supplied translation fields
+  from update bodies, and `getPublicTrips` gained the `reviewLang` filter with the curated-trip `$or`
+  clause from the spec. `ANTHROPIC_API_KEY`/`CURATED_TRIPS_USER_ID` added to
+  `backend/config/.env`/`infra/.env.prod.example`
+- **Phase B** — new `shared/utils/localized-text.ts` (`localizedName`/`localizedReview`, English
+  fallback); `SavedTrip` gained the translation fields; `trip-detail` and `trip-card` (front+back)
+  render through the helpers, including trip-detail's SEO title/description/JSON-LD — this is the
+  part that actually makes the per-locale `/de|fr|it/trips/:slug` pages pay off
+- **Phase C** — Profile's review editor extended with an EN/DE/FR/IT locale-tab strip
+  (`reviewEditLocale`); saving on a non-`en` locale patches `reviewTranslations.<locale>` directly
+  rather than the `review` field, so it doesn't re-trigger backend regeneration. Added an equivalent,
+  previously-nonexistent inline name editor (pencil icon next to `trip-card-name`) with its own
+  locale tabs, same pattern
+- **Phase D** — Explore Trips filter drawer gained a "Review language" `p-selectButton`
+  (all/en/de/fr/it/other), threaded through `ExploreTripsFilters`/`ExploreTripsService`/
+  `explore-trips.ts`'s `loadMore()`, with new `exploreTrips.filter.reviewLang*` keys in all four
+  locale files
+- **Two real bugs found via live testing, not caught by `tsc`/`node --check`**, both in
+  `utils/translate.js`:
+  1. Claude's structured-outputs API requires `additionalProperties: false` on *every* nested
+     object in the schema, not just the top level — the `de`/`fr`/`it` sub-schemas were missing it,
+     so every real request 400'd (`"For 'object' type, 'additionalProperties' must be explicitly set
+     to false"`). Root-caused by testing the raw API call directly (bypassing the
+     try/catch-swallows-everything design) rather than trusting a silent no-op
+  2. **Two env files, only one wired up**: `infra/.env` (what the actual running Docker
+     `backend` container reads via `docker-compose.yml`'s `env_file:`) is a *separate* file from
+     `backend/config/.env` (only read when running the backend directly with `npm run dev` outside
+     Docker) — the spec's `.env` additions only targeted the latter. Diagnosed by checking
+     `docker ps`/`docker-compose.yml` after the user reported "still not working" post-credit-fix;
+     copied the working key/id across and rebuilt (`docker compose up -d --build backend`). Matches
+     the same class of "stale/misconfigured Docker container" gotcha noted in earlier session
+     entries (OJP connections migration, Explore Trips UAT)
+  3. Also confirmed, not a bug: an empty Anthropic credit balance produces the same silent
+     "trip saves, no translations" symptom by design (Confirmed Decision 6) — diagnosed first via
+     the same direct-API-call approach before finding the schema bug
+- **Post-implementation cosmetic round**, all user-directed, on top of the same branch:
+  profile trip cards gained a "Public"/"Private" status label (green when public) next to the
+  km/mi distance, on the same row as the from→destination summary (first attempt stacked it
+  vertically below the summary row — corrected back to one line per user feedback); Explore Trips'
+  and Profile's trip-type badges shortened from "Road Trip"/"Rail Trip" to one word ("Road"/"Train")
+  via new `typeRoadShort`/`typeRailShort` i18n keys, to stop the badge text wrapping; trip-planner
+  Step 1's "Number of days" mode now defaults to 1 instead of blank (`selectDateMode()` seeds
+  `{startDay: 1, endDay: 1}` when switching into `'days'` mode, since `setDateMode()` resets `range`
+  to just `{mode}`)
+- Verified via `node --check` on every changed backend file, `tsc --noEmit` clean on the frontend
+  after every round, and live end-to-end testing by the user (translation, detection, the Explore
+  Trips filter, Profile's locale-switcher UI) — browser/build verification deliberately left to the
+  user throughout, per their explicit instruction mid-session
+- Not yet merged to `main`
+
+### 2026-08-12 — Trip Content Translation (Claude API) Specced
+
+- User asked to add real per-locale content to curated public trips' `/de|fr|it/trips/:slug` pages
+  (currently all show identical English `name`/`review`, undermining the trip-detail-pages SEO work) via
+  the Claude API, plus a way for visitors to filter Explore Trips by review language for regular users'
+  un-translated reviews
+- Investigated current state before designing: confirmed `Trip.js` has no translation concept at all, no
+  `@anthropic-ai/sdk` dependency, no curator/admin role on `User.js` (curated "ActivSwitzerland Team"
+  account is just a normal user), and that Profile's existing `editingReviewId`/`reviewDraft` review-edit
+  pattern is the template to extend for reviewing translations rather than building new UI
+- Confirmed decisions: Claude API (not OpenAI); additive `nameTranslations`/`reviewTranslations` fields
+  (`{de?, fr?, it?}`, no breaking change to `name`/`review`); translations regenerate on every English-source
+  edit, not just first publish; synchronous within the save request (`effort: 'low'`, thinking disabled);
+  curator can hand-edit any locale before treating it final; translation failure never blocks the save;
+  translation is gated to one account via `CURATED_TRIPS_USER_ID` env var (cost control); a separate,
+  free local (`franc`) language-detection pass runs on every public trip's review regardless of account,
+  powering a new Explore Trips filter; curated trips get a hardcoded `reviewLang: 'en'` rather than being
+  run through the detector
+- Wrote `context/features/trip-content-translation-spec.md`, four phases (A: backend translation +
+  detection; B: frontend display; C: Profile review/edit UI; D: Explore Trips language filter). Branch
+  `feature/trip-content-translation` created. **Status: proposed, not started** — spec only, no
+  implementation yet
+
 ### 2026-08-11 — Toast Redesign + Start-Over Modal Replaced with Action Toast
 
 - No feature branch/spec — user-directed design/UX changes made directly, following on from an

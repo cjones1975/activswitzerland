@@ -55,6 +55,8 @@
       "subtitle": "Pianifica un percorso in treno o in auto, trova coincidenze e scopri cosa fare in ogni destinazione.",
       "typeRoad": "Viaggio in auto",
       "typeRail": "Viaggio in treno",
+      "typeRoadShort": "Auto",
+      "typeRailShort": "Treno",
       "addStop": "Aggiungi tappa",
       "viewTrip": "Visualizza viaggio",
       "dateTime": "Data e ora",
@@ -186,7 +188,9 @@
       "reviewPlaceholder": "Descrivi come è andata, cosa ti è piaciuto o no...",
       "noReview": "Nessuna recensione ancora.",
       "editReview": "Modifica recensione",
-      "saveReview": "Salva recensione"
+      "saveReview": "Salva recensione",
+      "statusPublic": "Pubblico",
+      "statusPrivate": "Privato"
     },
     "stats": {
       "trips": "Viaggi salvati",
@@ -430,6 +434,15 @@
       },
       "mostLiked": "Ordina per più apprezzati",
       "distance": "Distanza",
+      "reviewLang": "Lingua della recensione",
+      "reviewLangOption": {
+        "all": "Tutte",
+        "en": "Inglese",
+        "de": "Tedesco",
+        "fr": "Francese",
+        "it": "Italiano",
+        "other": "Altra/e lingua/e"
+      },
       "apply": "Applica",
       "reset": "Reimposta"
     }

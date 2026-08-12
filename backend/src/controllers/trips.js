@@ -3,8 +3,11 @@ import ErrorResponse from '../utils/errorResponse.js';
 import Trip from '../models/Trip.js';
 import { routeDistanceKm } from '../utils/geo.js';
 import { generateUniqueSlug, tripDurationLabel } from '../utils/slug.js';
+import { detectReviewLang } from '../utils/detect-lang.js';
+import { translateTripContent } from '../utils/translate.js';
 
 const isSlugTaken = slug => Trip.exists({ slug }).then(Boolean);
+const isCuratedAccount = userId => userId === process.env.CURATED_TRIPS_USER_ID;
 
 // @desc   Get all trips for the logged-in user
 // @route  GET /api/v1/trips
@@ -18,10 +21,22 @@ export const getTrips = asyncHandler(async (req, res) => {
 // @route  POST /api/v1/trips
 // @access Private
 export const createTrip = asyncHandler(async (req, res) => {
-    const { name, type, dateMode, range, stops, connections, activities, routeCoordinates, isPublic, anonymous } = req.body;
+    const { name, type, dateMode, range, stops, connections, activities, routeCoordinates, isPublic, anonymous, review } = req.body;
     const slug = isPublic
         ? await generateUniqueSlug(`${name} ${tripDurationLabel(range)}`, isSlugTaken)
         : undefined;
+
+    let translationFields = {};
+    let reviewLang;
+    if (isPublic) {
+        const curated = isCuratedAccount(req.user.id);
+        reviewLang = curated ? 'en' : detectReviewLang(review || name);
+        if (curated) {
+            const translations = await translateTripContent({ name, review });
+            if (translations) translationFields = translations;
+        }
+    }
+
     const trip = await Trip.create({
         user: req.user.id,
         name,
@@ -34,8 +49,11 @@ export const createTrip = asyncHandler(async (req, res) => {
         routeCoordinates: routeCoordinates ?? [],
         isPublic: isPublic ?? false,
         anonymous: anonymous ?? true,
+        review: review ?? '',
         distanceKm: routeDistanceKm(routeCoordinates ?? []),
         ...(slug ? { slug } : {}),
+        ...(reviewLang ? { reviewLang } : {}),
+        ...translationFields,
     });
     res.status(201).json({ success: true, data: trip });
 });
@@ -50,9 +68,10 @@ export const updateTrip = asyncHandler(async (req, res, next) => {
         return next(new ErrorResponse('Not authorised to update this trip', 401));
     }
 
-    // likes only ever change through the dedicated like-toggle endpoint, and slug is
-    // server-derived only — neither is ever accepted from a direct trip edit
-    const { likes, slug, ...updates } = req.body;
+    // likes only ever change through the dedicated like-toggle endpoint, slug is
+    // server-derived only, and nameTranslations/reviewTranslations/reviewLang are only ever
+    // derived below (curator translation + detection) — none is ever accepted from a direct edit
+    const { likes, slug, nameTranslations, reviewTranslations, reviewLang, ...updates } = req.body;
     if (updates.routeCoordinates) {
         updates.distanceKm = routeDistanceKm(updates.routeCoordinates);
     }
@@ -62,6 +81,21 @@ export const updateTrip = asyncHandler(async (req, res, next) => {
         const name = updates.name ?? trip.name;
         const range = updates.range ?? trip.range;
         updates.slug = await generateUniqueSlug(`${name} ${tripDurationLabel(range)}`, isSlugTaken);
+    }
+
+    const effectiveIsPublic = updates.isPublic ?? trip.isPublic;
+    if (effectiveIsPublic && (updates.name !== undefined || updates.review !== undefined)) {
+        const effectiveName = updates.name ?? trip.name;
+        const effectiveReview = updates.review ?? trip.review;
+        const curated = isCuratedAccount(req.user.id);
+        updates.reviewLang = curated ? 'en' : detectReviewLang(effectiveReview || effectiveName);
+
+        const nameChanged = updates.name !== undefined && updates.name !== trip.name;
+        const reviewChanged = updates.review !== undefined && updates.review !== trip.review;
+        if (curated && (nameChanged || reviewChanged)) {
+            const translations = await translateTripContent({ name: effectiveName, review: effectiveReview });
+            if (translations) Object.assign(updates, translations);
+        }
     }
 
     trip = await Trip.findByIdAndUpdate(req.params.id, updates, { new: true, runValidators: true });
@@ -92,9 +126,16 @@ export const getPublicTrips = asyncHandler(async (req, res) => {
     const sortDir = req.query.order === 'asc' ? 1 : -1;
     const minDistance = req.query.minDistance !== undefined ? Number(req.query.minDistance) : null;
     const maxDistance = req.query.maxDistance !== undefined ? Number(req.query.maxDistance) : null;
+    const reviewLang = ['en', 'de', 'fr', 'it', 'other'].includes(req.query.reviewLang) ? req.query.reviewLang : null;
 
     const match = { isPublic: true };
     if (type) match.type = type;
+    if (reviewLang) {
+        match.$or = [
+            { reviewLang },
+            ...(['de', 'fr', 'it'].includes(reviewLang) ? [{ [`reviewTranslations.${reviewLang}`]: { $exists: true, $ne: null } }] : []),
+        ];
+    }
     if (minDistance !== null || maxDistance !== null) {
         match.distanceKm = {};
         if (minDistance !== null) match.distanceKm.$gte = minDistance;

@@ -153,14 +153,40 @@
                 @for (trip of savedTrips(); track trip._id) {
                     <div class="trip-card">
                         <div class="trip-card-header">
-                            <span class="trip-card-name">{{ trip.name }}</span>
+                            @if (editingNameId() === trip._id) {
+                                <span class="trip-card-name-edit">
+                                    <span class="trip-card-locale-tabs">
+                                        @for (locale of localeTabs; track locale) {
+                                            <button type="button" class="trip-card-locale-tab" [class.active]="nameEditLocale() === locale"
+                                                    (click)="selectNameLocale(trip, locale)">{{ locale | uppercase }}</button>
+                                        }
+                                    </span>
+                                    <input class="trip-card-name-input" type="text"
+                                           [ngModel]="nameDraft()" (ngModelChange)="nameDraft.set($event)" />
+                                    <p-button [label]="'profile.savedTrips.saveReview' | translate" size="small" (onClick)="saveName(trip)" />
+                                    <p-button icon="fa-light fa-xmark" [text]="true" size="small" (onClick)="cancelEditName()" />
+                                </span>
+                            } @else {
+                                <span class="trip-card-name">
+                                    {{ trip.name }}
+                                    <button type="button" class="trip-card-name-pencil" [attr.aria-label]="'profile.savedTrips.editReview' | translate" (click)="startEditName(trip)">
+                                        <i class="fa-light fa-pencil"></i>
+                                    </button>
+                                </span>
+                            }
                             <p-tag
-                                [value]="trip.type === 'road' ? ('trip.planner.typeRoad' | translate) : ('trip.planner.typeRail' | translate)"
+                                [value]="trip.type === 'road' ? ('trip.planner.typeRoadShort' | translate) : ('trip.planner.typeRailShort' | translate)"
                                 [severity]="trip.type === 'road' ? 'info' : 'success'" />
                         </div>
                         <p class="trip-card-stops">
                             <span>{{ tripStopSummary(trip) }}</span>
-                            <span class="trip-card-distance">{{ formatDistance(trip.distanceKm ?? 0) }}</span>
+                            <span class="trip-card-distance-status">
+                                <span class="trip-card-distance">{{ formatDistance(trip.distanceKm ?? 0) }}</span>
+                                <span class="trip-card-visibility-sep">·</span>
+                                <span class="trip-card-visibility" [class.trip-card-visibility--public]="trip.isPublic">
+                                    {{ (trip.isPublic ? 'profile.savedTrips.statusPublic' : 'profile.savedTrips.statusPrivate') | translate }}
+                                </span>
+                            </span>
                         </p>
                         <p class="trip-card-date">{{ formatDate(trip.createdAt) }}</p>
                         <div class="trip-card-actions">
@@ -190,6 +216,12 @@
                         @if (isReviewOpen(trip)) {
                             <div class="trip-card-review-body">
                                 @if (editingReviewId() === trip._id) {
+                                    <span class="trip-card-locale-tabs">
+                                        @for (locale of localeTabs; track locale) {
+                                            <button type="button" class="trip-card-locale-tab" [class.active]="reviewEditLocale() === locale"
+                                                    (click)="selectReviewLocale(trip, locale)">{{ locale | uppercase }}</button>
+                                        }
+                                    </span>
                                     <textarea class="trip-card-review-input" rows="3"
                                               [ngModel]="reviewDraft()" (ngModelChange)="reviewDraft.set($event)"
                                               [placeholder]="'profile.savedTrips.reviewPlaceholder' | translate"></textarea>

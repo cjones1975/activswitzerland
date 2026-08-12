@@ -6,7 +6,7 @@
 } @else if (trip(); as trip) {
   <div class="td-page">
     <div class="td-header">
-      <h1 class="td-name">{{ trip.name }}</h1>
+      <h1 class="td-name">{{ localizedName(trip, langSvc.current) }}</h1>
       <p-tag
         [value]="trip.type === 'road' ? ('trip.planner.typeRoad' | translate) : ('trip.planner.typeRail' | translate)"
         [severity]="trip.type === 'road' ? 'info' : 'success'" />
@@ -40,8 +40,8 @@
         [fitBounds]="(trip.routeCoordinates?.length ?? 0) >= 2 ? trip.routeCoordinates! : null" />
     </div>
 
-    @if (trip.review?.trim()) {
-      <p class="td-review">{{ trip.review }}</p>
+    @if (localizedReview(trip, langSvc.current).trim(); as review) {
+      <p class="td-review">{{ review }}</p>
     }
 
     <app-trip-timeline [trip]="trip" />

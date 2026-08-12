@@ -85,6 +85,17 @@ const TripSchema = new mongoose.Schema({
     isPublic:         { type: Boolean, default: false },
     anonymous:        { type: Boolean, default: true },
     review:           { type: String, default: '', trim: true },
+    // Auto-translated via the Claude API, curated account only — see
+    // trip-content-translation-spec.md. No `en` key: English is `name`/`review` itself.
+    nameTranslations: {
+        de: String, fr: String, it: String,
+    },
+    reviewTranslations: {
+        de: String, fr: String, it: String,
+    },
+    // Detected (curator: hardcoded 'en') source language of `review`/`name`, set on every
+    // public trip regardless of account, powering the Explore Trips language filter.
+    reviewLang:       { type: String, enum: ['en', 'de', 'fr', 'it', 'other'] },
     likes:            { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] },
     distanceKm:       { type: Number, default: 0 },
     // Assigned once, on the isPublic false->true transition (see utils/slug.js); never
