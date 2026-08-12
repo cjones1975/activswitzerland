@@ -188,9 +188,10 @@
       "reviewPlaceholder": "Décrivez comment cela s'est passé, ce que vous avez aimé ou non...",
       "noReview": "Pas encore d'avis.",
       "editReview": "Modifier l'avis",
-      "saveReview": "Enregistrer l'avis",
+      "saveReview": "Enregistrer",
       "statusPublic": "Public",
-      "statusPrivate": "Privé"
+      "statusPrivate": "Privé",
+      "cancel": "Annuler"
     },
     "stats": {
       "trips": "Voyages enregistrés",
@@ -436,12 +437,12 @@
       "distance": "Distance",
       "reviewLang": "Langue de l'avis",
       "reviewLangOption": {
-        "all": "Toutes",
-        "en": "Anglais",
-        "de": "Allemand",
-        "fr": "Français",
-        "it": "Italien",
-        "other": "Autre(s) langue(s)"
+        "all": "All",
+        "en": "En",
+        "de": "De",
+        "fr": "Fr",
+        "it": "It",
+        "other": "Other"
       },
       "apply": "Appliquer",
       "reset": "Réinitialiser"

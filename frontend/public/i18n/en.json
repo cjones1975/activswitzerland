@@ -188,9 +188,10 @@
       "reviewPlaceholder": "Describe how it went, what you liked or didn't like...",
       "noReview": "No review yet.",
       "editReview": "Edit review",
-      "saveReview": "Save review",
+      "saveReview": "Save",
       "statusPublic": "Public",
-      "statusPrivate": "Private"
+      "statusPrivate": "Private",
+      "cancel": "Cancel"
     },
     "stats": {
       "trips": "Saved trips",
@@ -437,11 +438,11 @@
       "reviewLang": "Review language",
       "reviewLangOption": {
         "all": "All",
-        "en": "English",
-        "de": "German",
-        "fr": "French",
-        "it": "Italian",
-        "other": "Other language(s)"
+        "en": "En",
+        "de": "De",
+        "fr": "Fr",
+        "it": "It",
+        "other": "Other"
       },
       "apply": "Apply",
       "reset": "Reset"

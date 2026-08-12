@@ -1,7 +1,6 @@
 .profile-page {
     min-height: 100svh;
     background: var(--gray-50);
-    padding-top: 56px;
     padding-bottom: 72px;
     display: flex;
     flex-direction: column;
@@ -27,7 +26,10 @@
     }
 }
 
-/* Hero */
+/* Hero — clears the fixed header itself (padding-top includes the header's own clearance,
+   56px, matching the value used elsewhere in the app e.g. trip-planner-layout.css's mobile
+   top: 3.5rem) so its navy background extends all the way behind the header instead of
+   leaving the page's own lighter background visible as a gap above the hero. */
 .profile-hero {
     height: 200px;
     background: linear-gradient(to bottom, var(--navy-500) 0%, var(--navy-900) 100%);
@@ -36,7 +38,7 @@
     align-items: center;
     justify-content: center;
     text-align: center;
-    padding: 1.25rem 1.5rem;
+    padding: calc(1.25rem + 56px) 1.5rem 1.25rem;
 }
 
 .profile-avatar {
@@ -269,6 +271,10 @@
 }
 
 .trip-card {
+    /* Grid items default to min-width: auto, which refuses to shrink below the content's
+       natural (unwrapped) size — this is what was overriding every truncation rule inside
+       the card. Without this, a long trip name just grows the card past its grid track. */
+    min-width: 0;
     border: 1px solid #e2e8f0;
     border-radius: 10px;
     padding: 1rem;
@@ -281,8 +287,8 @@
 .trip-card-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: 0.5rem;
+    min-width: 0;
 }
 
 .trip-card-name {
@@ -294,6 +300,17 @@
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
+}
+
+.trip-card-status-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5rem;
+}
+
+.trip-card-status-row p-tag {
+    flex-shrink: 0;
 }
 
 .trip-card-stops {
@@ -313,20 +330,9 @@
     text-overflow: ellipsis;
 }
 
-.trip-card-distance-status {
-    display: flex;
-    align-items: baseline;
-    gap: 0.35rem;
-    flex-shrink: 0;
-    white-space: nowrap;
-}
-
 .trip-card-distance {
+    flex-shrink: 0;
     color: var(--navy-700, #3a5a7a);
-}
-
-.trip-card-visibility-sep {
-    color: #cbd5e1;
 }
 
 .trip-card-visibility {
@@ -412,6 +418,16 @@
     resize: vertical;
 }
 
+.trip-card-edit-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.trip-card-edit-actions ::ng-deep .p-button-label {
+    font-size: 0.78rem;
+}
+
 .trip-card-locale-tabs {
     display: flex;
     gap: 0.3rem;
@@ -461,4 +477,5 @@
     cursor: pointer;
     padding: 0 0.2rem;
     font-size: 0.75rem;
+    flex-shrink: 0;
 }

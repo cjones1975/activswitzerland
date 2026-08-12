@@ -163,30 +163,29 @@
                                     </span>
                                     <input class="trip-card-name-input" type="text"
                                            [ngModel]="nameDraft()" (ngModelChange)="nameDraft.set($event)" />
-                                    <p-button [label]="'profile.savedTrips.saveReview' | translate" size="small" (onClick)="saveName(trip)" />
-                                    <p-button icon="fa-light fa-xmark" [text]="true" size="small" (onClick)="cancelEditName()" />
+                                    <span class="trip-card-edit-actions">
+                                        <p-button [label]="'profile.savedTrips.saveReview' | translate" size="small" (onClick)="saveName(trip)" />
+                                        <p-button [label]="'profile.savedTrips.cancel' | translate" [text]="true" severity="secondary" size="small" (onClick)="cancelEditName()" />
+                                    </span>
                                 </span>
                             } @else {
-                                <span class="trip-card-name">
-                                    {{ trip.name }}
-                                    <button type="button" class="trip-card-name-pencil" [attr.aria-label]="'profile.savedTrips.editReview' | translate" (click)="startEditName(trip)">
-                                        <i class="fa-light fa-pencil"></i>
-                                    </button>
-                                </span>
+                                <span class="trip-card-name">{{ trip.name }}</span>
+                                <button type="button" class="trip-card-name-pencil" [attr.aria-label]="'profile.savedTrips.editReview' | translate" (click)="startEditName(trip)">
+                                    <i class="fa-light fa-pencil"></i>
+                                </button>
                             }
+                        </div>
+                        <div class="trip-card-status-row">
+                            <span class="trip-card-visibility" [class.trip-card-visibility--public]="trip.isPublic">
+                                {{ (trip.isPublic ? 'profile.savedTrips.statusPublic' : 'profile.savedTrips.statusPrivate') | translate }}
+                            </span>
                             <p-tag
                                 [value]="trip.type === 'road' ? ('trip.planner.typeRoadShort' | translate) : ('trip.planner.typeRailShort' | translate)"
                                 [severity]="trip.type === 'road' ? 'info' : 'success'" />
                         </div>
                         <p class="trip-card-stops">
                             <span>{{ tripStopSummary(trip) }}</span>
-                            <span class="trip-card-distance-status">
-                                <span class="trip-card-distance">{{ formatDistance(trip.distanceKm ?? 0) }}</span>
-                                <span class="trip-card-visibility-sep">·</span>
-                                <span class="trip-card-visibility" [class.trip-card-visibility--public]="trip.isPublic">
-                                    {{ (trip.isPublic ? 'profile.savedTrips.statusPublic' : 'profile.savedTrips.statusPrivate') | translate }}
-                                </span>
-                            </span>
+                            <span class="trip-card-distance">{{ formatDistance(trip.distanceKm ?? 0) }}</span>
                         </p>
                         <p class="trip-card-date">{{ formatDate(trip.createdAt) }}</p>
                         <div class="trip-card-actions">
@@ -225,7 +224,10 @@
                                     <textarea class="trip-card-review-input" rows="3"
                                               [ngModel]="reviewDraft()" (ngModelChange)="reviewDraft.set($event)"
                                               [placeholder]="'profile.savedTrips.reviewPlaceholder' | translate"></textarea>
-                                    <p-button [label]="'profile.savedTrips.saveReview' | translate" size="small" (onClick)="saveReview(trip)" />
+                                    <span class="trip-card-edit-actions">
+                                        <p-button [label]="'profile.savedTrips.saveReview' | translate" size="small" (onClick)="saveReview(trip)" />
+                                        <p-button [label]="'profile.savedTrips.cancel' | translate" [text]="true" severity="secondary" size="small" (onClick)="cancelEditReview()" />
+                                    </span>
                                 } @else {
                                     <p class="trip-card-review-text">{{ trip.review || ('profile.savedTrips.noReview' | translate) }}</p>
                                     <p-button [label]="'profile.savedTrips.editReview' | translate" [text]="true" size="small" (onClick)="startEditReview(trip)" />

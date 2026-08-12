@@ -188,9 +188,10 @@
       "reviewPlaceholder": "Descrivi come è andata, cosa ti è piaciuto o no...",
       "noReview": "Nessuna recensione ancora.",
       "editReview": "Modifica recensione",
-      "saveReview": "Salva recensione",
+      "saveReview": "Salva",
       "statusPublic": "Pubblico",
-      "statusPrivate": "Privato"
+      "statusPrivate": "Privato",
+      "cancel": "Annulla"
     },
     "stats": {
       "trips": "Viaggi salvati",
@@ -436,12 +437,12 @@
       "distance": "Distanza",
       "reviewLang": "Lingua della recensione",
       "reviewLangOption": {
-        "all": "Tutte",
-        "en": "Inglese",
-        "de": "Tedesco",
-        "fr": "Francese",
-        "it": "Italiano",
-        "other": "Altra/e lingua/e"
+        "all": "All",
+        "en": "En",
+        "de": "De",
+        "fr": "Fr",
+        "it": "It",
+        "other": "Other"
       },
       "apply": "Applica",
       "reset": "Reimposta"

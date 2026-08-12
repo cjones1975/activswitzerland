@@ -188,9 +188,10 @@
       "reviewPlaceholder": "Beschreiben Sie, wie es war, was Ihnen gefallen hat oder nicht...",
       "noReview": "Noch keine Bewertung.",
       "editReview": "Bewertung bearbeiten",
-      "saveReview": "Bewertung speichern",
+      "saveReview": "Speichern",
       "statusPublic": "Öffentlich",
-      "statusPrivate": "Privat"
+      "statusPrivate": "Privat",
+      "cancel": "Abbrechen"
     },
     "stats": {
       "trips": "Gespeicherte Reisen",
@@ -436,12 +437,12 @@
       "distance": "Distanz",
       "reviewLang": "Sprache der Bewertung",
       "reviewLangOption": {
-        "all": "Alle",
-        "en": "Englisch",
-        "de": "Deutsch",
-        "fr": "Französisch",
-        "it": "Italienisch",
-        "other": "Andere Sprache(n)"
+        "all": "All",
+        "en": "En",
+        "de": "De",
+        "fr": "Fr",
+        "it": "It",
+        "other": "Other"
       },
       "apply": "Anwenden",
       "reset": "Zurücksetzen"

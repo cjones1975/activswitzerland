@@ -253,6 +253,10 @@ export class Profile implements OnInit {
       });
   }
 
+  cancelEditReview(): void {
+    this.editingReviewId.set(null);
+  }
+
   // ── Trip name translations ──────────────────────────────────────────────
   startEditName(trip: SavedTrip): void {
     if (!trip._id) return;
