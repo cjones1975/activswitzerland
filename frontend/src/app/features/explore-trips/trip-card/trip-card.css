@@ -108,6 +108,57 @@
   white-space: pre-wrap;
 }
 
+.tc-review-more {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  padding: 0;
+  margin-top: 0.3rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--navy-700, #3a5a7a);
+  text-decoration: underline;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.tc-review-mask {
+  position: absolute;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 1rem;
+  box-sizing: border-box;
+  background: var(--color-white);
+  border-radius: 10px;
+  overflow-y: auto;
+}
+
+.tc-review-mask-close {
+  align-self: flex-end;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  border: 1px solid var(--gray-200, #e2e8f0);
+  background: var(--color-white);
+  color: var(--navy-800);
+  font-size: 0.9rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.tc-review-mask-text {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+  white-space: pre-wrap;
+}
+
 .tc-footer {
   display: flex;
   align-items: center;

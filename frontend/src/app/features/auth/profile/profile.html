@@ -215,23 +215,37 @@
                         @if (isReviewOpen(trip)) {
                             <div class="trip-card-review-body">
                                 @if (editingReviewId() === trip._id) {
-                                    <span class="trip-card-locale-tabs">
-                                        @for (locale of localeTabs; track locale) {
-                                            <button type="button" class="trip-card-locale-tab" [class.active]="reviewEditLocale() === locale"
-                                                    (click)="selectReviewLocale(trip, locale)">{{ locale | uppercase }}</button>
-                                        }
-                                    </span>
-                                    <textarea class="trip-card-review-input" rows="3"
-                                              [ngModel]="reviewDraft()" (ngModelChange)="reviewDraft.set($event)"
-                                              [placeholder]="'profile.savedTrips.reviewPlaceholder' | translate"></textarea>
-                                    <span class="trip-card-edit-actions">
-                                        <p-button [label]="'profile.savedTrips.saveReview' | translate" size="small" (onClick)="saveReview(trip)" />
-                                        <p-button [label]="'profile.savedTrips.cancel' | translate" [text]="true" severity="secondary" size="small" (onClick)="cancelEditReview()" />
-                                    </span>
+                                    <textarea class="trip-card-review-input" rows="3" readonly
+                                              [ngModel]="reviewDraft()"
+                                              [placeholder]="'profile.savedTrips.reviewPlaceholder' | translate"
+                                              (focus)="openReviewMask()"></textarea>
                                 } @else {
                                     <p class="trip-card-review-text">{{ trip.review || ('profile.savedTrips.noReview' | translate) }}</p>
                                     <p-button [label]="'profile.savedTrips.editReview' | translate" [text]="true" size="small" (onClick)="startEditReview(trip)" />
                                 }
+                            </div>
+                        }
+                        @if (editingReviewId() === trip._id && reviewMaskOpen()) {
+                            <div class="trip-card-review-mask">
+                                <span class="trip-card-locale-tabs">
+                                    @for (locale of localeTabs; track locale) {
+                                        <button type="button" class="trip-card-locale-tab" [class.active]="reviewEditLocale() === locale"
+                                                [disabled]="savingReview()"
+                                                (click)="selectReviewLocale(trip, locale)">{{ locale | uppercase }}</button>
+                                    }
+                                </span>
+                                <textarea class="trip-card-review-mask-input"
+                                          [ngModel]="reviewDraft()" (ngModelChange)="reviewDraft.set($event)"
+                                          [maxlength]="reviewMaxLength"
+                                          [readonly]="savingReview()"
+                                          [placeholder]="'profile.savedTrips.reviewPlaceholder' | translate"></textarea>
+                                <div class="trip-card-review-mask-footer">
+                                    <span class="trip-card-review-count">{{ reviewDraft().length }}/{{ reviewMaxLength }}</span>
+                                    <span class="trip-card-edit-actions">
+                                        <p-button [label]="'profile.savedTrips.saveReview' | translate" size="small" [loading]="savingReview()" (onClick)="saveReview(trip)" />
+                                        <p-button [label]="'profile.savedTrips.cancel' | translate" [text]="true" severity="secondary" size="small" [disabled]="savingReview()" (onClick)="cancelEditReview()" />
+                                    </span>
+                                </div>
                             </div>
                         }
                     </div>

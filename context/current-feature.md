@@ -14,6 +14,38 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-13 — Explore Trips Cards: Static Route Thumbnail + On-Demand Map Mask Specced
+
+- User raised a scaling problem with Explore Trips cards: diagnosed live that every card mounts its
+  own live MapLibre map unconditionally (`trip-card.html:38-45`), each its own real WebGL context —
+  on a 10-trip test the last 1-2 cards failed to render on mobile because mobile browsers cap
+  simultaneous WebGL contexts far lower than desktop, and `MapComponent` has no handling for
+  context-creation failure. With a target of thousands of trips, "one live map per visible card" has
+  no ceiling that works
+- Confirmed design: replace the always-on live map with a static, dependency-free client-side route
+  thumbnail (SVG route line + activity marker dots over a generic terrain PNG background,
+  `frontend/src/assets/map_bg.png`, already added to the repo) shown by default — zero WebGL contexts
+  at rest regardless of trip count. A new "View map" link opens a mask covering the card with the
+  real, fully-interactive `MapComponent`, mounted only while open; exactly one mask open at a time,
+  app-wide
+- Mirrors the fix already shipped for `hikes-list`/`bikes-list` cards' `TrailThumbnail` (same
+  bounding-box→SVG-viewBox projection technique), extended with a background image and marker dots.
+  Explicitly distinct from the `hike-detail`/`bike-detail` drawers' small embedded preview map, which
+  is a separate, already-known `@defer`-triggered WebGL leak (not addressed by this spec, only
+  called out as the mistake to avoid repeating)
+- New `RouteThumbnail` component (`shared/route-thumbnail/`) and new `ExploreMapMask` service
+  (`shared/services/explore-map-mask.ts`, single-value signal — `open(tripId)` overwrites, closing
+  any other card's mask). Mount mechanism is a plain `@if`, deliberately not `@defer (when ...)` —
+  root-caused to be the exact mechanism behind the known `hike-detail`/`bike-detail` leak (a bare
+  `@defer` block resolves once and never reverts to its placeholder when the trigger condition later
+  goes false), so `MapComponent.ngOnDestroy()`/`map.remove()` actually runs and frees the WebGL
+  context the moment a mask closes
+- No backend changes required — `getPublicTrips` already returns `routeCoordinates`/`stops`/
+  `activities`, the same fields `TripCard`'s existing `activityMarkers`/`stopPoints` computed
+  signals already consume for the live map
+- Wrote `context/features/explore-trips-card-map-scaling-spec.md`. No feature branch created yet.
+  **Status: proposed, not started** — spec only, no implementation yet
+
 ### 2026-08-12 — Trip Content Translation (Claude API) Implemented
 
 - Branch `feature/trip-content-translation`; spec: `context/features/trip-content-translation-spec.md`.

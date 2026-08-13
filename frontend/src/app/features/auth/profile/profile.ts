@@ -1,5 +1,6 @@
 import { Component, DestroyRef, OnInit, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -59,6 +60,9 @@ export class Profile implements OnInit {
   openReviewIds = signal<Set<string>>(new Set());
   editingReviewId = signal<string | null>(null);
   reviewDraft = signal('');
+  reviewMaskOpen = signal(false);
+  savingReview = signal(false);
+  readonly reviewMaxLength = 650;
   // ── Translation review/edit (trip-content-translation-spec.md Phase C) ─────
   readonly localeTabs: readonly Lang[] = SUPPORTED_LANGS;
   reviewEditLocale = signal<Lang>('en');
@@ -223,6 +227,11 @@ export class Profile implements OnInit {
     this.reviewEditLocale.set('en');
     this.reviewDraft.set(localizedReview(trip, 'en'));
     this.editingReviewId.set(trip._id);
+    this.reviewMaskOpen.set(false);
+  }
+
+  openReviewMask(): void {
+    this.reviewMaskOpen.set(true);
   }
 
   // Switching locale discards any in-progress unsaved edit for the previous locale, in favour
@@ -236,25 +245,28 @@ export class Profile implements OnInit {
   saveReview(trip: SavedTrip): void {
     if (!trip._id) return;
     const locale = this.reviewEditLocale();
-    const draft = this.reviewDraft().trim();
+    const draft = this.reviewDraft().trim().slice(0, this.reviewMaxLength);
     // A direct field patch, not a re-translation — editing a locale's stored text overrides
     // that locale's translation without re-triggering the backend's regeneration logic, since
     // the English source (`review`) didn't change when `locale !== 'en'`.
     const updates = locale === 'en'
       ? { review: draft }
       : { reviewTranslations: { ...trip.reviewTranslations, [locale]: draft } };
+    this.savingReview.set(true);
     this.tripsSvc.updateTrip(trip._id, updates)
-      .pipe(takeUntilDestroyed(this.destroyRef))
+      .pipe(takeUntilDestroyed(this.destroyRef), finalize(() => this.savingReview.set(false)))
       .subscribe(saved => {
         const updated = this.savedTrips().map(t => t._id === trip._id ? { ...t, ...saved } : t);
         this.savedTrips.set(updated);
         this.recomputeStats(updated);
         this.editingReviewId.set(null);
+        this.reviewMaskOpen.set(false);
       });
   }
 
   cancelEditReview(): void {
     this.editingReviewId.set(null);
+    this.reviewMaskOpen.set(false);
   }
 
   // ── Trip name translations ──────────────────────────────────────────────
