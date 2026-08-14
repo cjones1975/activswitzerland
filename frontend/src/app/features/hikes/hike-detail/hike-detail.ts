@@ -21,7 +21,7 @@ export interface HikeDetailPayload {
   destination: GeoLocation;
   mode?: 'view' | 'select';
   stopId?: string;
-  source?: 'trip-summary';
+  source?: 'trip-summary' | 'explore-trips';
 }
 
 @Component({

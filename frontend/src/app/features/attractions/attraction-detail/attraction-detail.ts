@@ -15,7 +15,7 @@ import { GeoLocation } from '../../../models/geo-point';
 export interface AttractionDetailPayload {
   attraction: Attraction;
   destination?: GeoLocation;
-  source: 'destination-detail' | 'all-attractions' | 'trip-summary' | 'map' | 'search';
+  source: 'destination-detail' | 'all-attractions' | 'trip-summary' | 'map' | 'search' | 'explore-trips';
   mode?: 'view' | 'select';
   stopId?: string;
   /** Carries the originating all-attractions list's own `origin`, so reopening it on back-nav keeps the right back-button behavior. */

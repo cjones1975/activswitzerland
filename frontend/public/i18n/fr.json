@@ -413,6 +413,7 @@
   },
   "exploreTrips": {
     "anonymous": "Voyageur anonyme",
+    "backToList": "Retour à Explorer les voyages",
     "empty": "Aucun voyage public pour le moment.",
     "endOfList": "Vous avez atteint la fin.",
     "flip": "Retourner la carte",
@@ -421,6 +422,7 @@
     "travellerReview": "Avis du voyageur",
     "transitRoad": "Transit en voiture",
     "transitRail": "Transit en train",
+    "viewMap": "Voir la carte",
     "filter": {
       "title": "Filtrer les voyages",
       "tripType": "Type de voyage",

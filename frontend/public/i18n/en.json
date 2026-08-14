@@ -413,6 +413,7 @@
   },
   "exploreTrips": {
     "anonymous": "Anonymous traveler",
+    "backToList": "Back to Explore Trips",
     "empty": "No public trips yet.",
     "endOfList": "You've reached the end.",
     "flip": "Flip card",
@@ -421,6 +422,7 @@
     "travellerReview": "Traveller review",
     "transitRoad": "Transit by road",
     "transitRail": "Transit by rail",
+    "viewMap": "View map",
     "filter": {
       "title": "Filter trips",
       "tripType": "Trip type",

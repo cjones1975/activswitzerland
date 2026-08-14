@@ -129,7 +129,9 @@
                     ? ('attractions.backToDestination' | translate: { name: attractionDetailDestinationName() })
                     : attractionDetailSource() === 'search'
                         ? ('home.search.backToSearch' | translate)
-                        : ('attractions.backToAttractions' | translate)"
+                        : attractionDetailSource() === 'explore-trips'
+                            ? ('exploreTrips.backToList' | translate)
+                            : ('attractions.backToAttractions' | translate)"
                 (click)="onAttractionDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
@@ -273,7 +275,7 @@
     styleClass="dest-drawer hike-detail-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'hikes.backToList' | translate" (click)="onHikeDetailBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(hikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : 'hikes.backToList') | translate" (click)="onHikeDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
             @if (!isHikeDetailTripPlanner()) {
@@ -339,7 +341,7 @@
     styleClass="dest-drawer bike-detail-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'bikes.backToList' | translate" (click)="onBikeDetailBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(bikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : 'bikes.backToList') | translate" (click)="onBikeDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
             @if (!isBikeDetailTripPlanner()) {

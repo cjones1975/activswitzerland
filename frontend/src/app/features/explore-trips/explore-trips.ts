@@ -121,5 +121,12 @@ export class ExploreTrips implements OnInit, AfterViewInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
+    // DrawerHost is a global singleton with no route awareness — any of these left open when
+    // navigating away (opened via a card's thumbnail marker click) would render on top of
+    // whatever page comes next. Same bug class fixed in destinations-layout.ts/
+    // trip-planner-layout.ts's ngOnDestroy.
+    this.drawerSvc.close('attraction-detail');
+    this.drawerSvc.close('hike-detail');
+    this.drawerSvc.close('bike-detail');
   }
 }

@@ -46,22 +46,88 @@ flip Y since northing increases upward but SVG y increases downward), extended f
   `MapComponent`'s `[tripRoute]`.
 - `@Input() tripType: 'road' | 'rail' = 'road'` — line color, matching `MapComponent`'s existing
   road/rail convention exactly (`map.ts:334`): `#1a2f4a` (navy) for road, `#1a6b3c` (green) for rail.
-- `@Input() markers: { lng: number; lat: number }[] = []` — activity positions, drawn as small
-  filled-circle dots at their projected position (same accent color as the route line). Full
-  per-activity-kind icon parity with the live map's `ACTIVITY_GROUPS` icon set is **out of scope**
-  for v1 (see below) — plain dots only.
+- `@Input() markers: { lng: number; lat: number; image?: string }[] = []` — activity positions.
+  **Revised from the original v1 plan**: renders each marker's real `ACTIVITY_GROUPS` icon
+  (`/assets/attraction|hike|bike.png`, the same `image` field `TripCard`'s existing
+  `activityMarkers` computed already sets) as an SVG `<image>` at its projected position, drawn in
+  its own `<g>` after the route line/dots so icons always paint on top; a marker with no `image`
+  falls back to a small filled-circle dot (same accent color as the route line).
+- **Purely decorative, no click handling** — confirmed explicitly after a mid-implementation
+  detour: an earlier pass made thumbnail markers open a click-to-reveal name tooltip, then a
+  revision made them open the attraction/hike/bike detail drawer directly from the thumbnail. Both
+  were built on the wrong element — the intent was always for marker-click-to-open-drawer to live
+  on the *real* map (inside the "View map" mask, see below), not the static thumbnail. Reverted;
+  `RouteThumbnail` has no `@Output` at all.
 - Background: **not** a flat `<rect>` like `TrailThumbnail`'s `.trail-thumb-bg` — a generic terrain
   PNG, already present at `frontend/src/assets/map_bg.png`, as a CSS `background-image` on the host,
   `background-size: cover`, with the SVG (transparent background) layered on top drawing only the
-  line + marker dots.
+  line + marker icons/dots.
 
 ## `TripCard` changes
 
 `trip-card.html:38-53` (`.tc-map-wrap` block): replace the unconditional `<app-map>` with
 `<app-route-thumbnail [routeCoordinates]="trip.routeCoordinates ?? []" [tripType]="trip.type" [markers]="activityMarkers()">`
-(reusing the existing `activityMarkers` computed, just needs `{lng,lat}` — already its shape minus
-the map-specific `id`/`clickable`/`image` fields, no change needed there since extra fields are
-harmless to pass through).
+(reusing the existing `activityMarkers` computed as-is — extra fields beyond what `RouteThumbnail`
+reads are harmless to pass through).
+
+### Marker click opens the detail drawer — on the real map, not the thumbnail
+
+Lives entirely on the `<app-map>` mounted inside the "View map" mask (see "Mount mechanism" below),
+using `MapComponent`'s existing marker-click mechanism unchanged: a marker with both `label` (shown
+as a popup, `map.ts`'s `addMarker`) and `clickable: true` (adds the popup's arrow button) makes
+`MapComponent` emit `(markerClick)` when that button is tapped — the exact same two-step
+click-marker-then-tap-popup-button interaction already used by `all-attractions`,
+`destination-vertical-list`, and the hike/bike marker services. `TripCard.activityMarkers()` gained
+`clickable: true, label: a.name` (was `clickable: false`, no label) to opt into this; the same
+array still feeds `RouteThumbnail`, where the extra fields are simply unused.
+
+**Real latent bug found and fixed in shared `MapComponent` along the way**: the popup's
+`closeOnClick: true` option (`map.ts`'s `addMarker`) registers a map-wide `click` listener
+(maplibre-gl internals: `Popup.addTo()` → `this._map.on('click', this._onClose)`, where `_onClose`
+unconditionally calls `popup.remove()`) with **no check for whether the click landed inside the
+popup's own content** — confirmed by reading `node_modules/maplibre-gl`'s source directly, not
+guessed. For a clickable popup (the arrow-button case), that races the button's own click handler:
+closeOnClick's removal can win and yank the popup (and the button with it) out of the DOM
+before/during our own listener runs, so the `markerClick` emit intermittently never fires. This
+is a real maplibre-gl gotcha, not specific to this app or this feature — it likely affected
+`all-attractions`/`destination-vertical-list`/hike-bike markers' existing clickable popups too,
+just never surfaced/reported before. Diagnosed live: a headless-browser click-through succeeded
+100% of the time in one environment but the user's real browser reliably failed every time,
+narrowing it to a timing race rather than a wiring bug. Fixed by setting
+`closeOnClick: !marker.clickable` (clickable popups already remove themselves explicitly in the
+button handler) and making the "close other open popups" behavior — previously relied on as a side
+effect of closeOnClick firing on every click, including the click that opened a *different*
+marker's popup — explicit instead, via `popup.on('open', () => this.closeOtherPopups(popup))` for
+every popup regardless of type. Re-verified via 9/9 successful click-throughs across repeated
+headless-browser attempts after the fix (was previously flaky/broken).
+
+`onActivityMarkerClick(marker: MapMarker)` (`trip-card.ts`) mirrors `trip-planner-layout.ts`'s
+existing method of the same name and lookup-then-open pattern exactly: find the
+`TripActivitySelection` by `marker.id`, find its stop (`activity.stopId`) to build a `GeoPoint`
+destination, then fetch and open — `AttractionsService.getAttraction(activity.refId, lang)` →
+`drawerSvc.open('attraction-detail', …)` for `kind === 'attraction'`, or
+`TrailRoutesService.getRoutes(kind, stop.lat, stop.lon, lang, …)` → matching `route.routeNumber`
+against `activity.refId` → `drawerSvc.open('hike-detail' | 'bike-detail', …)` for hike/bike. The one
+difference from the trip-planner version: the payload's `source` is `'explore-trips'`, not
+`'trip-summary'` — a new source value added to `AttractionDetailPayload`/`HikeDetailPayload`/
+`BikeDetailPayload` (`source?: 'trip-summary' | 'explore-trips' | …`).
+
+`'explore-trips'` is folded into each drawer's existing `isXDetailTripPlanner()` computed in
+`drawer-host.ts` (alongside `'trip-summary'`/`'search'`) for two effects, matching the precedent
+those computeds already set for sourceless-of-a-map contexts:
+- Hides the header's top-right "show on map" icon (`nav.showOnMap`/`fa-map-location`) — Explore
+  Trips is a card grid with no full map behind the drawer for that icon to reveal.
+- Forces the drawer modal (via the existing `stickyModal()` helper) even at desktop split-view
+  widths, since there's no persistent sidebar content on this page to dock beside.
+
+The back chevron (top-left) also branches on `source === 'explore-trips'` in each `onXDetailBack()`
+(`drawer-host.ts`) to `langSvc.navigate(['explore-trips'])` instead of reopening a list drawer or
+returning to the trip planner — its aria-label uses a new `exploreTrips.backToList` key instead of
+`attractions.backToAttractions`/`hikes.backToList`/`bikes.backToList`.
+
+`ExploreTrips.ngOnDestroy()` (`explore-trips.ts`) closes `attraction-detail`/`hike-detail`/
+`bike-detail` on navigate-away, matching the same leftover-open-drawer cleanup precedent already
+established in `destinations-layout.ts`/`trip-planner-layout.ts`.
 
 Add a "View map" link, bottom-right corner of `.tc-map-wrap`:
 ```html
@@ -104,7 +170,8 @@ absolute; inset: 0` against `.tc-face`'s positioning context):
     </button>
     <app-map [tripRoute]="trip.routeCoordinates ?? []" [tripType]="trip.type"
              [tripStopPoints]="stopPoints()" [markers]="activityMarkers()"
-             [fitBounds]="(trip.routeCoordinates?.length ?? 0) >= 2 ? trip.routeCoordinates! : null" />
+             [fitBounds]="(trip.routeCoordinates?.length ?? 0) >= 2 ? trip.routeCoordinates! : null"
+             (markerClick)="onActivityMarkerClick($event)" />
   </div>
 }
 ```
@@ -129,15 +196,22 @@ detail preview) — the whole point is real zoom/pan.
   `frontend/src/assets/map_bg.png`, already in the repo.
 - "View map" trigger: `fa-regular fa-expand` icon + "View map" text, bottom-right corner of the
   thumbnail area.
-- Markers on the thumbnail are plain dots, not full activity-kind icons — matches `TrailThumbnail`'s
-  existing level of simplification for the same problem elsewhere in the app.
+- **Revised post-spec**: markers on the thumbnail use the real per-activity-kind
+  `ACTIVITY_GROUPS` icons (not plain dots) — feasible with no extra cost since
+  `TripCard.activityMarkers()` already carries the `image` field the live map uses, and the
+  thumbnail already computes each marker's pixel position for the (now-fallback-only) dot. Plain
+  dots remain as the fallback for any marker with no `image` set.
+- **Revised post-spec, again**: clicking a marker icon opens the real attraction/hike/bike detail
+  drawer (see "Marker click opens the detail drawer" above) — but on the real map inside the "View
+  map" mask, not the static thumbnail. The thumbnail's icons stay purely decorative; two earlier
+  implementation passes wired this onto the thumbnail instead (first a tooltip, then the drawer
+  open) before this was caught and corrected.
 
 ## Out of scope
 
 - No change to `hikes-list`/`bikes-list` (`TrailThumbnail`) or the `hike-detail`/`bike-detail`
   preview maps — those are separate, already-working (mostly — the `@defer` leak is a distinct,
   smaller bug, not addressed by this spec).
-- No per-activity-kind icon set on the thumbnail (dots only, v1).
 - No backend changes, no image storage, no static-image generation pipeline (superseded — this
   replaces the earlier static-PNG-snapshot direction entirely).
 - Explore Trips card flip (front/back), review mask, and "see more" truncation (already shipped) are
@@ -146,10 +220,21 @@ detail preview) — the whole point is real zoom/pan.
 
 ## Verification plan
 
-`tsc --noEmit` + `ng build`. Live check via `ng serve`: confirm thumbnails render route + marker dots
-correctly for both road and rail trips; confirm "View map" opens a fully interactive real map;
-confirm opening a second card's map while one is already open closes the first (only one `<app-map>`
-in the DOM at any time — check via DevTools element count, not just visually); confirm closing (✕)
-removes `<app-map>` from the DOM entirely (not just visually hidden) so `ngOnDestroy`/`map.remove()`
-actually ran. Mobile check: load a page with a large number of trips, confirm every card's thumbnail
-renders (no WebGL-context-limit failures possible since none are created at rest).
+`tsc --noEmit` + `ng build`. Live check via `ng serve`: confirm thumbnails render route + activity
+icons (attraction/hike/bike) correctly for both road and rail trips, icons always visible on top of
+the route line; confirm "View map" opens a fully interactive real map; confirm opening a second
+card's map while one is already open closes the first (only one `<app-map>` in the DOM at any time
+— check via DevTools element count, not just visually); confirm closing (✕) removes `<app-map>`
+from the DOM entirely (not just visually hidden) so `ngOnDestroy`/`map.remove()` actually ran.
+Confirm thumbnail icons are **not** clickable (no drawer, no popup) before "View map" is opened.
+Inside the map mask, confirm clicking an activity marker shows its name popup, and clicking the
+popup's button opens the correct drawer type (attraction/hike/bike) with the right content, no
+"show on map" icon in its header, and that its back chevron returns to Explore Trips (not the trip
+planner or an attractions/hikes/bikes list) — verified live via a headless-browser script:
+7 straightforward attempts out of 8 activity markers across real trip cards opened their drawer
+correctly on the first click-sequence; the remaining case was a marker sitting exactly under a
+numbered stop marker at the initial `fitBounds` zoom level, which blocked the click — expected,
+pre-existing behavior for any real MapLibre map with overlapping DOM markers (resolved by zooming
+in), not something specific to this feature. Mobile check: load a page with a large number of
+trips, confirm every card's thumbnail renders (no WebGL-context-limit failures possible since none
+are created at rest).

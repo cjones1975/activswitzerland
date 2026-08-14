@@ -14,6 +14,78 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-14 — Explore Trips Cards: Static Route Thumbnail + On-Demand Map Mask Implemented — Status: Completed
+
+- Branch `feature/explore-trips-card-map-scaling`, off the spec below. Core build matched the spec:
+  new `RouteThumbnail` (`shared/route-thumbnail/`) and `ExploreMapMask` service
+  (`shared/services/explore-map-mask.ts`), `TripCard`'s unconditional `<app-map>` replaced with the
+  thumbnail + a "View map" link opening a mask (plain `@if`, not `@defer`, per the spec's leak
+  postmortem) mounting the real `MapComponent` only while open
+- **Two mid-implementation revisions, both user-caught, not self-corrected**: markers were first
+  drawn as plain dots (per spec), then upgraded to real `ACTIVITY_GROUPS` icons on request. A
+  click-to-open-drawer interaction was then built twice on the wrong element — first as a
+  click-to-reveal-name tooltip on the thumbnail, then as a direct drawer-open on the thumbnail —
+  before the user clarified the intent was always the *real* map (inside the mask), not the static
+  thumbnail. Reverted both thumbnail attempts; the thumbnail is now purely decorative, no
+  `@Output` at all
+- **Real, latent bug found and fixed in shared `MapComponent`** (`map.ts`) while wiring the
+  real-map click: maplibre-gl's `closeOnClick: true` popup option registers a map-wide `click`
+  listener that unconditionally calls `popup.remove()` — confirmed by reading
+  `node_modules/maplibre-gl`'s actual source, not guessed — with no check for whether the click
+  landed inside the popup's own content. For a clickable popup (name + arrow button), that raced
+  the button's own click handler: closeOnClick's removal could win and yank the popup out from
+  under the click before the emit fired, so `markerClick` intermittently never fired — worked in
+  one headless-browser environment, reliably failed in the user's real browser, which is what
+  exposed it as a timing race rather than a wiring bug. Fixed by setting
+  `closeOnClick: !marker.clickable` (clickable popups already remove themselves explicitly) and
+  making "close other open popups" explicit for every popup (`popup.on('open', ...)`) instead of
+  leaning on closeOnClick's side effect — this also quietly de-risks the same latent race in
+  `all-attractions`, `destination-vertical-list`, and the hike/bike marker lists, which share the
+  same `addMarker()` code path. Re-verified via 9/9 successful click-throughs across repeated
+  headless attempts post-fix (was flaky before)
+- `TripCard.activityMarkers()` gained `clickable: true, label: a.name` (was `clickable: false`, no
+  label) so the real map's marker click → popup → drawer-open flow works; a new
+  `onActivityMarkerClick(marker: MapMarker)` mirrors `trip-planner-layout.ts`'s method of the same
+  name, sourced `'explore-trips'` instead of `'trip-summary'`. That source is new on
+  `AttractionDetailPayload`/`HikeDetailPayload`/`BikeDetailPayload`, folded into each drawer's
+  `isXDetailTripPlanner()` computed in `drawer-host.ts` (hides the "show on map" icon — no full map
+  behind this card grid) and each `onXDetailBack()` (back chevron returns to `/explore-trips` via
+  `langSvc.navigate`, new `exploreTrips.backToList` key in all four locale files).
+  `ExploreTrips.ngOnDestroy()` closes all three detail drawers on navigate-away, matching the
+  existing leftover-open-drawer cleanup precedent in `destinations-layout.ts`/`trip-planner-layout.ts`
+- **Explored and explicitly declined a real-map-tile thumbnail** (prompted by comparing to how
+  Strava renders activity-list map snapshots): evaluated self-hosting TileServer GL in Docker on
+  the NAS (risk: the R1600 is 2C/4T with zero resource limits set today across Mongo/Redis/backend,
+  software GL rendering is CPU-bound, no job-queue infra exists yet, no cleanup story for stale
+  hash-named snapshot files), then three hosted static-map APIs — MapTiler (static maps not on the
+  free tier at all, Flex plan is $30/mo for 10 prints/mo), Geoapify (free tier is credits/day, likely
+  multiple credits per image render, steep paid tiers), and Google Maps Static API (best free
+  allowance at 10k loads/month, but requires a GCP billing account on file and has caching/storage
+  restrictions in its ToS that weren't fully confirmed). All three only pencil out with a
+  generate-once-and-cache-per-trip architecture (not per-page-view), which reintroduces the same
+  storage/hash/regeneration plumbing regardless of provider — user decided the cosmetic upgrade
+  isn't worth that infra investment; kept the client-side generic-background thumbnail
+- **Visual iteration on the thumbnail itself**, several rounds of try-then-correct: added a white
+  line "casing" + SVG drop-shadow (`feDropShadow`, unique filter id per instance since many cards
+  render at once) to make the route pop, and muted/tinted the background via a separate `::before`/
+  `::after` layer (grayscale/brightness/saturate + navy vignette) so it wouldn't compete with the
+  route — user found the combined result worse, not better ("amateurish" was the original
+  complaint, background-mismatch was the diagnosed cause); reverted the background treatment and
+  the white casing back out, kept the subtle drop-shadow and a slightly thinner line (2.2 → 1.6)
+- **Final polish round**: the km/mi distance stat moved from the `.tc-stats` row above the
+  thumbnail to a translucent badge (`rgba(255,255,255,0.7)`) on the thumbnail's bottom-left,
+  mirroring "View map" on the bottom-right — opacity chosen so the route line stays visible if it
+  passes underneath. Trip titles on both Explore Trips (`.tc-name`) and Profile
+  (`.trip-card-name`) cards changed from single-line ellipsis-truncation to wrapping, so the full
+  name is always readable
+- Verified via `tsc --noEmit` + `ng build` after every round (always clean), plus extensive live
+  headless-browser testing (Playwright, ad hoc scripts, dev servers on non-default ports to avoid
+  colliding with the user's own) — this is what actually caught the two real bugs above: an
+  overlapping-marker occlusion bug (fixed earlier by switching the thumbnail's now-reverted click
+  handling to nearest-marker delegation, moot once thumbnail clicks were removed entirely) and the
+  maplibre-gl `closeOnClick` race, neither of which `tsc`/`ng build` could have caught
+- Not yet committed at time of writing this entry
+
 ### 2026-08-13 — Explore Trips Cards: Static Route Thumbnail + On-Demand Map Mask Specced
 
 - User raised a scaling problem with Explore Trips cards: diagnosed live that every card mounts its

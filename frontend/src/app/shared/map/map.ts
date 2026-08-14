@@ -201,10 +201,24 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
       const popup = new maplibregl.Popup({
         closeButton: false,
-        closeOnClick: true,
+        // maplibre-gl's closeOnClick registers a map-wide 'click' listener that unconditionally
+        // calls popup.remove() — with no check for whether the click landed inside the popup's
+        // own content. For a clickable popup (the arrow-button case below), that races the
+        // button's own click handler: closeOnClick's removal can win, yanking the popup (and the
+        // button with it) out of the DOM before/during our own listener, so the emit intermittently
+        // never fires — a real maplibre-gl gotcha, not specific to this app. Only safe for
+        // non-clickable popups (plain name label, nothing interactive inside to race); clickable
+        // ones remove themselves explicitly in the button's own click handler below instead.
+        closeOnClick: !marker.clickable,
         offset: 20,
         className: marker.className,
       }).setHTML(popupHtml);
+
+      // Only one popup open at a time, made explicit here rather than left to fall out of
+      // closeOnClick's side effect (opening a new popup is itself a click, which used to close
+      // any other popup via that OTHER popup's own closeOnClick listener) — that no longer holds
+      // now that closeOnClick is disabled for clickable popups, so this needs to run regardless.
+      popup.on('open', () => this.closeOtherPopups(popup));
 
       if (marker.clickable) {
         popup.on('open', () => {
@@ -282,16 +296,16 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
 
     if (popup) {
       this.map?.once('moveend', () => {
-        this.closeOtherPopups(popup);
+        // addTo() fires the popup's 'open' event synchronously, which now closes any other open
+        // popup itself (see addMarker's popup.on('open', ...)) — no separate call needed here.
         popup.setLngLat([target.lng, target.lat]).addTo(this.map!);
       });
     }
   }
 
-  // Direct marker clicks close other open popups for free (they trigger each
-  // popup's own `closeOnClick` map-click listener via event bubbling), but
-  // programmatic activation via `activeMarker` never fires a click, so it
-  // needs to close any other open popup explicitly.
+  // Keeps at most one popup open at a time — called from every popup's own 'open' event
+  // (addMarker), so it runs regardless of whether that popup opened via a direct marker click or
+  // programmatic activation (activateMarker above).
   private closeOtherPopups(except: Popup): void {
     for (const popup of this.popupInstances.values()) {
       if (popup !== except) popup.remove();

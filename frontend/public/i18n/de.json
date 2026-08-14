@@ -413,6 +413,7 @@
   },
   "exploreTrips": {
     "anonymous": "Anonymer Reisender",
+    "backToList": "Zurück zu Reisen entdecken",
     "empty": "Noch keine öffentlichen Reisen.",
     "endOfList": "Sie haben das Ende erreicht.",
     "flip": "Karte umdrehen",
@@ -421,6 +422,7 @@
     "travellerReview": "Reisebewertung",
     "transitRoad": "Transit mit dem Auto",
     "transitRail": "Transit mit der Bahn",
+    "viewMap": "Karte anzeigen",
     "filter": {
       "title": "Reisen filtern",
       "tripType": "Reiseart",

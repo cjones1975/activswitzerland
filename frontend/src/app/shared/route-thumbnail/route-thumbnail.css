@@ -1,0 +1,13 @@
+.rt-thumb {
+  width: 100%;
+  height: 100%;
+  background-image: url('/assets/map_bg.png');
+  background-size: cover;
+  background-position: center;
+}
+
+.rt-thumb-svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}

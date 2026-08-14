@@ -1,0 +1,33 @@
+<div class="rt-thumb">
+  <svg class="rt-thumb-svg" viewBox="0 0 100 60" preserveAspectRatio="xMidYMid meet">
+    <defs>
+      <!-- Unique per instance — many cards render at once, and duplicate SVG filter ids are invalid. -->
+      <filter [attr.id]="filterId" x="-30%" y="-30%" width="160%" height="160%">
+        <feDropShadow dx="0" dy="0.5" stdDeviation="0.7" flood-color="#0f172a" flood-opacity="0.35" />
+      </filter>
+    </defs>
+    @if (line) {
+      <polyline
+        [attr.points]="line"
+        fill="none"
+        [attr.stroke]="color"
+        stroke-width="1.6"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        [attr.filter]="'url(#' + filterId + ')'" />
+    }
+    <!-- Markers render after the line/dots above, so they always paint on top of them. Purely
+         decorative — this thumbnail is not interactive; "View map" opens the real, clickable map. -->
+    <g class="rt-markers">
+      @for (m of markerPoints; track $index) {
+        <g class="rt-marker">
+          @if (m.image) {
+            <image [attr.href]="m.image" [attr.x]="m.x - 3" [attr.y]="m.y - 3" width="6" height="6" />
+          } @else {
+            <circle [attr.cx]="m.x" [attr.cy]="m.y" r="2.2" [attr.fill]="color" stroke="white" stroke-width="0.6" />
+          }
+        </g>
+      }
+    </g>
+  </svg>
+</div>

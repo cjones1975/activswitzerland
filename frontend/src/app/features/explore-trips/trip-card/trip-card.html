@@ -32,17 +32,35 @@
         </span>
         <span><i class="fa-light fa-location-dot"></i>{{ trip.stops.length }}</span>
         <span><i class="fa-light fa-eye"></i>{{ trip.activities.length }}</span>
-        <span><i class="fa-light fa-route"></i>{{ formatDistance(trip.distanceKm ?? 0) }}</span>
       </div>
 
       <div class="tc-map-wrap" (click)="$event.stopPropagation()">
-        <app-map
-          [tripRoute]="trip.routeCoordinates ?? []"
+        <app-route-thumbnail
+          [routeCoordinates]="trip.routeCoordinates ?? []"
           [tripType]="trip.type"
-          [tripStopPoints]="stopPoints()"
-          [markers]="activityMarkers()"
-          [fitBounds]="(trip.routeCoordinates?.length ?? 0) >= 2 ? trip.routeCoordinates! : null" />
+          [markers]="activityMarkers()" />
+        <span class="tc-distance-badge">
+          <i class="fa-light fa-route"></i>{{ formatDistance(trip.distanceKm ?? 0) }}
+        </span>
+        <button class="tc-view-map" type="button" (click)="mapMaskSvc.open(trip._id!); $event.stopPropagation()">
+          <i class="fa-regular fa-expand"></i>
+          {{ 'exploreTrips.viewMap' | translate }}
+        </button>
       </div>
+      @if (mapMaskSvc.isOpen(trip._id!)) {
+        <div class="tc-map-mask" (click)="$event.stopPropagation()">
+          <button class="tc-map-mask-close" type="button" (click)="mapMaskSvc.close()" [attr.aria-label]="'nav.close' | translate">
+            <i class="fa-light fa-xmark"></i>
+          </button>
+          <app-map
+            [tripRoute]="trip.routeCoordinates ?? []"
+            [tripType]="trip.type"
+            [tripStopPoints]="stopPoints()"
+            [markers]="activityMarkers()"
+            [fitBounds]="(trip.routeCoordinates?.length ?? 0) >= 2 ? trip.routeCoordinates! : null"
+            (markerClick)="onActivityMarkerClick($event)" />
+        </div>
+      }
 
       <button class="tc-review-toggle" type="button" (click)="toggleReview(); $event.stopPropagation()">
         <i class="fa-light" [class.fa-chevron-down]="!reviewOpen()" [class.fa-chevron-up]="reviewOpen()"></i>

@@ -99,12 +99,12 @@ export class DrawerHost {
     return this.svc.getPayload<AttractionDetailPayload>('attraction-detail')?.source;
   });
 
-  // Also covers the 'search' source: /search has no map view behind it, so
-  // there's nothing for "show on map" to reveal there either.
+  // Also covers the 'search' and 'explore-trips' sources: neither /search nor /explore-trips has a
+  // map view behind it, so there's nothing for "show on map" to reveal there either.
   isAttractionDetailTripPlanner = computed(() => {
     this.svc.list();
     const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail');
-    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search';
+    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search' || payload?.source === 'explore-trips';
   });
 
   onAttractionDetailBack() {
@@ -123,6 +123,10 @@ export class DrawerHost {
     }
     if (payload.source === 'search') {
       this.langSvc.navigate(['search'], { queryParams: { q: payload.searchQuery, tab: payload.searchTab ?? 'things' } });
+      return;
+    }
+    if (payload.source === 'explore-trips') {
+      this.langSvc.navigate(['explore-trips']);
       return;
     }
     this.svc.open('all-attractions', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId, origin: payload.listOrigin });
@@ -169,7 +173,12 @@ export class DrawerHost {
   isHikeDetailTripPlanner = computed(() => {
     this.svc.list();
     const payload = this.svc.getPayload<HikeDetailPayload>('hike-detail');
-    return payload?.mode === 'select' || payload?.source === 'trip-summary';
+    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'explore-trips';
+  });
+
+  hikeDetailSource = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<HikeDetailPayload>('hike-detail')?.source;
   });
 
   onHikeDetailBack() {
@@ -177,6 +186,10 @@ export class DrawerHost {
     this.svc.close('hike-detail');
     if (payload.source === 'trip-summary') {
       this.tripPlanner.showWizard();
+      return;
+    }
+    if (payload.source === 'explore-trips') {
+      this.langSvc.navigate(['explore-trips']);
       return;
     }
     this.svc.open('hikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
@@ -205,7 +218,12 @@ export class DrawerHost {
   isBikeDetailTripPlanner = computed(() => {
     this.svc.list();
     const payload = this.svc.getPayload<BikeDetailPayload>('bike-detail');
-    return payload?.mode === 'select' || payload?.source === 'trip-summary';
+    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'explore-trips';
+  });
+
+  bikeDetailSource = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<BikeDetailPayload>('bike-detail')?.source;
   });
 
   onBikeDetailBack() {
@@ -213,6 +231,10 @@ export class DrawerHost {
     this.svc.close('bike-detail');
     if (payload.source === 'trip-summary') {
       this.tripPlanner.showWizard();
+      return;
+    }
+    if (payload.source === 'explore-trips') {
+      this.langSvc.navigate(['explore-trips']);
       return;
     }
     this.svc.open('bikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
