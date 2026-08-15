@@ -62,18 +62,10 @@
         </div>
       }
 
-      <button class="tc-review-toggle" type="button" (click)="toggleReview(); $event.stopPropagation()">
-        <i class="fa-light" [class.fa-chevron-down]="!reviewOpen()" [class.fa-chevron-up]="reviewOpen()"></i>
+      <button class="tc-review-toggle" type="button" (click)="openReviewMask(); $event.stopPropagation()">
+        <i class="fa-regular fa-message-lines"></i>
         {{ 'exploreTrips.travellerReview' | translate }}
       </button>
-      @if (reviewOpen()) {
-        <p class="tc-review-text">{{ reviewPreview() || ('exploreTrips.noReview' | translate) }}</p>
-        @if (reviewIsLong()) {
-          <button class="tc-review-more" type="button" (click)="openReviewMask(); $event.stopPropagation()">
-            {{ 'exploreTrips.seeMore' | translate }}
-          </button>
-        }
-      }
       @if (reviewMaskOpen()) {
         <div class="tc-review-mask" (click)="$event.stopPropagation()">
           <button class="tc-review-mask-close" type="button" (click)="closeReviewMask()" [attr.aria-label]="'nav.close' | translate">

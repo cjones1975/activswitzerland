@@ -44,9 +44,7 @@ export class TripCard implements OnInit {
   readonly localizedReview = localizedReview;
 
   flipped = signal(false);
-  reviewOpen = signal(true);
   reviewMaskOpen = signal(false);
-  readonly reviewPreviewLimit = 300;
 
   // Seeded from the input once (the trip list only ever grows via append, never replaces an
   // already-rendered card's data — see explore-trips.ts's loadMore), then updated locally after
@@ -92,19 +90,6 @@ export class TripCard implements OnInit {
 
   toggleFlip(): void {
     this.flipped.set(!this.flipped());
-  }
-
-  toggleReview(): void {
-    this.reviewOpen.set(!this.reviewOpen());
-  }
-
-  reviewIsLong(): boolean {
-    return this.localizedReview(this.trip, this.langSvc.current).length > this.reviewPreviewLimit;
-  }
-
-  reviewPreview(): string {
-    const text = this.localizedReview(this.trip, this.langSvc.current);
-    return text.length > this.reviewPreviewLimit ? text.slice(0, this.reviewPreviewLimit).trimEnd() + '…' : text;
   }
 
   openReviewMask(): void {
