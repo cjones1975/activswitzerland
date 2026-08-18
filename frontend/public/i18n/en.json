@@ -457,6 +457,25 @@
     "descriptionWithDuration": "A {{count}}-day trip through {{stops}}.",
     "descriptionNoDuration": "A trip through {{stops}}."
   },
+  "desktopNotice": {
+    "eyebrow": "A better way to explore",
+    "headingBefore": "The best of ",
+    "headingAccent": "Switzerland",
+    "headingAfter": " is on its way.",
+    "lead": "We're crafting a desktop experience worthy of the places you'll discover. Until then, take the scenic route on mobile.",
+    "languageAria": "Choose language",
+    "prevAria": "Previous screenshot",
+    "nextAria": "Next screenshot",
+    "slideAria": "Show slide {{n}}",
+    "slides": {
+      "explore": "Explore Switzerland",
+      "cityBreak": "Take a city break",
+      "attractions": "Look up attractions in the area",
+      "search": "Search for places & things to do",
+      "planTrip": "Plan your own trip by rail or car",
+      "sharedTrips": "See trips shared by others"
+    }
+  },
   "seo": {
     "home": {
       "title": "Plan Your Swiss Adventure",

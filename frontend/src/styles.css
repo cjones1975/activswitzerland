@@ -67,6 +67,12 @@ body {
   font-family: 'Strichpunkt Sans', sans-serif;
 }
 
+/* Paired with the inline no-flash script in index.html — hides the server-rendered real app on a
+   desktop-width screen until Angular has hydrated and swapped in the notice, so it never flashes. */
+html.as-desktop-gate app-root {
+  visibility: hidden;
+}
+
 /* Trip Planner Step 3 — day-assignment select, appendTo="body" so component-scoped
    styles can't reach it (portalled straight to <body>, outside any component view). */
 .day-select-panel .p-select-option {

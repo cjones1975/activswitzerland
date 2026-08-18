@@ -1,0 +1,284 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.desktop-notice {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--gray-50);
+}
+
+.notice-header {
+  background: var(--color-white);
+  border-bottom: 1px solid var(--gray-200);
+  padding: 1rem 2rem;
+}
+
+.notice-header-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+
+.brand-logo {
+  height: 2.25rem;
+  width: auto;
+}
+
+.brand-title {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--navy-800);
+}
+
+.lang-select {
+  flex-shrink: 0;
+  min-width: 9rem;
+}
+
+.notice-body {
+  flex: 1;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 4rem;
+  max-width: 1200px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 4rem 2rem;
+  box-sizing: border-box;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+  color: var(--amber-600);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  font-size: 0.85rem;
+}
+
+.notice-text h1 {
+  margin: 0 0 1.25rem;
+  font-size: clamp(2.25rem, 3.5vw, 3.25rem);
+  font-weight: 800;
+  line-height: 1.15;
+  color: var(--navy-800);
+}
+
+.notice-text h1 .accent {
+  color: var(--amber-600);
+}
+
+.lead {
+  margin: 0;
+  max-width: 30rem;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  color: var(--gray-500);
+}
+
+.notice-carousel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1.75rem;
+}
+
+/* Clips to one slide's width so the track's transform reads as a slide-in/slide-out
+   rather than the whole strip being visible at once. Padding (rather than a tight fit)
+   reserves room for the screenshot's rotation + drop-shadow so the resting slide isn't
+   clipped — only slides moving past the edge during a transition should be. */
+.carousel-viewport {
+  width: 100%;
+  overflow: hidden;
+  padding: 24px 8px 56px;
+  box-sizing: border-box;
+}
+
+.carousel-track {
+  display: flex;
+  transition: transform 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+.carousel-slide {
+  flex: 0 0 100%;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 2rem;
+}
+
+.screenshot {
+  display: block;
+  height: 420px;
+  width: auto;
+  flex-shrink: 0;
+  transform: rotate(-4deg);
+  /* The PNGs are already phone-shaped cutouts on a transparent background (rounded
+     corners, button bumps) — box-shadow follows the rectangular box regardless of
+     alpha and would show as a squared-off shadow behind the transparent corners.
+     drop-shadow follows the actual non-transparent pixels instead. */
+  filter: drop-shadow(0 25px 35px rgba(26, 47, 74, 0.35));
+}
+
+.carousel-caption {
+  margin: 0;
+  max-width: 11rem;
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--navy-800);
+  line-height: 1.3;
+}
+
+.carousel-controls {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.carousel-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.75rem;
+  height: 2.75rem;
+  border-radius: 50%;
+  border: 1px solid var(--gray-200);
+  background: var(--color-white);
+  color: var(--navy-800);
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.carousel-nav:hover {
+  background: var(--gray-100);
+}
+
+.carousel-dots {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  padding: 0;
+  border: none;
+  border-radius: 999px;
+  background: var(--gray-200);
+  cursor: pointer;
+  transition: width 0.2s ease, background 0.2s ease;
+}
+
+.dot.active {
+  width: 1.5rem;
+  background: var(--amber-600);
+}
+
+/* Large desktop (1920px+ class) — the 1200px-capped layout above leaves most of the
+   screen empty at this size, so both the container and the type/image scale grow rather
+   than just adding side margin. */
+@media (min-width: 1600px) {
+  .notice-header {
+    padding: 1.5rem 3rem;
+  }
+
+  .notice-header-inner {
+    max-width: 1600px;
+  }
+
+  .brand {
+    gap: 0.85rem;
+  }
+
+  .brand-logo {
+    height: 2.75rem;
+  }
+
+  .brand-title {
+    font-size: 1.5rem;
+  }
+
+  .lang-select {
+    min-width: 10rem;
+    font-size: 1.05rem;
+  }
+
+  .notice-body {
+    max-width: 1600px;
+    gap: 6rem;
+    padding: 5rem 3rem;
+  }
+
+  .eyebrow {
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+  }
+
+  .notice-text h1 {
+    font-size: clamp(3.25rem, 4vw, 4.5rem);
+    margin-bottom: 1.5rem;
+  }
+
+  .lead {
+    max-width: 36rem;
+    font-size: 1.35rem;
+  }
+
+  .notice-carousel {
+    gap: 2.25rem;
+  }
+
+  .carousel-viewport {
+    padding: 30px 8px 70px;
+  }
+
+  .carousel-slide {
+    gap: 3rem;
+  }
+
+  .screenshot {
+    height: 560px;
+  }
+
+  .carousel-caption {
+    max-width: 14rem;
+    font-size: 1.5rem;
+  }
+
+  .carousel-nav {
+    width: 3.25rem;
+    height: 3.25rem;
+    font-size: 1.1rem;
+  }
+
+  .carousel-dots {
+    gap: 0.65rem;
+  }
+
+  .dot {
+    width: 0.6rem;
+    height: 0.6rem;
+  }
+
+  .dot.active {
+    width: 1.75rem;
+  }
+}

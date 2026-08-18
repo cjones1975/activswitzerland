@@ -457,6 +457,25 @@
     "descriptionWithDuration": "Eine {{count}}-tägige Reise durch {{stops}}.",
     "descriptionNoDuration": "Eine Reise durch {{stops}}."
   },
+  "desktopNotice": {
+    "eyebrow": "Eine bessere Art zu entdecken",
+    "headingBefore": "Das Beste der ",
+    "headingAccent": "Schweiz",
+    "headingAfter": " kommt bald.",
+    "lead": "Wir gestalten eine Desktop-Erfahrung, die den Orten gerecht wird, die Sie entdecken werden. Nutzen Sie bis dahin unterwegs die mobile Ansicht.",
+    "languageAria": "Sprache wählen",
+    "prevAria": "Vorheriger Screenshot",
+    "nextAria": "Nächster Screenshot",
+    "slideAria": "Folie {{n}} anzeigen",
+    "slides": {
+      "explore": "Die Schweiz entdecken",
+      "cityBreak": "Städtereise geniessen",
+      "attractions": "Sehenswürdigkeiten in der Umgebung finden",
+      "search": "Orte und Aktivitäten suchen",
+      "planTrip": "Eigene Reise mit Bahn oder Auto planen",
+      "sharedTrips": "Von anderen geteilte Reisen ansehen"
+    }
+  },
   "seo": {
     "home": {
       "title": "Planen Sie Ihr Schweizer Abenteuer",

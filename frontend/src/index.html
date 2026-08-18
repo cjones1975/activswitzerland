@@ -10,6 +10,25 @@
 <script src="https://kit.fontawesome.com/bed0800c22.js" crossorigin="anonymous"></script>
 </head>
 <body>
+  <script>
+    // No-flash gate for the desktop "use mobile" notice (context/features/desktop-mobile-notice-spec.md).
+    // Runs synchronously before anything paints, so the server-rendered real app never becomes
+    // visible on a desktop-width screen while Angular's JS is still loading/hydrating. Breakpoint
+    // (shared/services/breakpoint.ts) removes the class once it's made the same call client-side —
+    // keep DESKTOP_NOTICE_MIN_WIDTH/storage key/class name here in sync with that file.
+    (function () {
+      try {
+        var params = new URLSearchParams(window.location.search);
+        if (params.get('preview') === 'desktop') {
+          localStorage.setItem('as-desktop-preview', '1');
+        }
+        var bypass = localStorage.getItem('as-desktop-preview') === '1';
+        if (!bypass && window.matchMedia('(min-width: 1024px)').matches) {
+          document.documentElement.classList.add('as-desktop-gate');
+        }
+      } catch (e) {}
+    })();
+  </script>
   <app-root></app-root>
 </body>
 </html>

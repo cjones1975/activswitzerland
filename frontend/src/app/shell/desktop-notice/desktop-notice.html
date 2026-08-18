@@ -1,0 +1,79 @@
+<div class="desktop-notice">
+  <header class="notice-header">
+    <div class="notice-header-inner">
+      <div class="brand">
+        <img class="brand-logo" src="/assets/as_logo.png" alt="" />
+        <span class="brand-title">ActivSwitzerland</span>
+      </div>
+
+      <p-select
+        class="lang-select"
+        [options]="languages"
+        [(ngModel)]="selectedLang"
+        optionLabel="label"
+        optionValue="value"
+        [attr.aria-label]="'desktopNotice.languageAria' | translate"
+        (onChange)="changeLanguage($event.value)"
+      />
+    </div>
+  </header>
+
+  <main class="notice-body">
+    <div class="notice-text">
+      <p class="eyebrow"><i class="fa-light fa-sparkles"></i> {{ 'desktopNotice.eyebrow' | translate }}</p>
+      <h1>
+        {{ 'desktopNotice.headingBefore' | translate }}<span class="accent">{{ 'desktopNotice.headingAccent' | translate }}</span>{{ 'desktopNotice.headingAfter' | translate }}
+      </h1>
+      <p class="lead">{{ 'desktopNotice.lead' | translate }}</p>
+    </div>
+
+    <div class="notice-carousel">
+      <div class="carousel-viewport">
+        <div class="carousel-track" [style.transform]="'translateX(-' + (activeIndex() * 100) + '%)'">
+          @for (slide of slides; track slide.src) {
+            <div class="carousel-slide">
+              <img
+                class="screenshot"
+                [src]="slide.src"
+                [alt]="(slide.captionKey | translate) + ' screenshot'"
+              />
+              <p class="carousel-caption">{{ slide.captionKey | translate }}</p>
+            </div>
+          }
+        </div>
+      </div>
+
+      <div class="carousel-controls">
+        <button
+          type="button"
+          class="carousel-nav"
+          [attr.aria-label]="'desktopNotice.prevAria' | translate"
+          (click)="prev()"
+        >
+          <i class="fa-light fa-chevron-left"></i>
+        </button>
+
+        <div class="carousel-dots">
+          @for (slide of slides; track slide.src; let i = $index) {
+            <button
+              type="button"
+              class="dot"
+              [class.active]="i === activeIndex()"
+              [attr.aria-label]="'desktopNotice.slideAria' | translate: { n: i + 1 }"
+              (click)="goTo(i)"
+            ></button>
+          }
+        </div>
+
+        <button
+          type="button"
+          class="carousel-nav"
+          [attr.aria-label]="'desktopNotice.nextAria' | translate"
+          (click)="next()"
+        >
+          <i class="fa-light fa-chevron-right"></i>
+        </button>
+      </div>
+    </div>
+  </main>
+</div>

@@ -457,6 +457,25 @@
     "descriptionWithDuration": "Un viaggio di {{count}} giorni attraverso {{stops}}.",
     "descriptionNoDuration": "Un viaggio attraverso {{stops}}."
   },
+  "desktopNotice": {
+    "eyebrow": "Un modo migliore per esplorare",
+    "headingBefore": "Il meglio della ",
+    "headingAccent": "Svizzera",
+    "headingAfter": " sta arrivando.",
+    "lead": "Stiamo creando un'esperienza desktop degna dei luoghi che scoprirai. Nel frattempo, goditi il percorso panoramico su mobile.",
+    "languageAria": "Scegli la lingua",
+    "prevAria": "Screenshot precedente",
+    "nextAria": "Screenshot successivo",
+    "slideAria": "Mostra la slide {{n}}",
+    "slides": {
+      "explore": "Esplora la Svizzera",
+      "cityBreak": "Goditi una gita in città",
+      "attractions": "Scopri le attrazioni nella zona",
+      "search": "Cerca luoghi e attività",
+      "planTrip": "Pianifica il tuo viaggio in treno o in auto",
+      "sharedTrips": "Scopri i viaggi condivisi da altri"
+    }
+  },
   "seo": {
     "home": {
       "title": "Pianifica la tua avventura svizzera",

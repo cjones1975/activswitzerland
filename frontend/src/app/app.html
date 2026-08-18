@@ -19,4 +19,8 @@
         </div>
     </ng-template>
 </p-toast>
-<router-outlet />
+@if (breakpoint.isDesktopNotice()) {
+  <app-desktop-notice />
+} @else {
+  <router-outlet />
+}
