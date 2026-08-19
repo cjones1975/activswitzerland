@@ -101,10 +101,14 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     this.map.on('load', () => {
       this.map?.resize();
       this.mapLoaded = true;
-      this.syncMarkers();
+      // Route/stop markers (rail's circle waypoints, road's numbered stops) added before the
+      // activity markers below — MapLibre's DOM markers paint in add order, so whichever group is
+      // added last ends up on top. Activity icons should always win that stacking, since users
+      // need to tap them; the route/stop markers are purely informational.
       this.syncTripRoute();
       this.syncTrailRoute();
       this.syncStageOverview();
+      this.syncMarkers();
       if (this.fitBounds && this.fitBounds.length >= 2) {
         this.applyFitBounds(this.fitBounds, false);
       } else if (this.center) {
@@ -120,9 +124,6 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['markers'] && this.mapLoaded) {
-      this.syncMarkers();
-    }
     if (changes['center'] && this.mapLoaded && this.center) {
       this.map?.flyTo({ center: this.center, zoom: this.zoom, duration: 800 });
     }
@@ -133,6 +134,8 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         this.deactivateMarker();
       }
     }
+    // Route/stop markers synced before activity markers below — see the same-order comment in
+    // the 'load' handler above; whichever group is (re-)added last paints on top.
     if ((changes['tripRoute'] || changes['tripType'] || changes['tripStopPoints']) && this.mapLoaded) {
       this.syncTripRoute();
     }
@@ -141,6 +144,9 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
     if ((changes['stageOverviewLines'] || changes['stageOverviewStages'] || changes['stageOverviewColor']) && this.mapLoaded) {
       this.syncStageOverview();
+    }
+    if (changes['markers'] && this.mapLoaded) {
+      this.syncMarkers();
     }
     if (changes['fitBounds'] && this.mapLoaded && this.fitBounds && this.fitBounds.length >= 2) {
       this.applyFitBounds(this.fitBounds, true);
