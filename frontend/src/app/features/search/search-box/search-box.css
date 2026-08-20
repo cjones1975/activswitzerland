@@ -10,15 +10,21 @@
 
 .search-tabs {
   display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.search-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .search-tab {
-  flex: 1;
+  flex: 0 0 auto;
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  padding: 0.9rem 1rem;
+  padding: 0.9rem 1.1rem;
   background: var(--gray-50);
   border: none;
   border-bottom: 3px solid transparent;
@@ -27,6 +33,7 @@
   color: var(--gray-500);
   cursor: pointer;
   font-family: inherit;
+  white-space: nowrap;
   transition: background 0.15s, color 0.15s;
 }
 

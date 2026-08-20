@@ -9,6 +9,10 @@ import { Tabs, TabList, Tab, TabPanels, TabPanel } from 'primeng/tabs';
 import { SearchTab } from '../search-box/search-box';
 import { DestinationSearchResults } from '../destination-search-results/destination-search-results';
 import { AttractionSearchResults } from '../attraction-search-results/attraction-search-results';
+import { HikeSearchResults } from '../hike-search-results/hike-search-results';
+import { BikeSearchResults } from '../bike-search-results/bike-search-results';
+
+const VALID_TABS: SearchTab[] = ['places', 'things', 'hikes', 'bikes-road', 'bikes-mountain'];
 import { LangService } from '../../../shared/services/lang';
 import { SeoService } from '../../../shared/services/seo';
 
@@ -26,6 +30,8 @@ import { SeoService } from '../../../shared/services/seo';
     TabPanel,
     DestinationSearchResults,
     AttractionSearchResults,
+    HikeSearchResults,
+    BikeSearchResults,
   ],
   templateUrl: './search-page.html',
   styleUrl: './search-page.css',
@@ -47,7 +53,8 @@ export class SearchPage {
       const q = params.get('q') ?? '';
       this.query.set(q);
       this.queryInput.set(q);
-      this.activeTab.set(params.get('tab') === 'things' ? 'things' : 'places');
+      const tab = params.get('tab') as SearchTab | null;
+      this.activeTab.set(tab && VALID_TABS.includes(tab) ? tab : 'places');
     });
 
     this.translate.onLangChange.pipe(

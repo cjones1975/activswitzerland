@@ -1,0 +1,42 @@
+<div class="results-list">
+  @if (loading()) {
+    @for (s of skeletons; track $index) {
+      <div class="skeleton-card">
+        <p-skeleton width="100%" height="100%" borderRadius="10px" />
+      </div>
+    }
+  } @else if (error()) {
+    <p class="no-results">{{ 'home.search.loadError' | translate }}</p>
+  } @else if (searched() && !results().length) {
+    <p class="no-results">{{ 'home.search.noHikeResults' | translate }}</p>
+  } @else {
+    @for (route of results(); track route.routeNumber) {
+      <div class="trail-card" (click)="onResultClick(route)">
+        <div class="trail-card-row">
+          <div class="trail-thumb-wrap">
+            <app-trail-thumbnail [stages]="route.stages" [category]="route.category" />
+          </div>
+          <div class="trail-card-text">
+            <h3 class="trail-name">{{ route.name }}</h3>
+            <div class="trail-meta-row">
+              <span class="trail-category-badge" [class]="'badge--' + route.category">
+                {{ ('hikes.category.' + route.category) | translate }}
+              </span>
+            </div>
+          </div>
+        </div>
+        <div class="trail-badge-row">
+          @if (route.isMultiDay) {
+            <span class="trail-stage-badge">{{ stageBadge(route) }}</span>
+          } @else {
+            <span class="trail-single-badge">{{ 'hikes.multiDay.singleRoute' | translate }}</span>
+          }
+        </div>
+        <div class="trail-attribution">
+          <span class="trail-attribution-distance">{{ formatDistanceKmMi(route.distanceKm) }}</span>
+          <span>{{ 'hikes.attribution' | translate }}</span>
+        </div>
+      </div>
+    }
+  }
+</div>

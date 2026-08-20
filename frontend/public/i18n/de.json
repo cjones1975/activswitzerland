@@ -402,13 +402,21 @@
     "search": {
       "placesTab": "Orte besuchen",
       "thingsTab": "Aktivitäten",
+      "hikesTab": "Wanderwege",
+      "bikesRoadTab": "Velorouten",
+      "bikesMountainTab": "Mountainbike-Routen",
       "placeholderPlaces": "Stadt, Sehenswürdigkeit oder Region suchen…",
       "placeholderThings": "Attraktion oder Aktivität suchen…",
+      "placeholderHikes": "Wanderweg nach Namen suchen…",
+      "placeholderBikesRoad": "Veloroute nach Namen suchen…",
+      "placeholderBikesMountain": "Mountainbike-Route nach Namen suchen…",
       "searchButton": "Suchen",
       "backToSearch": "Zurück zur Suche",
       "loadError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
       "noDestinationResults": "Es tut uns leid, wir konnten keine Reiseziele zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort.",
-      "noAttractionResults": "Es tut uns leid, wir konnten keine Attraktionen zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort."
+      "noAttractionResults": "Es tut uns leid, wir konnten keine Attraktionen zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort.",
+      "noHikeResults": "Es tut uns leid, wir konnten keine Wanderwege zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort.",
+      "noBikeResults": "Es tut uns leid, wir konnten keine Velorouten zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort."
     }
   },
   "exploreTrips": {

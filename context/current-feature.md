@@ -14,6 +14,19 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-20 — Search Page: Hiking / Road Bike / Mountain Bike Tabs Completed — Status: Completed
+
+- All 5 phases from the spec (@context/features/hike-bike-search-tabs-spec.md) implemented on
+  `feature/hike-bike-search-tabs`: backend `searchSchweizMobilRoutes()` +
+  `/api/v1/hikes/search`/`/api/v1/bikes/search` endpoints; frontend `TrailRoutesService.searchRoutes()`
+  and the new `hike-search-results`/`bike-search-results` components; `hike-detail`/`bike-detail`
+  `source: 'search'` payload handling wired into `drawer-host.ts`; `SearchTab` expanded to 5 values
+  across `search-box`/`search-page`; i18n added across en/de/fr/it
+- Verified via `tsc --noEmit` and `ng build` (both clean) plus live end-to-end Playwright testing
+  against the real geo.admin.ch API — search → result card → detail drawer → back-nav to `/search`
+  with query+tab preserved, confirmed for all three new tabs
+- Not yet committed
+
 ### 2026-08-14 — Explore Trips Cards: Static Route Thumbnail + On-Demand Map Mask Implemented — Status: Completed
 
 - Branch `feature/explore-trips-card-map-scaling`, off the spec below. Core build matched the spec:

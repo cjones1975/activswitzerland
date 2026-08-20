@@ -170,10 +170,12 @@ export class DrawerHost {
     return this.svc.getPayload<ActivityPickerPayload>('hikes')?.mode === 'select';
   });
 
+  // Also covers the 'search' source: /search has no map view behind it either,
+  // same reasoning as isAttractionDetailTripPlanner above.
   isHikeDetailTripPlanner = computed(() => {
     this.svc.list();
     const payload = this.svc.getPayload<HikeDetailPayload>('hike-detail');
-    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'explore-trips';
+    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search' || payload?.source === 'explore-trips';
   });
 
   hikeDetailSource = computed(() => {
@@ -186,6 +188,10 @@ export class DrawerHost {
     this.svc.close('hike-detail');
     if (payload.source === 'trip-summary') {
       this.tripPlanner.showWizard();
+      return;
+    }
+    if (payload.source === 'search') {
+      this.langSvc.navigate(['search'], { queryParams: { q: payload.searchQuery, tab: payload.searchTab } });
       return;
     }
     if (payload.source === 'explore-trips') {
@@ -215,10 +221,12 @@ export class DrawerHost {
     return this.svc.getPayload<ActivityPickerPayload>('bikes')?.mode === 'select';
   });
 
+  // Also covers the 'search' source: /search has no map view behind it either,
+  // same reasoning as isAttractionDetailTripPlanner above.
   isBikeDetailTripPlanner = computed(() => {
     this.svc.list();
     const payload = this.svc.getPayload<BikeDetailPayload>('bike-detail');
-    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'explore-trips';
+    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search' || payload?.source === 'explore-trips';
   });
 
   bikeDetailSource = computed(() => {
@@ -231,6 +239,10 @@ export class DrawerHost {
     this.svc.close('bike-detail');
     if (payload.source === 'trip-summary') {
       this.tripPlanner.showWizard();
+      return;
+    }
+    if (payload.source === 'search') {
+      this.langSvc.navigate(['search'], { queryParams: { q: payload.searchQuery, tab: payload.searchTab } });
       return;
     }
     if (payload.source === 'explore-trips') {

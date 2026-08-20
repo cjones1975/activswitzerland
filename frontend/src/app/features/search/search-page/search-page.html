@@ -17,7 +17,7 @@
     </button>
   </div>
 
-  <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)" [lazy]="true">
+  <p-tabs [value]="activeTab()" (valueChange)="onTabChange($event)" [lazy]="true" [scrollable]="true">
     <p-tablist>
       <p-tab value="places">
         <i class="fa-solid fa-location-dot"></i>
@@ -27,6 +27,18 @@
         <i class="fa-solid fa-bolt"></i>
         {{ 'home.search.thingsTab' | translate }}
       </p-tab>
+      <p-tab value="hikes">
+        <i class="fa-solid fa-person-hiking"></i>
+        {{ 'home.search.hikesTab' | translate }}
+      </p-tab>
+      <p-tab value="bikes-road">
+        <i class="fa-solid fa-bicycle"></i>
+        {{ 'home.search.bikesRoadTab' | translate }}
+      </p-tab>
+      <p-tab value="bikes-mountain">
+        <i class="fa-solid fa-person-biking-mountain"></i>
+        {{ 'home.search.bikesMountainTab' | translate }}
+      </p-tab>
     </p-tablist>
     <p-tabpanels>
       <p-tabpanel value="places">
@@ -34,6 +46,15 @@
       </p-tabpanel>
       <p-tabpanel value="things">
         <app-attraction-search-results [query]="query()" />
+      </p-tabpanel>
+      <p-tabpanel value="hikes">
+        <app-hike-search-results [query]="query()" />
+      </p-tabpanel>
+      <p-tabpanel value="bikes-road">
+        <app-bike-search-results [query]="query()" [bikeType]="'road'" />
+      </p-tabpanel>
+      <p-tabpanel value="bikes-mountain">
+        <app-bike-search-results [query]="query()" [bikeType]="'mountain'" />
       </p-tabpanel>
     </p-tabpanels>
   </p-tabs>

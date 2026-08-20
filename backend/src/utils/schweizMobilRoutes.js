@@ -97,15 +97,74 @@ export async function fetchSchweizMobilRoutes({ layer, easting, northing, radius
         },
     });
 
-    if (!response.data) return [];
+    return buildRoutesFromFeatures(response.data?.results || [], { layer, lang: langParam });
+}
 
+// Searches a SchweizMobil geo.admin.ch layer by route/stage title, not
+// location - powers the search page's Hiking/Road Bike/Mountain Bike tabs.
+// Same two-call attributes+geometry merge as fetchRouteStages below (find's
+// returnGeometry=false returns attributes but no geometry, returnGeometry=true
+// returns geometry but no attributes at all), just searching chmobil_title
+// with `contains` instead of looking up one exact route number.
+export async function searchSchweizMobilRoutes({ layer, query, lang }) {
+    const langParam = SUPPORTED_LANGS.includes(lang) ? lang : 'en';
+
+    const findParams = {
+        layer,
+        searchField: 'chmobil_title',
+        searchText: query,
+        contains: true,
+    };
+
+    const [attributesRes, geometryRes] = await Promise.all([
+        axios({
+            method: 'get',
+            url: GEOADMIN_FIND_URL,
+            params: { ...findParams, returnGeometry: false, lang: langParam },
+        }),
+        axios({
+            method: 'get',
+            url: GEOADMIN_FIND_URL,
+            params: { ...findParams, returnGeometry: true, sr: 2056, geometryFormat: 'geojson' },
+        }),
+    ]);
+
+    const attributesByKey = new Map();
+    for (const feature of attributesRes.data?.results || []) {
+        const key = feature.id ?? feature.featureId;
+        attributesByKey.set(key, feature.attributes ?? feature.properties ?? {});
+    }
+
+    const geometryByKey = new Map();
+    for (const feature of geometryRes.data?.results || []) {
+        const key = feature.id ?? feature.featureId;
+        geometryByKey.set(key, feature.geometry);
+    }
+
+    // Normalized to identify()'s { id, properties, geometry } feature shape so
+    // both fetch paths can share the same grouping/enrichment logic below.
+    const features = [];
+    for (const [key, attrs] of attributesByKey) {
+        const geometry = geometryByKey.get(key);
+        if (!geometry) continue;
+        features.push({ id: key, properties: attrs, geometry });
+    }
+
+    return buildRoutesFromFeatures(features, { layer, lang: langParam });
+}
+
+// Groups stage/segment features (from either identify's radius search or
+// find's name search above) back into whole routes, keyed by
+// chmobil_route_number, then enriches with nationwide stage counts and
+// computes distance/reprojected geometry per route.
+async function buildRoutesFromFeatures(features, { layer, lang }) {
     // Individual results are stage/segment features, not whole routes.
     // id format is "{routeNumber}.{stageNumber}", e.g. "6.18" = stage 18
     // of route 6. Group them back into their parent route here so the
     // frontend gets one card per route, not one per stage.
     const routesByNumber = new Map();
 
-    for (const feature of response.data.results || []) {
+    for (const feature of features) {
         const routeNumber = feature.properties?.chmobil_route_number;
 
         if (!routesByNumber.has(routeNumber)) {
@@ -134,17 +193,17 @@ export async function fetchSchweizMobilRoutes({ layer, easting, northing, radius
 
     const routes = Array.from(routesByNumber.values());
 
-    // Nearby-search results only see the stages that fall within the search
-    // radius, not the whole route - so the "Stage 9 of 20" badge needs a
-    // separate, lightweight (attributes-only, no geometry) nationwide count
-    // per multi-day route. Fetched in parallel, best-effort: a failure here
-    // just means that route's badge omits the "of N" suffix.
+    // Nearby/name-search results only see the stages that matched (radius or
+    // title text), not necessarily the whole route - so the "Stage 9 of 20"
+    // badge needs a separate, lightweight (attributes-only, no geometry)
+    // nationwide count per multi-day route. Fetched in parallel, best-effort:
+    // a failure here just means that route's badge omits the "of N" suffix.
     const totalStagesByRoute = new Map();
     await Promise.all(
         routes.filter(route => route.hasSegment).map(async route => {
             try {
                 totalStagesByRoute.set(route.routeNumber, await fetchStageCount({
-                    layer, routeNumber: route.routeNumber, lang: langParam,
+                    layer, routeNumber: route.routeNumber, lang,
                 }));
             } catch (error) {
                 console.error(`Stage count failed for route ${route.routeNumber}: ${error.message}`);

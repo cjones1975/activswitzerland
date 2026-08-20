@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { startWith } from 'rxjs';
 import { DestinationHorizontalList } from '../destinations/destination-horizontal-list/destination-horizontal-list';
-import { SearchBox } from '../search/search-box/search-box';
+import { SearchBox, SearchTab } from '../search/search-box/search-box';
 import { LangService } from '../../shared/services/lang';
 import { SeoService } from '../../shared/services/seo';
 
@@ -38,7 +38,7 @@ export class Home implements OnInit {
     this.langSvc.navigate(['trip-planner'], { queryParams: { from: this.router.url } });
   }
 
-  onSearch(event: { query: string; tab: 'places' | 'things' }): void {
+  onSearch(event: { query: string; tab: SearchTab }): void {
     this.langSvc.navigate(['search'], { queryParams: { q: event.query, tab: event.tab } });
   }
 }

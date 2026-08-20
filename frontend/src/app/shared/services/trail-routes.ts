@@ -52,6 +52,15 @@ export class TrailRoutesService {
       .pipe(map(res => res.data));
   }
 
+  searchRoutes(kind: TrailKind, query: string, lang: string, bikeType?: BikeType): Observable<TrailRoute[]> {
+    let params = new HttpParams().set('q', query).set('lang', lang);
+    if (bikeType) params = params.set('bikeType', bikeType);
+
+    return this.http
+      .get<TrailRoutesResponse>(`${environment.apiUrl}/api/v1/${KIND_PATH[kind]}/search`, { params })
+      .pipe(map(res => res.data));
+  }
+
   getRouteStages(kind: TrailKind, routeNumber: string | number, lang: string, bikeType?: BikeType): Observable<TrailRoute> {
     let params = new HttpParams().set('lang', lang);
     if (bikeType) params = params.set('bikeType', bikeType);

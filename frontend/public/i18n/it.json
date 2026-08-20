@@ -402,13 +402,21 @@
     "search": {
       "placesTab": "Luoghi da visitare",
       "thingsTab": "Cose da fare",
+      "hikesTab": "Sentieri escursionistici",
+      "bikesRoadTab": "Percorsi in bici",
+      "bikesMountainTab": "Percorsi mountain bike",
       "placeholderPlaces": "Cerca una città, un monumento o una regione…",
       "placeholderThings": "Cerca un'attrazione o un'attività…",
+      "placeholderHikes": "Cerca un sentiero escursionistico per nome…",
+      "placeholderBikesRoad": "Cerca un percorso in bici per nome…",
+      "placeholderBikesMountain": "Cerca un percorso mountain bike per nome…",
       "searchButton": "Cerca",
       "backToSearch": "Torna alla ricerca",
       "loadError": "Qualcosa è andato storto. Riprova.",
       "noDestinationResults": "Siamo spiacenti, non abbiamo trovato destinazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave.",
-      "noAttractionResults": "Siamo spiacenti, non abbiamo trovato attrazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave."
+      "noAttractionResults": "Siamo spiacenti, non abbiamo trovato attrazioni corrispondenti alla tua ricerca. Prova un'altra parola chiave.",
+      "noHikeResults": "Siamo spiacenti, non abbiamo trovato sentieri escursionistici corrispondenti alla tua ricerca. Prova un'altra parola chiave.",
+      "noBikeResults": "Siamo spiacenti, non abbiamo trovato percorsi in bici corrispondenti alla tua ricerca. Prova un'altra parola chiave."
     }
   },
   "exploreTrips": {

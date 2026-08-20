@@ -18,10 +18,13 @@ import { formatDistanceKmMi } from '../../../shared/utils/distance';
 
 export interface BikeDetailPayload {
   route: TrailRoute;
-  destination: GeoLocation;
+  destination?: GeoLocation;
   mode?: 'view' | 'select';
   stopId?: string;
-  source?: 'trip-summary' | 'explore-trips';
+  source?: 'trip-summary' | 'explore-trips' | 'search';
+  /** Query text + active tab, set when source === 'search', so back-nav can reconstruct the `/search` URL. */
+  searchQuery?: string;
+  searchTab?: 'bikes-road' | 'bikes-mountain';
 }
 
 @Component({

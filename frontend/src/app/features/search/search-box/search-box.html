@@ -16,6 +16,30 @@
       <i class="fa-solid fa-bolt"></i>
       {{ 'home.search.thingsTab' | translate }}
     </button>
+    <button
+      type="button"
+      class="search-tab"
+      [class.search-tab--active]="activeTab() === 'hikes'"
+      (click)="selectTab('hikes')">
+      <i class="fa-solid fa-person-hiking"></i>
+      {{ 'home.search.hikesTab' | translate }}
+    </button>
+    <button
+      type="button"
+      class="search-tab"
+      [class.search-tab--active]="activeTab() === 'bikes-road'"
+      (click)="selectTab('bikes-road')">
+      <i class="fa-solid fa-bicycle"></i>
+      {{ 'home.search.bikesRoadTab' | translate }}
+    </button>
+    <button
+      type="button"
+      class="search-tab"
+      [class.search-tab--active]="activeTab() === 'bikes-mountain'"
+      (click)="selectTab('bikes-mountain')">
+      <i class="fa-solid fa-person-biking-mountain"></i>
+      {{ 'home.search.bikesMountainTab' | translate }}
+    </button>
   </div>
   <div class="search-card">
     <div class="search-input-wrap">
@@ -27,7 +51,7 @@
         [ngModel]="queryText()"
         (ngModelChange)="queryText.set($event)"
         (keydown.enter)="onSubmit()"
-        [placeholder]="(activeTab() === 'places' ? 'home.search.placeholderPlaces' : 'home.search.placeholderThings') | translate" />
+        [placeholder]="placeholderKey() | translate" />
     </div>
     <button type="button" class="search-submit-btn" (click)="onSubmit()">
       <i class="fa-solid fa-magnifying-glass"></i>

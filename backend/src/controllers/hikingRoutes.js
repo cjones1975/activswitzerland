@@ -1,6 +1,6 @@
 import ErrorResponse from '../utils/errorResponse.js';
 import asyncHandler from '../middleware/async.js';
-import { fetchSchweizMobilRoutes, buildGpx, fetchElevationProfile, fetchRouteStages } from '../utils/schweizMobilRoutes.js';
+import { fetchSchweizMobilRoutes, searchSchweizMobilRoutes, buildGpx, fetchElevationProfile, fetchRouteStages } from '../utils/schweizMobilRoutes.js';
 
 // ch.astra.wanderland = official SchweizMobil hiking routes (Wanderland)
 const HIKING_LAYER = 'ch.astra.wanderland';
@@ -22,6 +22,24 @@ export const getHikes = asyncHandler(async (req, res, next) => {
         });
 
         res.status(200).json({ success: true, count: hikes.length, radiusMeters, data: hikes });
+    } catch (error) {
+        console.error(error);
+        next(
+            new ErrorResponse(`An error occurred during the request: ${error.message}`, 500)
+        );
+    }
+});
+
+// @desc    Search hiking routes by name
+// @route   GET /api/v1/hikes/search?q=&lang=
+// @access  Public
+export const getHikesSearch = asyncHandler(async (req, res, next) => {
+    const query = (req.query.q || '').trim();
+    if (!query) return next(new ErrorResponse('q query param is required', 400));
+
+    try {
+        const hikes = await searchSchweizMobilRoutes({ layer: HIKING_LAYER, query, lang: req.query.lang });
+        res.status(200).json({ success: true, count: hikes.length, query, data: hikes });
     } catch (error) {
         console.error(error);
         next(
