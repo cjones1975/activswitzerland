@@ -15,6 +15,9 @@
     "back": "Indietro",
     "search": "Cerca"
   },
+  "activityMap": {
+    "backToPlanner": "Torna al pianificatore di viaggio"
+  },
   "aiChat": {
     "title": "Chiedi all'IA",
     "backToChat": "Torna alla chat",

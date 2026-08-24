@@ -98,6 +98,18 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     showCompass: true
 }), 'bottom-right');
 
+    // Closes whatever popup is open when the user taps empty map background — deliberately not
+    // MapLibre's own closeOnClick (disabled per addMarker's comment: it races a clickable popup's
+    // own button handler and can yank the button out of the DOM mid-click). This is the same
+    // dismissal without that race: it only ever acts on clicks that land outside every marker and
+    // popup, so it never competes with the button's own listener or the marker's built-in
+    // click-toggles-its-popup behavior.
+    this.map.on('click', (e) => {
+      const target = e.originalEvent?.target as HTMLElement | null;
+      if (target?.closest('.maplibregl-marker') || target?.closest('.maplibregl-popup')) return;
+      this.closeAllPopups();
+    });
+
     this.map.on('load', () => {
       this.map?.resize();
       this.mapLoaded = true;
@@ -316,6 +328,10 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     for (const popup of this.popupInstances.values()) {
       if (popup !== except) popup.remove();
     }
+  }
+
+  private closeAllPopups(): void {
+    for (const popup of this.popupInstances.values()) popup.remove();
   }
 
   private deactivateMarker(): void {

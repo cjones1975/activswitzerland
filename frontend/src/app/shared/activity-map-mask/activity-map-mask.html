@@ -1,0 +1,9 @@
+@if (mask.state(); as state) {
+  <div class="activity-map-mask">
+    <app-map [markers]="markers()" [center]="center()" [zoom]="zoom()" [fitBounds]="fitBounds()" (markerClick)="onMarkerClick($event)" />
+    <button type="button" class="activity-map-mask-return" (click)="onReturn()">
+      <i [class]="state.returnIcon"></i>
+      {{ state.returnLabelKey | translate }}
+    </button>
+  </div>
+}

@@ -100,6 +100,10 @@
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('all-attractions')">
                     <i class="fa-regular fa-map-location"></i>
                 </button>
+            } @else {
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onAllAttractionsViewOnMap()">
+                    <i class="fa-regular fa-map-location"></i>
+                </button>
             }
         </div>
     </ng-template>
@@ -137,6 +141,10 @@
             </button>
             @if (!isAttractionDetailTripPlanner()) {
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('attraction-detail')">
+                    <i class="fa-regular fa-map-location"></i>
+                </button>
+            } @else if (attractionDetailWantsMask()) {
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onAttractionDetailViewOnMap()">
                     <i class="fa-regular fa-map-location"></i>
                 </button>
             }
@@ -439,3 +447,5 @@
         <div class="drawer-defer-loading"><i class="fa-light fa-spinner-third fa-spin"></i></div>
     }
 </p-drawer>
+
+<app-activity-map-mask />

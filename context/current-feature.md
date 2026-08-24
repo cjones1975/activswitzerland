@@ -14,6 +14,108 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-24 — Activity Map Mask (Trip Planner + AI Chat) Implemented — Status: Completed
+
+- Branch `feature/activity-map-mask`, built directly off a design discussion in-session (no
+  written spec file — small enough to talk through and confirm before building). Adds a "view on
+  map" full-screen affordance to the two contexts that have never had a real map behind them: the
+  trip planner's activity picker (`all-attractions`/`attraction-detail` opened `mode: 'select'`)
+  and the AI chat's attractions flow (`origin`/`listOrigin: 'ai-chat'`). Hikes/bikes explicitly
+  left untouched (they already have an embedded route-line map; not extended here)
+- New minimal service `shared/services/activity-map-mask.ts` — single-value signal, same shape as
+  the existing `ExploreMapMask` precedent, deliberately dumb about *why* it's open (callers supply
+  `onReturn`/`onMarkerClick`, so navigation logic lives exactly once, wherever it already lived —
+  the mask's return button for a single attraction just calls the drawer's own existing
+  `onAttractionDetailBack()`, zero duplicated routing). New `shared/activity-map-mask/` overlay
+  component, mounted once in `drawer-host.html`, full-screen (`z-index: 9000`), reading directly
+  from `AttractionMarkersService` (already populated by whichever list is open — no new marker
+  plumbing needed) with an optional `activeMarkerId` that zooms + auto-opens that one marker's
+  popup instead of fitting the whole list
+- **Iterated twice on the shape after live feedback**: first built as two separate modes (single
+  marker vs. full list); user's testing showed opening the mask from a specific attraction's own
+  detail view should still show the *other* nearby attractions for context, zoomed to the current
+  one — not an isolated pin. Collapsed into one shape (always show the list; `activeMarkerId`
+  optionally zooms/highlights one) — simpler than the two-mode version it replaced, not more
+  complex. Same round also extended the feature from AI-chat-only to trip-planner's select mode
+  too, since the user wanted parity between the two
+- **Real bug found via user testing, not caught by the build**: the map icon worked from the trip
+  planner route but silently showed the old (wrong) icon on the AI chat route. Root cause:
+  `isAttractionDetailTripPlanner` — the gate deciding old-collapse-icon vs. new-mask-button — only
+  checked `mode === 'select'` (trip planner), never `listOrigin === 'ai-chat'`, even though the
+  new `attractionDetailWantsMask` computed added alongside it *did* check for both. Two computeds
+  covering overlapping cases had drifted out of sync. Fixed by adding the missing condition to the
+  older gate
+- **Second real bug, found from a follow-up request, not a report of broken behavior**: asked to
+  make an open map tooltip dismiss on tapping empty map background. `MapComponent` already had
+  this disabled on purpose (a documented comment: MapLibre's built-in `closeOnClick` races a
+  clickable popup's own button handler and can yank the button out of the DOM mid-click) — so a
+  real fix needed a background-only click handler, not just re-enabling the library default.
+  Added a `map.on('click', ...)` handler that checks the click target first (`.closest()` for
+  `.maplibregl-marker`/`.maplibregl-popup`) and only closes open popups when the tap hit neither —
+  app-wide, since every map in the app shares this one component
+- Verified via `ng build` after every round (clean throughout); no live browser testing from this
+  side this session — the two bugs above were both caught by the user's own testing, not by build
+  checks, which don't exercise click-target/DOM-timing behavior
+- Not yet committed at time of writing this entry
+
+### 2026-08-24 — AI Conversation Assistant (Phases 1-3) Implemented, Merged to Main — Status: Completed (Phases 1-3 only)
+
+- Branch `feature/ai-chat-assistant`, off the spec at @context/features/ai-chat-assistant-spec.md.
+  Built Phases 1-3 only (backend agent core, frontend chat UI, auth gating) — Phases 4-5 (usage
+  metering, Stripe subscription) explicitly deferred to a later branch per the spec's noted scope
+  split; this ships auth-gated but **not cost-capped**, flagged to keep the trigger unlinked from
+  any public rollout until metering lands
+- **Backend**: manual Claude Sonnet 5 tool-use loop (`utils/aiAgent.js`) over 6 tools
+  (`utils/aiTools.js`) wrapping the app's existing MySwitzerland/Open-Meteo/opentransportdata.swiss/
+  SchweizMobil sources — deliberately new standalone functions for MySwitzerland
+  (`utils/myswitzerland.js`) rather than refactoring the existing paginated destination/attraction
+  controllers (not worth the risk to their existing frontend contract). Persisted multi-turn
+  conversations (`models/AiConversation.js`). `POST /api/v1/ai/chat` streams Server-Sent Events
+  (a `{type:'status', tool, input}` per tool call, then one `{type:'done', reply}`) so the UI can
+  show which tool is running instead of one opaque wait — frontend switched from `HttpClient` to a
+  raw `fetch()` + manual SSE line parsing to support this (Angular's `HttpClient` can't stream a
+  `POST` body)
+- **Frontend**: chat drawer (`features/ai-chat/`) reachable via a header icon anywhere in the app,
+  context-aware (reads whatever drawer's already open — hike/bike/attraction/destination detail —
+  so it doesn't ask for a location it can already see), tool results render as tappable cards
+  (hikes/bikes, weather, destination, attractions-list link, transit connections with
+  tap-to-expand leg detail) opening the same real drawers the rest of the app uses, not plain text.
+  Assistant replies render `**bold**`/`- bullets` as real HTML (new `shared/utils/chat-markdown.ts`,
+  escaped-then-formatted, bound via `[innerHTML]` which Angular sanitizes) instead of showing raw
+  markdown syntax
+- Extracted `resolveStopRef`/`fetchConnections` into `utils/ojp.js` and the raw-OJP-to-
+  `TripConnection`/`TripSection` mapping into a new shared `shared/utils/trip-sections.ts` (lifted
+  out of `TransportService`'s private methods) so the chat's in-process tool calls and the trip
+  planner's real HTTP endpoint share one transform instead of drifting apart — this is what let a
+  "show me the legs of that connection" follow-up work by expanding the card in place rather than
+  asking the model to narrate stop-by-stop timing it was never given
+- **Real bugs found via live testing (each confirmed live before AND after the fix, not assumed)**:
+  1. MySwitzerland's id field is `identifier`, not `id` — `resolve_location` was silently returning
+     `id: undefined` for every destination, so every `get_destination_info` follow-up 404'd. Not
+     conversation-history-dependent as first suspected — reproduced fresh, confirmed by inspecting
+     the raw MySwitzerland response directly
+  2. The model unreliably transcribes exact numbers out of a large tool result into prose: asked
+     for weather, it shifted every date by one day against the real forecast; asked to find a
+     12:05 train, it insisted no such departure existed because it was reading raw UTC timestamps
+     as if already Zurich-local (off by the +2h CEST offset) and comparing against the wrong clock
+     entirely. Fixed at the data layer both times — trimmed/localized what the model reads
+     (`summarizeForModel` in `aiTools.js`), left the full data for the card, and told the model to
+     give a qualitative take and let the card carry the numbers, never restate them
+  3. Tool schemas had no `strict: true` — nothing actually enforced the model's tool call included
+     required fields; added to all 6 schemas as a structural guard, verified live it doesn't change
+     normal tool-calling behavior
+  4. `all-attractions`' tap-to-view assumed a real map always sits behind it (true when opened from
+     `destination-detail`, false from the AI chat or trip-planner-select) — collapsing revealed
+     whatever was actually behind it (the chat drawer) instead of opening `attraction-detail`. Now
+     opens `attraction-detail` directly when there's no map to reveal (`origin === 'ai-chat'`),
+     with `attraction-detail`'s existing generic back-nav fallback (unchanged) correctly threading
+     back through the list to the chat
+- Verified throughout via live calls against the real backend (`node --check` plus a series of
+  throwaway `.mjs` scripts run from `backend/` and deleted after, calling `runConversation()`
+  directly) and `ng build` after every frontend round — both clean at merge time
+- Committed as a single commit (`b3971e2`), fast-forward merged to `main`, pushed to
+  `origin/main` (also carried the previously-unpushed hike-bike-search-tabs merge along with it)
+
 ### 2026-08-20 — Search Page: Hiking / Road Bike / Mountain Bike Tabs Completed — Status: Completed
 
 - All 5 phases from the spec (@context/features/hike-bike-search-tabs-spec.md) implemented on

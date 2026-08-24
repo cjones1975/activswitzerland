@@ -15,6 +15,9 @@
     "back": "Zurück",
     "search": "Suche"
   },
+  "activityMap": {
+    "backToPlanner": "Zurück zum Reiseplaner"
+  },
   "aiChat": {
     "title": "KI fragen",
     "backToChat": "Zurück zum Chat",

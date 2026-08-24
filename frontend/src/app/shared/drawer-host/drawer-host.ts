@@ -26,6 +26,9 @@ import { HotelsStub } from '../../features/hotels/hotels-stub/hotels-stub';
 import { ExploreTripsFilter } from '../../features/explore-trips/explore-trips-filter/explore-trips-filter';
 import { AiChatDrawer } from '../../features/ai-chat/ai-chat-drawer/ai-chat-drawer';
 import { AiChat } from '../services/ai-chat';
+import { ActivityMapMaskOverlay } from '../activity-map-mask/activity-map-mask';
+import { ActivityMapMask } from '../services/activity-map-mask';
+import { MapMarker } from '../map/map';
 import { ActivityPickerPayload } from '../../models/geo-point';
 import { WeatherPayload } from '../../models/weather';
 import { LangService } from '../services/lang';
@@ -34,7 +37,7 @@ import { Breakpoint } from '../services/breakpoint';
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub, ExploreTripsFilter, AiChatDrawer],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub, ExploreTripsFilter, AiChatDrawer, ActivityMapMaskOverlay],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -46,6 +49,7 @@ export class DrawerHost {
   private attractionMarkers = inject(AttractionMarkersService);
   private tripPlanner = inject(TripPlannerService);
   private aiChat = inject(AiChat);
+  private activityMapMask = inject(ActivityMapMask);
 
   onVisibleChange(key: DrawerKey, visible: boolean) {
     visible ? this.svc.open(key) : this.svc.close(key);
@@ -111,6 +115,38 @@ export class DrawerHost {
     return payload?.mode === 'select' || payload?.origin === 'ai-chat';
   });
 
+  onAllAttractionsViewOnMap(): void {
+    const isTripPlanner = this.svc.getPayload<ActivityPickerPayload>('all-attractions')?.mode === 'select';
+    this.activityMapMask.open({
+      ...this.activityMapReturnConfig(isTripPlanner),
+      onReturn: () => {}, // nothing to reopen — the list is still there, untouched, under the mask
+      onMarkerClick: (marker) => this.onActivityMapMarkerClick(marker),
+    });
+  }
+
+  // Shared by both the list's "view all on map" and a single attraction's "view on map" — a
+  // marker tap always means "open that attraction's detail", regardless of which one opened the
+  // mask. Reads mode/destination/stopId from all-attractions' own payload since that drawer stays
+  // in the stack (never closed, just covered) the whole time the mask or attraction-detail is up.
+  private onActivityMapMarkerClick(marker: MapMarker): void {
+    const attraction = this.attractionMarkers.attractionMap().get(marker.id ?? '');
+    const listPayload = this.svc.getPayload<ActivityPickerPayload>('all-attractions');
+    const destination = listPayload?.destination;
+    if (!attraction || !destination) return;
+    this.activityMapMask.close();
+    if (listPayload?.mode === 'select') {
+      this.svc.open('attraction-detail', { attraction, destination, source: 'all-attractions', mode: 'select', stopId: listPayload.stopId });
+    } else {
+      this.svc.open('attraction-detail', { attraction, destination, source: 'all-attractions', listOrigin: 'ai-chat' });
+    }
+  }
+
+  private activityMapReturnConfig(isTripPlanner: boolean): { returnIcon: string; returnLabelKey: string } {
+    return isTripPlanner
+      ? { returnIcon: 'fa-solid fa-route', returnLabelKey: 'activityMap.backToPlanner' }
+      : { returnIcon: 'fa-solid fa-sparkles', returnLabelKey: 'aiChat.backToChat' };
+  }
+
   attractionDetailSource = computed(() => {
     this.svc.list();
     return this.svc.getPayload<AttractionDetailPayload>('attraction-detail')?.source;
@@ -121,8 +157,29 @@ export class DrawerHost {
   isAttractionDetailTripPlanner = computed(() => {
     this.svc.list();
     const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail');
-    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search' || payload?.source === 'explore-trips';
+    return payload?.mode === 'select' || payload?.listOrigin === 'ai-chat' || payload?.source === 'trip-summary' || payload?.source === 'search' || payload?.source === 'explore-trips';
   });
+
+  // Of isAttractionDetailTripPlanner's cases, only trip-planner select mode and the ai-chat list
+  // have a single real point worth showing full-screen — trip-summary/search/explore-trips are
+  // left as they were (no map affordance at all) rather than extended in this pass.
+  attractionDetailWantsMask = computed(() => {
+    this.svc.list();
+    const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail');
+    return payload?.mode === 'select' || payload?.listOrigin === 'ai-chat';
+  });
+
+  onAttractionDetailViewOnMap(): void {
+    const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail');
+    const attraction = payload?.attraction;
+    if (!attraction) return;
+    this.activityMapMask.open({
+      activeMarkerId: attraction.identifier,
+      ...this.activityMapReturnConfig(payload?.mode === 'select'),
+      onReturn: () => this.onAttractionDetailBack(),
+      onMarkerClick: (marker) => this.onActivityMapMarkerClick(marker),
+    });
+  }
 
   onAttractionDetailBack() {
     const payload = this.svc.getPayload<AttractionDetailPayload>('attraction-detail')!;

@@ -15,6 +15,9 @@
     "back": "Back",
     "search": "Search"
   },
+  "activityMap": {
+    "backToPlanner": "Back to Trip Planner"
+  },
   "aiChat": {
     "title": "Ask AI",
     "backToChat": "Back to chat",
