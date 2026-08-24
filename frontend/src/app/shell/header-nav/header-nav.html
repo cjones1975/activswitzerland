@@ -7,6 +7,9 @@
   </ng-template>
 
   <ng-template #end>
+    <button type="button" class="toggle-btn" [attr.aria-label]="'aiChat.title' | translate" (click)="openAiChat()">
+      <i class="fa-solid fa-sparkles"></i>
+    </button>
     <button type="button" class="toggle-btn" aria-label="Toggle menu" (click)="toggleMenu()">
       <i class="fa-solid fa-bars-staggered"></i>
     </button>

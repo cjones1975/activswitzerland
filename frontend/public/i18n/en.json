@@ -15,6 +15,38 @@
     "back": "Back",
     "search": "Search"
   },
+  "aiChat": {
+    "title": "Ask AI",
+    "backToChat": "Back to chat",
+    "clearChat": "Clear chat",
+    "contextChip": "Viewing: {{name}}",
+    "seeAllAttractions": "See all {{count}} things to do in {{name}}",
+    "introTitle": "Ask me anything about Switzerland",
+    "introTitleContext": "Ask me anything about this",
+    "introSub": "Weather, hikes, trains, and things to do — just ask.",
+    "suggestionsLabel": "Try asking",
+    "suggestion": {
+      "whatToDoBern": "What can I do in Bern?",
+      "weatherZermatt": "Weather in Zermatt today",
+      "recommendHike": "Recommend a hike",
+      "trainToSpiez": "Can I take a train to Spiez?",
+      "weatherHere": "How's the weather here?",
+      "nearbyHikes": "Any other hikes nearby?",
+      "gettingHere": "How do I get here by train?"
+    },
+    "placeholder": "Ask about Switzerland…",
+    "send": "Send",
+    "status": {
+      "default": "Thinking…",
+      "resolve_location": "Looking up {{query}}…",
+      "get_destination_info": "Finding things to do…",
+      "get_weather": "Checking the forecast…",
+      "search_hikes": "Searching hikes near {{query}}…",
+      "search_bikes": "Searching bike routes near {{query}}…",
+      "get_transit_connections": "Looking up trains from {{from}} to {{to}}…"
+    },
+    "error": "Sorry, something went wrong. Please try again."
+  },
   "auth": {
     "toast": {
       "login_success": "Logged in",

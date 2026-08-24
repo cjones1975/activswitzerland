@@ -17,6 +17,7 @@ export type DrawerKey =
   | 'bike-detail'
   | 'hotels'
   | 'explore-trips-filter'
+  | 'ai-chat'
 
 
 const DRAWER_BASE_Z = 4000;

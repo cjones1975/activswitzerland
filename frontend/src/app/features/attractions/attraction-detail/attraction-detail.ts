@@ -19,7 +19,7 @@ export interface AttractionDetailPayload {
   mode?: 'view' | 'select';
   stopId?: string;
   /** Carries the originating all-attractions list's own `origin`, so reopening it on back-nav keeps the right back-button behavior. */
-  listOrigin?: 'destination-detail' | 'map';
+  listOrigin?: 'destination-detail' | 'map' | 'ai-chat';
   /** Query text + active tab, set when source === 'search', so back-nav can reconstruct the `/search` URL. */
   searchQuery?: string;
   searchTab?: 'places' | 'things';

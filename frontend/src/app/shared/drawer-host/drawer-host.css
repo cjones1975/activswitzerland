@@ -152,6 +152,75 @@
     background: rgba(255, 255, 255, 0.15);
 }
 
+/* AI chat drawer: navy header (matches auth-drawer's), no gap, full width, flex body so
+   app-ai-chat-drawer can fill the remaining height for its own scrollable transcript + fixed input bar. */
+::ng-deep .ai-chat-drawer .p-drawer-header {
+    background: var(--navy-900);
+}
+
+::ng-deep .ai-chat-drawer .p-drawer-content {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.ai-chat-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.ai-chat-header-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.65rem;
+}
+
+.ai-chat-header-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--amber-700);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-white);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+}
+
+.ai-chat-header-name {
+    font-size: 1.2rem;
+    font-weight: 700;
+    color: var(--color-white);
+}
+
+.ai-chat-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.15rem;
+}
+
+.ai-chat-header-close {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.1rem;
+    padding: 0.35rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.ai-chat-header-close:hover {
+    color: var(--color-white);
+    background: rgba(255, 255, 255, 0.15);
+}
+
 /* Destination detail drawer */
 .dest-header {
     display: flex;
@@ -211,7 +280,8 @@
     ::ng-deep .bikes-drawer,
     ::ng-deep .bike-detail-drawer,
     ::ng-deep .hotels-drawer,
-    ::ng-deep .connections-drawer {
+    ::ng-deep .connections-drawer,
+    ::ng-deep .ai-chat-drawer {
         top: 4.5rem !important;
         height: calc(100% - 4.5rem) !important;
         box-shadow: none !important;
@@ -229,7 +299,8 @@
     ::ng-deep .hike-detail-drawer,
     ::ng-deep .bikes-drawer,
     ::ng-deep .bike-detail-drawer,
-    ::ng-deep .auth-drawer {
+    ::ng-deep .auth-drawer,
+    ::ng-deep .ai-chat-drawer {
         width: 100vw !important;
     }
 }

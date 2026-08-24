@@ -15,6 +15,38 @@
     "back": "Retour",
     "search": "Recherche"
   },
+  "aiChat": {
+    "title": "Demander à l'IA",
+    "backToChat": "Retour au chat",
+    "clearChat": "Effacer la conversation",
+    "contextChip": "Consultation : {{name}}",
+    "seeAllAttractions": "Voir les {{count}} activités à {{name}}",
+    "introTitle": "Demandez-moi tout sur la Suisse",
+    "introTitleContext": "Demandez-moi tout à ce sujet",
+    "introSub": "Météo, randonnées, trains et activités — posez votre question.",
+    "suggestionsLabel": "Essayez de demander",
+    "suggestion": {
+      "whatToDoBern": "Que puis-je faire à Berne ?",
+      "weatherZermatt": "Météo à Zermatt aujourd'hui",
+      "recommendHike": "Recommande-moi une randonnée",
+      "trainToSpiez": "Puis-je prendre le train pour Spiez ?",
+      "weatherHere": "Quel temps fait-il ici ?",
+      "nearbyHikes": "Y a-t-il d'autres randonnées à proximité ?",
+      "gettingHere": "Comment venir ici en train ?"
+    },
+    "placeholder": "Posez une question sur la Suisse…",
+    "send": "Envoyer",
+    "status": {
+      "default": "Réflexion…",
+      "resolve_location": "Recherche de {{query}}…",
+      "get_destination_info": "Recherche d'activités…",
+      "get_weather": "Vérification des prévisions météo…",
+      "search_hikes": "Recherche de randonnées près de {{query}}…",
+      "search_bikes": "Recherche d'itinéraires vélo près de {{query}}…",
+      "get_transit_connections": "Recherche de trains de {{from}} à {{to}}…"
+    },
+    "error": "Désolé, une erreur s'est produite. Veuillez réessayer."
+  },
   "auth": {
     "toast": {
       "login_success": "Connecté",

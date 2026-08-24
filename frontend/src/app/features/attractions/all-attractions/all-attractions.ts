@@ -229,6 +229,19 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       });
       return;
     }
+    // The normal view-mode tap just collapses this list to reveal the real map behind it
+    // (destination-detail's), where the marker click opens attraction-detail. Opened from the AI
+    // chat drawer there's no map behind it to reveal — collapsing just surfaced the chat drawer
+    // underneath, which read as the tap silently doing nothing useful. Open attraction-detail
+    // directly instead, same as select mode.
+    if (this.payload()?.origin === 'ai-chat') {
+      const dest = this.destination();
+      if (!dest) return;
+      this.drawerSvc.open('attraction-detail', {
+        attraction, destination: dest, source: 'all-attractions', listOrigin: 'ai-chat',
+      });
+      return;
+    }
     this.attractionMarkers.setSelected(attraction.identifier);
     this.drawerSvc.collapse('all-attractions');
   }

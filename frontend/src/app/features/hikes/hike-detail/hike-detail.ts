@@ -21,7 +21,7 @@ export interface HikeDetailPayload {
   destination?: GeoLocation;
   mode?: 'view' | 'select';
   stopId?: string;
-  source?: 'trip-summary' | 'explore-trips' | 'search';
+  source?: 'trip-summary' | 'explore-trips' | 'search' | 'ai-chat';
   /** Query text + active tab, set when source === 'search', so back-nav can reconstruct the `/search` URL. */
   searchQuery?: string;
   searchTab?: 'hikes';

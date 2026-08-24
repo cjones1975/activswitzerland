@@ -15,6 +15,38 @@
     "back": "Zurück",
     "search": "Suche"
   },
+  "aiChat": {
+    "title": "KI fragen",
+    "backToChat": "Zurück zum Chat",
+    "clearChat": "Chat löschen",
+    "contextChip": "Angezeigt: {{name}}",
+    "seeAllAttractions": "Alle {{count}} Aktivitäten in {{name}} ansehen",
+    "introTitle": "Frag mich alles über die Schweiz",
+    "introTitleContext": "Frag mich alles dazu",
+    "introSub": "Wetter, Wanderungen, Züge und Aktivitäten — frag einfach.",
+    "suggestionsLabel": "Vorschläge",
+    "suggestion": {
+      "whatToDoBern": "Was kann ich in Bern unternehmen?",
+      "weatherZermatt": "Wetter heute in Zermatt",
+      "recommendHike": "Empfiehl mir eine Wanderung",
+      "trainToSpiez": "Kann ich mit dem Zug nach Spiez fahren?",
+      "weatherHere": "Wie ist das Wetter hier?",
+      "nearbyHikes": "Gibt es weitere Wanderungen in der Nähe?",
+      "gettingHere": "Wie komme ich mit dem Zug hierher?"
+    },
+    "placeholder": "Frag etwas über die Schweiz…",
+    "send": "Senden",
+    "status": {
+      "default": "Überlegt…",
+      "resolve_location": "Suche {{query}}…",
+      "get_destination_info": "Suche Aktivitäten…",
+      "get_weather": "Prüfe die Wettervorhersage…",
+      "search_hikes": "Suche Wanderungen in der Nähe von {{query}}…",
+      "search_bikes": "Suche Velorouten in der Nähe von {{query}}…",
+      "get_transit_connections": "Suche Züge von {{from}} nach {{to}}…"
+    },
+    "error": "Entschuldigung, etwas ist schiefgelaufen. Bitte versuche es erneut."
+  },
   "auth": {
     "toast": {
       "login_success": "Angemeldet",

@@ -275,7 +275,7 @@
     styleClass="dest-drawer hike-detail-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(hikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : 'hikes.backToList') | translate" (click)="onHikeDetailBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(hikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : hikeDetailSource() === 'ai-chat' ? 'aiChat.backToChat' : 'hikes.backToList') | translate" (click)="onHikeDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
             @if (!isHikeDetailTripPlanner()) {
@@ -341,7 +341,7 @@
     styleClass="dest-drawer bike-detail-drawer">
     <ng-template #header>
         <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(bikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : 'bikes.backToList') | translate" (click)="onBikeDetailBack()">
+            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(bikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : bikeDetailSource() === 'ai-chat' ? 'aiChat.backToChat' : 'bikes.backToList') | translate" (click)="onBikeDetailBack()">
                 <i class="fa-regular fa-chevron-left"></i>
             </button>
             @if (!isBikeDetailTripPlanner()) {
@@ -404,4 +404,38 @@
         </div>
     </ng-template>
     <app-explore-trips-filter></app-explore-trips-filter>
+</p-drawer>
+
+<!-- AI CHAT -->
+<p-drawer
+    [visible]="svc.isOpen('ai-chat')"
+    [closable]="false"
+    position="right"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('ai-chat')"
+    [style]="{ width: 'min(420px, 100vw)' }"
+    styleClass="ai-chat-drawer">
+    <ng-template #header>
+        <div class="ai-chat-header">
+            <div class="ai-chat-header-brand">
+                <div class="ai-chat-header-avatar">
+                    <i class="fa-solid fa-sparkles"></i>
+                </div>
+                <span class="ai-chat-header-name">{{ 'aiChat.title' | translate }}</span>
+            </div>
+            <div class="ai-chat-header-actions">
+                <button class="ai-chat-header-close" type="button" [attr.aria-label]="'aiChat.clearChat' | translate" (click)="onClearAiChat()">
+                    <i class="fa-solid fa-eraser"></i>
+                </button>
+                <button class="ai-chat-header-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('ai-chat')">
+                    <i class="pi pi-times"></i>
+                </button>
+            </div>
+        </div>
+    </ng-template>
+    @defer (on idle; when svc.isOpen('ai-chat')) {
+        <app-ai-chat-drawer></app-ai-chat-drawer>
+    } @placeholder {
+        <div class="drawer-defer-loading"><i class="fa-light fa-spinner-third fa-spin"></i></div>
+    }
 </p-drawer>

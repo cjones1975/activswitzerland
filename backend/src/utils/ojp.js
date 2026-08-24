@@ -1,3 +1,4 @@
+import axios from 'axios';
 import { XMLParser } from 'fast-xml-parser';
 
 const xmlParser = new XMLParser({
@@ -299,4 +300,45 @@ function mapPlace(place) {
     return { id, name: genericName, type: 'address', coordinate, modes: [] };
   }
   return null;
+}
+
+const STOP_PLACE_REF = /^ch:\d+:sloid:/;
+
+export function ojpConfig(body) {
+  return {
+    method: 'post',
+    url: process.env.OPENTRANSPORTDATA_ENDPOINT,
+    data: body,
+    headers: {
+      accept: 'application/xml',
+      'Content-Type': 'application/xml',
+      Authorization: `Bearer ${process.env.TOKEN}`,
+    },
+  };
+}
+
+// `value` is a `TripStop.externalId` (an OJP StopPlaceRef) whenever the stop was picked via
+// rail station search — the only real case, since ConnectionLegPicker is rail-only. Falls back to
+// a location lookup only for a plain name, the same defensive stance as the location endpoint.
+export async function resolveStopRef(value) {
+  if (STOP_PLACE_REF.test(value)) return value;
+  const response = await axios(ojpConfig(buildLocationInformationRequest(value, 'station', 'en')));
+  const [station] = parseLocationInformationResponse(response.data, 'station');
+  if (!station) throw new Error(`Could not resolve location "${value}"`);
+  return station.id;
+}
+
+// Resolves `from`/`to` (either an OJP StopPlaceRef or a plain station name) and runs a TripRequest,
+// mirroring transport.js's getConnections — used both by that controller and by the AI chat tool.
+export async function fetchConnections({ from, to, date, time, isArrivalTime = false, limit }) {
+  const [originRef, destRef] = await Promise.all([resolveStopRef(from), resolveStopRef(to)]);
+  const body = buildTripRequest({
+    originRef,
+    destRef,
+    dateTime: zurichLocalToUtcIso(date, time),
+    isArrivalTime,
+    numberOfResults: limit,
+  });
+  const response = await axios(ojpConfig(body));
+  return parseTripResponse(response.data);
 }

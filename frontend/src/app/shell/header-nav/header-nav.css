@@ -25,6 +25,9 @@
 
 :host ::ng-deep .header-nav .p-menubar-end {
   flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 .toggle-btn {

@@ -4,33 +4,8 @@ import asyncHandler from '../middleware/async.js';
 import {
   buildLocationInformationRequest, parseLocationInformationResponse,
   buildTripRequest, parseTripResponse, zurichLocalToUtcIso,
+  ojpConfig, resolveStopRef, fetchConnections,
 } from '../utils/ojp.js';
-
-const STOP_PLACE_REF = /^ch:\d+:sloid:/;
-
-function ojpConfig(body) {
-  return {
-    method: 'post',
-    url: process.env.OPENTRANSPORTDATA_ENDPOINT,
-    data: body,
-    headers: {
-      accept: 'application/xml',
-      'Content-Type': 'application/xml',
-      Authorization: `Bearer ${process.env.TOKEN}`,
-    },
-  };
-}
-
-// `from`/`to` are `TripStop.externalId` (an OJP StopPlaceRef) whenever the stop was picked via
-// rail station search — the only real case, since ConnectionLegPicker is rail-only. Falls back to
-// a location lookup only for a plain name, the same defensive stance as the location endpoint.
-async function resolveStopRef(value) {
-  if (STOP_PLACE_REF.test(value)) return value;
-  const response = await axios(ojpConfig(buildLocationInformationRequest(value, 'station', 'en')));
-  const [station] = parseLocationInformationResponse(response.data, 'station');
-  if (!station) throw new Error(`Could not resolve location "${value}"`);
-  return station.id;
-}
 
 // @desc    GET locations
 // @route   GET /api/v1/locations
@@ -69,23 +44,17 @@ export const getLocations = asyncHandler(async (req, res, next) => {
 // `ConnectionLegPicker`) never sends one anyway. See ojp-trip-request-spec.md.
 export const getConnections = asyncHandler(async (req, res, next) => {
   try {
-    const [originRef, destRef] = await Promise.all([
-      resolveStopRef(req.query.from),
-      resolveStopRef(req.query.to),
-    ]);
-    const isArrivalTime = req.query.isArrivalTime === 'true';
-    const body = buildTripRequest({
-      originRef,
-      destRef,
-      dateTime: zurichLocalToUtcIso(req.query.date, req.query.time),
-      isArrivalTime,
-      numberOfResults: req.query.limit,
+    const connections = await fetchConnections({
+      from: req.query.from,
+      to: req.query.to,
+      date: req.query.date,
+      time: req.query.time,
+      isArrivalTime: req.query.isArrivalTime === 'true',
+      limit: req.query.limit,
     });
-    const response = await axios(ojpConfig(body));
-    if (!response.data) {
+    if (!connections) {
       return next(new ErrorResponse(`No connections data found`, 404));
     }
-    const connections = parseTripResponse(response.data);
     res.status(200).json({ success: true, data: { connections } });
   } catch (error) {
     console.error(error);

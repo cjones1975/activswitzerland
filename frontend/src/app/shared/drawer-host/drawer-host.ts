@@ -24,6 +24,8 @@ import { BikeDetail } from '../../features/bikes/bike-detail/bike-detail';
 import type { BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
 import { HotelsStub } from '../../features/hotels/hotels-stub/hotels-stub';
 import { ExploreTripsFilter } from '../../features/explore-trips/explore-trips-filter/explore-trips-filter';
+import { AiChatDrawer } from '../../features/ai-chat/ai-chat-drawer/ai-chat-drawer';
+import { AiChat } from '../services/ai-chat';
 import { ActivityPickerPayload } from '../../models/geo-point';
 import { WeatherPayload } from '../../models/weather';
 import { LangService } from '../services/lang';
@@ -32,7 +34,7 @@ import { Breakpoint } from '../services/breakpoint';
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub, ExploreTripsFilter],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub, ExploreTripsFilter, AiChatDrawer],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -43,6 +45,7 @@ export class DrawerHost {
   private langSvc = inject(LangService);
   private attractionMarkers = inject(AttractionMarkersService);
   private tripPlanner = inject(TripPlannerService);
+  private aiChat = inject(AiChat);
 
   onVisibleChange(key: DrawerKey, visible: boolean) {
     visible ? this.svc.open(key) : this.svc.close(key);
@@ -52,12 +55,22 @@ export class DrawerHost {
     this.svc.close(key);
   }
 
+  onClearAiChat() {
+    this.aiChat.reset();
+  }
+
   onCollapse(key: DrawerKey) {
     this.svc.collapse(key);
   }
 
   onDestinationBack() {
     this.svc.close('destination-detail');
+    // Opened from the AI chat drawer, which can be sitting on any page (not just /search or
+    // /destinations) — it's still in the drawer stack underneath, so just reveal it rather than
+    // navigating away from wherever the user actually is.
+    if (this.svc.isOpen('ai-chat')) {
+      return;
+    }
     const queryParams = this.router.parseUrl(this.router.url).queryParams;
     if (queryParams['from'] === 'search') {
       this.langSvc.navigate(['search'], { queryParams: { q: queryParams['q'], tab: queryParams['tab'] } });
@@ -76,6 +89,8 @@ export class DrawerHost {
       this.svc.collapse('all-attractions');
       if (payload?.origin === 'destination-detail') {
         this.svc.open('destination-detail', payload.destination);
+      } else if (payload?.origin === 'ai-chat') {
+        this.svc.open('ai-chat');
       }
     }
     this.attractionMarkers.setSelected(null);
@@ -89,9 +104,11 @@ export class DrawerHost {
   // Trip-planner picker flow (opened in 'select' mode, or reached from a
   // trip-summary map marker) shows no "show on map" affordance — the wizard
   // isn't a drawer over this map, it's a different page's content entirely.
+  // Same reasoning for the 'ai-chat' origin: there's no real map behind the list there either.
   isAllAttractionsTripPlanner = computed(() => {
     this.svc.list();
-    return this.svc.getPayload<ActivityPickerPayload>('all-attractions')?.mode === 'select';
+    const payload = this.svc.getPayload<ActivityPickerPayload>('all-attractions');
+    return payload?.mode === 'select' || payload?.origin === 'ai-chat';
   });
 
   attractionDetailSource = computed(() => {
@@ -170,12 +187,12 @@ export class DrawerHost {
     return this.svc.getPayload<ActivityPickerPayload>('hikes')?.mode === 'select';
   });
 
-  // Also covers the 'search' source: /search has no map view behind it either,
-  // same reasoning as isAttractionDetailTripPlanner above.
+  // Also covers the 'search' and 'ai-chat' sources: neither /search nor the AI chat drawer has a
+  // map view behind it either, same reasoning as isAttractionDetailTripPlanner above.
   isHikeDetailTripPlanner = computed(() => {
     this.svc.list();
     const payload = this.svc.getPayload<HikeDetailPayload>('hike-detail');
-    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search' || payload?.source === 'explore-trips';
+    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search' || payload?.source === 'explore-trips' || payload?.source === 'ai-chat';
   });
 
   hikeDetailSource = computed(() => {
@@ -196,6 +213,10 @@ export class DrawerHost {
     }
     if (payload.source === 'explore-trips') {
       this.langSvc.navigate(['explore-trips']);
+      return;
+    }
+    if (payload.source === 'ai-chat') {
+      this.svc.open('ai-chat');
       return;
     }
     this.svc.open('hikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });
@@ -221,12 +242,12 @@ export class DrawerHost {
     return this.svc.getPayload<ActivityPickerPayload>('bikes')?.mode === 'select';
   });
 
-  // Also covers the 'search' source: /search has no map view behind it either,
-  // same reasoning as isAttractionDetailTripPlanner above.
+  // Also covers the 'search' and 'ai-chat' sources: neither /search nor the AI chat drawer has a
+  // map view behind it either, same reasoning as isAttractionDetailTripPlanner above.
   isBikeDetailTripPlanner = computed(() => {
     this.svc.list();
     const payload = this.svc.getPayload<BikeDetailPayload>('bike-detail');
-    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search' || payload?.source === 'explore-trips';
+    return payload?.mode === 'select' || payload?.source === 'trip-summary' || payload?.source === 'search' || payload?.source === 'explore-trips' || payload?.source === 'ai-chat';
   });
 
   bikeDetailSource = computed(() => {
@@ -247,6 +268,10 @@ export class DrawerHost {
     }
     if (payload.source === 'explore-trips') {
       this.langSvc.navigate(['explore-trips']);
+      return;
+    }
+    if (payload.source === 'ai-chat') {
+      this.svc.open('ai-chat');
       return;
     }
     this.svc.open('bikes', { destination: payload.destination, mode: payload.mode, stopId: payload.stopId });

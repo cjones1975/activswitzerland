@@ -15,6 +15,38 @@
     "back": "Indietro",
     "search": "Cerca"
   },
+  "aiChat": {
+    "title": "Chiedi all'IA",
+    "backToChat": "Torna alla chat",
+    "clearChat": "Cancella chat",
+    "contextChip": "Stai visualizzando: {{name}}",
+    "seeAllAttractions": "Vedi tutte le {{count}} attività a {{name}}",
+    "introTitle": "Chiedimi qualsiasi cosa sulla Svizzera",
+    "introTitleContext": "Chiedimi qualsiasi cosa in merito",
+    "introSub": "Meteo, escursioni, treni e attività — chiedi pure.",
+    "suggestionsLabel": "Prova a chiedere",
+    "suggestion": {
+      "whatToDoBern": "Cosa posso fare a Berna?",
+      "weatherZermatt": "Meteo a Zermatt oggi",
+      "recommendHike": "Consigliami un'escursione",
+      "trainToSpiez": "Posso prendere il treno per Spiez?",
+      "weatherHere": "Che tempo fa qui?",
+      "nearbyHikes": "Ci sono altre escursioni nelle vicinanze?",
+      "gettingHere": "Come arrivo qui in treno?"
+    },
+    "placeholder": "Chiedi qualcosa sulla Svizzera…",
+    "send": "Invia",
+    "status": {
+      "default": "Sto pensando…",
+      "resolve_location": "Ricerca di {{query}}…",
+      "get_destination_info": "Ricerca attività…",
+      "get_weather": "Controllo delle previsioni meteo…",
+      "search_hikes": "Ricerca escursioni vicino a {{query}}…",
+      "search_bikes": "Ricerca percorsi in bici vicino a {{query}}…",
+      "get_transit_connections": "Ricerca treni da {{from}} a {{to}}…"
+    },
+    "error": "Spiacenti, qualcosa è andato storto. Riprova."
+  },
   "auth": {
     "toast": {
       "login_success": "Accesso effettuato",

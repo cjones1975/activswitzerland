@@ -35,3 +35,18 @@ export const resendLimiter = rateLimit({
   standardHeaders: true,
   legacyHeaders: false,
 });
+
+// Rate limiter for the AI chat endpoint — the free/paid conversation gate (Phase 4, not yet
+// built) controls *conversation count*, but a compromised or scripted account could still hammer
+// individual messages; this is a cheap per-IP second layer given each request's real Claude API
+// cost, unlike the auth limiters above which guard cheap endpoints.
+export const chatLimiter = rateLimit({
+  windowMs: 5 * 60 * 1000,
+  max: 20,
+  message: {
+    success: false,
+    error: 'Too many chat requests from this IP, please try again in a few minutes',
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});

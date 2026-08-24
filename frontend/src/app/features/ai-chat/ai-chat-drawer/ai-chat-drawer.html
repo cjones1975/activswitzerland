@@ -1,0 +1,181 @@
+<div class="ai-chat-panel">
+
+  @if (contextName(); as name) {
+    <div class="context-chip">
+      <i class="fa-light fa-location-dot"></i>
+      <span>{{ 'aiChat.contextChip' | translate: { name } }}</span>
+    </div>
+  }
+
+  <div class="ai-chat-body">
+    @if (!chat.messages().length) {
+      <div class="ai-chat-intro">
+        <div class="ai-chat-intro-avatar"><i class="fa-solid fa-sparkles"></i></div>
+        <p class="ai-chat-intro-title">{{ (contextName() ? 'aiChat.introTitleContext' : 'aiChat.introTitle') | translate }}</p>
+        <p class="ai-chat-intro-sub">{{ 'aiChat.introSub' | translate }}</p>
+      </div>
+
+      <div class="ai-chat-suggestions">
+        <span class="ai-chat-suggestion-label">{{ 'aiChat.suggestionsLabel' | translate }}</span>
+        @for (suggestion of suggestions(); track suggestion.labelKey) {
+          <button type="button" class="ai-chat-suggestion-row" (click)="onSuggestionClick(suggestion)">
+            <span class="ai-chat-suggestion-icon"><i [class]="suggestion.icon"></i></span>
+            <span class="ai-chat-suggestion-text">{{ suggestion.labelKey | translate }}</span>
+            <i class="fa-solid fa-chevron-right ai-chat-suggestion-chev"></i>
+          </button>
+        }
+      </div>
+    } @else {
+      <div class="ai-chat-transcript">
+        @for (message of chat.messages(); track $index) {
+          <div class="ai-chat-msg-row" [class.ai-chat-msg-row--user]="message.role === 'user'">
+            @if (message.role === 'assistant') {
+              <div class="ai-chat-msg-avatar"><i class="fa-solid fa-sparkles"></i></div>
+            }
+            <div class="ai-chat-bubble" [class.ai-chat-bubble--user]="message.role === 'user'">
+              @if (message.role === 'assistant') {
+                <div class="ai-chat-bubble-text" [innerHTML]="formatText(message.text)"></div>
+              } @else {
+                {{ message.text }}
+              }
+
+              @for (card of message.cards; track $index) {
+                @switch (card.type) {
+                  @case ('weather') {
+                    @if (todayForecast(card.data); as day) {
+                      <div class="ai-chat-weather-card" (click)="onCardClick(card)">
+                        <i [class]="day.weatherCode.icon"></i>
+                        <div>
+                          <div class="ai-chat-weather-temp">{{ day.maxTemp | number: '1.0-0' }}° / {{ day.minTemp | number: '1.0-0' }}° · {{ day.weatherCode.labelKey | translate }}</div>
+                        </div>
+                      </div>
+                    }
+                  }
+                  @case ('destination') {
+                    <div class="ai-chat-dest-card" (click)="onCardClick(card)">
+                      <img class="ai-chat-dest-photo" [src]="card.destination.image?.[0]?.url || '/assets/no_image.png'" [alt]="card.destination.name" loading="lazy" decoding="async">
+                      <div class="ai-chat-dest-name">{{ card.destination.name }}</div>
+                    </div>
+                  }
+                  @case ('connections') {
+                    <div class="ai-chat-conn-card">
+                      <div class="ai-chat-conn-route"><i class="fa-light fa-train"></i> {{ card.from }} <i class="fa-light fa-arrow-right"></i> {{ card.to }}</div>
+                      @for (conn of card.connections; track $index) {
+                        <button type="button" class="ai-chat-conn-row" (click)="toggleConn(conn)">
+                          <div class="ai-chat-conn-stops">{{ conn.from }} <i class="fa-light fa-arrow-right"></i> {{ conn.to }}</div>
+                          <div class="ai-chat-conn-time-row">
+                            <span class="ai-chat-conn-time">{{ formatConnTime(conn.departure) }} – {{ formatConnTime(conn.arrival) }}</span>
+                            <span class="ai-chat-conn-meta">
+                              {{ formatConnDuration(conn.duration) }} · {{ conn.transfers }} {{ (conn.transfers === 1 ? 'trip.planner.transfer' : 'trip.planner.transfers') | translate }}
+                              @if (conn.sections?.length) {
+                                <i class="fa-solid" [class.fa-chevron-down]="!isConnExpanded(conn)" [class.fa-chevron-up]="isConnExpanded(conn)"></i>
+                              }
+                            </span>
+                          </div>
+                          @if (isConnExpanded(conn) && conn.sections?.length) {
+                            <div class="ai-chat-conn-detail">
+                              @for (section of conn.sections!; track $index) {
+                                @if (section.type === 'journey') {
+                                  <div class="ai-chat-conn-stop">
+                                    <span class="ai-chat-conn-stop-time">{{ formatConnTime(section.departure!.time) }}</span>
+                                    <span class="ai-chat-conn-stop-station">{{ section.departure!.station }}</span>
+                                    @if (section.departure!.platform) {
+                                      <span class="ai-chat-conn-platform">{{ formatConnPlatform(section.departure!.platform) }}</span>
+                                    }
+                                  </div>
+                                  <div class="ai-chat-conn-leg" [style.color]="connTrainColor(section.journey!.category)">
+                                    <i class="fa-regular fa-train"></i> {{ section.journey!.category }} {{ section.journey!.number }} → {{ section.journey!.direction }}
+                                  </div>
+                                  <div class="ai-chat-conn-stop">
+                                    <span class="ai-chat-conn-stop-time">{{ formatConnTime(section.arrival!.time) }}</span>
+                                    <span class="ai-chat-conn-stop-station">{{ section.arrival!.station }}</span>
+                                    @if (section.arrival!.platform) {
+                                      <span class="ai-chat-conn-platform">{{ formatConnPlatform(section.arrival!.platform) }}</span>
+                                    }
+                                  </div>
+                                } @else if (section.type === 'walk') {
+                                  <div class="ai-chat-conn-leg ai-chat-conn-leg--walk">
+                                    <i class="fa-light fa-person-walking"></i> {{ 'trip.planner.connection.walk' | translate }}
+                                  </div>
+                                }
+                              }
+                            </div>
+                          }
+                        </button>
+                      }
+                    </div>
+                  }
+                  @case ('attractions') {
+                    <button type="button" class="ai-chat-link-row" (click)="onCardClick(card)">
+                      <span class="ai-chat-link-icon"><i class="fa-light fa-map-location-dot"></i></span>
+                      <span class="ai-chat-link-text">{{ 'aiChat.seeAllAttractions' | translate: { name: card.destination.name, count: card.count } }}</span>
+                      <i class="fa-solid fa-chevron-right ai-chat-suggestion-chev"></i>
+                    </button>
+                  }
+                  @case ('hike') {
+                    <div class="ai-chat-trail-card" (click)="onCardClick(card)">
+                      <div class="ai-chat-trail-card-row">
+                        <div class="ai-chat-trail-thumb">
+                          <app-trail-thumbnail [stages]="card.route.stages" [category]="card.route.category" />
+                        </div>
+                        <div class="ai-chat-trail-text">
+                          <p class="ai-chat-trail-name">{{ card.route.name }}</p>
+                          <span class="ai-chat-trail-badge" [class]="'ai-chat-trail-badge--' + card.route.category">
+                            {{ ('hikes.category.' + card.route.category) | translate }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="ai-chat-trail-attribution">
+                        <strong>{{ formatDistance(card.route.distanceKm) }}</strong>
+                        <span>{{ 'hikes.attribution' | translate }}</span>
+                      </div>
+                    </div>
+                  }
+                  @case ('bike') {
+                    <div class="ai-chat-trail-card" (click)="onCardClick(card)">
+                      <div class="ai-chat-trail-card-row">
+                        <div class="ai-chat-trail-thumb">
+                          <app-trail-thumbnail [stages]="card.route.stages" [category]="card.route.category" />
+                        </div>
+                        <div class="ai-chat-trail-text">
+                          <p class="ai-chat-trail-name">{{ card.route.name }}</p>
+                          <span class="ai-chat-trail-badge" [class]="'ai-chat-trail-badge--' + card.route.category">
+                            {{ ('bikes.category.' + card.route.category) | translate }}
+                          </span>
+                        </div>
+                      </div>
+                      <div class="ai-chat-trail-attribution">
+                        <strong>{{ formatDistance(card.route.distanceKm) }}</strong>
+                        <span>{{ 'bikes.attribution' | translate }}</span>
+                      </div>
+                    </div>
+                  }
+                }
+              }
+            </div>
+          </div>
+        }
+
+        @if (chat.sending()) {
+          <div class="ai-chat-status-row">
+            <i class="fa-solid fa-gear fa-spin ai-chat-status-spinner"></i>
+            {{ chat.currentStatus() ? statusLabel(chat.currentStatus()!) : ('aiChat.status.default' | translate) }}
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div class="ai-chat-input-bar">
+    <input
+      type="text"
+      class="ai-chat-input-field"
+      [placeholder]="'aiChat.placeholder' | translate"
+      [ngModel]="draft()"
+      (ngModelChange)="draft.set($event)"
+      (keyup.enter)="send()" />
+    <button type="button" class="ai-chat-send-btn" [attr.aria-label]="'aiChat.send' | translate" [disabled]="!draft().trim() || chat.sending()" (click)="send()">
+      <i class="fa-solid fa-paper-plane-top"></i>
+    </button>
+  </div>
+</div>
