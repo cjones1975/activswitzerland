@@ -1,4 +1,4 @@
-import { Injectable, inject, signal } from '@angular/core';
+import { Injectable, computed, inject, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { Drawer } from './drawer';
@@ -60,6 +60,22 @@ export class AiChat {
   readonly conversationId = signal<string | null>(null);
   readonly messages = signal<ChatMessage[]>([]);
   readonly sending = signal(false);
+
+  /** Free-trial message usage — one lifetime trial conversation capped at freeLimit user
+   * messages, refreshed on drawer open and after every sent message. hasUnlimitedAccess folds in
+   * both a real Stripe subscription and the app-side isExempt bypass (see
+   * ai-chat-assistant-spec.md's Confirmed decisions), so this service never needs to know which
+   * of the two applies. */
+  readonly messagesUsed = signal(0);
+  readonly freeLimit = signal(5);
+  readonly hasUnlimitedAccess = signal(false);
+  readonly usageChecked = signal(false);
+
+  /** True once the free message limit is hit — including mid-conversation, since the cap is a
+   * lifetime message count, not a per-conversation grace. */
+  readonly paywalled = computed(() =>
+    this.usageChecked() && !this.hasUnlimitedAccess() && this.messagesUsed() >= this.freeLimit()
+  );
   /** The tool call currently in flight, if any — null while the model is composing its final
    * reply (or hasn't started a tool call yet), driving the "Checking the forecast…" status row. */
   readonly currentStatus = signal<ChatStatus | null>(null);
@@ -100,9 +116,30 @@ export class AiChat {
     return null;
   }
 
+  /** Fetches current free-conversation usage — call on drawer open and after a new conversation
+   * successfully starts. Leaves prior values in place on failure (non-critical, best-effort). */
+  async refreshUsage(): Promise<void> {
+    if (!this.auth.isLoggedIn()) return;
+    try {
+      const headers: Record<string, string> = {};
+      const token = this.auth.token();
+      if (token) headers['Authorization'] = `Bearer ${token}`;
+
+      const response = await fetch(`${environment.apiUrl}/api/v1/ai/usage`, { headers });
+      if (!response.ok) return;
+      const { data } = await response.json();
+      this.messagesUsed.set(data.messagesUsed);
+      this.freeLimit.set(data.freeLimit);
+      this.hasUnlimitedAccess.set(data.hasUnlimitedAccess);
+      this.usageChecked.set(true);
+    } catch {
+      // stale values are fine — a failed check just means the paywall computed lags reality
+    }
+  }
+
   async sendMessage(text: string): Promise<void> {
     const trimmed = text.trim();
-    if (!trimmed || this.sending()) return;
+    if (!trimmed || this.sending() || this.paywalled()) return;
 
     if (!this.auth.isLoggedIn()) {
       this.drawerSvc.open('auth');
@@ -127,9 +164,16 @@ export class AiChat {
           context: this.contextLabel(),
         }),
       });
+      if (response.status === 402) {
+        // Stale frontend state raced a just-exhausted limit — resync instead of showing an error.
+        await this.refreshUsage();
+        this.messages.set(this.messages().slice(0, -1));
+        return;
+      }
       if (!response.ok || !response.body) throw new Error('Request failed');
 
       await this.consumeStream(response.body);
+      await this.refreshUsage();
     } catch {
       this.messages.set([
         ...this.messages(),

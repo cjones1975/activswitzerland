@@ -7,6 +7,7 @@ import { DestinationHorizontalList } from '../destinations/destination-horizonta
 import { SearchBox, SearchTab } from '../search/search-box/search-box';
 import { LangService } from '../../shared/services/lang';
 import { SeoService } from '../../shared/services/seo';
+import { Drawer } from '../../shared/services/drawer';
 
 @Component({
   selector: 'app-home',
@@ -21,6 +22,7 @@ export class Home implements OnInit {
   private langSvc = inject(LangService);
   private seo = inject(SeoService);
   private destroyRef = inject(DestroyRef);
+  private drawer = inject(Drawer);
 
   ngOnInit(): void {
     this.translate.onLangChange.pipe(
@@ -36,6 +38,10 @@ export class Home implements OnInit {
 
   openTripPlanner(): void {
     this.langSvc.navigate(['trip-planner'], { queryParams: { from: this.router.url } });
+  }
+
+  openAiChat(): void {
+    this.drawer.open('ai-chat');
   }
 
   onSearch(event: { query: string; tab: SearchTab }): void {

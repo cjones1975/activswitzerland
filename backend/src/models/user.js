@@ -55,6 +55,20 @@ const UserSchema = new mongoose.Schema({
         default: false,
         select: false
     },
+    isExempt: {
+        // App-side paywall bypass, independent of Stripe — e.g. the "ActivSwitzerland Team"
+        // account. Kept separate from isPro so billing UI never implies a real subscription.
+        type: Boolean,
+        default: false,
+        select: false
+    },
+    aiMessagesUsed: {
+        // Lifetime count of free-trial user messages sent (across the one trial conversation) —
+        // see ai-chat-assistant-spec.md's Confirmed decisions.
+        type: Number,
+        default: 0,
+        select: false
+    },
     resetPasswordToken: {
         type: String,
         select: false

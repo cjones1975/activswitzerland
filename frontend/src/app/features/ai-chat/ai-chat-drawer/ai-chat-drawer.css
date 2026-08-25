@@ -567,3 +567,96 @@
   color: var(--gray-400);
   cursor: default;
 }
+
+/* Sign-in hint + usage note + paywall */
+
+.ai-chat-signin-hint {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  margin: 0.75rem 1.25rem;
+  padding: 0.5rem 0.65rem;
+  border-radius: 8px;
+  background: var(--navy-100, #eef3f8);
+  color: var(--navy-700, #3a5a7a);
+  font-size: 0.78rem;
+}
+
+.ai-chat-usage-note {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 0.4rem 1rem 0;
+  font-size: 0.68rem;
+  color: var(--gray-400);
+}
+
+.ai-chat-paywall {
+  flex-shrink: 0;
+  text-align: center;
+  padding: 1.1rem 1.25rem;
+  border-top: 1px solid var(--gray-200);
+  background: var(--color-white);
+}
+
+.ai-chat-paywall-title {
+  margin: 0 0 0.3rem;
+  font-size: 0.95rem;
+  font-weight: 800;
+  color: var(--navy-900);
+}
+
+.ai-chat-paywall-body {
+  margin: 0 0 0.85rem;
+  font-size: 0.8rem;
+  color: var(--gray-500);
+  line-height: 1.45;
+}
+
+.ai-chat-paywall-plans {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.ai-chat-subscribe-btn {
+  width: 100%;
+  padding: 0.7rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--amber-700);
+  color: var(--color-white);
+  font-size: 0.85rem;
+  font-weight: 700;
+  font-family: inherit;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.4rem;
+}
+
+.ai-chat-subscribe-btn--secondary {
+  background: var(--gray-100);
+  color: var(--navy-900);
+}
+
+.ai-chat-subscribe-badge {
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.25);
+  font-size: 0.68rem;
+  font-weight: 800;
+}
+
+.ai-chat-subscribe-btn:disabled {
+  background: var(--gray-200);
+  color: var(--gray-400);
+  cursor: default;
+}
+
+.ai-chat-subscribe-btn:disabled .ai-chat-subscribe-badge {
+  background: var(--gray-300);
+  color: var(--gray-400);
+}

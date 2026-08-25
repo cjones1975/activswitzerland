@@ -26,14 +26,21 @@ import trips from './routes/trips.js';
 import hikingRoutes from './routes/hikingRoutes.js';
 import bikeRoutes from './routes/bikeRoutes.js';
 import ai from './routes/ai.js';
+import billing from './routes/billing.js';
 
 // Create an instance of Express
 const app = express();
 
 // Middleware
+app.use(corsHandler());
+
+// Billing is mounted ahead of the global JSON parser so /webhook's express.raw() sees Stripe's
+// untouched raw body for signature verification (the global express.json() would otherwise
+// consume it first) — /checkout and /portal get their own express.json() in routes/billing.js.
+app.use('/api/v1/billing', billing);
+
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: false, limit: '10mb' }));
-app.use(corsHandler());
 
 // Mount routes
 app.use('/api/v1/auth', auth);

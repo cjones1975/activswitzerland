@@ -20,6 +20,7 @@
   },
   "aiChat": {
     "title": "Chiedi all'IA",
+    "signInPrompt": "Accedi prima di fare una domanda.",
     "backToChat": "Torna alla chat",
     "clearChat": "Cancella chat",
     "contextChip": "Stai visualizzando: {{name}}",
@@ -48,7 +49,19 @@
       "search_bikes": "Ricerca percorsi in bici vicino a {{query}}…",
       "get_transit_connections": "Ricerca treni da {{from}} a {{to}}…"
     },
-    "error": "Spiacenti, qualcosa è andato storto. Riprova."
+    "error": "Spiacenti, qualcosa è andato storto. Riprova.",
+    "freeRemaining": "{{count}} messaggi gratuiti rimanenti",
+    "paywallTitle": "Hai esaurito i messaggi gratuiti",
+    "paywallBody": "Abbonati per continuare a chattare con l'assistente di viaggio IA.",
+    "subscribeMonthly": "Mensile — CHF 3.50/mese",
+    "subscribeYearly": "Annuale — CHF 20/anno",
+    "subscribeSaveBadge": "Risparmia il 50%"
+  },
+  "billing": {
+    "title": "Abbonamento Chat IA",
+    "status": "Stato",
+    "statusPro": "Abbonato",
+    "manageSubscription": "Gestisci abbonamento"
   },
   "auth": {
     "toast": {
@@ -79,9 +92,9 @@
     },
     "benefits": {
       "title": "Perché creare un account?",
-      "save": "Salva idee di viaggio",
-      "reviews": "Leggi e scrivi recensioni della community",
-      "ai": "Lascia che l'AI costruisca il tuo itinerario"
+      "save": "Salva gli itinerari di viaggio e condividili",
+      "gpx": "Scarica i file GPX dei percorsi escursionistici e ciclistici",
+      "ai": "Lascia che l'IA risponda alle tue domande"
     }
   },
   "trip": {
@@ -482,12 +495,12 @@
       "distance": "Distanza",
       "reviewLang": "Lingua della recensione",
       "reviewLangOption": {
-        "all": "All",
+        "all": "Tutti",
         "en": "En",
         "de": "De",
         "fr": "Fr",
         "it": "It",
-        "other": "Other"
+        "other": "Altro"
       },
       "apply": "Applica",
       "reset": "Reimposta"

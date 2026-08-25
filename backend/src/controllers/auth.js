@@ -168,7 +168,7 @@ export const resendVerification = AsyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/auth/me
 // @access  Private
 export const getMe = AsyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id);
+    const user = await User.findById(req.user.id).select('+isPro');
 
     res.status(200).json({
         success: true,

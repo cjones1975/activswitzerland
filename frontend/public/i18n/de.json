@@ -20,6 +20,7 @@
   },
   "aiChat": {
     "title": "KI fragen",
+    "signInPrompt": "Bitte melde dich an, bevor du eine Frage stellst.",
     "backToChat": "Zurück zum Chat",
     "clearChat": "Chat löschen",
     "contextChip": "Angezeigt: {{name}}",
@@ -48,23 +49,35 @@
       "search_bikes": "Suche Velorouten in der Nähe von {{query}}…",
       "get_transit_connections": "Suche Züge von {{from}} nach {{to}}…"
     },
-    "error": "Entschuldigung, etwas ist schiefgelaufen. Bitte versuche es erneut."
+    "error": "Entschuldigung, etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "freeRemaining": "Noch {{count}} kostenlose Nachrichten übrig",
+    "paywallTitle": "Du hast deine kostenlosen Nachrichten aufgebraucht",
+    "paywallBody": "Abonniere, um weiter mit dem KI-Reiseassistenten zu chatten.",
+    "subscribeMonthly": "Monatlich — CHF 3.50/Mt.",
+    "subscribeYearly": "Jährlich — CHF 20/Jahr",
+    "subscribeSaveBadge": "50% sparen"
+  },
+  "billing": {
+    "title": "KI-Chat-Abonnement",
+    "status": "Status",
+    "statusPro": "Abonniert",
+    "manageSubscription": "Abonnement verwalten"
   },
   "auth": {
     "toast": {
       "login_success": "Angemeldet",
       "login_welcome": "Willkommen zurück!",
       "login_failed": "Anmeldung fehlgeschlagen",
-      "login_check_credentials": "Bitte überprüfen Sie Ihre Anmeldedaten und versuchen Sie es erneut.",
+      "login_check_credentials": "Bitte überprüfe deine Anmeldedaten und versuche es erneut.",
       "register_success": "Konto erstellt",
       "register_welcome": "Willkommen bei ActivSwitzerland!",
       "register_failed": "Registrierung fehlgeschlagen",
-      "register_failed_detail": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+      "register_failed_detail": "Registrierung fehlgeschlagen. Bitte versuche es erneut.",
       "forgot_success": "E-Mail gesendet",
-      "forgot_success_detail": "Wir haben Ihnen einen Link zum Zurücksetzen Ihres Passworts gesendet.",
+      "forgot_success_detail": "Wir haben dir einen Link zum Zurücksetzen deines Passworts gesendet.",
       "forgot_failed": "Anfrage fehlgeschlagen",
       "forgot_no_user": "Kein Benutzer mit der angegebenen E-Mail-Adresse gefunden.",
-      "generic_error": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
+      "generic_error": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
       "verify_sent": "Wir haben Ihnen einen Bestätigungscode per E-Mail gesendet.",
       "verify_required": "Bestätigung erforderlich",
       "verify_success": "E-Mail bestätigt",
@@ -79,15 +92,15 @@
     },
     "benefits": {
       "title": "Warum ein Konto erstellen?",
-      "save": "Reiseideen speichern",
-      "reviews": "Community-Bewertungen lesen und schreiben",
-      "ai": "KI erstellt Ihre Reiseroute"
+      "save": "Reiserouten speichern und mit anderen teilen",
+      "gpx": "GPX-Dateien für Wander- und Velorouten herunterladen",
+      "ai": "Lass die KI deine Fragen beantworten"
     }
   },
   "trip": {
     "planner": {
       "title": "Reise planen",
-      "subtitle": "Planen Sie eine Route per Bahn oder Auto, finden Sie Verbindungen und entdecken Sie Aktivitäten an jedem Ziel.",
+      "subtitle": "Plane eine Route per Bahn oder Auto, finde Verbindungen und entdecke Aktivitäten an jedem Ziel.",
       "typeRoad": "Autoreise",
       "typeRail": "Bahnreise",
       "typeRoadShort": "Auto",
@@ -101,9 +114,9 @@
       "select": "Auswählen",
       "tripName": "Reisename",
       "save": "Reise speichern",
-      "saveHint": "Melden Sie sich an, um Ihre Reisen zu speichern",
+      "saveHint": "Melde dich an, um deine Reisen zu speichern",
       "savedSuccess": "Reise gespeichert!",
-      "deleteConfirm": "Möchten Sie diese Reise wirklich löschen?",
+      "deleteConfirm": "Möchtest du diese Reise wirklich löschen?",
       "noTrips": "Noch keine Reisen gespeichert.",
       "planFirst": "Erste Reise planen",
       "open": "Reiseplaner öffnen",
@@ -112,10 +125,10 @@
       "next": "Weiter",
       "cancel": "Abbrechen",
       "startOver": "Neu beginnen",
-      "startOverConfirm": "Dadurch wird Ihre begonnene Reise verworfen. Möchten Sie wirklich neu beginnen?",
-      "noConnections": "Für dieses Datum und diese Uhrzeit wurden keine Verbindungen gefunden. Versuchen Sie eine andere Suche.",
+      "startOverConfirm": "Dadurch wird deine begonnene Reise verworfen. Möchtest du wirklich neu beginnen?",
+      "noConnections": "Für dieses Datum und diese Uhrzeit wurden keine Verbindungen gefunden. Versuche eine andere Suche.",
       "routeError": "Route konnte nicht berechnet werden.",
-      "routeUnreachable": "Wir konnten keine Straße finden, die nahe genug an diesem Ziel liegt. Versuchen Sie einen anderen Haltepunkt.",
+      "routeUnreachable": "Wir konnten keine Straße finden, die nahe genug an diesem Ziel liegt. Versuche einen anderen Haltepunkt.",
       "removeStop": "Haltepunkt entfernen",
       "dragStop": "Zum Neuordnen ziehen",
       "connection": {
@@ -163,7 +176,7 @@
         "searching": "Wird gesucht…",
         "noResults": "Keine Ergebnisse gefunden",
         "clearSelection": "Auswahl löschen",
-        "noLegs": "Fügen Sie mindestens zwei Stopps hinzu, um Zuganschlüsse zu planen.",
+        "noLegs": "Füge mindestens zwei Stopps hinzu, um Zuganschlüsse zu planen.",
         "connectionNeeded": "Verbindung erforderlich",
         "connectionPicked": "Verbindung gewählt",
         "connectionSkipped": "Übersprungen",
@@ -185,7 +198,7 @@
         "removeFromTrip": "Von der Reise entfernen",
         "dayDateLabel": "Tag {{day}} - {{date}}",
         "continue": "Übersicht",
-        "noStops": "Fügen Sie Haltepunkte mit mindestens einem Tag hinzu, um Aktivitäten hinzuzufügen."
+        "noStops": "Füge Haltepunkte mit mindestens einem Tag hinzu, um Aktivitäten hinzuzufügen."
       },
       "step4": {
         "destinations": "Ziele",
@@ -199,18 +212,18 @@
       },
       "step5": {
         "title": "Reise speichern",
-        "subtitle": "Geben Sie Ihrem Schweizer Abenteuer einen Namen und speichern Sie es für später",
+        "subtitle": "Gib deinem Schweizer Abenteuer einen Namen und speichere es für später",
         "type": "Art",
         "duration": "Dauer",
         "suggestedRoad": "Meine Schweizer Autoreise",
         "suggestedRail": "Meine Schweizer Bahnreise",
         "update": "Reise aktualisieren",
         "backToSummary": "Zurück zur Übersicht",
-        "saveError": "Ihre Reise konnte nicht gespeichert werden. Bitte versuchen Sie es erneut.",
+        "saveError": "Deine Reise konnte nicht gespeichert werden. Bitte versuche es erneut.",
         "makePublic": "Reise öffentlich machen",
         "makePublicHint": "Andere Reisende können diese Reise unter „Reisen entdecken\" sehen",
         "stayAnonymous": "Anonym bleiben",
-        "stayAnonymousHint": "Ihr Name und Ihr Land werden nicht angezeigt"
+        "stayAnonymousHint": "Dein Name und dein Land werden nicht angezeigt"
       }
     }
   },
@@ -218,9 +231,9 @@
     "savedTrips": {
       "title": "Gespeicherte Reisen",
       "view": "Anzeigen",
-      "empty": "Sie haben noch keine Reisen gespeichert.",
+      "empty": "Du hast noch keine Reisen gespeichert.",
       "review": "Bewertung",
-      "reviewPlaceholder": "Beschreiben Sie, wie es war, was Ihnen gefallen hat oder nicht...",
+      "reviewPlaceholder": "Beschreibe, wie es war, was dir gefallen hat oder nicht...",
       "noReview": "Noch keine Bewertung.",
       "editReview": "Bewertung bearbeiten",
       "saveReview": "Speichern",
@@ -249,7 +262,7 @@
   },
   "forgot": {
     "title": "Passwort zurücksetzen",
-    "subtitle": "Geben Sie Ihre E-Mail-Adresse ein und wir senden Ihnen einen Link zum Zurücksetzen.",
+    "subtitle": "Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.",
     "email_label": "E-Mail-Adresse",
     "email_placeholder": "ihre@email.com",
     "submit": "Passwort zurücksetzen",
@@ -263,16 +276,16 @@
     },
     "cityBreaks": {
       "title": "Städtereisen",
-      "subtitle": "Entdecken Sie die Schweiz Stadt für Stadt"
+      "subtitle": "Entdecke die Schweiz Stadt für Stadt"
     },
     "mountains": {
       "title": "Berge, Seen & Gletscher",
-      "subtitle": "Entdecken Sie die alpinen Landschaften der Schweiz",
+      "subtitle": "Entdecke die alpinen Landschaften der Schweiz",
       "count": "{{count}} Reiseziele"
     },
     "natureParks": {
       "title": "Naturparks",
-      "subtitle": "Erkunden Sie die geschützten Naturgebiete der Schweiz",
+      "subtitle": "Erkunde die geschützten Naturgebiete der Schweiz",
       "count": "{{count}} Reiseziele"
     },
     "detail": {
@@ -379,7 +392,7 @@
     "search": {
       "placeholder": "Attraktionen suchen...",
       "backToAll": "Zurück zu allen Attraktionen",
-      "noResults": "Es tut uns leid, wir konnten keine Attraktionen finden, die Ihrer Suchanfrage entsprechen. Bitte versuchen Sie ein anderes Stichwort."
+      "noResults": "Es tut uns leid, wir konnten keine Attraktionen finden, die deiner Suchanfrage entsprechen. Bitte versuche ein anderes Stichwort."
     }
   },
   "weather": {
@@ -425,7 +438,7 @@
   },
   "hero": {
     "title": "Willkommen in der Schweiz",
-    "subtitle": "Entdecken Sie Tagesausflüge, Wahrzeichen und versteckte Juwelen.",
+    "subtitle": "Entdecke Tagesausflüge, Wahrzeichen und versteckte Juwelen.",
     "cta": "Reise planen",
     "stats": {
       "attractions": "Attraktionen",
@@ -447,18 +460,18 @@
       "placeholderBikesMountain": "Mountainbike-Route nach Namen suchen…",
       "searchButton": "Suchen",
       "backToSearch": "Zurück zur Suche",
-      "loadError": "Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.",
-      "noDestinationResults": "Es tut uns leid, wir konnten keine Reiseziele zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort.",
-      "noAttractionResults": "Es tut uns leid, wir konnten keine Attraktionen zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort.",
-      "noHikeResults": "Es tut uns leid, wir konnten keine Wanderwege zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort.",
-      "noBikeResults": "Es tut uns leid, wir konnten keine Velorouten zu Ihrer Suche finden. Bitte versuchen Sie ein anderes Stichwort."
+      "loadError": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+      "noDestinationResults": "Es tut uns leid, wir konnten keine Reiseziele zu deiner Suche finden. Bitte versuche ein anderes Stichwort.",
+      "noAttractionResults": "Es tut uns leid, wir konnten keine Attraktionen zu deiner Suche finden. Bitte versuche ein anderes Stichwort.",
+      "noHikeResults": "Es tut uns leid, wir konnten keine Wanderwege zu deiner Suche finden. Bitte versuche ein anderes Stichwort.",
+      "noBikeResults": "Es tut uns leid, wir konnten keine Velorouten zu deiner Suche finden. Bitte versuche ein anderes Stichwort."
     }
   },
   "exploreTrips": {
     "anonymous": "Anonymer Reisender",
     "backToList": "Zurück zu Reisen entdecken",
     "empty": "Noch keine öffentlichen Reisen.",
-    "endOfList": "Sie haben das Ende erreicht.",
+    "endOfList": "Du hast das Ende erreicht.",
     "flip": "Karte umdrehen",
     "noReview": "Keine Bewertung verfügbar.",
     "travellerReview": "Reisebewertung",
@@ -482,12 +495,12 @@
       "distance": "Distanz",
       "reviewLang": "Sprache der Bewertung",
       "reviewLangOption": {
-        "all": "All",
+        "all": "Alle",
         "en": "En",
         "de": "De",
         "fr": "Fr",
         "it": "It",
-        "other": "Other"
+        "other": "Andere"
       },
       "apply": "Anwenden",
       "reset": "Zurücksetzen"
@@ -505,7 +518,7 @@
     "headingBefore": "Das Beste der ",
     "headingAccent": "Schweiz",
     "headingAfter": " kommt bald.",
-    "lead": "Wir gestalten eine Desktop-Erfahrung, die den Orten gerecht wird, die Sie entdecken werden. Nutzen Sie bis dahin unterwegs die mobile Ansicht.",
+    "lead": "Wir gestalten eine Desktop-Erfahrung, die den Orten gerecht wird, die du entdecken wirst. Nutze bis dahin unterwegs die mobile Ansicht.",
     "languageAria": "Sprache wählen",
     "prevAria": "Vorheriger Screenshot",
     "nextAria": "Nächster Screenshot",
@@ -521,20 +534,20 @@
   },
   "seo": {
     "home": {
-      "title": "Planen Sie Ihr Schweizer Abenteuer",
-      "description": "Entdecken Sie die schönsten Wanderwege, Velorouten und Reiseziele der Schweiz. Planen Sie Ihre perfekte Reise mit aktuellen Transport- und Unterkunftsinformationen."
+      "title": "Plane dein Schweizer Abenteuer",
+      "description": "Entdecke die schönsten Wanderwege, Velorouten und Reiseziele der Schweiz. Plane deine perfekte Reise mit aktuellen Transport- und Unterkunftsinformationen."
     },
     "destinations": {
       "title": "Reiseziele in der Schweiz",
-      "description": "Entdecken Sie Städte, Berge, Seen und Naturparks in der ganzen Schweiz. Finden Sie das perfekte Reiseziel für Ihre nächste Reise."
+      "description": "Entdecke Städte, Berge, Seen und Naturparks in der ganzen Schweiz. Finde das perfekte Reiseziel für deine nächste Reise."
     },
     "exploreTrips": {
       "title": "Reiseideen entdecken",
-      "description": "Lassen Sie sich von kuratierten Reiseideen zu Schweizer Städten, Bergen und der Landschaft inspirieren."
+      "description": "Lass dich von kuratierten Reiseideen zu Schweizer Städten, Bergen und der Landschaft inspirieren."
     },
     "search": {
       "title": "Suche",
-      "description": "Suchen Sie Reiseziele und Aktivitäten in der ganzen Schweiz."
+      "description": "Suche Reiseziele und Aktivitäten in der ganzen Schweiz."
     }
   }
 }

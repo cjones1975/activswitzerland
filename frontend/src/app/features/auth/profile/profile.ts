@@ -3,7 +3,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { finalize } from 'rxjs';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule, FormBuilder, Validators } from '@angular/forms';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
@@ -15,6 +15,7 @@ import { ConfirmationService, MessageService } from 'primeng/api';
 import { Toast } from 'primeng/toast';
 import { Auth, CurrentUser } from '../../../core/services/auth';
 import { Toast as ToastService } from '../../../core/services/toast';
+import { Billing } from '../../../shared/services/billing';
 import { TripsService } from '../../../shared/services/trips';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { SavedTrip } from '../../../models/trip';
@@ -36,9 +37,11 @@ export class Profile implements OnInit {
   readonly formatDistance = formatDistance;
 
   auth = inject(Auth);
+  private billing = inject(Billing);
   private toast = inject(ToastService);
   private translate = inject(TranslateService);
   private router = inject(Router);
+  private route = inject(ActivatedRoute);
   private langSvc = inject(LangService);
   private fb = inject(FormBuilder);
   private tripsSvc = inject(TripsService);
@@ -49,6 +52,7 @@ export class Profile implements OnInit {
 
   isEditing = signal(false);
   savedTrips = signal<SavedTrip[]>([]);
+  managingSubscription = signal(false);
 
   user = signal<CurrentUser | null>(null);
   pendingEmailVerification = signal<string | null>(null);
@@ -99,6 +103,13 @@ export class Profile implements OnInit {
     this.auth.getMe()
       .then(u => this.user.set(u))
       .catch(() => {});
+
+    // Stripe Checkout redirects back here with ?checkout=success|cancel (see billing.js) — on
+    // success, isPro flips via webhook shortly after the redirect lands, so re-fetch once more
+    // after a short delay rather than trusting the very first getMe() above to have caught it.
+    if (this.route.snapshot.queryParamMap.get('checkout') === 'success') {
+      setTimeout(() => this.auth.getMe().then(u => this.user.set(u)).catch(() => {}), 1500);
+    }
     this.tripsSvc.getTrips()
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe(trips => {
@@ -155,6 +166,15 @@ export class Profile implements OnInit {
     }
     if (res.emailUpdateError) {
       this.toast.error(this.translate.instant('auth.toast.verify_failed'), res.emailUpdateError, 4000, 'toast-error');
+    }
+  }
+
+  async manageSubscription(): Promise<void> {
+    this.managingSubscription.set(true);
+    try {
+      await this.billing.openPortal();
+    } finally {
+      this.managingSubscription.set(false);
     }
   }
 

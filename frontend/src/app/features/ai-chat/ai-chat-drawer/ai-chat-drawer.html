@@ -166,16 +166,42 @@
     }
   </div>
 
-  <div class="ai-chat-input-bar">
-    <input
-      type="text"
-      class="ai-chat-input-field"
-      [placeholder]="'aiChat.placeholder' | translate"
-      [ngModel]="draft()"
-      (ngModelChange)="draft.set($event)"
-      (keyup.enter)="send()" />
-    <button type="button" class="ai-chat-send-btn" [attr.aria-label]="'aiChat.send' | translate" [disabled]="!draft().trim() || chat.sending()" (click)="send()">
-      <i class="fa-solid fa-paper-plane-top"></i>
-    </button>
-  </div>
+  @if (!chat.auth.isLoggedIn()) {
+    <div class="ai-chat-signin-hint">
+      <i class="fa-light fa-circle-info"></i>
+      {{ 'aiChat.signInPrompt' | translate }}
+    </div>
+  } @else if (chat.paywalled()) {
+    <div class="ai-chat-paywall">
+      <p class="ai-chat-paywall-title">{{ 'aiChat.paywallTitle' | translate }}</p>
+      <p class="ai-chat-paywall-body">{{ 'aiChat.paywallBody' | translate }}</p>
+      <div class="ai-chat-paywall-plans">
+        <button type="button" class="ai-chat-subscribe-btn ai-chat-subscribe-btn--secondary" [disabled]="subscribingPlan() !== null" (click)="subscribe('monthly')">
+          {{ 'aiChat.subscribeMonthly' | translate }}
+        </button>
+        <button type="button" class="ai-chat-subscribe-btn" [disabled]="subscribingPlan() !== null" (click)="subscribe('yearly')">
+          {{ 'aiChat.subscribeYearly' | translate }}
+          <span class="ai-chat-subscribe-badge">{{ 'aiChat.subscribeSaveBadge' | translate }}</span>
+        </button>
+      </div>
+    </div>
+  } @else {
+    @if (chat.usageChecked() && !chat.hasUnlimitedAccess()) {
+      <div class="ai-chat-usage-note">
+        {{ 'aiChat.freeRemaining' | translate: { count: chat.freeLimit() - chat.messagesUsed() } }}
+      </div>
+    }
+    <div class="ai-chat-input-bar">
+      <input
+        type="text"
+        class="ai-chat-input-field"
+        [placeholder]="'aiChat.placeholder' | translate"
+        [ngModel]="draft()"
+        (ngModelChange)="draft.set($event)"
+        (keyup.enter)="send()" />
+      <button type="button" class="ai-chat-send-btn" [attr.aria-label]="'aiChat.send' | translate" [disabled]="!draft().trim() || chat.sending()" (click)="send()">
+        <i class="fa-solid fa-paper-plane-top"></i>
+      </button>
+    </div>
+  }
 </div>

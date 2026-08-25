@@ -20,6 +20,7 @@
   },
   "aiChat": {
     "title": "Demander à l'IA",
+    "signInPrompt": "Veuillez vous connecter avant de poser une question.",
     "backToChat": "Retour au chat",
     "clearChat": "Effacer la conversation",
     "contextChip": "Consultation : {{name}}",
@@ -48,7 +49,19 @@
       "search_bikes": "Recherche d'itinéraires vélo près de {{query}}…",
       "get_transit_connections": "Recherche de trains de {{from}} à {{to}}…"
     },
-    "error": "Désolé, une erreur s'est produite. Veuillez réessayer."
+    "error": "Désolé, une erreur s'est produite. Veuillez réessayer.",
+    "freeRemaining": "{{count}} messages gratuits restants",
+    "paywallTitle": "Vous avez utilisé vos messages gratuits",
+    "paywallBody": "Abonnez-vous pour continuer à discuter avec l'assistant de voyage IA.",
+    "subscribeMonthly": "Mensuel — CHF 3.50/mois",
+    "subscribeYearly": "Annuel — CHF 20/an",
+    "subscribeSaveBadge": "Économisez 50%"
+  },
+  "billing": {
+    "title": "Abonnement Chat IA",
+    "status": "Statut",
+    "statusPro": "Abonné",
+    "manageSubscription": "Gérer l'abonnement"
   },
   "auth": {
     "toast": {
@@ -79,9 +92,9 @@
     },
     "benefits": {
       "title": "Pourquoi créer un compte ?",
-      "save": "Enregistrer des idées de voyage",
-      "reviews": "Lire et laisser des avis communautaires",
-      "ai": "Laisser l'IA créer votre itinéraire"
+      "save": "Enregistrez vos itinéraires et partagez-les",
+      "gpx": "Téléchargez les fichiers GPX des itinéraires de randonnée et de vélo",
+      "ai": "Laissez l'IA répondre à vos questions"
     }
   },
   "trip": {
@@ -482,12 +495,12 @@
       "distance": "Distance",
       "reviewLang": "Langue de l'avis",
       "reviewLangOption": {
-        "all": "All",
+        "all": "Tous",
         "en": "En",
         "de": "De",
         "fr": "Fr",
         "it": "It",
-        "other": "Other"
+        "other": "Autre"
       },
       "apply": "Appliquer",
       "reset": "Réinitialiser"

@@ -30,6 +30,7 @@ export interface CurrentUser {
   country: string;
   email: string;
   emailUpdates: boolean;
+  isPro?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

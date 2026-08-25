@@ -4,10 +4,16 @@
         <div class="hero-body">
             <h1 class="hero-title">{{ 'hero.title' | translate }}</h1>
             <p class="hero-subtitle">{{ 'hero.subtitle' | translate }}</p>
-            <button class="hero-cta" type="button" (click)="openTripPlanner()">
-                {{ 'hero.cta' | translate }}
-              <i class="fa-regular fa-chevron-right"></i>
-            </button>
+            <div class="hero-cta-row">
+                <button class="hero-cta" type="button" (click)="openTripPlanner()">
+                    <i class="fa-solid fa-route"></i>
+                    {{ 'hero.cta' | translate }}
+                </button>
+                <button class="hero-cta hero-cta--ai" type="button" (click)="openAiChat()">
+                    <i class="fa-solid fa-sparkles"></i>
+                    {{ 'aiChat.title' | translate }}
+                </button>
+            </div>
         </div>
         <div class="hero-stats">
             <div class="hero-stat">

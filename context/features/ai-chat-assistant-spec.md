@@ -4,11 +4,11 @@
 
 A conversational, natural-language interface ("Ask me anything about Switzerland") backed by the Claude API, letting users ask things like *"What can I do in Bern"*, *"Weather in Zermatt today?"*, *"Recommend a 10km hike near Lauterbrunnen"*, *"Can I take a train to Spiez?"*, or *"Propose a 3-day trip including the Eiger"*. The assistant answers by calling tools that wrap the app's four existing external data sources — MySwitzerland (destinations/attractions), Open-Meteo (weather), opentransportdata.swiss (transport), and SchweizMobil hike/bike routes — rather than by exposing an MCP server (see rationale below).
 
-Gated behind login, with a 3-free-conversations trial before a Stripe subscription is required — the user bears the marginal Claude API cost, not the business.
+Gated behind login, with a one-conversation 5-free-message trial before a Stripe subscription is required — the user bears the marginal Claude API cost, not the business.
 
 This is a large feature, broken into five phases: (1) the backend agent core, (2) the frontend chat UI with app-wide context passing, (3) auth gating, (4) usage metering, (5) Stripe subscription.
 
-**Current build target: Phases 1-3 only** (branch `feature/ai-chat-assistant`), with Phases 4-5 deferred to a later stage. This means the shipped result is login-gated but **not** cost-capped — no free-conversation limit, no subscription requirement, only the per-IP `chatLimiter` from Phase 1. Acceptable for internal testing/dev, but the trigger should stay unlinked from any public rollout until Phase 4 (usage metering) lands — an unmetered chat endpoint is an open-ended Claude API cost exposure for as long as it's reachable by real users.
+**Phases 1-3 shipped** (branch `feature/ai-chat-assistant`, merged to `main`). **Phases 4-5 are now being built** (branch `feature/ai-chat-billing`, 2026-08-24) to close the cost exposure the unmetered endpoint left open — no free-conversation limit, no subscription requirement, only the per-IP `chatLimiter` from Phase 1, until this lands.
 
 ## Confirmed decisions
 
@@ -22,9 +22,11 @@ This is a large feature, broken into five phases: (1) the backend agent core, (2
 - **Drawer chrome matches the existing convention exactly — not a bespoke bottom-sheet.** `position="right"` `p-drawer`, same header pattern as `auth-drawer` (navy-900 background, avatar circle + title + close button), full-width on mobile like every other content drawer. Reviewed as a 4-state mockup (trigger, empty/context-aware state, active conversation, paywall) and approved 2026-08-20.
 - **Empty state shows a context chip + suggested prompts, not a blank input.** When opened with context, a chip at the top states what's in scope ("Viewing: Staubbachfall Trail — Lauterbrunnen"); below it, 3-4 tappable suggested-prompt rows (adapted to context where available) address the discoverability problem of a brand-new interaction pattern.
 - **Tool results that map to a real entity render as cards, not prose-only text.** A hike/bike recommendation renders as a compact card reusing the existing `trail-card` visual language (thumbnail, name, category badge, distance/attribution row); a weather answer renders a compact summary card. Both are tappable straight into the real `hike-detail`/`bike-detail` drawer — consistent with the rest of the app and more useful than a wall of text. This means the backend response can't be plain text alone; see Phase 1's response shape below.
-- **Gating: login required, 3 free conversations, then Stripe subscription.** Reuses existing JWT auth (`middleware/auth.js`) and the already-scaffolded-but-unused `isPro`/`stripeCustomerId`/`stripeSubscriptionId` fields on `User.js`.
-- **A "conversation" is a session, capped at a fixed message count** (proposed: 20 user turns), not unlimited-length — needed so free-tier cost is bounded per grant, and so a paying subscriber's session budget is predictable. Exact cap is a business/cost call, flagged as an open question below, not blocking the spec.
+- **Gating: login required, one lifetime trial conversation capped at 5 free messages, then Stripe subscription.** Changed 2026-08-25 from an earlier 3-free-conversations design — the free trial is now a single conversation, and the message cap itself is what triggers the paywall (not a count of conversations started). Reuses existing JWT auth (`middleware/auth.js`) and the already-scaffolded-but-unused `isPro`/`stripeCustomerId`/`stripeSubscriptionId` fields on `User.js`. The gate check runs on every message (not just conversation-start) and applies mid-conversation too — there's no "let an in-progress conversation finish" grace, since the whole trial *is* that one conversation.
+- **A paying subscriber's conversation is still a session, not unlimited-length** (proposed cap: 20 user turns) — needed so a subscriber's session budget/cost is predictable. Exact cap is a business/cost call, flagged as an open question below, not blocking the spec. (The free-trial cap above is separate and already fixed at 5.)
 - **Stripe Checkout + Customer Portal (hosted), no custom payment UI.** Standard, low-code, PCI compliance handled entirely by Stripe.
+- **Two plans: CHF 3.50/month or CHF 20/year (~50% discount vs. paying monthly), one Stripe Product with two Prices.** Decided 2026-08-25, resolving the price-point open question below. Checkout takes a `plan: 'monthly' | 'yearly'` param and looks up the matching `STRIPE_PRICE_ID_MONTHLY`/`STRIPE_PRICE_ID_YEARLY`; `isPro` stays a single boolean regardless of which plan is active — the Stripe Customer Portal (not app UI) is where a subscriber sees/changes which plan they're on.
+- **Subscription exemption is app-side, not Stripe-side.** The "ActivSwitzerland Team" account (already identified elsewhere via `CURATED_TRIPS_USER_ID`, see the trip-translation feature) needs to bypass the paywall without an actual Stripe subscription behind it — e.g. for internal testing/demos. Modeled as a new `isExempt: Boolean` field on `User.js` (`select: false`, same pattern as `isPro`), manually flipped in Mongo for that one account — not a general role/permission system, since this is a single binary case, not a hierarchy. Kept fully separate from `isPro` (which stays strictly "has an active Stripe subscription") so billing UI (e.g. "Manage subscription") never shows for an account with no real subscription behind it. Every paywall/gate check reads `isPro || isExempt`; the `/api/v1/ai/usage` response exposes this pre-combined as `hasUnlimitedAccess` so the frontend never needs to know `isExempt` exists.
 
 ## Phase 1 — Backend: AI agent core
 
@@ -74,7 +76,7 @@ One document per conversation; its `_id` is the session id the frontend holds on
   2. If `conversationId` absent: **starting a new conversation** — check the usage/paywall gate (Phase 4) before creating the `AiConversation` doc.
   3. If `conversationId` present: load the existing conversation, append the new user turn (with `context` folded in per `aiAgent.js`'s rule above), skip the paywall gate (an in-progress conversation isn't cut off mid-way just because the free count ticked over).
   4. Call `runConversation`, persist the updated `messages`, respond `{ conversationId, reply: { text, cards } }`.
-- `getChatUsage` — `GET /api/v1/ai/usage` → `{ conversationsUsed, freeLimit: 3, isPro }`, for the frontend to show remaining-count / paywall UI without guessing.
+- `getChatUsage` — `GET /api/v1/ai/usage` → `{ messagesUsed, freeLimit: 5, isPro }`, for the frontend to show remaining-count / paywall UI without guessing.
 
 ### New: `backend/src/routes/ai.js`
 
@@ -131,24 +133,29 @@ Register the new drawer component, same registration pattern as every existing d
 
 Add:
 ```js
-aiConversationsUsed: { type: Number, default: 0, select: false },
+aiMessagesUsed: { type: Number, default: 0, select: false }, // lifetime free-trial user messages sent
+isExempt: { type: Boolean, default: false, select: false }, // app-side paywall bypass, see Confirmed decisions
 ```
 
 ### `backend/src/controllers/ai.js`
 
-- New-conversation gate: `if (!req.user.isPro && req.user.aiConversationsUsed >= 3) return next(new ErrorResponse('Free conversation limit reached', 402));`
-- On successfully starting a new conversation (step 2 in `postChatMessage` above), `req.user.aiConversationsUsed += 1; await req.user.save();` — incremented once per *conversation*, not per message.
+- `protect` doesn't select `isPro`/`isExempt`/`aiMessagesUsed` (all `select: false`) — the gate re-fetches `req.user.id` with `.select('+isPro +isExempt +aiMessagesUsed')` rather than changing the global `protect` middleware's projection for every route.
+- Gate runs on *every* message, whether starting a new conversation or continuing one: `hasUnlimitedAccess = user.isPro || user.isExempt`; if not, and `aiMessagesUsed >= 5`, respond `402` before opening the SSE stream (i.e. before `res.flushHeaders()`) and before creating/loading the conversation.
+- On successfully accepting a message (not unlimited access), `aiMessagesUsed += 1; await user.save();` — incremented once per *message*, not per conversation.
+- `getChatUsage` returns `{ messagesUsed, freeLimit: 5, isPro, hasUnlimitedAccess }` — `hasUnlimitedAccess` is the pre-combined `isPro || isExempt` the frontend actually gates on, so it never needs to know `isExempt` exists.
 
 ### Frontend
 
-- `AiChat` service checks `GET /api/v1/ai/usage` before allowing "start a new conversation" (a "New chat" action, if the UI offers one) and renders the paywall CTA when `!isPro && conversationsUsed >= freeLimit`.
+- `AiChat` service adds `messagesUsed`/`freeLimit`/`hasUnlimitedAccess` signals, refreshed via `GET /api/v1/ai/usage` (on drawer open, and again after every sent message). A `paywalled` computed (`!hasUnlimitedAccess && messagesUsed >= freeLimit`) swaps the drawer's input bar for the Phase 5 paywall CTA — no "conversation in progress" exception, since the free trial is itself the one conversation being capped (per Confirmed decisions).
+- A `402` response from `/chat` (stale frontend state racing a just-exhausted limit) re-triggers `refreshUsage()` instead of showing the generic error bubble.
 
 ## Phase 5 — Stripe subscription
 
 ### Setup (user-side, before any code)
 
-- Create a Stripe account, get test-mode API keys.
-- Define one Product + recurring Price in the Stripe dashboard for the subscription.
+- Stripe account + sandbox already exist (test-mode API keys available).
+- Define one Product with two recurring Prices in the Stripe dashboard (test mode) — CHF 3.50/month and CHF 20/year; copy their Price ids into `STRIPE_PRICE_ID_MONTHLY`/`STRIPE_PRICE_ID_YEARLY`.
+- Install the Stripe CLI locally and run `stripe listen --forward-to localhost:3000/api/v1/billing/webhook` during dev — it prints a `whsec_...` signing secret for `STRIPE_WEBHOOK_SECRET` and forwards real test-mode events to the local backend without needing a publicly reachable URL.
 
 ### `backend/package.json`
 
@@ -156,27 +163,39 @@ Add `stripe` dependency.
 
 ### New: `backend/src/controllers/billing.js`
 
-- `createCheckoutSession` — `POST /api/v1/billing/checkout` (auth required): creates a Stripe Checkout Session for the configured Price, `customer_email` from `req.user`, `success_url`/`cancel_url` back into the app; returns the session URL for the frontend to redirect to.
-- `createPortalSession` — `POST /api/v1/billing/portal` (auth required): requires an existing `stripeCustomerId` on the user; returns a Customer Portal URL for managing/cancelling.
-- `handleWebhook` — `POST /api/v1/billing/webhook`: verifies the Stripe signature (needs the **raw** request body, not JSON-parsed — must be mounted with `express.raw({ type: 'application/json' })` on this one route, ahead of the global `express.json()` in `server.js`, or signature verification will fail). Handles `checkout.session.completed` (set `isPro: true`, store `stripeCustomerId`/`stripeSubscriptionId`) and `customer.subscription.deleted`/`customer.subscription.updated` with a non-active status (set `isPro: false`).
+- `createCheckoutSession` — `POST /api/v1/billing/checkout` (auth required), body `{ plan: 'monthly' | 'yearly' }`: looks up the matching Price id (`400` "Invalid plan" if `plan` isn't one of the two), creates a Stripe Checkout Session (`mode: 'subscription'`) for it, `customer_email` from `req.user`, `client_reference_id`/`metadata.userId` set to `req.user.id` (so the webhook can map the session back to a user without relying on email matching), `success_url`/`cancel_url` back into the app (`${FRONTEND_URL}/profile?checkout=success|cancel`); returns the session URL for the frontend to redirect to.
+- `createPortalSession` — `POST /api/v1/billing/portal` (auth required): requires an existing `stripeCustomerId` on the user (`400` if absent — "no subscription to manage"); returns a Customer Portal URL (`return_url: ${FRONTEND_URL}/profile`) for managing/cancelling.
+- `handleWebhook` — `POST /api/v1/billing/webhook`: verifies the Stripe signature via `stripe.webhooks.constructEvent(req.body, sig, STRIPE_WEBHOOK_SECRET)` (needs the **raw** request body — see mounting note below). Handles `checkout.session.completed` (look up the user by `session.metadata.userId`, set `isPro: true`, store `stripeCustomerId`/`stripeSubscriptionId`) and `customer.subscription.updated`/`customer.subscription.deleted` (look up by `stripeSubscriptionId`, set `isPro` from the subscription's `status` — `active`/`trialing` → true, anything else → false).
 
 ### `backend/src/routes/billing.js`
 
 ```js
-router.post('/checkout', protect, createCheckoutSession);
-router.post('/portal', protect, createPortalSession);
-router.post('/webhook', handleWebhook); // no protect — Stripe calls this directly, verified by signature instead
+router.post('/webhook', express.raw({ type: 'application/json' }), handleWebhook); // no protect — verified by signature instead
+router.post('/checkout', express.json(), protect, createCheckoutSession); // needs req.body.plan
+router.post('/portal', express.json(), protect, createPortalSession);
 ```
+
+**Mounting order in `server.js` matters**: the whole billing router is mounted *before* the global `app.use(express.json())`, right after `corsHandler()`, so `/webhook`'s `express.raw()` gets Stripe's untouched raw body for signature verification — if the global JSON parser ran first, it would consume that body before `express.raw()` on the route ever saw it, and signature verification would fail. Because the router sits ahead of the global parser, `/checkout` and `/portal` don't inherit it either, so each needs its own `express.json()` if its controller reads `req.body` (`/checkout` does, for `plan`) — omitting that on a route that needs it fails with `req.body` simply being `undefined`, not a body-shaped error, which is easy to misdiagnose. This is the same class of gotcha the Trip Content Translation feature hit with dual env files — catching it here in the spec instead of after it broke in the running container.
 
 ### Config — **both env files**
 
-`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID` need adding to **both** `backend/config/.env` (direct `npm run dev`) and `infra/.env` (what the actual Docker container reads) — the Trip Content Translation feature hit exactly this gap (spec only updated one file, translations silently no-op'd in the running container until diagnosed). Do both from the start this time.
+`STRIPE_SECRET_KEY`, `STRIPE_WEBHOOK_SECRET`, `STRIPE_PRICE_ID_MONTHLY`, `STRIPE_PRICE_ID_YEARLY`, `FRONTEND_URL` need adding to **both** `backend/config/.env` (direct `npm run dev`) and `infra/.env` (what the actual Docker container reads) — the Trip Content Translation feature hit exactly this gap (spec only updated one file, translations silently no-op'd in the running container until diagnosed). Do both from the start this time. `FRONTEND_URL` is `http://localhost:4200` in dev, `https://activswitzerland.com` in prod (`infra/.env.prod.example` too).
 
 ### Frontend
 
-- Paywall CTA (Phase 4) calls `POST /api/v1/billing/checkout`, redirects `window.location` to the returned URL.
-- Profile page gets a "Manage subscription" link (visible when `isPro`) calling `POST /api/v1/billing/portal`.
+- Paywall CTA (Phase 4) shows both plans as separate buttons (monthly, yearly with a "Save 50%" badge); each calls `POST /api/v1/billing/checkout` with its `plan`, redirects `window.location` to the returned URL.
+- Profile page gets a "Manage subscription" link (visible when `isPro`) calling `POST /api/v1/billing/portal`; the profile route also handles the `?checkout=success|cancel` query param from the Checkout redirect (re-fetch `getMe()` on `success` so the fresh `isPro` shows without a manual refresh).
 - `Auth.getMe()`'s `CurrentUser` interface gains `isPro: boolean` (backend's `/auth/me` needs to actually select+return it — currently `select: false` on the schema means it's excluded from every query by default).
+
+### Testing in the Stripe sandbox
+
+1. Dashboard is already in test mode by default for a fresh sandbox — confirm the "Test mode" toggle before creating the Product/Prices so it doesn't end up live.
+2. Run `stripe listen --forward-to localhost:3000/api/v1/billing/webhook` in a separate terminal alongside `npm run dev` — keep it running for the whole test session; paste its `whsec_...` into `backend/config/.env`.
+3. Log into the app as a normal (non-exempt) test user, send 5 messages (in one or more turns of the same conversation), trigger the paywall CTA → redirected to Stripe Checkout.
+4. Use a Stripe test card: `4242 4242 4242 4242`, any future expiry, any CVC, any postcode/name. (`4000 0000 0000 0002` to test a decline, `4000 0025 0000 3155` to test 3-D Secure.)
+5. On success, Checkout redirects to `/profile?checkout=success`; the `checkout.session.completed` webhook event should land almost immediately in the `stripe listen` terminal — confirm `isPro` flips to `true` on the user in Mongo and the AI chat paywall clears.
+6. Test the Customer Portal link ("Manage subscription") — cancel the subscription there; confirm the `customer.subscription.updated`/`.deleted` webhook flips `isPro` back to `false` and the paywall reappears on the next new-conversation attempt.
+7. To re-run the free-tier walkthrough repeatedly, reset the test user's `aiMessagesUsed` to `0` directly in Mongo between passes.
 
 ## i18n
 
@@ -187,10 +206,11 @@ New `aiChat.*` namespace, mirrored across en/de/fr/it in the same pass:
 - `aiChat.paywallTitle` / `aiChat.paywallBody` / `aiChat.subscribeCta`
 - `aiChat.manageSubscription` (Profile page)
 
+New `billing.*` namespace (Profile page's subscription section), mirrored the same way.
+
 ## Open questions (flag, not blocking)
 
-- **Exact free-conversation cap unit** — this spec assumes 3 *sessions*, each capped at ~20 user turns, but the turn-cap number is a placeholder pending a real cost-per-session model once Phase 1 is live and real usage data exists.
-- **Subscription price point** — business decision, out of scope for this spec.
+- **Paying subscriber's per-session turn cap** — proposed ~20 user turns (see Confirmed decisions), a placeholder pending a real cost-per-session model once Phase 1 is live and real usage data exists. (The free-trial cap is separate and already fixed at 5 messages, not an open question.)
 - **Streaming responses** (typing-effect UI) — Claude API supports streaming; v1 as specified is request/response (simpler, matches `translate.js`'s existing non-streaming style). Worth revisiting once the chat UI is live and response latency (multi-tool-call turns can take several seconds) is felt to be a problem.
 - **Saving an agent-proposed itinerary as a real trip** — deliberately out of scope (see Confirmed decisions), flagged as a natural future phase once this ships.
 - **Browser geolocation** as a context source for ambiguous "near me" queries — not built in v1, no existing geolocation plumbing to extend.

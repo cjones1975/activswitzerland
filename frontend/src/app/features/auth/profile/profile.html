@@ -254,6 +254,26 @@
         }
     </div>
 
+    <!-- AI chat subscription -->
+    @if (u.isPro) {
+        <div class="details-card">
+            <div class="details-header">
+                <span class="details-title">{{ 'billing.title' | translate }}</span>
+            </div>
+            <div class="detail-row">
+                <i class="fa-solid fa-sparkles detail-icon"></i>
+                <div class="detail-content">
+                    <span class="detail-label">{{ 'billing.status' | translate }}</span>
+                    <span class="detail-value">{{ 'billing.statusPro' | translate }}</span>
+                </div>
+            </div>
+            <button class="edit-btn" [disabled]="managingSubscription()" (click)="manageSubscription()">
+                <i class="fa-light fa-arrow-up-right-from-square"></i>
+                {{ 'billing.manageSubscription' | translate }}
+            </button>
+        </div>
+    }
+
     <!-- Sign out -->
     <div class="signout-wrap">
         <button class="signout-btn" (click)="signOut()">

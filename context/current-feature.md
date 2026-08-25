@@ -14,6 +14,62 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-25 — AI Chat Assistant Phases 4-5 (Usage Metering + Stripe Subscription) Implemented, Merged to Main — Status: Completed
+
+- Branch `feature/ai-chat-billing`, off `main` (which already had Phases 1-3). Closes the cost
+  exposure flagged when Phases 1-3 shipped unmetered — spec updated in place at
+  @context/features/ai-chat-assistant-spec.md rather than a new spec file, since this is a
+  continuation of the same feature, not a new one
+- **Initial build (this session)**: `User.js` gained `aiConversationsUsed`/`isExempt`; `ai.js`
+  gated new-conversation starts behind a 3-free-conversations check (`isPro || isExempt`, else
+  `402`); new `GET /api/v1/ai/usage`; new `controllers/billing.js`/`routes/billing.js`
+  (Checkout/Portal/webhook) and frontend `Billing` service; paywall CTA in the chat drawer;
+  "Manage subscription" on Profile; `STRIPE_*`/`FRONTEND_URL` added to both env files (dev +
+  `infra/.env.prod.example`) — flagging the same dual-env-file gotcha the Trip Content Translation
+  feature hit, this time from the start. `billing.js`'s webhook route mounted ahead of the global
+  `express.json()` in `server.js` (raw body needed for signature verification); `getMe` fixed to
+  actually `select('+isPro')`, which it wasn't doing before despite the field existing since
+  Phases 1-3
+- **Exemption design decision**: user wanted the "ActivSwitzerland Team" account (already
+  identified elsewhere via `CURATED_TRIPS_USER_ID`) exempted from billing at the *app* level, not
+  by giving it a real Stripe subscription. Recommended and built a single `isExempt: Boolean` on
+  `User.js` (not a general role system — this is one binary case), kept fully separate from
+  `isPro` so billing UI never implies a real subscription for that account; every gate/paywall
+  check reads `isPro || isExempt`, pre-combined server-side as `hasUnlimitedAccess` so the
+  frontend never needs to know `isExempt` exists
+- **Reworked further after this session's build, directly by the user** (found already on disk,
+  not built by this agent — verified rather than assumed, see below): the free-trial model changed
+  from "3 free conversations" to "one lifetime trial conversation capped at 5 free messages"
+  (`aiMessagesUsed`, gate now runs on *every* message, not just conversation-start, with no
+  in-progress-conversation grace since the trial itself is the one conversation); pricing resolved
+  from an open question to two real Stripe Prices on one Product (CHF 3.50/month, CHF 20/year,
+  "Save 50%" badge), `createCheckoutSession` taking `{ plan: 'monthly' | 'yearly' }` and mapping to
+  `STRIPE_PRICE_ID_MONTHLY`/`STRIPE_PRICE_ID_YEARLY`; a `signInPrompt` added to the chat drawer's
+  logged-out state; a homepage hero "Ask AI" CTA button (`Home.openAiChat()`) added next to the
+  existing trip-planner CTA; `auth-layout`'s benefit row swapped "reviews" for "download GPX files"
+  (matches the actual gated action, `hike-detail`/`bike-detail`'s `downloadGpx()`). All i18n mirrored
+  across en/de/fr/it in the same pass, including the new `billing.*` namespace
+- **Almost mis-flagged a bug that wasn't one**: this agent's Read tool reported
+  `billing.js`/`billing.ts`/`routes/billing.js` as "unchanged since last read" even though the
+  monthly/yearly rework had actually touched them (stale dedup cache, not a real signal) — nearly
+  reported a mismatch (UI offering two plans, service allegedly still taking no plan argument) as a
+  finding. Caught before saying anything by re-reading every file directly via `cat` instead of
+  trusting the tool's "unchanged" claim; everything was in fact fully and consistently implemented.
+  Lesson: don't trust a "no changes" signal for files central to a correctness claim — verify
+  directly when the stakes of being wrong are "tell the user their own code is broken"
+- **Process mistake, disclosed to the user rather than left quiet**: dry-ran the server with a
+  backgrounded `node src/server.js` then killed it with `taskkill //F //IM node.exe` — this kills
+  *every* Node process on the machine, not just the one started, so any unrelated Node process
+  (editor tooling, another project) running at the time would have been killed too. No safe way to
+  undo after the fact; flagged immediately rather than silently moving on
+- Verified: `node --check` on every changed/new backend file, `npx tsc --noEmit` clean on the
+  frontend, all four i18n JSON files parsed successfully after edits. No live Stripe sandbox test
+  run from this agent's side — the user has real test-mode keys already in their local `infra/.env`
+  (confirmed present, not committed — both env files are gitignored) and is expected to run the
+  actual `stripe listen` + Checkout walkthrough themselves per the spec's new "Testing in the
+  Stripe sandbox" section
+- Committed as a single commit, fast-forward merged to `main`, `feature/ai-chat-billing` deleted
+
 ### 2026-08-24 — Activity Map Mask (Trip Planner + AI Chat) Implemented — Status: Completed
 
 - Branch `feature/activity-map-mask`, built directly off a design discussion in-session (no

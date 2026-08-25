@@ -3,6 +3,7 @@ import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AiChat, ChatCard, ChatStatus } from '../../../shared/services/ai-chat';
+import { Billing } from '../../../shared/services/billing';
 import { Drawer } from '../../../shared/services/drawer';
 import { TrailThumbnail } from '../../../shared/trail-thumbnail/trail-thumbnail';
 import { formatDistanceKmMi } from '../../../shared/utils/distance';
@@ -39,14 +40,29 @@ const GENERIC_SUGGESTIONS: Suggestion[] = [
 })
 export class AiChatDrawer {
   chat = inject(AiChat);
+  private billing = inject(Billing);
   private drawerSvc = inject(Drawer);
   private translate = inject(TranslateService);
 
   draft = signal('');
+  subscribingPlan = signal<'monthly' | 'yearly' | null>(null);
 
   contextName = computed(() => this.chat.contextEntityName());
 
   suggestions = computed<Suggestion[]>(() => this.contextName() ? CONTEXT_SUGGESTIONS : GENERIC_SUGGESTIONS);
+
+  constructor() {
+    if (this.chat.auth.isLoggedIn()) this.chat.refreshUsage();
+  }
+
+  async subscribe(plan: 'monthly' | 'yearly'): Promise<void> {
+    this.subscribingPlan.set(plan);
+    try {
+      await this.billing.startCheckout(plan);
+    } finally {
+      this.subscribingPlan.set(null);
+    }
+  }
 
   send(text?: string): void {
     const value = text ?? this.draft();

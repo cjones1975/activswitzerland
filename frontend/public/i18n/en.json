@@ -20,6 +20,7 @@
   },
   "aiChat": {
     "title": "Ask AI",
+    "signInPrompt": "Please sign in before asking a question.",
     "backToChat": "Back to chat",
     "clearChat": "Clear chat",
     "contextChip": "Viewing: {{name}}",
@@ -48,7 +49,19 @@
       "search_bikes": "Searching bike routes near {{query}}…",
       "get_transit_connections": "Looking up trains from {{from}} to {{to}}…"
     },
-    "error": "Sorry, something went wrong. Please try again."
+    "error": "Sorry, something went wrong. Please try again.",
+    "freeRemaining": "{{count}} free messages left",
+    "paywallTitle": "You've used your free messages",
+    "paywallBody": "Subscribe to keep chatting with the AI travel assistant.",
+    "subscribeMonthly": "Monthly — CHF 3.50/mo",
+    "subscribeYearly": "Yearly — CHF 20/yr",
+    "subscribeSaveBadge": "Save 50%"
+  },
+  "billing": {
+    "title": "AI Chat Subscription",
+    "status": "Status",
+    "statusPro": "Subscribed",
+    "manageSubscription": "Manage subscription"
   },
   "auth": {
     "toast": {
@@ -79,9 +92,9 @@
     },
     "benefits": {
       "title": "Why create an account?",
-      "save": "Save trip ideas",
-      "reviews": "Leave and read community reviews",
-      "ai": "Let AI build an itinerary"
+      "save": "Save trip itineraries and share with others",
+      "gpx": "Download hike & bike trail GPX files",
+      "ai": "Let AI answer your queries"
     }
   },
   "trip": {
