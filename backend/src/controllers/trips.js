@@ -126,14 +126,14 @@ export const getPublicTrips = asyncHandler(async (req, res) => {
     const sortDir = req.query.order === 'asc' ? 1 : -1;
     const minDistance = req.query.minDistance !== undefined ? Number(req.query.minDistance) : null;
     const maxDistance = req.query.maxDistance !== undefined ? Number(req.query.maxDistance) : null;
-    const reviewLang = ['en', 'de', 'fr', 'it', 'other'].includes(req.query.reviewLang) ? req.query.reviewLang : null;
+    const reviewLang = ['en', 'de', 'fr', 'it', 'es', 'other'].includes(req.query.reviewLang) ? req.query.reviewLang : null;
 
     const match = { isPublic: true };
     if (type) match.type = type;
     if (reviewLang) {
         match.$or = [
             { reviewLang },
-            ...(['de', 'fr', 'it'].includes(reviewLang) ? [{ [`reviewTranslations.${reviewLang}`]: { $exists: true, $ne: null } }] : []),
+            ...(['de', 'fr', 'it', 'es'].includes(reviewLang) ? [{ [`reviewTranslations.${reviewLang}`]: { $exists: true, $ne: null } }] : []),
         ];
     }
     if (minDistance !== null || maxDistance !== null) {

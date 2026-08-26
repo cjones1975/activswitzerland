@@ -12,7 +12,7 @@
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const SUPPORTED_LANGS = ['en', 'de', 'fr', 'it'];
+const SUPPORTED_LANGS = ['en', 'de', 'fr', 'it', 'es'];
 const SITE_URL = (process.env.SITE_URL ?? 'https://www.activswitzerland.com').replace(/\/$/, '');
 const API_URL = process.env.SSR_API_URL ?? 'http://localhost:3000';
 const HITS_PER_PAGE = Number(process.env.SITEMAP_HITS_PER_PAGE ?? 100);

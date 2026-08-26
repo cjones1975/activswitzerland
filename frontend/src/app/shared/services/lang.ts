@@ -1,7 +1,7 @@
 import { Injectable, inject } from '@angular/core';
 import { NavigationExtras, Router } from '@angular/router';
 
-export const SUPPORTED_LANGS = ['en', 'de', 'fr', 'it'] as const;
+export const SUPPORTED_LANGS = ['en', 'de', 'fr', 'it', 'es'] as const;
 export type Lang = (typeof SUPPORTED_LANGS)[number];
 export const DEFAULT_LANG: Lang = 'en';
 

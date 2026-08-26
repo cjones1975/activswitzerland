@@ -8,6 +8,10 @@
   background: var(--color-white);
 }
 
+.search-tabs-wrap {
+  position: relative;
+}
+
 .search-tabs {
   display: flex;
   overflow-x: auto;
@@ -16,6 +20,59 @@
 
 .search-tabs::-webkit-scrollbar {
   display: none;
+}
+
+/* A plain color-fade here reads as invisible — the tab row's own background (--gray-50) is the
+   same flat color the fade starts from, so there's no contrast. The chevron badge is what
+   actually carries the "more tabs" affordance; the fade just softens the badge's backdrop. */
+.tabs-fade {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2.75rem;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+.tabs-fade--left {
+  left: 0;
+  justify-content: flex-start;
+  background: linear-gradient(to right, rgba(0, 0, 0, 0.1), transparent);
+}
+
+.tabs-fade--right {
+  right: 0;
+  justify-content: flex-end;
+  background: linear-gradient(to left, rgba(0, 0, 0, 0.1), transparent);
+}
+
+.tabs-fade.visible {
+  opacity: 1;
+}
+
+.tabs-fade-chevron {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  height: 1.5rem;
+  margin: 0 0.35rem;
+  border: none;
+  border-radius: 999px;
+  background: var(--color-white);
+  color: var(--navy-800);
+  font-size: 0.65rem;
+  font-family: inherit;
+  cursor: pointer;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.25);
+  pointer-events: auto;
+}
+
+.tabs-fade-chevron:hover {
+  background: var(--gray-100);
 }
 
 .search-tab {

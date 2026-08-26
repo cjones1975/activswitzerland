@@ -1,6 +1,6 @@
 .hero {
     position: relative;
-    height: 500px;
+    min-height: 500px;
     background-image: url('/assets/hero1.jpg');
     background-size: cover;
     background-position: center;
@@ -53,9 +53,13 @@
     max-width: 340px;
 }
 
+/* Mobile-first: stacked, full-width — translated button text (e.g. Italian "Pianifica un
+   viaggio", Spanish "Preguntar a la IA") doesn't reliably fit two side-by-side pills on a
+   narrow phone. Restored to a row at the real-desktop breakpoint below, where there's ample
+   width regardless of language. */
 .hero-cta-row {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 0.75rem;
 }
 
@@ -64,7 +68,7 @@
     align-items: center;
     justify-content: center;
     gap: 0.5rem;
-    flex: 1 1 0;
+    width: 100%;
     padding: 0.7rem 1.5rem;
     background: var(--amber-600);
     color: var(--color-text-dark);
@@ -142,6 +146,16 @@
         font-size: 2rem;
         max-width: 680px;
     }
+
+    .hero-cta-row {
+        flex-direction: row;
+        align-items: center;
+    }
+
+    .hero-cta {
+        flex: 1 1 0;
+        width: auto;
+    }
 }
 
 .home-search-wrap {
@@ -149,7 +163,7 @@
     z-index: 5;
     margin-top: -0.5rem;
     margin-bottom: 1.5rem;
-    padding: 0 1.5rem;
+    padding: 0 0.75rem;
 }
 
 @media (min-width: 1024px) {

@@ -146,7 +146,7 @@ export const AI_TOOLS = [
       type: 'object',
       properties: {
         query: { type: 'string', description: 'Trail name or area, e.g. "Lauterbrunnen".' },
-        lang: { type: 'string', description: 'Two-letter UI language code (en/de/fr/it).' },
+        lang: { type: 'string', description: 'Two-letter UI language code (en/de/fr/it/es). Falls back to English results server-side if the underlying route data has no Spanish.' },
       },
       required: ['query'],
       additionalProperties: false,

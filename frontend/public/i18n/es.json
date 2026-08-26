@@ -1,0 +1,554 @@
+{
+  "nav-drawer": {
+    "subtitle": "Descubre · Explora · Planifica"
+  },
+  "nav": {
+    "navigation": "NAVEGACIÓN",
+    "home": "Inicio",
+    "exploreTrips": "Explorar viajes",
+    "tripplanner": "Planificador de viajes",
+    "profile": "Perfil",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "close": "Cerrar",
+    "showOnMap": "Mostrar en el mapa",
+    "back": "Atrás",
+    "search": "Buscar"
+  },
+  "activityMap": {
+    "backToPlanner": "Volver al planificador de viajes"
+  },
+  "aiChat": {
+    "title": "Preguntar a la IA",
+    "signInPrompt": "Inicia sesión antes de hacer una pregunta.",
+    "backToChat": "Volver al chat",
+    "clearChat": "Borrar chat",
+    "contextChip": "Viendo: {{name}}",
+    "seeAllAttractions": "Ver las {{count}} actividades en {{name}}",
+    "introTitle": "Pregúntame lo que quieras sobre Suiza",
+    "introTitleContext": "Pregúntame lo que quieras sobre esto",
+    "introSub": "Clima, rutas de senderismo, trenes y actividades — solo pregunta.",
+    "suggestionsLabel": "Prueba a preguntar",
+    "suggestion": {
+      "whatToDoBern": "¿Qué puedo hacer en Berna?",
+      "weatherZermatt": "El tiempo en Zermatt hoy",
+      "recommendHike": "Recomiéndame una ruta de senderismo",
+      "trainToSpiez": "¿Puedo ir en tren a Spiez?",
+      "weatherHere": "¿Qué tiempo hace aquí?",
+      "nearbyHikes": "¿Hay otras rutas de senderismo cerca?",
+      "gettingHere": "¿Cómo llego aquí en tren?"
+    },
+    "placeholder": "Pregunta sobre Suiza…",
+    "send": "Enviar",
+    "status": {
+      "default": "Pensando…",
+      "resolve_location": "Buscando {{query}}…",
+      "get_destination_info": "Buscando actividades…",
+      "get_weather": "Consultando el pronóstico…",
+      "search_hikes": "Buscando rutas de senderismo cerca de {{query}}…",
+      "search_bikes": "Buscando rutas en bici cerca de {{query}}…",
+      "get_transit_connections": "Buscando trenes de {{from}} a {{to}}…"
+    },
+    "error": "Lo sentimos, algo salió mal. Inténtalo de nuevo.",
+    "freeRemaining": "{{count}} mensajes gratuitos restantes",
+    "paywallTitle": "Has agotado tus mensajes gratuitos",
+    "paywallBody": "Suscríbete para seguir chateando con el asistente de viajes IA.",
+    "subscribeMonthly": "Mensual — CHF 3.50/mes",
+    "subscribeYearly": "Anual — CHF 20/año",
+    "subscribeSaveBadge": "Ahorra un 50%"
+  },
+  "billing": {
+    "title": "Suscripción al chat IA",
+    "status": "Estado",
+    "statusPro": "Suscrito",
+    "manageSubscription": "Gestionar suscripción"
+  },
+  "auth": {
+    "toast": {
+      "login_success": "Sesión iniciada",
+      "login_welcome": "¡Bienvenido de nuevo!",
+      "login_failed": "Error al iniciar sesión",
+      "login_check_credentials": "Comprueba tus credenciales e inténtalo de nuevo.",
+      "register_success": "Cuenta creada",
+      "register_welcome": "¡Bienvenido a ActivSwitzerland!",
+      "register_failed": "Error en el registro",
+      "register_failed_detail": "Error en el registro. Inténtalo de nuevo.",
+      "forgot_success": "Correo enviado",
+      "forgot_success_detail": "Te hemos enviado un enlace a tu correo electrónico para restablecer tu contraseña.",
+      "forgot_failed": "Error en la solicitud",
+      "forgot_no_user": "No se ha encontrado ningún usuario con ese correo electrónico.",
+      "generic_error": "Vaya, algo salió mal. Inténtalo de nuevo.",
+      "verify_sent": "Te hemos enviado un código de verificación por correo electrónico.",
+      "verify_required": "Verificación necesaria",
+      "verify_success": "Correo verificado",
+      "verify_failed": "Error en la verificación",
+      "resend_success": "Código reenviado",
+      "resend_failed": "Error al reenviar",
+      "update_failed": "Error al actualizar"
+    },
+    "tabs": {
+      "login": "Iniciar sesión",
+      "register": "Crear cuenta"
+    },
+    "benefits": {
+      "title": "¿Por qué crear una cuenta?",
+      "save": "Guarda itinerarios de viaje y compártelos con otros",
+      "gpx": "Descarga archivos GPX de rutas de senderismo y ciclismo",
+      "ai": "Deja que la IA responda tus preguntas"
+    }
+  },
+  "trip": {
+    "planner": {
+      "title": "Planifica un viaje",
+      "subtitle": "Planifica una ruta en tren o coche, encuentra conexiones y descubre actividades en cada destino.",
+      "typeRoad": "Viaje en coche",
+      "typeRail": "Viaje en tren",
+      "typeRoadShort": "Coche",
+      "typeRailShort": "Tren",
+      "addStop": "Añadir parada",
+      "viewTrip": "Ver viaje",
+      "dateTime": "Fecha y hora",
+      "connections": "Conexiones de tren",
+      "transfer": "transbordo",
+      "transfers": "transbordos",
+      "select": "Seleccionar",
+      "tripName": "Nombre del viaje",
+      "save": "Guardar viaje",
+      "saveHint": "Inicia sesión para guardar tus viajes",
+      "savedSuccess": "¡Viaje guardado!",
+      "deleteConfirm": "¿Seguro que quieres eliminar este viaje?",
+      "noTrips": "Todavía no has guardado ningún viaje.",
+      "planFirst": "Planifica tu primer viaje",
+      "open": "Abrir planificador de viajes",
+      "backToPlanner": "Volver al planificador de viajes",
+      "back": "Atrás",
+      "next": "Siguiente",
+      "cancel": "Cancelar",
+      "startOver": "Empezar de nuevo",
+      "startOverConfirm": "Esto descartará el viaje que estás planificando. ¿Seguro que quieres empezar de nuevo?",
+      "noConnections": "No se han encontrado conexiones para esta fecha y hora. Prueba con otra búsqueda.",
+      "routeError": "No se pudo calcular la ruta.",
+      "routeUnreachable": "No hemos encontrado ninguna carretera lo bastante cerca de este destino. Prueba con otra parada.",
+      "removeStop": "Eliminar parada",
+      "dragStop": "Arrastra para reordenar",
+      "connection": {
+        "direction": "Dirección",
+        "walk": "A pie"
+      },
+      "steps": {
+        "myTrip": "Mi viaje",
+        "itinerary": "Itinerario",
+        "activities": "Actividades",
+        "summary": "Resumen",
+        "save": "Guardar"
+      },
+      "step1": {
+        "tripType": "Tipo de viaje",
+        "roadTitle": "Viaje en coche",
+        "roadSubtitle": "Viaja en coche por rutas panorámicas",
+        "railTitle": "Viaje en tren",
+        "railSubtitle": "Explora la red ferroviaria suiza",
+        "travelDates": "Fechas del viaje",
+        "datesTitle": "Fechas concretas",
+        "datesSubtitle": "Elige fechas exactas",
+        "daysTitle": "Número de días",
+        "daysSubtitle": "Días de viaje flexibles",
+        "dateRange": "Fechas",
+        "numDays": "Número de días",
+        "daysTrip": "Viaje de {{count}} días",
+        "continue": "Continuar al itinerario"
+      },
+      "step2": {
+        "tripRange": "Viaje: {{range}}",
+        "departure": "Iniciar viaje",
+        "destination": "Finalizar viaje",
+        "stop": "Selecciona una ubicación",
+        "daysHere": "Noches aquí",
+        "transit": "Tránsito",
+        "dayLabel": "Día {{start}}",
+        "dayRangeLabel": "Días {{start}}–{{end}}",
+        "dayRemaining": "Queda {{count}} noche por asignar",
+        "daysRemaining": "Quedan {{count}} noches por asignar",
+        "dayOverBudget": "{{count}} noche por encima de la duración de tu viaje",
+        "daysOverBudget": "{{count}} noches por encima de la duración de tu viaje",
+        "cancel": "Cancelar",
+        "searchTitle": "Buscar ubicación",
+        "searching": "Buscando…",
+        "noResults": "No se han encontrado resultados",
+        "clearSelection": "Borrar selección",
+        "noLegs": "Añade al menos dos paradas para planificar conexiones de tren.",
+        "connectionNeeded": "Se necesita conexión",
+        "connectionPicked": "Conexión elegida",
+        "connectionSkipped": "Omitida",
+        "searchConnection": "Buscar conexiones",
+        "searchingConnections": "Buscando conexiones…",
+        "skipForNow": "Omitir por ahora",
+        "continue": "Actividades"
+      },
+      "step3": {
+        "placesToVisit": "Lugares para visitar",
+        "hikesNearby": "Rutas de senderismo en la zona",
+        "bikesNearby": "Rutas en bici",
+        "hikingTrails": "Rutas de senderismo",
+        "bikingTrails": "Rutas de ciclismo",
+        "hotelsNearby": "Hoteles",
+        "hotelsComingSoon": "Próximamente",
+        "addToTrip": "Añadir al viaje",
+        "added": "Añadido",
+        "removeFromTrip": "Quitar del viaje",
+        "dayDateLabel": "Día {{day}} - {{date}}",
+        "continue": "Resumen",
+        "noStops": "Añade paradas de al menos un día para empezar a agregar actividades."
+      },
+      "step4": {
+        "destinations": "Destinos",
+        "activities": "Actividades",
+        "timeline": "Cronología",
+        "mapView": "Vista de mapa",
+        "mapRequiresConnections": "Se necesitan conexiones de tren para ver el mapa",
+        "routeComplete": "¡Ruta completa!",
+        "noActivities": "Todavía no se ha añadido ninguna actividad.",
+        "continue": "Guardar"
+      },
+      "step5": {
+        "title": "Guarda tu viaje",
+        "subtitle": "Ponle un nombre a tu aventura suiza y guárdala para más tarde",
+        "type": "Tipo",
+        "duration": "Duración",
+        "suggestedRoad": "Mi viaje en coche por Suiza",
+        "suggestedRail": "Mi viaje en tren por Suiza",
+        "update": "Actualizar viaje",
+        "backToSummary": "Volver al resumen",
+        "saveError": "No se pudo guardar tu viaje. Inténtalo de nuevo.",
+        "makePublic": "Hacer público el viaje",
+        "makePublicHint": "Otros viajeros podrán ver este viaje en Explorar viajes",
+        "stayAnonymous": "Mantente anónimo",
+        "stayAnonymousHint": "Tu nombre y país no se mostrarán"
+      }
+    }
+  },
+  "profile": {
+    "savedTrips": {
+      "title": "Viajes guardados",
+      "view": "Ver",
+      "empty": "Todavía no has guardado ningún viaje.",
+      "review": "Reseña",
+      "reviewPlaceholder": "Describe cómo fue, qué te gustó o no te gustó...",
+      "noReview": "Todavía no hay ninguna reseña.",
+      "editReview": "Editar reseña",
+      "saveReview": "Guardar",
+      "statusPublic": "Público",
+      "statusPrivate": "Privado",
+      "cancel": "Cancelar"
+    },
+    "stats": {
+      "trips": "Viajes guardados",
+      "reviews": "Reseñas escritas",
+      "likes": "Me gusta recibidos"
+    },
+    "details": {
+      "title": "Detalles del perfil",
+      "edit": "Editar",
+      "save": "Guardar",
+      "firstname": "Nombre",
+      "lastname": "Apellidos",
+      "country": "País",
+      "email": "Correo electrónico",
+      "newsletter": "Boletín por correo electrónico",
+      "subscribed": "Suscrito",
+      "not_subscribed": "No suscrito"
+    },
+    "signout": "Cerrar sesión"
+  },
+  "forgot": {
+    "title": "Restablece tu contraseña",
+    "subtitle": "Introduce tu correo electrónico y te enviaremos un enlace para restablecer tu contraseña.",
+    "email_label": "Correo electrónico",
+    "email_placeholder": "tu@email.com",
+    "submit": "Restablecer contraseña",
+    "sending": "Enviando...",
+    "back": "Volver a iniciar sesión"
+  },
+  "destinations": {
+    "viewAll": "Ver todo",
+    "allCities": {
+      "subtitle": "{{count}} destinos"
+    },
+    "cityBreaks": {
+      "title": "Escapadas urbanas",
+      "subtitle": "Descubre Suiza ciudad a ciudad"
+    },
+    "mountains": {
+      "title": "Montañas, lagos y glaciares",
+      "subtitle": "Descubre los paisajes alpinos de Suiza",
+      "count": "{{count}} destinos"
+    },
+    "natureParks": {
+      "title": "Parques naturales",
+      "subtitle": "Explora los hábitats naturales protegidos de Suiza",
+      "count": "{{count}} destinos"
+    },
+    "detail": {
+      "visit": "Visitar página oficial",
+      "open": "Volver a {{name}}",
+      "hikes": "Rutas de senderismo",
+      "bikeRides": "Rutas en bici",
+      "hotels": "Hoteles",
+      "hotelsSubtitle": "Encuentra buenos lugares para alojarte en la zona.",
+      "loadError": "No se pudo cargar este destino."
+    }
+  },
+  "hikes": {
+    "loadError": "No se pudieron cargar las rutas de senderismo.",
+    "empty": "No se han encontrado rutas de senderismo cerca de este destino.",
+    "noMatch": "Ninguna ruta de senderismo coincide con este filtro.",
+    "backToList": "Volver a las rutas de senderismo",
+    "reopen": "Mostrar rutas de senderismo",
+    "downloadGpx": "Descargar GPX",
+    "downloadGpxSignInHint": "Inicia sesión para descargar el archivo GPX",
+    "distance": "Distancia",
+    "radius": "Radio",
+    "category": {
+      "all": "Todas",
+      "national": "Nacional",
+      "regional": "Regional",
+      "local": "Local"
+    },
+    "elevation": {
+      "title": "Perfil de elevación",
+      "ascent": "Desnivel positivo",
+      "descent": "Desnivel negativo",
+      "loadError": "No se pudo cargar el perfil de elevación."
+    },
+    "multiDay": {
+      "stage": "Etapa {{n}} de {{total}}",
+      "stageNoTotal": "Etapa {{n}}",
+      "stageRange": "Etapas {{start}}–{{end}} de {{total}}",
+      "stageRangeNoTotal": "Etapas {{start}}–{{end}}",
+      "seeAllStages": "Ver todas las etapas",
+      "singleRoute": "Ruta única"
+    },
+    "attribution": "© SwitzerlandMobility"
+  },
+  "bikes": {
+    "loadError": "No se pudieron cargar las rutas en bici.",
+    "empty": "No se han encontrado rutas en bici cerca de este destino.",
+    "noMatch": "Ninguna ruta en bici coincide con este filtro.",
+    "tabs": {
+      "road": "Rutas de carretera",
+      "mountain": "Rutas de montaña"
+    },
+    "backToList": "Volver a las rutas en bici",
+    "reopen": "Mostrar rutas en bici",
+    "downloadGpx": "Descargar GPX",
+    "downloadGpxSignInHint": "Inicia sesión para descargar el archivo GPX",
+    "distance": "Distancia",
+    "radius": "Radio",
+    "category": {
+      "all": "Todas",
+      "national": "Nacional",
+      "regional": "Regional",
+      "local": "Local"
+    },
+    "elevation": {
+      "title": "Perfil de elevación",
+      "ascent": "Desnivel positivo",
+      "descent": "Desnivel negativo",
+      "loadError": "No se pudo cargar el perfil de elevación."
+    },
+    "multiDay": {
+      "stage": "Etapa {{n}} de {{total}}",
+      "stageNoTotal": "Etapa {{n}}",
+      "stageRange": "Etapas {{start}}–{{end}} de {{total}}",
+      "stageRangeNoTotal": "Etapas {{start}}–{{end}}",
+      "seeAllStages": "Ver todas las etapas",
+      "singleRoute": "Ruta única"
+    },
+    "attribution": "© SwitzerlandMobility"
+  },
+  "hotels": {
+    "comingSoon": "Próximamente",
+    "comingSoonSubtitle": "La búsqueda y reserva de hoteles estará disponible en una futura actualización."
+  },
+  "attractions": {
+    "title": "Atracciones",
+    "radius": "Radio",
+    "seeAll": "Ver todo",
+    "backToDestination": "Volver a {{name}}",
+    "backToAttractions": "Volver a las atracciones",
+    "openAll": "Abrir atracciones",
+    "listAll": "Listar todas las atracciones",
+    "loadError": "No se pudieron cargar las atracciones.",
+    "detail": {
+      "neededTime": "Tiempo necesario para esta actividad",
+      "wheelchair": "Accesible en silla de ruedas",
+      "languages": "Idiomas hablados",
+      "groupSize": "Tamaño del grupo",
+      "groupMin": "Mínimo",
+      "groupMax": "Máximo",
+      "price": "Información de precios",
+      "loadError": "No se pudieron cargar los detalles de la atracción."
+    },
+    "search": {
+      "placeholder": "Buscar atracciones...",
+      "backToAll": "Volver a todas las atracciones",
+      "noResults": "Lo sentimos, no hemos encontrado ninguna atracción que coincida con tu búsqueda. Prueba con otra palabra clave."
+    }
+  },
+  "weather": {
+    "today": "El tiempo de hoy",
+    "seeForecast": "Previsión a 7 días",
+    "precipChance": "Prob. de precip.",
+    "avgWind": "Viento medio",
+    "uvIndex": "Índice UV",
+    "precipitation": "Precipitación",
+    "overview": "RESUMEN DE 7 DÍAS",
+    "daylight": "Horas de luz",
+    "rain": "Lluvia",
+    "wind": "Viento",
+    "uv": "UV",
+    "loadError": "No se pudieron cargar los datos meteorológicos.",
+    "forecastHeading": "PREVISIÓN A 7 DÍAS",
+    "todayLabel": "Hoy",
+    "daylightFormat": "{{hours}} h {{minutes}} min",
+    "code": {
+      "clearSky": "Cielo despejado",
+      "mainlyClear": "Mayormente despejado",
+      "partlyCloudy": "Parcialmente nublado",
+      "overcast": "Cubierto",
+      "fog": "Niebla",
+      "lightDrizzle": "Llovizna ligera",
+      "moderateDrizzle": "Llovizna moderada",
+      "heavyDrizzle": "Llovizna intensa",
+      "lightFreezingRain": "Lluvia helada ligera",
+      "heavyFreezingRain": "Lluvia helada intensa",
+      "sunWithPossibleRain": "Sol con posibilidad de lluvia",
+      "moderateRain": "Lluvia moderada",
+      "heavyRain": "Lluvia intensa",
+      "lightSnow": "Nieve ligera",
+      "moderateSnow": "Nieve moderada",
+      "heavySnow": "Nieve intensa",
+      "snow": "Nieve",
+      "iceRain": "Lluvia gélida",
+      "thunderstorms": "Tormentas",
+      "thunderstormRain": "Tormenta con lluvia",
+      "hail": "Granizo",
+      "unknown": "Desconocido"
+    }
+  },
+  "hero": {
+    "title": "Bienvenido a Suiza",
+    "subtitle": "Descubre excursiones de un día, lugares emblemáticos y joyas escondidas.",
+    "cta": "Planifica un viaje",
+    "stats": {
+      "attractions": "Atracciones",
+      "cantons": "Cantones",
+      "unesco": "Sitios UNESCO"
+    }
+  },
+  "home": {
+    "search": {
+      "placesTab": "Lugares para visitar",
+      "thingsTab": "Actividades",
+      "hikesTab": "Rutas de senderismo",
+      "bikesRoadTab": "Rutas de ciclismo de carretera",
+      "bikesMountainTab": "Rutas de ciclismo de montaña",
+      "placeholderPlaces": "Busca una ciudad, monumento o región…",
+      "placeholderThings": "Busca una atracción o actividad…",
+      "placeholderHikes": "Busca una ruta de senderismo por nombre…",
+      "placeholderBikesRoad": "Busca una ruta de ciclismo de carretera por nombre…",
+      "placeholderBikesMountain": "Busca una ruta de ciclismo de montaña por nombre…",
+      "searchButton": "Buscar",
+      "backToSearch": "Volver a la búsqueda",
+      "loadError": "Algo salió mal. Inténtalo de nuevo.",
+      "noDestinationResults": "Lo sentimos, no hemos encontrado ningún destino que coincida con tu búsqueda. Prueba con otra palabra clave.",
+      "noAttractionResults": "Lo sentimos, no hemos encontrado ninguna atracción que coincida con tu búsqueda. Prueba con otra palabra clave.",
+      "noHikeResults": "Lo sentimos, no hemos encontrado ninguna ruta de senderismo que coincida con tu búsqueda. Prueba con otra palabra clave.",
+      "noBikeResults": "Lo sentimos, no hemos encontrado ninguna ruta en bici que coincida con tu búsqueda. Prueba con otra palabra clave."
+    }
+  },
+  "exploreTrips": {
+    "anonymous": "Viajero anónimo",
+    "backToList": "Volver a Explorar viajes",
+    "empty": "Todavía no hay viajes públicos.",
+    "endOfList": "Has llegado al final.",
+    "flip": "Girar tarjeta",
+    "noReview": "No hay ninguna reseña disponible.",
+    "travellerReview": "Reseña del viajero",
+    "transitRoad": "Tránsito por carretera",
+    "transitRail": "Tránsito en tren",
+    "viewMap": "Ver mapa",
+    "filter": {
+      "title": "Filtrar viajes",
+      "tripType": "Tipo de viaje",
+      "type": {
+        "all": "Todos",
+        "road": "Viajes en coche",
+        "rail": "Viajes en tren"
+      },
+      "createdOrder": "Orden de creación",
+      "order": {
+        "desc": "Descendente",
+        "asc": "Ascendente"
+      },
+      "mostLiked": "Ordenar por más gustados",
+      "distance": "Distancia",
+      "reviewLang": "Idioma de la reseña",
+      "reviewLangOption": {
+        "all": "Todos",
+        "en": "En",
+        "de": "De",
+        "fr": "Fr",
+        "it": "It",
+        "es": "Es",
+        "other": "Otro"
+      },
+      "apply": "Aplicar",
+      "reset": "Restablecer"
+    }
+  },
+  "tripDetail": {
+    "notFoundTitle": "Viaje no encontrado",
+    "notFoundMessage": "Este viaje ya no está disponible, o el enlace es incorrecto.",
+    "backToExplore": "Volver a Explorar viajes",
+    "descriptionWithDuration": "Un viaje de {{count}} días por {{stops}}.",
+    "descriptionNoDuration": "Un viaje por {{stops}}."
+  },
+  "desktopNotice": {
+    "eyebrow": "Una mejor forma de explorar",
+    "headingBefore": "Lo mejor de ",
+    "headingAccent": "Suiza",
+    "headingAfter": " está en camino.",
+    "lead": "Estamos creando una experiencia de escritorio a la altura de los lugares que descubrirás. Mientras tanto, disfruta de la ruta panorámica en el móvil.",
+    "languageAria": "Elegir idioma",
+    "prevAria": "Captura anterior",
+    "nextAria": "Captura siguiente",
+    "slideAria": "Mostrar diapositiva {{n}}",
+    "slides": {
+      "explore": "Explora Suiza",
+      "cityBreak": "Disfruta de una escapada urbana",
+      "attractions": "Descubre atracciones en la zona",
+      "search": "Busca lugares y actividades",
+      "planTrip": "Planifica tu propio viaje en tren o coche",
+      "sharedTrips": "Consulta los viajes compartidos por otros"
+    }
+  },
+  "seo": {
+    "home": {
+      "title": "Planifica tu aventura suiza",
+      "description": "Descubre las mejores rutas de senderismo, rutas en bici y destinos de Suiza. Planifica tu viaje perfecto con información de transporte y alojamiento en tiempo real."
+    },
+    "destinations": {
+      "title": "Destinos en Suiza",
+      "description": "Explora ciudades, montañas, lagos y parques naturales en toda Suiza. Encuentra el destino perfecto para tu próximo viaje."
+    },
+    "exploreTrips": {
+      "title": "Explora ideas de viaje",
+      "description": "Inspírate con ideas de viaje seleccionadas por ciudades, montañas y paisajes de Suiza."
+    },
+    "search": {
+      "title": "Buscar",
+      "description": "Busca destinos y actividades en toda Suiza."
+    }
+  }
+}

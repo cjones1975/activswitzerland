@@ -15,6 +15,9 @@ const xmlParser = new XMLParser({
 // transport.js's `type` query param -> OJP's Restrictions/Type value
 const OJP_PLACE_TYPE = { station: 'stop', address: 'topographicPlace' };
 
+// Deliberately not 'es' — OJP's Language restriction only publishes stop/place names in
+// Switzerland's national languages + English; Spanish isn't available upstream. Falls back to
+// 'en' below for that (and any other unrecognized) code, not an oversight to "fix".
 const VALID_LANGS = ['en', 'de', 'fr', 'it'];
 
 // Doubles as the recognized-PtMode allowlist (anything else is silently dropped) and the fixed

@@ -37,6 +37,7 @@ export class DesktopNotice {
     { label: 'Deutsch', value: 'de' },
     { label: 'Français', value: 'fr' },
     { label: 'Italiano', value: 'it' },
+    { label: 'Español', value: 'es' },
   ];
 
   protected selectedLang = this.langSvc.current;

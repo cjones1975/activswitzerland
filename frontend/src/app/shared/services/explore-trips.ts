@@ -12,7 +12,7 @@ export interface ExploreTripsFilter {
   order?: 'asc' | 'desc';
   minDistance?: number;
   maxDistance?: number;
-  reviewLang?: 'all' | 'en' | 'de' | 'fr' | 'it' | 'other';
+  reviewLang?: 'all' | 'en' | 'de' | 'fr' | 'it' | 'es' | 'other';
 }
 
 interface PublicTripsResponse { success: boolean; hasMore: boolean; data: PublicTrip[]; }

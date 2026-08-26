@@ -14,6 +14,94 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-26 — Add Spanish (es) as a Fifth UI Language Implemented — Status: Completed
+
+- Branch `feature/i18n-add-spanish`, off the spec at @context/features/i18n-add-spanish-spec.md.
+  All 7 phases implemented in the same session as the spec: `lang.ts`/`i18n-loader.ts` core
+  registration; new `es.json` (full ~230-key translation, informal *tú*, Castilian — the two
+  open decisions resolved by going with the spec's own recommendations rather than blocking);
+  `menu-nav.ts`/`desktop-notice.ts` language-switcher entries; `generate-sitemap.mjs`'s duplicated
+  `SUPPORTED_LANGS`; `translate.js`/`Trip.js`/`localized-text.ts` for Spanish trip-translation
+  output; `detect-lang.js`/`Trip.js` enum/frontend `reviewLang` union/options for the Explore Trips
+  language filter; `ojp.js`/`schweizMobilRoutes.js` comments (allowlists deliberately left
+  unchanged) and `aiTools.js` description strings
+- **Two real gaps the spec itself missed**, caught by `tsc`/`ng build`, not anticipated in
+  planning: `shared/services/explore-trips.ts` had its own separate `reviewLang` union type the
+  spec didn't list; `controllers/trips.js`'s `getPublicTrips` had a hardcoded
+  `['en','de','fr','it','other']` query allowlist and a separate `['de','fr','it']` curated-
+  translation `$or` match — both would have silently dropped/ignored a Spanish filter request.
+  Both fixed
+- Verified: `node --check` clean on every changed backend file; `tsc --noEmit` and a full `ng
+  build` clean (5 prerendered static routes, up from 4 — confirms `es` was picked up
+  automatically); all 5 `i18n/*.json` files valid JSON with `es.json` at exact 426/426 key parity
+  against `en.json`
+- **Unrelated pre-existing bug found and fixed while testing this feature**: the backend Docker
+  container was crash-looping (`ERR_MODULE_NOT_FOUND`) — every controller imports
+  `'../models/User.js'` (capital U) but the committed file was `user.js` (lowercase), silently
+  fine on Windows' case-insensitive filesystem, fatal on the Docker image's case-sensitive Linux
+  one. Existed since the initial commit; only surfaced now because the container got rebuilt.
+  Renamed via a two-step `git mv` (needed for git to register a pure-case rename on Windows),
+  rebuilt the image, confirmed the previously-failing endpoint returns 200. Nothing to do with
+  Spanish — flagged as such at the time
+- **Follow-on UI fixes, same branch, prompted by the longer translated strings this feature
+  introduced**: the homepage hero's "Plan a trip"/"Ask AI" buttons overflowed on mobile for
+  longer translations (Italian, Spanish worst-case) — `home.css`'s `.hero-cta-row` changed from a
+  fixed side-by-side row to mobile-first stacked/full-width buttons, restored to a row only at
+  the existing 1024px desktop breakpoint, `.hero` changed from fixed `height` to `min-height` so
+  the extra stacked height doesn't overflow/clip. Separately, investigated switching the
+  homepage's 5-tab `search-box` to PrimeNG's `p-tabs [scrollable]="true"` (already used on
+  `/search`) to signal overflow on mobile — live-tested `/search` first and found PrimeNG's own
+  scrollable-tabs nav buttons never render there either (a real bug: the enabled-state check only
+  re-runs via a `ResizeObserver` on the tab bar's own container, which never resizes — only its
+  overflowing content does — confirmed by forcing an unrelated viewport resize, which made the
+  correctly-computed button appear). User decided to leave `/search` as-is and only fix the
+  homepage. Built a custom scroll-fade + chevron-button indicator directly on `search-box`
+  instead (own component, own `ResizeObserver`-free approach — initial measurement re-run via
+  double-`requestAnimationFrame` + `document.fonts.ready` to avoid hitting the exact same
+  stale-measurement bug class in this component's own first paint, which it did on the first
+  attempt before that fix). Plain color fade was tested and found genuinely invisible (fades to
+  the tab row's own flat background color) before landing on the white circular chevron badge;
+  chevron made clickable (`scrollBy` on click) since a visible affordance invited clicking.
+  `home-search-wrap` padding also reduced (1.5rem → 0.75rem per side) to give the search box a
+  bit more width, at the user's request — trades off no longer aligning with the hero content's
+  edges above it, flagged, not yet confirmed as final
+- Verified throughout via the already-running dev server (not started by this agent) and
+  Playwright screenshots/DOM inspection at a 360×740 mobile viewport across en/de/fr/it/es —
+  every fix confirmed visually and via direct scroll-state/computed-style checks, not just built
+  and assumed
+- Committed as a single commit, fast-forward merged to `main`, `feature/i18n-add-spanish` deleted
+
+### 2026-08-26 — Add Spanish (es) as a Fifth UI Language Specced
+
+- User asked for a review of i18n translation quality first. Found two real issues across the
+  fr/de/it locale files: `exploreTrips.filter.reviewLangOption`'s `all`/`other` entries were left
+  untranslated (literal "All"/"Other") in all three, and German mixed formal *Sie* and informal
+  *du* address inconsistently section-to-section. Both fixed directly (translated the two strings
+  per locale; normalized German to *du* throughout, per user's explicit call)
+- User then asked whether Spanish could be added as a UI language. Investigated every place
+  `en`/`de`/`fr`/`it` are wired in before answering: `lang.ts`'s `SUPPORTED_LANGS` (routing,
+  hreflang, and `profile.ts`'s translation-editor tabs all derive from it), the two hardcoded
+  language-switcher arrays (`menu-nav.ts`/`desktop-notice.ts`), the sitemap script's
+  deliberately-duplicated `SUPPORTED_LANGS`, and three backend integrations that take a `lang`
+  param: MySwitzerland (no allowlist, passes through), OJP (`ojp.js`'s `VALID_LANGS`), and
+  SchweizMobil/geo.admin.ch (`schweizMobilRoutes.js`'s `SUPPORTED_LANGS`)
+- Confirmed with the user: MySwitzerland supports Spanish; OJP and SchweizMobil/geo.admin.ch do
+  not — both only publish place/trail names in en/de/fr/it and already fall back to `'en'` for any
+  unrecognized code, so the spec deliberately leaves those two allowlists unchanged rather than
+  adding Spanish support that doesn't exist upstream. Permanent English fallback for transit
+  connections and hike/bike trail names under `/es`, by design
+- Wrote `context/features/i18n-add-spanish-spec.md` — core locale registration
+  (`lang.ts`/`i18n-loader.ts`), new `es.json`, language-switcher entries, sitemap, the Claude-API
+  trip-translation schema (`translate.js`/`Trip.js`/`localized-text.ts`), the Explore Trips
+  review-language filter + detection (`detect-lang.js`'s franc mapping, `reviewLang` enum/union/
+  options), and the external-API passthrough decisions above. Branch `feature/i18n-add-spanish`
+  created off `main`
+- Two decisions left open in the spec rather than assumed: register (recommended informal *tú*,
+  matching German/Italian's now-consistent informal register) and dialect (recommended Castilian)
+  for the new `es.json` — flagged for confirmation before the translation content pass, same
+  native-speaker-verification caveat raised for the DE/IT files during the i18n review above
+- **Status: proposed, not started** — spec only, no implementation yet
+
 ### 2026-08-25 — AI Chat Assistant Phases 4-5 (Usage Metering + Stripe Subscription) Implemented, Merged to Main — Status: Completed
 
 - Branch `feature/ai-chat-billing`, off `main` (which already had Phases 1-3). Closes the cost

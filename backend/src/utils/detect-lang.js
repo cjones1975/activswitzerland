@@ -1,7 +1,7 @@
 import { francAll } from 'franc';
 
 // franc's ISO 639-3 codes -> this app's SUPPORTED_LANGS.
-const ISO_639_3_TO_APP_LANG = { eng: 'en', deu: 'de', fra: 'fr', ita: 'it' };
+const ISO_639_3_TO_APP_LANG = { eng: 'en', deu: 'de', fra: 'fr', ita: 'it', spa: 'es' };
 const MIN_TEXT_LENGTH = 20; // below this, franc's guesses are unreliable — bucket as 'other'
 
 // Best-effort detection for the Explore Trips language filter — never throws, always returns a value.

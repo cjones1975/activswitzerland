@@ -1,5 +1,6 @@
 <div class="search-box">
-  <div class="search-tabs">
+  <div class="search-tabs-wrap">
+  <div class="search-tabs" #tabsEl (scroll)="onTabsScroll()">
     <button
       type="button"
       class="search-tab"
@@ -40,6 +41,17 @@
       <i class="fa-solid fa-person-biking-mountain"></i>
       {{ 'home.search.bikesMountainTab' | translate }}
     </button>
+  </div>
+  <div class="tabs-fade tabs-fade--left" [class.visible]="canScrollLeft()">
+    <button type="button" class="tabs-fade-chevron" tabindex="-1" (click)="scrollTabs(-1)">
+      <i class="fa-solid fa-chevron-left"></i>
+    </button>
+  </div>
+  <div class="tabs-fade tabs-fade--right" [class.visible]="canScrollRight()">
+    <button type="button" class="tabs-fade-chevron" tabindex="-1" (click)="scrollTabs(1)">
+      <i class="fa-solid fa-chevron-right"></i>
+    </button>
+  </div>
   </div>
   <div class="search-card">
     <div class="search-input-wrap">

@@ -17,8 +17,9 @@ const TRANSLATION_SCHEMA = {
         de: LOCALE_FIELDS_SCHEMA,
         fr: LOCALE_FIELDS_SCHEMA,
         it: LOCALE_FIELDS_SCHEMA,
+        es: LOCALE_FIELDS_SCHEMA,
     },
-    required: ['de', 'fr', 'it'],
+    required: ['de', 'fr', 'it', 'es'],
     additionalProperties: false,
 };
 
@@ -37,7 +38,7 @@ export async function translateTripContent({ name, review }) {
             },
             messages: [{
                 role: 'user',
-                content: `Translate this Swiss travel itinerary's title and traveller review into German, French, and Italian.
+                content: `Translate this Swiss travel itinerary's title and traveller review into German, French, Italian, and Spanish.
 Keep place names, trail names, and other proper nouns unchanged. Keep the tone natural and concise, matching
 the original. If the review is empty, return an empty string for review in every language.
 
@@ -51,8 +52,8 @@ Review: ${review || '(none)'}`,
         if (!text) return null;
         const parsed = JSON.parse(text);
         return {
-            nameTranslations: { de: parsed.de.name, fr: parsed.fr.name, it: parsed.it.name },
-            reviewTranslations: { de: parsed.de.review, fr: parsed.fr.review, it: parsed.it.review },
+            nameTranslations: { de: parsed.de.name, fr: parsed.fr.name, it: parsed.it.name, es: parsed.es.name },
+            reviewTranslations: { de: parsed.de.review, fr: parsed.fr.review, it: parsed.it.review, es: parsed.es.review },
         };
     } catch {
         return null; // network/API error — degrade gracefully, per Confirmed Decision 6

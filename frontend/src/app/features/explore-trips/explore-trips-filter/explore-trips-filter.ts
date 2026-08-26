@@ -13,7 +13,7 @@ export interface ExploreTripsFilters {
   sortByLikes: boolean;
   minDistance: number;
   maxDistance: number;
-  reviewLang: 'all' | 'en' | 'de' | 'fr' | 'it' | 'other';
+  reviewLang: 'all' | 'en' | 'de' | 'fr' | 'it' | 'es' | 'other';
 }
 
 // Stable references (not recreated per call) — ExploreTrips reads this through a `computed()`
@@ -43,7 +43,7 @@ export class ExploreTripsFilter implements OnInit {
 
   readonly typeOptions: ExploreTripsFilters['type'][] = ['all', 'road', 'rail'];
   readonly orderOptions: ExploreTripsFilters['order'][] = ['desc', 'asc'];
-  readonly reviewLangOptions: ExploreTripsFilters['reviewLang'][] = ['all', 'en', 'de', 'fr', 'it', 'other'];
+  readonly reviewLangOptions: ExploreTripsFilters['reviewLang'][] = ['all', 'en', 'de', 'fr', 'it', 'es', 'other'];
 
   type = signal<ExploreTripsFilters['type']>(DEFAULT_EXPLORE_TRIPS_FILTERS.type);
   order = signal<ExploreTripsFilters['order']>(DEFAULT_EXPLORE_TRIPS_FILTERS.order);

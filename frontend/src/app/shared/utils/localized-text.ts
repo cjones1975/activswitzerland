@@ -3,8 +3,8 @@ import { Lang } from '../services/lang';
 export interface LocalizableTrip {
   name?: string;
   review?: string;
-  nameTranslations?: { de?: string; fr?: string; it?: string };
-  reviewTranslations?: { de?: string; fr?: string; it?: string };
+  nameTranslations?: { de?: string; fr?: string; it?: string; es?: string };
+  reviewTranslations?: { de?: string; fr?: string; it?: string; es?: string };
 }
 
 export function localizedName(trip: LocalizableTrip, lang: Lang): string {

@@ -98,7 +98,7 @@ export interface SavedTrip extends PlannedTrip {
   likes?: string[];      // user ids, present once saved
   nameTranslations?: { de?: string; fr?: string; it?: string };
   reviewTranslations?: { de?: string; fr?: string; it?: string };
-  reviewLang?: 'en' | 'de' | 'fr' | 'it' | 'other';
+  reviewLang?: 'en' | 'de' | 'fr' | 'it' | 'es' | 'other';
 }
 
 // Shape returned by GET /trips/public — a SavedTrip plus the derived fields the list view

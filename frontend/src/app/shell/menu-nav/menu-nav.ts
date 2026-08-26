@@ -25,6 +25,7 @@ export class MenuNav {
     { label: 'Deutsch', value: 'de' },
     { label: 'Français', value: 'fr' },
     { label: 'Italiano', value: 'it' },
+    { label: 'Español', value: 'es' },
   ];
 
   selectedLang = this.langSvc.current;

@@ -31,6 +31,9 @@ proj4.defs(
     '+towgs84=674.374,15.056,405.346,0,0,0,0 +units=m +no_defs'
 );
 
+// Deliberately not 'es' — geo.admin.ch only publishes trail/route names in Switzerland's
+// national languages + English; Spanish isn't available upstream. Falls back to 'en' below for
+// that (and any other unrecognized code), not an oversight to "fix".
 const SUPPORTED_LANGS = ['de', 'fr', 'it', 'en'];
 
 // SchweizMobil convention: 1-digit route number = national, 2-digit = regional,

@@ -7,6 +7,7 @@ import en from '../../../../public/i18n/en.json';
 import de from '../../../../public/i18n/de.json';
 import fr from '../../../../public/i18n/fr.json';
 import it from '../../../../public/i18n/it.json';
+import es from '../../../../public/i18n/es.json';
 
 // SSR/prerendering has no live HTTP server to fetch /i18n/{lang}.json from —
 // there's no incoming request to resolve a relative URL against during
@@ -15,7 +16,7 @@ import it from '../../../../public/i18n/it.json';
 // browser keeps fetching over HTTP (so a rebuild-only i18n edit doesn't need
 // touching this file), the server uses what got bundled at build time —
 // same source files, same build, so the two can't drift within one deploy.
-const SERVER_TRANSLATIONS: Record<string, TranslationObject> = { en, de, fr, it };
+const SERVER_TRANSLATIONS: Record<string, TranslationObject> = { en, de, fr, it, es };
 
 @Injectable({ providedIn: 'root' })
 export class I18nLoader implements TranslateLoader {
