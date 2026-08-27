@@ -12,16 +12,25 @@ const sendVerificationEmail = (email, code, subject) =>
         message: `Your ActivSwitzerland verification code is ${code}. It expires in 5 minutes.`,
     });
 
+// Bump whenever the published Terms and Conditions / Privacy Policy materially change.
+const TERMS_VERSION = '2026-08-26';
+
 // @desc    Register user
 // @route   POST /api/v1/auth/register
 // @access  Public
 export const register = AsyncHandler(async (req, res, next) => {
-    const { firstName, lastName, country, email, password, emailUpdates } = req.body;
+    const { firstName, lastName, country, email, password, emailUpdates, termsAccepted } = req.body;
 
     // Check for required fields
     if (!firstName || !lastName || !email || !password || !country) {
         return next(
             new ErrorResponse('Please provide all required fields', 400)
+        );
+    }
+
+    if (termsAccepted !== true) {
+        return next(
+            new ErrorResponse('You must accept the Terms and Conditions and Privacy Policy', 400)
         );
     }
 
@@ -43,6 +52,8 @@ export const register = AsyncHandler(async (req, res, next) => {
         user.country = country;
         user.password = password;
         user.emailUpdates = emailUpdates;
+        user.termsAcceptedAt = new Date();
+        user.termsVersion = TERMS_VERSION;
         await user.save();
     } else {
         user = await User.create({
@@ -52,6 +63,8 @@ export const register = AsyncHandler(async (req, res, next) => {
             email: normalizedEmail,
             password,
             emailUpdates,
+            termsAcceptedAt: new Date(),
+            termsVersion: TERMS_VERSION,
         });
     }
 

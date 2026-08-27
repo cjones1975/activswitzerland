@@ -13,7 +13,10 @@
     "close": "Close",
     "showOnMap": "Show on map",
     "back": "Back",
-    "search": "Search"
+    "search": "Search",
+    "legal": "Legal",
+    "termsAndConditions": "Terms & Conditions",
+    "privacyPolicy": "Privacy Policy"
   },
   "activityMap": {
     "backToPlanner": "Back to Trip Planner"
@@ -95,6 +98,11 @@
       "save": "Save trip itineraries and share with others",
       "gpx": "Download hike & bike trail GPX files",
       "ai": "Let AI answer your queries"
+    },
+    "terms": {
+      "title": "Terms & Conditions",
+      "prefix": "I agree to the",
+      "and": "and"
     }
   },
   "trip": {

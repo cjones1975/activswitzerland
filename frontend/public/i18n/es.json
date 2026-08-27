@@ -13,7 +13,10 @@
     "close": "Cerrar",
     "showOnMap": "Mostrar en el mapa",
     "back": "Atrás",
-    "search": "Buscar"
+    "search": "Buscar",
+    "legal": "Legal",
+    "termsAndConditions": "Términos y Condiciones",
+    "privacyPolicy": "Política de Privacidad"
   },
   "activityMap": {
     "backToPlanner": "Volver al planificador de viajes"
@@ -95,6 +98,11 @@
       "save": "Guarda itinerarios de viaje y compártelos con otros",
       "gpx": "Descarga archivos GPX de rutas de senderismo y ciclismo",
       "ai": "Deja que la IA responda tus preguntas"
+    },
+    "terms": {
+      "title": "Términos y Condiciones",
+      "prefix": "Acepto los",
+      "and": "y la"
     }
   },
   "trip": {

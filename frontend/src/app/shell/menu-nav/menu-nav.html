@@ -47,3 +47,9 @@
         class="lang-select"
     />
 </div>
+
+<div class="legal-links">
+    <a [routerLink]="langSvc.localize(['terms-and-conditions'])" (click)="closeMenu()">{{ 'nav.termsAndConditions' | translate }}</a>
+    <span class="legal-sep">·</span>
+    <a [routerLink]="langSvc.localize(['privacy-policy'])" (click)="closeMenu()">{{ 'nav.privacyPolicy' | translate }}</a>
+</div>

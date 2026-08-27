@@ -105,6 +105,19 @@
         <p-toggleswitch formControlName="emailUpdates" />
     </div>
 
+    <div class="consent-card">
+        <div class="consent-text">
+            <span class="consent-title">{{ 'auth.terms.title' | translate }}</span>
+            <span class="consent-sub">
+                {{ 'auth.terms.prefix' | translate }}
+                <a class="consent-link" [routerLink]="langSvc.localize(['terms-and-conditions'])" target="_blank" rel="noopener">{{ 'nav.termsAndConditions' | translate }}</a>
+                {{ 'auth.terms.and' | translate }}
+                <a class="consent-link" [routerLink]="langSvc.localize(['privacy-policy'])" target="_blank" rel="noopener">{{ 'nav.privacyPolicy' | translate }}</a>
+            </span>
+        </div>
+        <p-toggleswitch formControlName="termsAccepted" />
+    </div>
+
     <button class="submit-btn" type="submit" [disabled]="form.invalid || submitting()">
         {{ submitting() ? 'Creating account...' : 'Create account' }}
     </button>

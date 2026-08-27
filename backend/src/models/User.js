@@ -77,6 +77,14 @@ const UserSchema = new mongoose.Schema({
         type: Date,
         select: false
     },
+    termsAcceptedAt: {
+        type: Date,
+        select: false
+    },
+    termsVersion: {
+        type: String,
+        select: false
+    },
     createdAt: {
         type: Date,
         default: Date.now,

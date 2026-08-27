@@ -1,11 +1,14 @@
 import { Component, inject, OnInit, signal } from '@angular/core';
 import { AbstractControl, ReactiveFormsModule, FormBuilder, ValidationErrors, Validators } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 import { InputText } from 'primeng/inputtext';
 import { Select } from 'primeng/select';
 import { ToggleSwitch } from 'primeng/toggleswitch';
 import { Auth } from '../../../core/services/auth';
 import { ReferenceData } from '../../../core/services/referenceData';
 import { Country } from '../../../models/country';
+import { LangService } from '../../../shared/services/lang';
 
 function passwordMatchValidator(group: AbstractControl): ValidationErrors | null {
   const pw = group.get('password')?.value;
@@ -16,7 +19,7 @@ function passwordMatchValidator(group: AbstractControl): ValidationErrors | null
 @Component({
   selector: 'app-register',
   standalone: true,
-  imports: [ReactiveFormsModule, InputText, Select, ToggleSwitch],
+  imports: [ReactiveFormsModule, RouterLink, TranslatePipe, InputText, Select, ToggleSwitch],
   templateUrl: './register.html',
   styleUrl: './register.css',
 })
@@ -24,6 +27,7 @@ export class Register implements OnInit {
   private fb = inject(FormBuilder);
   private auth = inject(Auth);
   private refData = inject(ReferenceData);
+  protected langSvc = inject(LangService);
 
   showPassword = signal(false);
   showPasswordCheck = signal(false);
@@ -39,6 +43,7 @@ export class Register implements OnInit {
       password:      ['', [Validators.required, Validators.minLength(8)]],
       passwordCheck: ['', Validators.required],
       emailUpdates:  [false],
+      termsAccepted: [false, Validators.requiredTrue],
     },
     { validators: passwordMatchValidator }
   );
@@ -59,8 +64,8 @@ export class Register implements OnInit {
     if (this.form.invalid) return;
     this.submitting.set(true);
     try {
-      const { firstName, lastName, country, email, password, emailUpdates } = this.form.getRawValue();
-      await this.auth.register({ firstName, lastName, country, email, password, emailUpdates });
+      const { firstName, lastName, country, email, password, emailUpdates, termsAccepted } = this.form.getRawValue();
+      await this.auth.register({ firstName, lastName, country, email, password, emailUpdates, termsAccepted });
     } finally {
       this.submitting.set(false);
     }

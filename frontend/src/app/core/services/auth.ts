@@ -17,6 +17,7 @@ interface RegisterPayload {
   email: string;
   password: string;
   emailUpdates: boolean;
+  termsAccepted: boolean;
 }
 
 interface RegisterResponse {

@@ -13,7 +13,10 @@
     "close": "Schliessen",
     "showOnMap": "Auf Karte anzeigen",
     "back": "Zurück",
-    "search": "Suche"
+    "search": "Suche",
+    "legal": "Rechtliches",
+    "termsAndConditions": "AGB",
+    "privacyPolicy": "Datenschutzerklärung"
   },
   "activityMap": {
     "backToPlanner": "Zurück zum Reiseplaner"
@@ -95,6 +98,11 @@
       "save": "Reiserouten speichern und mit anderen teilen",
       "gpx": "GPX-Dateien für Wander- und Velorouten herunterladen",
       "ai": "Lass die KI deine Fragen beantworten"
+    },
+    "terms": {
+      "title": "AGB",
+      "prefix": "Ich akzeptiere die",
+      "and": "und die"
     }
   },
   "trip": {

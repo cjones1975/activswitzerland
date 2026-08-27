@@ -108,3 +108,24 @@
 .lang-select {
     width: 100%;
 }
+
+.legal-links {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding-top: 0.75rem;
+    font-size: 0.75rem;
+}
+
+.legal-links a {
+    color: var(--gray-500);
+    text-decoration: none;
+}
+
+.legal-links a:hover {
+    text-decoration: underline;
+}
+
+.legal-sep {
+    color: var(--gray-300);
+}

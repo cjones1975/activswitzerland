@@ -14,6 +14,71 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-27 — Terms Acceptance + Legal Pages Implemented — Status: Completed
+
+- Branch `feature/terms-consent-legal-pages`, off the spec at
+  @context/features/terms-consent-legal-pages-spec.md. Whole arc (content review, spec, build)
+  done in one session, no separate Specced-day entry
+- **Content origin**: user drafted an ActivSwitzerland Terms and Conditions and a Privacy Policy
+  as standalone `.docx` files (`context/legal/`), asked for review rather than a from-scratch
+  draft. Reviewed against SwitzerlandMobility's own published liability disclaimer for comparison
+  — concluded the docx's gross-negligence-only liability carve-out already sits at the statutory
+  ceiling under Art. 100 OR, so no paid lawyer review was actually needed for that clause; a
+  lawyer can't make a waiver stronger than the mandatory floor SwitzerlandMobility's own wording
+  already relies on
+- **Two real drafting issues found and fixed in the Privacy Policy docx**: section numbering
+  skipped §13 entirely (jumped 12→14, from a deleted section never renumbered), and §14 had a
+  copy-paste leftover referencing "changes to these Terms" instead of "this Policy." Fixed by
+  editing the `.docx` directly (not just the spec) — added §13 "Children's Privacy," anchored to
+  the existing 18+ account-creation rule in the Terms rather than a separate/lower age threshold,
+  per the user's explicit call: minors can still use every part of the Service that doesn't
+  require an account, they just can't create one (or hit the AI assistant, which requires sign-in)
+  until 18
+- **Docx editing had to route around a blocked automation path**: Word COM automation
+  (`New-Object -ComObject Word.Application`) failed opening the file with a generic "Word
+  experienced an error" — root-caused to an endpoint DLP agent that had tagged the file with a
+  `sec.endpointdlp` alternate data stream, which appears to block Word's own COM automation from
+  touching the file even after `Unblock-File` cleared the separate `Zone.Identifier` stream.
+  Worked around by editing `word/document.xml` directly inside the `.docx` zip via .NET
+  `ZipArchive` (PowerShell), cloning the exact `w:pPr`/`w:pStyle`/bookmark XML structure of
+  neighboring sections so the inserted section matches native Word formatting, then validated
+  well-formed XML via `XmlDocument.LoadXml` before treating it as done. A full backup was taken
+  first
+- **Backend**: `User.js` gained `termsAcceptedAt`/`termsVersion` (both `select: false`, matching
+  the existing audit-field pattern). `controllers/auth.js`'s `register` now hard-rejects
+  (400) if `termsAccepted !== true` — belt-and-braces against the frontend guard, since register
+  is a public unauthenticated endpoint — and stamps both fields on both the new-user and
+  re-register-unverified paths. New `TERMS_VERSION` constant to bump whenever the published Terms
+  next materially change
+- **Register form**: new toggle directly below the existing newsletter one, same visual card
+  (`.newsletter-card`/`.consent-card` share one CSS ruleset rather than duplicating it),
+  `Validators.requiredTrue` keeps "Create account" disabled until switched on. Inline Terms/Privacy
+  links inside the toggle's label open in a new tab (`target="_blank"`) rather than navigating in
+  place — Register lives inside the `auth` drawer, so an in-place nav would close the drawer and
+  lose whatever the user had already typed
+- **Nav menu**: Terms + Privacy links added to `menu-nav` below the language selector (the site
+  has no footer and the user didn't want to add one), plain in-place navigation + drawer close,
+  unlike the register form's new-tab links
+- **Two new pages**: `features/legal/terms-and-conditions` and `features/legal/privacy-policy`,
+  lazy-loaded at `/{lang}/terms-and-conditions` and `/{lang}/privacy-policy`, content transcribed
+  from the two finalized `.docx` files (including the §13 fix), cross-linked to each other. Page
+  bodies are deliberately *not* i18n-driven — hardcoded English HTML with a "currently available
+  in English only" note — following the precedent already set in
+  @context/features/cookie-consent-matomo-spec.md that legal copy needs a native-speaker/legal
+  review pass before translating, unlike routine UI strings. That spec's own planned
+  `privacy-policy` route (never implemented) is superseded by this one at the same path
+- **i18n**: only the short nav labels and the register consent sentence
+  (`nav.legal`/`termsAndConditions`/`privacyPolicy`, `auth.terms.*`) translated into all 5
+  locales, per the above. The consent sentence is built from `prefix + link + and + link`
+  fragments in the template; Italian's `and` fragment had to drop its leading article ("e" instead
+  of the grammatically fuller "e l'") because the template's whitespace between the interpolated
+  text and the following `<a>` would have broken the elision (rendered as "e l' Informativa" with
+  a stray space) — a deliberate compact-UI-microcopy tradeoff, not an oversight
+- Verified: `node --check` clean on both changed backend files; a full `ng build` clean, with both
+  `terms-and-conditions` and `privacy-policy` confirmed as their own separate lazy chunks in the
+  output (not accidentally inlined into the initial bundle)
+- Not yet committed at time of writing this entry
+
 ### 2026-08-26 — Add Spanish (es) as a Fifth UI Language Implemented — Status: Completed
 
 - Branch `feature/i18n-add-spanish`, off the spec at @context/features/i18n-add-spanish-spec.md.

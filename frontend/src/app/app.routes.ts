@@ -48,6 +48,14 @@ export const routes: Routes = [
             component: Profile,
             canActivate: [authGuard],
           },
+          {
+            path: 'terms-and-conditions',
+            loadComponent: () => import('./features/legal/terms-and-conditions/terms-and-conditions').then(m => m.TermsAndConditions),
+          },
+          {
+            path: 'privacy-policy',
+            loadComponent: () => import('./features/legal/privacy-policy/privacy-policy').then(m => m.PrivacyPolicy),
+          },
         ]
       },
       { path: 'auth', redirectTo: '', pathMatch: 'full' },

@@ -72,7 +72,8 @@
     align-items: center;
 }
 
-.newsletter-card {
+.newsletter-card,
+.consent-card {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -83,21 +84,29 @@
     margin-bottom: 1.25rem;
 }
 
-.newsletter-text {
+.newsletter-text,
+.consent-text {
     display: flex;
     flex-direction: column;
     gap: 0.15rem;
 }
 
-.newsletter-title {
+.newsletter-title,
+.consent-title {
     font-size: 0.9rem;
     font-weight: 600;
     color: var(--gray-900);
 }
 
-.newsletter-sub {
+.newsletter-sub,
+.consent-sub {
     font-size: 0.78rem;
     color: var(--gray-500);
+}
+
+.consent-link {
+    color: var(--navy-500);
+    text-decoration: underline;
 }
 
 .submit-btn {
