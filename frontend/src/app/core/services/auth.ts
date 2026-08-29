@@ -32,6 +32,7 @@ export interface CurrentUser {
   email: string;
   emailUpdates: boolean;
   isPro?: boolean;
+  hasStripeCustomer?: boolean;
   createdAt?: string;
   updatedAt?: string;
 }

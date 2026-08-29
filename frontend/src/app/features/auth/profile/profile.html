@@ -254,8 +254,9 @@
         }
     </div>
 
-    <!-- AI chat subscription -->
-    @if (u.isPro) {
+    <!-- AI chat subscription — hasStripeCustomer (not isPro) gates this: a past_due/unpaid
+         subscriber still needs the Portal to fix their card even though isPro just flipped false. -->
+    @if (u.isPro || u.hasStripeCustomer) {
         <div class="details-card">
             <div class="details-header">
                 <span class="details-title">{{ 'billing.title' | translate }}</span>
@@ -264,7 +265,7 @@
                 <i class="fa-solid fa-sparkles detail-icon"></i>
                 <div class="detail-content">
                     <span class="detail-label">{{ 'billing.status' | translate }}</span>
-                    <span class="detail-value">{{ 'billing.statusPro' | translate }}</span>
+                    <span class="detail-value">{{ (u.isPro ? 'billing.statusPro' : 'billing.statusInactive') | translate }}</span>
                 </div>
             </div>
             <button class="edit-btn" [disabled]="managingSubscription()" (click)="manageSubscription()">

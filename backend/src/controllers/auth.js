@@ -181,11 +181,19 @@ export const resendVerification = AsyncHandler(async (req, res, next) => {
 // @route   POST /api/v1/auth/me
 // @access  Private
 export const getMe = AsyncHandler(async (req, res, next) => {
-    const user = await User.findById(req.user.id).select('+isPro');
+    const user = await User.findById(req.user.id).select('+isPro +stripeCustomerId');
+
+    // hasStripeCustomer (not isPro) is what should gate the "Manage subscription" link — a
+    // past_due/unpaid subscriber still has a Stripe customer and needs the Portal to fix their
+    // card, even though isPro just flipped false. The raw id itself has no reason to leave the
+    // backend, so it's stripped in favour of just the boolean.
+    const data = user.toObject();
+    data.hasStripeCustomer = !!data.stripeCustomerId;
+    delete data.stripeCustomerId;
 
     res.status(200).json({
         success: true,
-        data: user,
+        data,
     });
 });
 
