@@ -1,0 +1,10 @@
+<div class="pi-page">
+  <a class="back-link" [routerLink]="langSvc.localize([])" [attr.aria-label]="'nav.back' | translate">
+    <i class="fa-solid fa-chevron-left"></i>
+  </a>
+
+  @if (!loading()) {
+    <h1 class="pi-title">{{ title() }}</h1>
+    <app-markdown [content]="body()"></app-markdown>
+  }
+</div>

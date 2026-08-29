@@ -56,6 +56,10 @@ export const routes: Routes = [
             path: 'privacy-policy',
             loadComponent: () => import('./features/legal/privacy-policy/privacy-policy').then(m => m.PrivacyPolicy),
           },
+          {
+            path: 'practical-info/:slug',
+            loadComponent: () => import('./features/practical-info/practical-info-detail/practical-info-detail').then(m => m.PracticalInfoDetail),
+          },
         ]
       },
       { path: 'auth', redirectTo: '', pathMatch: 'full' },

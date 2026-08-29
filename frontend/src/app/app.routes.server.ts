@@ -26,6 +26,10 @@ export const serverRoutes: ServerRoute[] = [
   { path: ':lang/explore-trips', renderMode: RenderMode.Server },
   { path: ':lang/trips/:slug', renderMode: RenderMode.Server },
   { path: ':lang/search', renderMode: RenderMode.Server },
+  // Static local markdown content, but fetched via HttpClient like the API-backed routes above
+  // rather than build-time Prerender — prerendering runs before server.ts is listening, and the
+  // ssrBaseUrlInterceptor's /content/ loopback (see that file) needs a live server to hit.
+  { path: ':lang/practical-info/:slug', renderMode: RenderMode.Server },
   // Personal/authenticated content, not canonical — client-render only, no
   // SSR/prerender spent here (see the spec's Confirmed decisions).
   { path: ':lang/trip-planner/**', renderMode: RenderMode.Client },

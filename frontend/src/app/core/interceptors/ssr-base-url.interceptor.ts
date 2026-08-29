@@ -18,6 +18,14 @@ export const ssrBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
   const isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
   if (isBrowser || !req.url.startsWith('/')) return next(req);
 
+  // Static public/ assets (e.g. practical-info markdown) aren't served by the backend API —
+  // they're served by this very Express process (server.ts's express.static(browserDistFolder)),
+  // so during SSR they're fetched back from this process's own port rather than SSR_API_URL.
+  if (req.url.startsWith('/content/')) {
+    const port = process.env['PORT'] || 4000;
+    return next(req.clone({ url: `http://localhost:${port}${req.url}` }));
+  }
+
   const apiUrl = process.env['SSR_API_URL'] ?? 'http://localhost:3000';
   return next(req.clone({ url: `${apiUrl}${req.url}` }));
 };

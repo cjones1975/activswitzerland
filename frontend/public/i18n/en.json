@@ -64,6 +64,7 @@
     "title": "AI Chat Subscription",
     "status": "Status",
     "statusPro": "Subscribed",
+    "statusInactive": "Payment needs attention",
     "manageSubscription": "Manage subscription"
   },
   "auth": {
@@ -305,6 +306,14 @@
       "hotelsSubtitle": "Find great places to stay in the area.",
       "loadError": "Could not load this destination."
     }
+  },
+  "practicalInfo": {
+    "title": "New to Switzerland?",
+    "subtitle": "Practical guides for your first weeks here",
+    "gettingAround": "Getting around",
+    "greatOutdoors": "The great outdoors",
+    "costOfLiving": "Cost of living",
+    "cultureHistory": "Culture & history"
   },
   "hikes": {
     "loadError": "Could not load hiking routes.",

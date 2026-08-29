@@ -1,0 +1,30 @@
+.pi-page {
+  padding: 1.5rem 1.25rem 4rem;
+  padding-top: calc(3.5rem + 1.5rem);
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  margin-bottom: 0.75rem;
+  border-radius: 50%;
+  color: var(--navy-900);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.back-link:hover {
+  background: var(--gray-100, #f1f5f9);
+}
+
+.pi-title {
+  font-size: 1.4rem;
+  font-weight: 800;
+  color: var(--navy-900);
+  margin: 0 0 1.25rem;
+}

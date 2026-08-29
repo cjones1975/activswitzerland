@@ -14,6 +14,60 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-08-29 — Practical Info Section (Homepage) + Content Pages Implemented — Status: Completed
+
+- Branch `feature/practical-info`, off the spec at @context/features/practical-info-spec.md. User
+  had already created the full `public/content/practical-info/<slug>/<lang>.md` file tree (20
+  files: 4 topics × 5 locales) before this session; this session implemented the frontend that
+  serves them
+- **New shared markdown renderer**: added `marked` as a dependency; new
+  `shared/markdown/markdown.ts` takes a raw markdown `@Input()`, parses it, and rewrites every
+  `<a href=` to add `target="_blank" rel="noopener noreferrer"` via a post-parse regex — covers
+  both real `[text](url)` links and `marked`'s GFM autolinking of the bare URL lines already
+  present in the source content, with no need to edit that content
+- **New model + detail page**: `models/practical-info-category.ts` (`PRACTICAL_INFO_CATEGORIES`,
+  icons per the spec's mockup); `features/practical-info/practical-info-detail/` reads `:slug`,
+  fetches `/content/practical-info/<slug>/<lang>.md` with an `en.md` fallback on error, derives the
+  page title from the markdown's own `# Heading` (category i18n label as fallback), renders the
+  rest through `app-markdown`. Routed (not a drawer) at `practical-info/:slug`, back-nav to home
+  matching `destination-vertical-list`'s pattern. Registered in `app.routes.server.ts` as
+  `RenderMode.Server`, same tier as `destinations/:id`/`trips/:slug`
+- **Homepage**: new gray section below Nature Parks looping `PRACTICAL_INFO_CATEGORIES` into a
+  fixed 2×2 grid of 4 amber boxes (no responsive column change, per the spec). New
+  `practicalInfo.*` i18n keys (title/subtitle/4 labels) mirrored across en/de/fr/it/es
+- **Sitemap**: `generate-sitemap.mjs` gained the 4 slugs as static entries with `lastmod: buildDate`
+  (real local content, unlike the fetched destination/trip entries) and priority `0.6`, matching the
+  spec's explicit call-out that these (unlike the legal pages) are genuine SEO content
+- **Infra fix required, not anticipated by the spec**: `public/content/**` are static assets, but
+  the existing `ssrBaseUrlInterceptor` unconditionally rewrites every relative SSR-side fetch to
+  the backend API — wrong for these. Added a carve-out routing `/content/` requests back to this
+  same Express server's own port instead of `SSR_API_URL`. Also added an nginx `location /content/`
+  block with `Cache-Control: no-cache`, mirroring the existing `/i18n/` precedent (unhashed content,
+  should reflect edits without a hard refresh)
+- **Two real bugs found via the user's own browser testing, not caught by `tsc`/`ng build`**:
+  1. The `# Heading` extraction regex (`/^#\s+(.+?)\s*\n?/`) used a lazy `.+?` followed by a
+     trailing part that can match empty — so it always captured just the first character of the
+     heading (e.g. "S" out of "Se déplacer"), leaking the rest of the line into the body as an
+     orphaned paragraph. Fixed by making the capture greedy (`.+`)
+  2. Paragraph/list spacing in the rendered markdown had no effect no matter how much the CSS
+     margin was increased — root cause was `Markdown`'s default *Emulated* view encapsulation:
+     content set via `[innerHTML]` bypasses Angular's template compiler, so those DOM nodes never
+     get the encapsulation attribute Angular stamps onto template-defined elements, and every
+     scoped descendant selector (`.markdown-body p`, `h1`, etc.) was silently never matching — only
+     inherited properties on `:host` (color) were taking effect. Fixed by setting
+     `encapsulation: ViewEncapsulation.None` on the component and moving the `:host` rules onto the
+     `.markdown-body` class directly (since `:host` semantics are unreliable under `None`)
+- **Unrelated small UI tweak, same session**: header-nav's "ActivSwitzerland" brand text reduced
+  from `1.4rem` to `1.1rem` (`header-nav.css`) at the user's request; logo untouched since its
+  height is set in `rem` (not `em`), so it was never coupled to the brand text's font-size
+- Verified via `npx tsc --noEmit` (clean) and a full `ng build` (clean, `practical-info-detail`
+  confirmed as its own lazy chunk, `marked` not present in the initial bundle). Attempted to
+  verify the SSR content-fetch path locally via a direct `node server.mjs` run but hit Angular's
+  unrelated `allowedHosts` SSRF guard (pre-existing repo config, empty allowlist) rather than any
+  bug in this feature; user took over real end-to-end browser verification from there and reported
+  the two bugs above plus the styling follow-ups
+- Not yet committed at time of writing this entry
+
 ### 2026-08-27 — Terms Acceptance + Legal Pages Implemented — Status: Completed
 
 - Branch `feature/terms-consent-legal-pages`, off the spec at

@@ -64,6 +64,7 @@
     "title": "Abonnement Chat IA",
     "status": "Statut",
     "statusPro": "Abonné",
+    "statusInactive": "Le paiement nécessite votre attention",
     "manageSubscription": "Gérer l'abonnement"
   },
   "auth": {
@@ -305,6 +306,14 @@
       "hotelsSubtitle": "Trouvez de superbes hébergements dans la région.",
       "loadError": "Impossible de charger cette destination."
     }
+  },
+  "practicalInfo": {
+    "title": "Nouveau en Suisse ?",
+    "subtitle": "Guides pratiques pour vos premières semaines ici",
+    "gettingAround": "Se déplacer",
+    "greatOutdoors": "Les grands espaces",
+    "costOfLiving": "Coût de la vie",
+    "cultureHistory": "Culture et histoire"
   },
   "hikes": {
     "loadError": "Impossible de charger les itinéraires de randonnée.",

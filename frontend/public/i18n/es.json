@@ -306,6 +306,14 @@
       "loadError": "No se pudo cargar este destino."
     }
   },
+  "practicalInfo": {
+    "title": "¿Nuevo en Suiza?",
+    "subtitle": "Guías prácticas para tus primeras semanas aquí",
+    "gettingAround": "Moverse por Suiza",
+    "greatOutdoors": "Al aire libre",
+    "costOfLiving": "Coste de vida",
+    "cultureHistory": "Cultura e historia"
+  },
   "hikes": {
     "loadError": "No se pudieron cargar las rutas de senderismo.",
     "empty": "No se han encontrado rutas de senderismo cerca de este destino.",

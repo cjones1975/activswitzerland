@@ -64,6 +64,7 @@
     "title": "KI-Chat-Abonnement",
     "status": "Status",
     "statusPro": "Abonniert",
+    "statusInactive": "Zahlung erfordert Aufmerksamkeit",
     "manageSubscription": "Abonnement verwalten"
   },
   "auth": {
@@ -305,6 +306,14 @@
       "hotelsSubtitle": "Finde tolle Unterkünfte in der Umgebung.",
       "loadError": "Dieses Reiseziel konnte nicht geladen werden."
     }
+  },
+  "practicalInfo": {
+    "title": "Neu in der Schweiz?",
+    "subtitle": "Praktische Ratgeber für deine ersten Wochen hier",
+    "gettingAround": "Unterwegs sein",
+    "greatOutdoors": "Draussen in der Natur",
+    "costOfLiving": "Lebenshaltungskosten",
+    "cultureHistory": "Kultur & Geschichte"
   },
   "hikes": {
     "loadError": "Wanderrouten konnten nicht geladen werden.",

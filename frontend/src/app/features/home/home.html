@@ -75,3 +75,21 @@
     </app-destination-horizontal-list>
   </div>
 </div>
+<div class="home-section home-section--gray">
+  <div class="section-inner">
+    <h2 class="section-title">{{ 'practicalInfo.title' | translate }}</h2>
+    <p class="section-subtitle">{{ 'practicalInfo.subtitle' | translate }}</p>
+    <div class="practical-info-grid">
+      @for (entry of practicalInfoCategories; track entry.key) {
+        <a class="practical-info-box" [routerLink]="langSvc.localize(['practical-info', entry.key])">
+          <div class="practical-info-icons">
+            @for (icon of entry.config.icons; track icon) {
+              <i [class]="icon"></i>
+            }
+          </div>
+          <span class="practical-info-label">{{ entry.config.label | translate }}</span>
+        </a>
+      }
+    </div>
+  </div>
+</div>

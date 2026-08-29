@@ -85,9 +85,13 @@ function buildSitemap(destinationIds, tripSlugs) {
   // it trains crawlers to stop trusting the field site-wide (Google's own guidance).
   // Same reasoning applies to trip pages — no per-trip modification date is tracked either.
   const buildDate = new Date().toISOString().slice(0, 10);
+  // Static local content (not fetched from a third-party API with no per-item modified date),
+  // so a real build-date lastmod is honest here — unlike the destination/trip entries below.
+  const practicalInfoSlugs = ['getting-around', 'great-outdoors', 'cost-of-living', 'culture-history'];
   const pages = [
     { path: '', priority: '1.0', lastmod: buildDate },
     { path: '/destinations', priority: '0.8', lastmod: buildDate },
+    ...practicalInfoSlugs.map(slug => ({ path: `/practical-info/${slug}`, priority: '0.6', lastmod: buildDate })),
     ...destinationIds.map(id => ({ path: `/destinations/${id}`, priority: '0.6' })),
     ...tripSlugs.map(slug => ({ path: `/trips/${slug}`, priority: '0.6' })),
   ];
