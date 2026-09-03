@@ -10,8 +10,63 @@
     <button type="button" class="toggle-btn" [attr.aria-label]="'aiChat.title' | translate" (click)="openAiChat()">
       <i class="fa-solid fa-sparkles"></i>
     </button>
-    <button type="button" class="toggle-btn" aria-label="Toggle menu" (click)="toggleMenu()">
+    <button type="button" class="toggle-btn profile-btn" [attr.aria-label]="'nav.profile' | translate" (click)="profilePopover.toggle($event)">
+      <i class="fa-light fa-circle-user"></i>
+    </button>
+    <button type="button" class="toggle-btn hamburger-btn" aria-label="Toggle menu" (click)="toggleMenu()">
       <i class="fa-solid fa-bars-staggered"></i>
     </button>
   </ng-template>
 </p-menubar>
+
+<nav class="nav-links">
+  <a class="nav-link" [routerLink]="langSvc.localize([])" routerLinkActive="nav-link-active" [routerLinkActiveOptions]="{ exact: true }">
+    <i class="fa-light fa-house"></i>
+    <span>{{ 'nav.home' | translate }}</span>
+  </a>
+  <span class="nav-divider"></span>
+  <a class="nav-link" [routerLink]="langSvc.localize(['search'])" routerLinkActive="nav-link-active">
+    <i class="fa-light fa-magnifying-glass"></i>
+    <span>{{ 'nav.search' | translate }}</span>
+  </a>
+  <span class="nav-divider"></span>
+  <a class="nav-link" [routerLink]="langSvc.localize(['trip-planner'])" [queryParams]="{ from: router.url }" routerLinkActive="nav-link-active">
+    <i class="fa-light fa-route"></i>
+    <span>{{ 'nav.tripplanner' | translate }}</span>
+  </a>
+  <span class="nav-divider"></span>
+  <a class="nav-link" [routerLink]="langSvc.localize(['explore-trips'])" routerLinkActive="nav-link-active">
+    <i class="fa-light fa-compass"></i>
+    <span>{{ 'nav.exploreTrips' | translate }}</span>
+  </a>
+</nav>
+
+<p-popover #profilePopover styleClass="header-profile-popover">
+  <div class="profile-menu">
+    <button type="button" class="profile-menu-item" (click)="onProfileClick(); profilePopover.hide()">
+      <i [class]="auth.isLoggedIn() ? 'pi pi-user' : 'pi pi-sign-in'"></i>
+      <span>{{ (auth.isLoggedIn() ? 'nav.profile' : 'nav.login') | translate }}</span>
+    </button>
+    @if (auth.isLoggedIn()) {
+      <button type="button" class="profile-menu-item" (click)="onAuthAction(); profilePopover.hide()">
+        <i class="pi pi-sign-out"></i>
+        <span>{{ 'nav.logout' | translate }}</span>
+      </button>
+    }
+
+    <p-select
+      class="profile-menu-lang"
+      [options]="languages"
+      [(ngModel)]="selectedLang"
+      optionLabel="label"
+      optionValue="value"
+      (onChange)="changeLanguage($event.value)"
+    />
+
+    <div class="profile-menu-legal">
+      <a [routerLink]="langSvc.localize(['terms-and-conditions'])" (click)="profilePopover.hide()">{{ 'nav.termsAndConditions' | translate }}</a>
+      <span>·</span>
+      <a [routerLink]="langSvc.localize(['privacy-policy'])" (click)="profilePopover.hide()">{{ 'nav.privacyPolicy' | translate }}</a>
+    </div>
+  </div>
+</p-popover>

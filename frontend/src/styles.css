@@ -87,6 +87,65 @@ html.as-desktop-gate app-root {
   overflow-y: auto;
 }
 
+/* Desktop header-nav profile dropdown (header-nav.html) — p-popover portals to <body>, so
+   component-scoped styles can't reach it. */
+.header-profile-popover {
+  min-width: 220px;
+}
+
+.profile-menu {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.profile-menu-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  border: none;
+  background: none;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: var(--color-text-dark);
+  cursor: pointer;
+  text-align: left;
+  border-radius: 6px;
+}
+
+.profile-menu-item:hover {
+  background: var(--navy-100);
+}
+
+.profile-menu-lang {
+  width: 100%;
+  margin-top: 0.5rem;
+}
+
+.profile-menu-legal {
+  display: flex;
+  justify-content: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding-top: 0.6rem;
+  border-top: 1px solid var(--gray-100);
+  font-size: 0.75rem;
+}
+
+.profile-menu-legal a {
+  color: var(--gray-500);
+  text-decoration: none;
+}
+
+.profile-menu-legal a:hover {
+  text-decoration: underline;
+}
+
+.profile-menu-legal span {
+  color: var(--gray-300);
+}
+
 /* Toast */
 .p-toast {
     max-width: 340px;

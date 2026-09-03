@@ -21,6 +21,76 @@
 
 :host ::ng-deep .header-nav .p-menubar-start {
   flex: 1;
+  display: flex;
+  align-items: center;
+}
+
+/* Centered on the header as a whole (not the p-menubar-start region, which is brand-only and flexes
+   to whatever width the end region leaves it) — sibling of <p-menubar>, absolutely positioned against
+   :host so its centering is independent of the brand/actions widths on either side. */
+.nav-links {
+  display: none;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  align-items: center;
+  gap: 2rem;
+}
+
+.nav-divider {
+  width: 1px;
+  height: 1.2rem;
+  background: var(--color-white);
+  opacity: 0.3;
+}
+
+/* `.toggle-btn.profile-btn`/`.toggle-btn.hamburger-btn` (not just `.profile-btn`) so these always
+   out-specificity the plain `.toggle-btn { display: inline-flex }` rule below, regardless of source
+   order. Tailwind's `xl:`/`hidden` utilities can't be used here since this file's plain (unlayered)
+   CSS always beats Tailwind's `@layer utilities` rules no matter the order or specificity — a
+   Tailwind-utility show/hide silently never took effect against `.toggle-btn`. Breakpoint matches
+   SPLIT_VIEW_MIN_WIDTH (breakpoint.ts). */
+.toggle-btn.profile-btn {
+  display: none;
+}
+
+@media (min-width: 1280px) {
+  .nav-links {
+    display: flex;
+  }
+
+  .toggle-btn.profile-btn {
+    display: inline-flex;
+  }
+
+  .toggle-btn.hamburger-btn {
+    display: none;
+  }
+}
+
+.nav-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: var(--color-white);
+  opacity: 0.75;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+
+.nav-link i {
+  font-size: 0.85rem;
+}
+
+.nav-link:hover {
+  opacity: 1;
+}
+
+.nav-link.nav-link-active {
+  opacity: 1;
+  font-weight: 600;
 }
 
 :host ::ng-deep .header-nav .p-menubar-end {
