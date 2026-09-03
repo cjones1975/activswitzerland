@@ -14,6 +14,42 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-09-03 — Desktop Redesign Phase 5: Horizontal Header Nav Implemented — Status: Completed
+
+- Branch `feature/desktop-header-nav`, off the spec at
+  @context/features/desktop-redesign-phase5-header-nav-spec.md — the master plan's
+  (@context/features/desktop-responsive-redesign-spec.md) independent Phase 5, pulled forward ahead
+  of Phases 2-4 at the user's request to work through existing functionality bit-by-bit rather than
+  strictly in phase order
+- **`header-nav`** gains a horizontal nav row (Home/Search/Trip Planner/Explore Trips, same icons
+  `menu-nav`'s drawer already uses, `routerLinkActive` highlighting) and a profile-icon `p-popover`
+  (login/logout, language switcher, terms/privacy links) at/above 1280px (`SPLIT_VIEW_MIN_WIDTH`,
+  matching the split-view breakpoint used elsewhere rather than adding a second one). Below 1280px,
+  `header-nav`/`menu-nav` are unchanged — same hamburger + drawer as before
+- Two follow-up rounds from live user review: nav row moved from inside `p-menubar`'s `#start` slot
+  to a sibling element, absolutely positioned against `:host` so it's centered on the header as a
+  whole (independent of the brand/actions' differing widths, which `#start`'s flex layout can't
+  give); then a vertical divider + more spacing added between each item
+- **Real bug found via user's own live testing** (this agent had stopped self-verifying in-browser
+  partway through, at the user's explicit request — see below): the master plan's stated approach of
+  using Tailwind `hidden`/`xl:` utility classes for the responsive show/hide silently never took
+  effect — Tailwind v4 wraps its utilities in a CSS `@layer`, and this file's pre-existing plain
+  (unlayered) CSS always wins over any layered rule regardless of specificity or source order, so
+  `.toggle-btn`'s unconditional `display: inline-flex` kept the hamburger visible at every width no
+  matter what. Fixed with plain `@media (min-width: 1280px)` CSS instead (same 1280px cutover), using
+  compound selectors (`.toggle-btn.profile-btn` etc.) so the override reliably out-specificities the
+  base `.toggle-btn` rule regardless of source order. Flagged in the spec as a trap the other
+  Tailwind-utility-reliant phases (3/4) will also hit on any component with existing hand-rolled CSS
+- **Mid-session correction**: this agent had been launching `ng serve` + Playwright screenshots
+  itself to verify each round (which is what caught the Tailwind-layering bug above, and separately
+  surfaced/killed a stale non-rebuilding dev-server process already occupying port 4200). User then
+  asked to leave browser verification to them going forward — self-directed verification stopped
+  from that point on; the centering and icon/divider rounds were reviewed by the user directly
+- Verified via `ng build` (clean) for every round; the two rounds before the correction above were
+  additionally confirmed live via screenshots at 1280/1600/1920px and 800px, no console errors; the
+  final icon/divider round was verified by the user directly, not this agent
+- Committed as a single commit on `feature/desktop-header-nav`, not yet merged to `main`
+
 ### 2026-08-29 — Practical Info Section (Homepage) + Content Pages Implemented — Status: Completed
 
 - Branch `feature/practical-info`, off the spec at @context/features/practical-info-spec.md. User
