@@ -65,7 +65,11 @@
     "status": "Stato",
     "statusPro": "Abbonato",
     "statusInactive": "Il pagamento richiede attenzione",
-    "manageSubscription": "Gestisci abbonamento"
+    "manageSubscription": "Gestisci abbonamento",
+    "checkoutFailed": "Impossibile avviare il pagamento",
+    "checkoutFailedDetail": "Qualcosa è andato storto. Riprova.",
+    "portalFailed": "Impossibile aprire la gestione dell'abbonamento",
+    "portalFailedDetail": "Qualcosa è andato storto. Riprova."
   },
   "auth": {
     "toast": {

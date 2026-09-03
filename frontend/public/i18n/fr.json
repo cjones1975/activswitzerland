@@ -65,7 +65,11 @@
     "status": "Statut",
     "statusPro": "Abonné",
     "statusInactive": "Le paiement nécessite votre attention",
-    "manageSubscription": "Gérer l'abonnement"
+    "manageSubscription": "Gérer l'abonnement",
+    "checkoutFailed": "Impossible de démarrer le paiement",
+    "checkoutFailedDetail": "Une erreur s'est produite. Veuillez réessayer.",
+    "portalFailed": "Impossible d'ouvrir la gestion de l'abonnement",
+    "portalFailedDetail": "Une erreur s'est produite. Veuillez réessayer."
   },
   "auth": {
     "toast": {

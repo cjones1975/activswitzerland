@@ -65,7 +65,11 @@
     "status": "Status",
     "statusPro": "Abonniert",
     "statusInactive": "Zahlung erfordert Aufmerksamkeit",
-    "manageSubscription": "Abonnement verwalten"
+    "manageSubscription": "Abonnement verwalten",
+    "checkoutFailed": "Checkout konnte nicht gestartet werden",
+    "checkoutFailedDetail": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
+    "portalFailed": "Abonnementverwaltung konnte nicht geöffnet werden",
+    "portalFailedDetail": "Etwas ist schiefgelaufen. Bitte versuche es erneut."
   },
   "auth": {
     "toast": {

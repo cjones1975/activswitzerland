@@ -5,6 +5,7 @@ import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { AiChat, ChatCard, ChatStatus } from '../../../shared/services/ai-chat';
 import { Billing } from '../../../shared/services/billing';
 import { Drawer } from '../../../shared/services/drawer';
+import { Toast } from '../../../core/services/toast';
 import { TrailThumbnail } from '../../../shared/trail-thumbnail/trail-thumbnail';
 import { formatDistanceKmMi } from '../../../shared/utils/distance';
 import { formatChatText } from '../../../shared/utils/chat-markdown';
@@ -43,6 +44,7 @@ export class AiChatDrawer {
   private billing = inject(Billing);
   private drawerSvc = inject(Drawer);
   private translate = inject(TranslateService);
+  private toast = inject(Toast);
 
   draft = signal('');
   subscribingPlan = signal<'monthly' | 'yearly' | null>(null);
@@ -59,6 +61,13 @@ export class AiChatDrawer {
     this.subscribingPlan.set(plan);
     try {
       await this.billing.startCheckout(plan);
+    } catch {
+      this.toast.error(
+        this.translate.instant('billing.checkoutFailed'),
+        this.translate.instant('billing.checkoutFailedDetail'),
+        4000,
+        'toast-error',
+      );
     } finally {
       this.subscribingPlan.set(null);
     }

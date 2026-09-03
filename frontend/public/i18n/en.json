@@ -65,7 +65,11 @@
     "status": "Status",
     "statusPro": "Subscribed",
     "statusInactive": "Payment needs attention",
-    "manageSubscription": "Manage subscription"
+    "manageSubscription": "Manage subscription",
+    "checkoutFailed": "Couldn't start checkout",
+    "checkoutFailedDetail": "Something went wrong. Please try again.",
+    "portalFailed": "Couldn't open subscription management",
+    "portalFailedDetail": "Something went wrong. Please try again."
   },
   "auth": {
     "toast": {

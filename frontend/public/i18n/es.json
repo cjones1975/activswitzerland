@@ -64,7 +64,12 @@
     "title": "Suscripción al chat IA",
     "status": "Estado",
     "statusPro": "Suscrito",
-    "manageSubscription": "Gestionar suscripción"
+    "statusInactive": "El pago requiere atención",
+    "manageSubscription": "Gestionar suscripción",
+    "checkoutFailed": "No se pudo iniciar el pago",
+    "checkoutFailedDetail": "Algo salió mal. Inténtalo de nuevo.",
+    "portalFailed": "No se pudo abrir la gestión de la suscripción",
+    "portalFailedDetail": "Algo salió mal. Inténtalo de nuevo."
   },
   "auth": {
     "toast": {

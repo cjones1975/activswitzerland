@@ -173,6 +173,13 @@ export class Profile implements OnInit {
     this.managingSubscription.set(true);
     try {
       await this.billing.openPortal();
+    } catch {
+      this.toast.error(
+        this.translate.instant('billing.portalFailed'),
+        this.translate.instant('billing.portalFailedDetail'),
+        4000,
+        'toast-error',
+      );
     } finally {
       this.managingSubscription.set(false);
     }
