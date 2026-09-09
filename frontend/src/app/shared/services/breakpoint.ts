@@ -16,6 +16,14 @@ export const SPLIT_VIEW_MIN_WIDTH = 1280;
  */
 export const DESKTOP_NOTICE_MIN_WIDTH = 1024;
 
+/**
+ * Below this width, the docked drawers (destination/attractions/hikes/bikes) render as a fixed-height
+ * bottom sheet instead of a full-screen left slide (context/features/mobile-drawer-bottom-sheet-spec.md)
+ * — matches drawer-host.css's existing `@media (max-width: 767px)` full-width breakpoint, not a new
+ * value, so "mobile" means the same thing in both places.
+ */
+export const MOBILE_MAX_WIDTH = 768;
+
 const DESKTOP_PREVIEW_STORAGE_KEY = 'as-desktop-preview';
 
 /** Must match the class name the inline no-flash script in index.html adds. */
@@ -39,12 +47,22 @@ export class Breakpoint {
    */
   readonly isDesktopNotice = signal(false);
 
+  /**
+   * True below MOBILE_MAX_WIDTH. Always false during SSR/prerender, same reasoning as
+   * `isDesktopSplitView` — corrected on the client once `matchMedia` runs.
+   */
+  readonly isMobile = signal(false);
+
   constructor() {
     if (!isPlatformBrowser(this.platformId)) return;
 
     const splitViewMql = window.matchMedia(`(min-width: ${SPLIT_VIEW_MIN_WIDTH}px)`);
     this.isDesktopSplitView.set(splitViewMql.matches);
     splitViewMql.addEventListener('change', e => this.isDesktopSplitView.set(e.matches));
+
+    const mobileMql = window.matchMedia(`(max-width: ${MOBILE_MAX_WIDTH - 1}px)`);
+    this.isMobile.set(mobileMql.matches);
+    mobileMql.addEventListener('change', e => this.isMobile.set(e.matches));
 
     if (new URLSearchParams(window.location.search).get('preview') === 'desktop') {
       localStorage.setItem(DESKTOP_PREVIEW_STORAGE_KEY, '1');

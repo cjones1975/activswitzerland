@@ -14,6 +14,49 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-09-09 — Mobile Drawers: Bottom Sheet Instead of Full-Screen Slide Implemented — Status: Completed
+
+- Branch `feature/mobile-drawer-bottom-sheet`, off the spec at
+  @context/features/mobile-drawer-bottom-sheet-spec.md. Created off the then-current, still-uncommitted
+  `desktop-redesign` working-tree state rather than off `main` — that branch's own desktop-only card/
+  header/spacing changes are unrelated to this spec and were deliberately left out of every commit on
+  this branch, to be committed separately on `desktop-redesign` itself
+- Below 768px (matching `drawer-host.css`'s existing full-width breakpoint, not a new value), the seven
+  destination/activity/hike/bike drawers (`destination-detail`, `all-attractions`,
+  `attraction-detail`, `hikes`, `hike-detail`, `bikes`, `bike-detail`) now render as a fixed-height
+  bottom sheet — map visible above, non-modal (map stays interactive) — instead of a full-screen
+  `position="left"` slide. New `Breakpoint.isMobile` signal (`MOBILE_MAX_WIDTH = 768`) and a
+  `isXTripPlanner`-derived `xMobileSheet` computed per drawer, so trip-planner picker mode (and the
+  search/explore-trips/trip-summary sources with no real map behind them) keep today's full-screen
+  modal unchanged at every width — this redesign doesn't touch that separate feature
+- **Two rounds of live-review correction on what the X (replacing the old chevron/map-icon pair)
+  actually does, both driven by user feedback, not self-caught**:
+  1. First shipped reusing each drawer's existing "smart back" method (closing `attraction-detail`
+     would reopen `all-attractions`/`destination-detail`, whichever it came from) — user found this
+     unintuitive for an X specifically ("not what the user would expect"). Changed to a uniform plain
+     `onDrawerClose(key)` for all seven, no exceptions, no chained reopening — reopening anything is
+     now only reachable via the map's own reopen pills. Saved as a standing preference
+     ([[feedback_x_button_means_plain_close]]): X icons must always mean plain dismiss, never smart
+     back-nav, even where a chevron in the same spot used to do exactly that
+  2. Added an expand/collapse caret (`fa-square-caret-up`/`-down`) toggling the sheet between the
+     default 75vh and full 100vh — a discrete two-state toggle, not the continuous drag-to-resize
+     explicitly descoped earlier in the same conversation. First placed adjacent to the X (both
+     right-aligned); user wanted it at the opposite/far-left edge instead — fixed by removing a CSS
+     override that no longer needed to exist once there were two buttons again (falls back to the
+     header's own already-existing `space-between`)
+- One real bug caught during this session's own redundant-code pass (before commit, not live-tested):
+  an orphaned CSS comment left behind explaining a `.dest-header--sheet` override that had already
+  been deleted in the caret-repositioning fix above — comment described code that no longer existed.
+  Removed
+- `onAllAttractionsBack()` (the only one of the seven back-handlers that internally called
+  `collapse()` rather than `close()`) briefly grew a mobile-only conditional to swap that to `close()`
+  when X called it directly; reverted back to its original unconditional `collapse()` once X stopped
+  calling this method at all (per the plain-close correction above) — tablet width still uses it
+  unchanged
+- Verified via `ng build` after every round (clean throughout, several rounds); not verified live in
+  a real browser this session — user reviewed each round via their own screenshots/device instead
+- Not yet committed at time of writing this entry
+
 ### 2026-09-03 — Desktop Redesign Phase 5: Horizontal Header Nav Implemented — Status: Completed
 
 - Branch `feature/desktop-header-nav`, off the spec at

@@ -11,6 +11,8 @@
     "login": "Iniciar sesión",
     "logout": "Cerrar sesión",
     "close": "Cerrar",
+    "expand": "Expandir",
+    "collapse": "Contraer",
     "showOnMap": "Mostrar en el mapa",
     "back": "Atrás",
     "search": "Buscar",
@@ -284,6 +286,7 @@
   },
   "destinations": {
     "viewAll": "Ver todo",
+    "discover": "Descubrir",
     "allCities": {
       "subtitle": "{{count}} destinos"
     },
