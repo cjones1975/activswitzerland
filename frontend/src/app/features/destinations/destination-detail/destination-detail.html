@@ -44,11 +44,13 @@
             <span class="activity-card-label">{{ 'destinations.detail.bikeRides' | translate }}</span>
           </button>
         }
-        <button class="activity-card activity-card-hotels" type="button" (click)="openHotels()">
-          <i class="fa-solid fa-bed activity-card-icon"></i>
-          <span class="activity-card-label">{{ 'destinations.detail.hotels' | translate }}</span>
-          <span class="activity-card-subtitle">{{ 'destinations.detail.hotelsSubtitle' | translate }}</span>
-        </button>
+        @if (hasHotelMapping()) {
+          <button class="activity-card activity-card-hotels" type="button" (click)="openHotels()">
+            <i class="fa-solid fa-bed activity-card-icon"></i>
+            <span class="activity-card-label">{{ 'destinations.detail.hotels' | translate }}</span>
+            <span class="activity-card-subtitle">{{ 'destinations.detail.hotelsSubtitle' | translate }}</span>
+          </button>
+        }
       </div>
 
       @if (hasGeo()) {

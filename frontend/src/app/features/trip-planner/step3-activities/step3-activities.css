@@ -104,18 +104,9 @@
   padding: 0.05rem 0.5rem;
 }
 
-.s3-category-hint {
-  font-size: 0.68rem;
-  color: var(--gray-400);
-}
-
 .s3-category-chevron {
   color: var(--gray-400);
   font-size: 0.75rem;
-}
-
-.s3-category-row--hotels {
-  opacity: 0.75;
 }
 
 .s3-added-list {

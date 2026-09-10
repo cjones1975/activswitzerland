@@ -1,0 +1,60 @@
+@if (destination(); as dest) {
+  <div class="hs-content">
+    <div class="hs-field">
+      <label for="hs-daterange">{{ 'hotels.search.dateRangeLabel' | translate }}</label>
+      <p-datepicker
+        inputId="hs-daterange"
+        selectionMode="range"
+        [ngModel]="dateRange()"
+        (ngModelChange)="onDateRangeChange($event)"
+        [minDate]="minDate"
+        [showIcon]="true"
+        [readonlyInput]="true"
+        dateFormat="dd.mm.yy"
+        styleClass="w-full"
+      />
+      @if (showMinStayError()) {
+        <p-message severity="warn" class="w-full mt-2">
+          {{ 'hotels.search.minStayError' | translate }}
+        </p-message>
+      }
+    </div>
+
+    <div class="hs-row">
+      <div class="hs-field">
+        <label for="hs-adults">{{ 'hotels.search.adultsLabel' | translate }}</label>
+        <p-inputNumber inputId="hs-adults" [ngModel]="adults()" (ngModelChange)="onAdultsChange($event)" [min]="1" [showButtons]="true" styleClass="w-full" />
+      </div>
+      <div class="hs-field">
+        <label for="hs-children">{{ 'hotels.search.childrenLabel' | translate }}</label>
+        <p-inputNumber inputId="hs-children" [ngModel]="children()" (ngModelChange)="onChildrenChange($event)" [min]="0" [showButtons]="true" styleClass="w-full" />
+      </div>
+    </div>
+
+    <div class="hs-row">
+      <div class="hs-field">
+        <label for="hs-rooms">{{ 'hotels.search.roomsLabel' | translate }}</label>
+        <p-inputNumber inputId="hs-rooms" [ngModel]="rooms()" (ngModelChange)="onRoomsChange($event)" [min]="1" [showButtons]="true" styleClass="w-full" />
+      </div>
+      <div class="hs-field">
+        <label for="hs-currency">{{ 'hotels.search.currencyLabel' | translate }}</label>
+        <p-select inputId="hs-currency" [options]="currencies" [ngModel]="currency()" (ngModelChange)="currency.set($event)" styleClass="w-full" />
+      </div>
+    </div>
+
+    @if (loadError()) {
+      <p-message severity="warn" class="w-full mt-2">
+        {{ 'hotels.search.loadError' | translate }}
+      </p-message>
+    }
+
+    <p-button
+      [label]="'hotels.search.submit' | translate"
+      icon="fa-light fa-arrow-up-right-from-square"
+      styleClass="w-full"
+      [disabled]="!canSearch()"
+      [loading]="loading()"
+      (onClick)="search()"
+    />
+  </div>
+}

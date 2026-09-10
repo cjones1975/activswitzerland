@@ -206,8 +206,6 @@
         "bikesNearby": "Parcours vélo",
         "hikingTrails": "Sentiers de randonnée",
         "bikingTrails": "Pistes cyclables",
-        "hotelsNearby": "Hôtels",
-        "hotelsComingSoon": "Bientôt disponible",
         "addToTrip": "Ajouter au voyage",
         "added": "Ajouté",
         "removeFromTrip": "Retirer du voyage",
@@ -391,8 +389,16 @@
     "attribution": "© SuisseMobile"
   },
   "hotels": {
-    "comingSoon": "Bientôt disponible",
-    "comingSoonSubtitle": "La recherche et la réservation d'hôtels seront disponibles dans une prochaine mise à jour."
+    "search": {
+      "dateRangeLabel": "Arrivée / Départ",
+      "minStayError": "Le départ doit avoir lieu au moins 1 nuit après l'arrivée.",
+      "adultsLabel": "Adultes",
+      "childrenLabel": "Enfants",
+      "roomsLabel": "Chambres",
+      "currencyLabel": "Devise",
+      "submit": "Rechercher sur Booking.com",
+      "loadError": "Impossible de créer le lien de réservation. Veuillez réessayer."
+    }
   },
   "attractions": {
     "title": "Attractions",

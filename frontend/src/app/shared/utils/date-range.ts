@@ -67,6 +67,15 @@ export function formatDdMmYyyy(iso: string): string {
   return `${d}.${m}.${y}`;
 }
 
+/** Local-time format (not UTC) — avoids the day-shift `toISOString()` introduces for date-only values. */
+export function formatIsoDate(date: Date | null | undefined): string | null {
+  if (!date) return null;
+  const y = date.getFullYear();
+  const m = String(date.getMonth() + 1).padStart(2, '0');
+  const d = String(date.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
 /** Translation key + params for a day choice's display label — "Day N" in 'days' mode, "Day N - DD-MM-YYYY" in 'dates' mode. */
 export function dayChoiceLabelParams(trip: PlannedTrip, option: StopDayOption): { key: string; params: Record<string, unknown> } {
   if (trip.dateMode === 'dates' && typeof option.value === 'string') {

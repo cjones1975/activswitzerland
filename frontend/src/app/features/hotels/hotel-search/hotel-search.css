@@ -1,0 +1,31 @@
+.hs-content {
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+}
+
+.hs-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+}
+
+.hs-field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  margin-bottom: 0.85rem;
+}
+
+.hs-field label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--navy-700, #3a5a7a);
+}
+
+/* Narrow phones: two fields per row gets cramped once each drops below ~140px — stack instead. */
+@media (max-width: 400px) {
+  .hs-row {
+    grid-template-columns: 1fr;
+  }
+}

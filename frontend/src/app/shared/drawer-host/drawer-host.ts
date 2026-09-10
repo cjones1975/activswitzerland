@@ -22,7 +22,7 @@ import type { HikeDetailPayload } from '../../features/hikes/hike-detail/hike-de
 import { BikesList } from '../../features/bikes/bikes-list/bikes-list';
 import { BikeDetail } from '../../features/bikes/bike-detail/bike-detail';
 import type { BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
-import { HotelsStub } from '../../features/hotels/hotels-stub/hotels-stub';
+import { HotelSearch } from '../../features/hotels/hotel-search/hotel-search';
 import { ExploreTripsFilter } from '../../features/explore-trips/explore-trips-filter/explore-trips-filter';
 import { AiChatDrawer } from '../../features/ai-chat/ai-chat-drawer/ai-chat-drawer';
 import { AiChat } from '../services/ai-chat';
@@ -37,7 +37,7 @@ import { Breakpoint } from '../services/breakpoint';
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelsStub, ExploreTripsFilter, AiChatDrawer, ActivityMapMaskOverlay],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelSearch, ExploreTripsFilter, AiChatDrawer, ActivityMapMaskOverlay],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -353,11 +353,7 @@ export class DrawerHost {
   onHotelsBack() {
     const payload = this.svc.getPayload<ActivityPickerPayload>('hotels');
     this.svc.close('hotels');
-    if (payload?.mode === 'select') {
-      this.tripPlanner.showWizard();
-    } else {
-      this.svc.open('destination-detail', payload?.destination);
-    }
+    this.svc.open('destination-detail', payload?.destination);
   }
 
   hotelsDestinationName = computed(() => {
@@ -423,4 +419,8 @@ export class DrawerHost {
   bikeDetailMobileSheet = computed(() => this.breakpoint.isMobile() && !this.isBikeDetailTripPlanner());
   // destination-detail has no trip-planner-picker variant, so no gate needed beyond isMobile itself.
   destinationDetailMobileSheet = computed(() => this.breakpoint.isMobile());
+
+  // hotels has no trip-planner-picker variant either (only ever opened from destination-detail),
+  // same reasoning as destinationDetailMobileSheet above.
+  hotelsMobileSheet = computed(() => this.breakpoint.isMobile());
 }

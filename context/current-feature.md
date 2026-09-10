@@ -14,6 +14,100 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-09-10 — Booking.com Hotel Deep Link Implemented — Status: Completed
+
+- Branch `feature/hotel-booking-deeplink`, off the spec at
+  @context/features/hotel-booking-deeplink-spec.md, written and implemented in the same session.
+  Replaces the destinations drawer's long-standing "Find hotel" placeholder (`HotelsStub`, a static
+  "coming soon" card) with a real Booking.com search handoff via the site's Commission Junction (CJ)
+  affiliate link
+- **Two upfront unknowns resolved before any code, both via live API/data investigation rather than
+  assumption**:
+  1. *Which destinations should show the button* — MySwitzerland's destination objects carry no
+     category field the frontend model declared, but a live call against `MYS_ENDPOINT` showed each
+     record actually has a `classification` array with a `placetypes` entry the backend was already
+     passing through untouched. Full enum pulled from the live facet counts: only `cities` (28) and
+     `villages` (435) qualify as candidates (no separate "towns" tier exists in the data at all,
+     contrary to the original ask's wording) — `regions`/`valleys`/`islands`/`plain` etc. treated as
+     non-qualifying per an explicit scoping decision
+  2. *How to get a Booking.com `dest_id`* — no public API resolves an arbitrary place to one without a
+     separate Booking.com Demand API partnership (a different application from the existing CJ
+     affiliate account). Decided approach: a manually curated, DB-backed mapping table covering all 28
+     cities plus 20 user-named villages, with button visibility and deep-link availability tied to the
+     same table (a destination without a mapping row simply never shows the button — no path to a
+     dead link)
+- **Village/city MySwitzerland identifiers looked up live**, not guessed — free-text `query=` search
+  against the destinations endpoint turned out to be fuzzy/relevance-based (often didn't return the
+  named place at all) and initially seemed to return empty pages for several well-known villages
+  (Mürren, Pontresina, Klosters, Stein am Rhein); root-caused to the API's `page` param being
+  **0-indexed**, not 1 — every earlier call had been requesting page 2. Fixed and re-run with `page=0`,
+  resolved all 20 villages plus all 28 cities from a single `facet.filter=placetypes:cities` call
+  (two, Gruyères and Murten, only matched under their bilingual dataset names "Gruyères / Greyerz" /
+  "Murten/Morat")
+- **CJ link mechanics corrected mid-session after the user's own first example turned out wrong**: the
+  real mechanism (confirmed against a working example the user re-tested) is that our own generated
+  link only needs the plain Booking.com URL with a literal, unsubstituted `CJEVENT={eventId}` macro as
+  its first param, wrapped through `https://www.anrdoezrs.net/click-<siteId>-<pid>?url=...` — CJ's own
+  redirect server substitutes the real event id and appends `aid`/`label`/`utm_*` itself from
+  site/pid-level config. This dropped what would have been five unnecessary env vars
+  (`BOOKING_AID`/`BOOKING_LABEL`/`BOOKING_UTM_*`) down to three (`CJ_REDIRECT_HOST`/`CJ_SITE_ID`/`CJ_PID`)
+- **Backend**: new `HotelDestination` Mongo model + `hotelDestinations.json` seed (48 rows, following
+  the existing `Country`/`countries.json` reference-collection precedent — manually imported, no
+  seeder script), `GET /api/v1/hotels/destinations` and `GET /api/v1/hotels/deeplink` (full server-side
+  validation as a backstop even though the frontend button is already gated on the same table)
+- **Frontend**: new `HotelsService` (loads the small mapping table once, cached signal, synchronous
+  `mappingFor()` lookup); `destination-detail`'s "Find hotel" card now gated on `hasHotelMapping()`
+  (mirroring the existing `hasGeo()` pattern); new `HotelSearch` component replacing `HotelsStub`,
+  built with PrimeNG components matching `step1-my-trip`'s existing date-range/guest-count conventions
+  exactly (`p-datepicker` range mode, `p-inputNumber` ×3, `p-select`, `p-button`) rather than
+  introducing new UI patterns, per an explicit request to keep it consistent with the rest of the app
+- **Removed the trip planner's separate "Hotels" activity-picker entry** (`step3-activities.ts`/
+  `.html`/`.css`) — it only ever passed a bare `GeoPoint` (a free-text trip stop, never a real
+  MySwitzerland destination), which can never have a mapping row, and a mid-trip hotel search can't
+  write anything back into the trip anyway. Decided to delete rather than adapt, with a possible
+  future "search hotels" entry against a *saved* trip flagged as out of scope for now.
+  `onHotelsBack()` in `drawer-host.ts` simplified to drop the now-unreachable `mode: 'select'` branch
+- **Mobile bottom-sheet parity added for the hotels drawer**, joining `destination-detail`/
+  `all-attractions`/`attraction-detail`/`hikes`/`hike-detail`/`bikes`/`bike-detail` on the existing
+  pattern from @context/features/mobile-drawer-bottom-sheet-spec.md — that spec had explicitly
+  deferred `hotels` as "worth deciding separately" since it didn't exist yet at the time. User asked
+  for full parity rather than just a narrower width fix; found the literal root cause of the reported
+  mobile-width bug along the way (`.hotels-drawer` was simply missing from `drawer-host.css`'s
+  `max-width: 767px { width: 100vw }` list)
+- **Code-review pass (user-requested) found and fixed six real issues**, three genuinely subtle: (1) a
+  double-encoding bug in the deep-link builder — `URLSearchParams.toString()` followed by a second
+  `encodeURIComponent()` turned the required literal `{eventId}` macro into a broken `%257BeventId%257D`,
+  fixed by building the inner URL as one plain string encoded exactly once; (2) `destination.name`/`lang`
+  then needed their *own* individual `encodeURIComponent()` at the point of insertion (a destination
+  like "Sion / Sitten" would otherwise corrupt the query string) — verified correct by simulating both
+  decode hops (CJ's, then Booking.com's) rather than trusting it by eye, since the raw encoded output
+  looks alarming (`%2520%252F%2520`) despite being right; (3) `checkin`/`checkout` were only
+  regex-shape-validated (`2026-02-30` passed), fixed with a real calendar round-trip check; plus a
+  window.open()-from-async-callback popup-blocker risk, a duplicated `formatIsoDate` (extracted to
+  `shared/utils/date-range.ts`, also un-duplicating `step1-my-trip.ts`'s own copy), and an unused
+  `CommonModule` import
+- **The popup-blocker fix from the code-review pass didn't survive live testing and was reverted**:
+  pre-opening a blank tab synchronously in the click handler and later navigating it via
+  `popup.location.href` was reported by the user to still land on `about:blank` — reverted back to a
+  plain `window.open(url, '_blank', 'noopener')` in the success callback per their direct instruction,
+  rather than continuing to guess at browser-specific popup mechanics blind. The real, separate bug
+  behind at least one `about:blank` report was found and kept fixed: the Search button only checked
+  that check-in/check-out were both non-null, not that checkout was actually after checkin — a range
+  picker allows picking the same day twice (0 nights), which the backend correctly rejected, but the
+  already-open tab had nothing to navigate to. New `hasMinStay`/`showMinStayError` computeds now block
+  submission and show an inline message until a real ≥1-night range is picked
+- Two items flagged and deliberately left as-is per the user's explicit call: `Klosters` (`4087`) and
+  `Rapperswil-Jona` (`900040764`) don't fit the ~7-digit-negative `dest_id` pattern every other row
+  follows (likely a different Booking.com `dest_type`) — schema stores `destType` per row specifically
+  so correcting either later is a one-row data edit, not a migration
+- Verified via `ng build` (clean) after every round and direct `curl` testing against the local Docker
+  backend (rebuilt from source each time, since it has no dev volume mount) for every validation edge
+  case and both encoding-correctness scenarios above; local dev Mongo seeded with all 48 mapping rows
+  directly. No live browser testing from this agent's side, per the user's standing preference
+  ([[feedback_no_self_browser_verification]]) — both real regressions this session (the mobile-width
+  gap and the popup-blocker revert) were found and reported by the user's own testing, not self-caught
+- Committed on `feature/hotel-booking-deeplink`, not yet merged to `main`
+
 ### 2026-09-10 — Desktop Redesign: Destination Cards, Attraction Direct-Open, Header/Drawer Flush Fix — Status: Completed
 
 - Continuation of the desktop responsive redesign on `desktop-redesign` itself (component-by-component,

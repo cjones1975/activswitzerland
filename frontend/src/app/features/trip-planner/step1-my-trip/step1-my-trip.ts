@@ -8,7 +8,7 @@ import { InputNumber } from 'primeng/inputnumber';
 import { DatePicker } from 'primeng/datepicker';
 import { TripPlannerService } from '../../../shared/services/trip-planner';
 import { TripDateMode } from '../../../models/trip';
-import { tripDayCount } from '../../../shared/utils/date-range';
+import { formatIsoDate, tripDayCount } from '../../../shared/utils/date-range';
 import { StartOverLink } from '../start-over-link/start-over-link';
 
 interface SelectCardOption<T> {
@@ -78,7 +78,7 @@ export class Step1MyTrip {
       const startIso = this.startDate();
       const endIso = this.endDate();
       const [curStart, curEnd] = this.dateRangeValue() ?? [null, null];
-      if (startIso !== (this.formatIsoDate(curStart) ?? '') || endIso !== (this.formatIsoDate(curEnd) ?? '')) {
+      if (startIso !== (formatIsoDate(curStart) ?? '') || endIso !== (formatIsoDate(curEnd) ?? '')) {
         this.dateRangeValue.set(this.computeRangeValue(startIso, endIso));
       }
     });
@@ -102,8 +102,8 @@ export class Step1MyTrip {
     this.plannerSvc.setOverallRange({
       ...this.range(),
       mode: 'dates',
-      startDate: this.formatIsoDate(start) ?? undefined,
-      endDate: this.formatIsoDate(end) ?? undefined,
+      startDate: formatIsoDate(start) ?? undefined,
+      endDate: formatIsoDate(end) ?? undefined,
     });
   }
 
@@ -119,14 +119,6 @@ export class Step1MyTrip {
     if (!iso) return null;
     const [y, m, d] = iso.split('-').map(Number);
     return new Date(y, m - 1, d);
-  }
-
-  private formatIsoDate(date: Date | null | undefined): string | null {
-    if (!date) return null;
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, '0');
-    const d = String(date.getDate()).padStart(2, '0');
-    return `${y}-${m}-${d}`;
   }
 
   onNumDaysChange(value: number | null): void {

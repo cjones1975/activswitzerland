@@ -206,8 +206,6 @@
         "bikesNearby": "Bike Rides",
         "hikingTrails": "Hiking Trails",
         "bikingTrails": "Biking Trails",
-        "hotelsNearby": "Hotels",
-        "hotelsComingSoon": "Coming soon",
         "addToTrip": "Add to Trip",
         "added": "Added",
         "removeFromTrip": "Remove from trip",
@@ -391,8 +389,16 @@
     "attribution": "© SwitzerlandMobility"
   },
   "hotels": {
-    "comingSoon": "Coming soon",
-    "comingSoonSubtitle": "Hotel browsing and booking will be available in a future update."
+    "search": {
+      "dateRangeLabel": "Check-in / Check-out",
+      "minStayError": "Check-out must be at least 1 night after check-in.",
+      "adultsLabel": "Adults",
+      "childrenLabel": "Children",
+      "roomsLabel": "Rooms",
+      "currencyLabel": "Currency",
+      "submit": "Search on Booking.com",
+      "loadError": "Could not create the booking link. Please try again."
+    }
   },
   "attractions": {
     "title": "Attractions",

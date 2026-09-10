@@ -316,6 +316,7 @@
     ::ng-deep .hike-detail-drawer,
     ::ng-deep .bikes-drawer,
     ::ng-deep .bike-detail-drawer,
+    ::ng-deep .hotels-drawer,
     ::ng-deep .auth-drawer,
     ::ng-deep .ai-chat-drawer {
         width: 100vw !important;

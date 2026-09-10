@@ -63,11 +63,6 @@ export class Step3Activities {
     this.drawerSvc.open(category.drawerKey, { destination: point, mode: 'select', stopId: stop.id });
   }
 
-  openHotels(stop: TripStop): void {
-    const point: GeoPoint = { id: stop.id, name: stop.name, lat: stop.lat, lon: stop.lon };
-    this.drawerSvc.open('hotels', { destination: point, mode: 'select', stopId: stop.id });
-  }
-
   removeActivity(activity: TripActivitySelection): void {
     this.plannerSvc.removeActivity(activity.id);
   }

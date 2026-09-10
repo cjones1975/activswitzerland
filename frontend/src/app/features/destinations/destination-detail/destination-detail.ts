@@ -6,6 +6,7 @@ import { Subject, switchMap } from 'rxjs';
 import { Drawer } from '../../../shared/services/drawer';
 import { WeatherService } from '../../../shared/services/weather';
 import { ActivityMapService } from '../../../shared/services/activity-map';
+import { HotelsService } from '../../../shared/services/hotels';
 import { Destination } from '../../../models/destination';
 import { DailyForecast, WeatherPayload } from '../../../models/weather';
 import { AttractionVerticalList } from '../../attractions/attraction-vertical-list/attraction-vertical-list';
@@ -21,6 +22,7 @@ export class DestinationDetail {
   private drawerSvc = inject(Drawer);
   private weatherService = inject(WeatherService);
   private activityMap = inject(ActivityMapService);
+  private hotelsSvc = inject(HotelsService);
   private destroyRef = inject(DestroyRef);
 
   destination = computed(() => {
@@ -37,6 +39,8 @@ export class DestinationDetail {
     const dest = this.destination();
     return !!(dest?.geo?.latitude && dest?.geo?.longitude);
   });
+
+  hasHotelMapping = computed(() => !!this.hotelsSvc.mappingFor(this.destination()?.identifier ?? ''));
 
   todayWeather = signal<DailyForecast | null>(null);
   weatherLoading = signal(false);
