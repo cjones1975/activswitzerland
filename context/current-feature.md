@@ -14,6 +14,31 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-09-10 — Desktop/Mobile Polish Batch: Hike/Bike Direct-Open, Hero CTA Row, Connections Drawer Padding — Status: Completed
+
+- Continued on `feature/mobile-drawer-bottom-sheet` (per the user — a handful of unrelated small
+  fixes, not part of that spec, landed here rather than switching branches each time)
+- **Desktop: hikes/bikes list click opens the detail drawer directly.** Same fix as the
+  attraction-list one from 2026-09-09's session (`all-attractions.ts`/`attraction-vertical-list.ts`,
+  committed on `desktop-redesign`, not this entry) applied to `hikes-list.ts`/`bikes-list.ts`'s
+  `onRouteClick()` — at `breakpoint.isDesktopSplitView()`, closes the list and opens
+  `hike-detail`/`bike-detail` directly instead of collapsing to reveal a map tooltip to click.
+  Mobile/tablet unchanged. This exact change was built once already earlier in the session as part of
+  the marker-visibility confusion, then reverted during that reset — re-added now as a deliberate,
+  clearly-scoped desktop-only request
+- **Homepage hero CTA buttons back to side-by-side on desktop.** `.hero-cta-row` was deliberately
+  stacked (column) earlier this session at the user's own explicit request; changed back to
+  `flex-direction: row` with a `20px` gap per a later request in the same session. Buttons stay fixed
+  at 300px each
+- **Connections drawer content padding, mobile only** — two rounds, opposite directions, from a
+  genuine miscommunication: first request read as "more room around the content" (`.cd-content`
+  padding-left/right `1rem` → `1.5rem`); a screenshot showed the user actually meant the *connection
+  card itself* should be wider, i.e. less padding *around* it, not more. Corrected to `0.25rem`
+  (down from the original `1rem`) after two further reduction rounds. Tablet/desktop unchanged
+- Verified via `ng build` after every round (clean throughout); not verified live in a real browser —
+  the connections-drawer padding correction was driven by a user-provided screenshot mid-session
+- Not yet committed at time of writing this entry
+
 ### 2026-09-09 — Mobile Drawers: Bottom Sheet Instead of Full-Screen Slide Implemented — Status: Completed
 
 - Branch `feature/mobile-drawer-bottom-sheet`, off the spec at
