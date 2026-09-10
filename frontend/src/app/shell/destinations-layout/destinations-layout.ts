@@ -16,6 +16,7 @@ import { HikeMarkersService } from '../../shared/services/hike-markers';
 import { BikeMarkersService } from '../../shared/services/bike-markers';
 import { TrailRoute, trailCategoryColor } from '../../models/trail-route';
 import { ActivityPickerPayload } from '../../models/geo-point';
+import { AttractionDetailPayload } from '../../features/attractions/attraction-detail/attraction-detail';
 import { formatDistanceKmMi } from '../../shared/utils/distance';
 import { SeoService } from '../../shared/services/seo';
 import { Toast } from '../../core/services/toast';
@@ -332,6 +333,24 @@ export class DestinationsLayout implements OnInit, OnDestroy {
 
     const attraction = this.attractionMarkers.attractionMap().get(marker.id);
     if (!attraction) return;
+
+    // Jumping from one attraction's detail to another via a map tooltip (attraction-detail already
+    // open) should keep the ORIGINAL entry point's back-nav target, not reset it to 'map' — otherwise
+    // the back button on the new attraction would just close the drawer instead of returning to
+    // wherever the user actually came from (destination-detail's embedded list or all-attractions).
+    const currentAttractionDetail = this.drawer.isOpen('attraction-detail')
+      ? this.drawer.getPayload<AttractionDetailPayload>('attraction-detail')
+      : undefined;
+    if (currentAttractionDetail?.source === 'destination-detail' || currentAttractionDetail?.source === 'all-attractions') {
+      this.drawer.open('attraction-detail', {
+        attraction,
+        destination: dest,
+        source: currentAttractionDetail.source,
+        listOrigin: currentAttractionDetail.listOrigin,
+      });
+      return;
+    }
+
     const listOrigin = this.drawer.getPayload<ActivityPickerPayload>('all-attractions')?.origin;
     // Only treat this as "opened from the list" when the list drawer is actually
     // open (visible alongside the map on wide screens). A merely-collapsed or

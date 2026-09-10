@@ -229,11 +229,9 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       });
       return;
     }
-    // The normal view-mode tap just collapses this list to reveal the real map behind it
-    // (destination-detail's), where the marker click opens attraction-detail. Opened from the AI
-    // chat drawer there's no map behind it to reveal — collapsing just surfaced the chat drawer
-    // underneath, which read as the tap silently doing nothing useful. Open attraction-detail
-    // directly instead, same as select mode.
+    // Opened from the AI chat drawer there's no map behind this list to reveal — collapsing just
+    // surfaced the chat drawer underneath, which read as the tap silently doing nothing useful.
+    // Open attraction-detail directly instead, same as select mode.
     if (this.payload()?.origin === 'ai-chat') {
       const dest = this.destination();
       if (!dest) return;
@@ -242,8 +240,19 @@ export class AllAttractions implements AfterViewInit, OnDestroy {
       });
       return;
     }
+    // Normal view-mode tap: open attraction-detail directly instead of collapsing to the map and
+    // waiting for a second click on the marker — same change as attraction-vertical-list.ts's own
+    // onAttractionClick (destination-detail's embedded list). source: 'all-attractions' is what
+    // tells attraction-detail's back button (drawer-host.ts's onAttractionDetailBack()) to reopen
+    // this list on the way back. Read destination/origin before close() deletes the payload.
     this.attractionMarkers.setSelected(attraction.identifier);
-    this.drawerSvc.collapse('all-attractions');
+    const dest = this.destination();
+    if (!dest) return;
+    const listOrigin = this.payload()?.origin;
+    this.drawerSvc.close('all-attractions');
+    this.drawerSvc.open('attraction-detail', {
+      attraction, destination: dest, source: 'all-attractions', listOrigin,
+    });
   }
 
   isAdded(attraction: Attraction): boolean {

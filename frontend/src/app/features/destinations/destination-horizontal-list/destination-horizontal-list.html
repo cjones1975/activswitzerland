@@ -16,11 +16,33 @@
     }
   } @else {
     @for (dest of destinations; track dest.identifier) {
-      <a class="destination-card" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="categoryKey ? { category: categoryKey } : {}">
-        <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
-        <span class="card-type">{{ cardTitle }}</span>
-        <span class="card-name">{{ dest.name }}</span>
-      </a>
+      @if (breakpoint.isDesktopSplitView()) {
+        <!-- Desktop: same card design/size as destination-vertical-list's own desktop card — plain
+             div, not a routerLink, since only the footer's "Discover" button navigates here (mobile
+             below keeps the whole card as the link, unchanged). -->
+        <div class="destination-card destination-card--desktop">
+          <div class="card-photo">
+            <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
+            <span class="card-type">{{ cardTitle }}</span>
+          </div>
+          <div class="card-text">
+            <h3 class="card-title">{{ dest.name }}</h3>
+            <p class="card-abstract">{{ dest.abstract }}</p>
+          </div>
+          <div class="card-footer">
+            <a class="card-discover-btn" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="categoryKey ? { category: categoryKey } : {}">
+              {{ 'destinations.discover' | translate }}
+              <i class="fa-solid fa-angle-right"></i>
+            </a>
+          </div>
+        </div>
+      } @else {
+        <a class="destination-card" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="categoryKey ? { category: categoryKey } : {}">
+          <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
+          <span class="card-type">{{ cardTitle }}</span>
+          <span class="card-name">{{ dest.name }}</span>
+        </a>
+      }
     }
   }
 </div>

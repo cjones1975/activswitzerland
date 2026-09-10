@@ -82,8 +82,16 @@ export class AttractionVerticalList implements OnInit {
   }
 
   onAttractionClick(attraction: Attraction): void {
+    // Read before close() — Drawer.close() deletes the drawer's payload synchronously, same
+    // ordering onSeeAll() above already relies on.
+    const destination = this.drawerSvc.getPayload<Destination>('destination-detail');
     this.drawerSvc.close('destination-detail');
     this.activityMap.showOnly('attractions');
     this.attractionMarkers.setSelected(attraction.identifier);
+    // source: 'destination-detail' is what tells attraction-detail's back button to reopen
+    // destination-detail (drawer-host.ts's onAttractionDetailBack()) instead of all-attractions —
+    // that branch, and attraction-detail's modal/docked desktop split-view behavior, already existed
+    // unused before this change.
+    this.drawerSvc.open('attraction-detail', { attraction, destination, source: 'destination-detail' });
   }
 }

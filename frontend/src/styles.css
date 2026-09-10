@@ -61,6 +61,14 @@
   --color-text-dark: #1a1a1a;
   --color-green:     #1b8c5b;
   --color-error:     #dc2626;
+
+  /* header-nav's fixed bar height — shared so every below-the-header clearance value (map shells,
+     docked panels, reopen buttons) stays exactly in sync with the real header instead of each
+     independently guessing a "safe" rem value, which is what caused header-nav to visually read as
+     taller than it is on the destinations-detail page (destinations-layout's own top clearance was
+     4.5rem, header-nav's real height was less, and a matching navy-800 fill papered over the gap —
+     removing that fill exposed the mismatch as a stray white gap instead). */
+  --header-h: 3.5rem;
 }
 
 body {

@@ -10,6 +10,7 @@ import { Destination } from '../../../models/destination';
 import { MapComponent, MapMarker } from '../../../shared/map/map';
 import { CategoryConfig, CategoryKey, DESTINATION_CATEGORIES } from '../../../models/destination-category';
 import { SeoService } from '../../../shared/services/seo';
+import { Breakpoint } from '../../../shared/services/breakpoint';
 
 @Component({
   selector: 'app-destination-vertical-list',
@@ -27,6 +28,7 @@ export class DestinationVerticalList implements OnInit {
   private translate = inject(TranslateService);
   private destroyRef = inject(DestroyRef);
   private seo = inject(SeoService);
+  protected breakpoint = inject(Breakpoint);
 
   destinations: Destination[] = [];
   loading = signal(true);

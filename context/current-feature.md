@@ -14,6 +14,46 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-09-10 — Desktop Redesign: Destination Cards, Attraction Direct-Open, Header/Drawer Flush Fix — Status: Completed
+
+- Continuation of the desktop responsive redesign on `desktop-redesign` itself (component-by-component,
+  per the user's own stated approach this session — no single umbrella spec, each piece driven by live
+  review and corrected in place rather than planned upfront)
+- **`destination-horizontal-list`/`destination-vertical-list` desktop card redesign**: image on top,
+  heading + 3-line-clamped abstract below, a footer "Discover" button (icon-then-label, white
+  background with a `1px solid #e08700` border, filling solid on hover) as the only clickable element
+  at desktop — mobile keeps the original whole-card-is-the-link overlay design, untouched. Horizontal
+  rails stayed a scroll strip (not a grid) at the user's explicit call, sized to match the vertical
+  list's actual 3-column grid width (~368px) so the two read the same at a glance. Caught and fixed a
+  real specificity bug along the way: a desktop-only height override lost a cascade tie against an
+  older same-specificity rule from this file's own history (`.destination-card { height: 360px }`
+  from an earlier phase), silently clipping the new footer button — fixed with a compound selector
+  rather than reordering, so it can't regress the same way again
+- **Attraction/hike/bike list clicks open the detail drawer directly, desktop only.** Previously
+  clicking an item in `all-attractions`/`attraction-vertical-list` (destination-detail's embedded
+  list) collapsed the list to reveal a map marker/tooltip that had to be clicked again to actually see
+  the detail. Now opens `attraction-detail` directly at `breakpoint.isDesktopSplitView()`, reusing
+  `attraction-detail`'s existing `source`-based back-navigation (already correctly wired to reopen
+  whichever list it came from, including staying correct when hopping between attractions via a map
+  tooltip — a related bug fixed the same session). Mobile/tablet keep the original
+  collapse-and-tap-tooltip flow unchanged
+- **`destinations-layout`**: the "reopen" pill buttons (destination/attraction/hike/bike, top-left)
+  are hidden entirely at desktop (`display: none` at `≥1280px`) — with the drawer clicks above now
+  opening detail directly, there's rarely a "collapsed" state left for them to recover from. Marker
+  icon visibility itself (`displayMarkers`) was touched and then explicitly reverted back to unchanged
+  behavior mid-session, after a real misunderstanding about which icons ("small map pins" vs "large
+  reopen buttons") the user actually meant — see the session's own back-and-forth, not repeated here
+- **Shared `--header-h` CSS custom property** (`styles.css`), consumed by `header-nav.css` (pins the
+  bar to an explicit height instead of an organic/content-driven one) and every below-the-header
+  clearance value that used to be an independently hand-picked rem number (`drawer-host.css`'s docked
+  drawers, `trip-planner-layout.css`'s wizard host, `destinations-layout.css`'s map/reopen-btns) —
+  fixes a real ~15px drift between the header's actual height and what those clearances assumed,
+  which used to leave drawers and the docked map sidebar visibly short of flush with the header
+- Verified via `ng build` after every round; live review was screenshot/device-driven by the user
+  throughout rather than this agent launching a browser (per the user's own stated preference)
+- Committed as a single commit on `desktop-redesign` directly (not a new branch) — continuation of
+  already-in-progress work on that branch, not a new feature
+
 ### 2026-09-03 — Desktop Redesign Phase 5: Horizontal Header Nav Implemented — Status: Completed
 
 - Branch `feature/desktop-header-nav`, off the spec at

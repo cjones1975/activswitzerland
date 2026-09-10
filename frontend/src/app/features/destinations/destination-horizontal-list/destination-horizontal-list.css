@@ -128,6 +128,37 @@
   line-height: 1.2;
 }
 
+/* Desktop card only (>=1280px template branch, destination-horizontal-list.html) — resets the base
+   `.destination-card` rule's fixed 200px height/bottom-justified content, which suits the mobile
+   overlay card but not this one's own natural (photo + text + footer) stacked height. `.card-photo`/
+   `.card-text` have no equivalent in the mobile overlay card, so these are new, unconditional (safe
+   since mobile never renders them) — mirrors destination-vertical-list.css's own base rules for the
+   same two classes.
+   `.destination-card.destination-card--desktop` (compound, not just `.destination-card--desktop`)
+   so this reliably out-specificities `.destination-card`'s own `height: 360px` from the 1024px tier
+   below regardless of source order — this element carries both classes, and a single-class override
+   placed earlier in the file lost that tie to the later 1024px rule the first time this shipped,
+   silently clipping the footer button against `.destination-card`'s `overflow: hidden`. */
+.destination-card.destination-card--desktop {
+  height: auto;
+  justify-content: flex-start;
+}
+
+.card-photo {
+  position: relative;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.card-text {
+  padding: 0.875rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
 @media (min-width: 768px) {
   .skeleton-card,
   .destination-card {
@@ -136,32 +167,19 @@
   }
 }
 
-/* Desktop (Phase 3 of the desktop responsive redesign, see
-   context/features/desktop-responsive-redesign-spec.md): below this, unchanged horizontal-scroll
-   strip of fixed 200px cards forever, even at 1920px+. Switches to a grid in a max-width container
-   instead, with cards growing to ~4x the 160px mobile card width at the top tier (both tiers use
-   `auto-fit`/`minmax` so the column count adapts on its own rather than being hand-picked per
-   breakpoint — the max-width cap is what actually controls how big/how many columns settle out). */
+/* Phase 3 of the desktop responsive redesign (context/features/desktop-responsive-redesign-spec.md):
+   bigger overlay-style cards in the same horizontal-scroll strip mobile uses. Only governs the
+   768-1279px range now — the true desktop tier below replaces this card design outright, rendering
+   a different template branch (destination-horizontal-list.html), so these rules never apply once
+   that kicks in at 1280px. */
 @media (min-width: 1024px) {
-  .list-header {
-    max-width: 900px;
-    margin-left: auto;
-    margin-right: auto;
-  }
-
   .scroll-strip {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 1.5rem;
-    overflow: visible;
-    padding-bottom: 0;
-    max-width: 900px;
-    margin: 0 auto;
   }
 
   .skeleton-card,
   .destination-card {
-    width: 100%;
+    flex: 0 0 320px;
     height: 360px;
   }
 
@@ -170,29 +188,79 @@
   }
 }
 
-@media (min-width: 1536px) {
-  .list-header {
-    max-width: 1300px;
-  }
-
+/* Desktop (>=1280px, matching the split-view breakpoint used app-wide): same card design/size as
+   destination-vertical-list's own desktop card (image top, heading + abstract below, a footer
+   "Discover" button) — width picked to match that component's actual rendered card width (its
+   1200px-capped 3-column grid: (1200 - 2*24px padding - 2*24px gaps) / 3 ≈ 368px), even though this
+   component stays a horizontal-scroll strip rather than becoming a grid itself (kept that way at the
+   user's own explicit prior request). Still only 3 cards fit before scrolling kicks in, so it reads
+   the same as the vertical list's 3-per-row at a glance. */
+@media (min-width: 1280px) {
   .scroll-strip {
-    grid-template-columns: repeat(auto-fit, minmax(560px, 1fr));
-    gap: 2rem;
-    max-width: 1300px;
+    gap: 1.5rem;
+    /* Extra room below the taller desktop cards, before the scrollbar track — was 0.75rem
+       (from the @media (hover:hover) rule above); first bumped to 3.875rem, then halved back
+       down per feedback that it was too much. */
+    padding-bottom: 2rem;
   }
 
   .skeleton-card,
-  .destination-card {
-    height: 480px;
+  .destination-card--desktop {
+    flex: 0 0 368px;
   }
 
-  .card-type {
-    font-size: 0.7rem;
-    padding: 4px 10px;
+  .destination-card--desktop .card-photo {
+    width: 100%;
+    height: 200px;
   }
 
-  .card-name {
-    font-size: 1.4rem;
-    padding: 2.5rem 1rem 1rem;
+  .destination-card--desktop .card-text {
+    flex: 1;
+    padding: 1rem 1.25rem;
+  }
+
+  .card-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--navy-900);
+  }
+
+  .destination-card--desktop .card-abstract {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .card-footer {
+    padding: 0 1.25rem 1.25rem;
+  }
+
+  .card-discover-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: var(--color-white);
+    color: #e08700;
+    border: 1px solid #e08700;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .card-discover-btn:hover {
+    background: #e08700;
+    color: var(--color-white);
   }
 }

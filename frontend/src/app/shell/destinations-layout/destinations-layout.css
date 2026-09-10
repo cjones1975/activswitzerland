@@ -14,16 +14,22 @@
 }
 
 /* Desktop split-view (Phase 0, see context/features/desktop-redesign-phase0-foundations-spec.md):
-   top: 4.5rem (not inset: 0's top: 0) so the map's own box starts below the fixed header instead of
-   merely being painted-over by it — z-index alone (header is 200 vs this host's 101) already
-   prevented any visible bleed-through, but this removes the reliance on that and matches
-   .reopen-btns' existing below-the-header clearance below. Scoped to desktop only — applying this
-   unconditionally regressed mobile (reported via live testing): the map's box started 72px down at
-   every width, leaving an empty gap between the header and the map with the reopen-button/markers
-   stranded in it, something mobile never had a problem with before this change. */
+   :host itself (not just .map-wrapper) starts below the fixed header at this breakpoint, using the
+   same `--header-h` custom property (styles.css) header-nav.css now uses as its own explicit height
+   — instead of each independently guessing a "safe" rem value, which is what caused this gap in the
+   first place: destinations-layout's own clearance was a hand-picked 4.5rem, header-nav's real
+   (organic, un-pinned) height was less, and a matching navy-800 fill used to paper over the gap
+   between them (that's the mechanism behind header-nav visually reading as taller than it is — see
+   the earlier fix in this file's history). Moving :host itself removes that stray navy strip;
+   .map-wrapper's own `inset: 0` now already lines up with the repositioned host, so its former
+   `top: 4.5rem` override is gone, and .reopen-btns (also host-relative) gets `top: 0` here so it
+   doesn't get double-offset. Scoped to desktop only — applying this unconditionally regressed mobile
+   (reported via live testing): the map's box started 72px down at every width, leaving an empty gap
+   between the header and the map with the reopen-button/markers stranded in it, something mobile
+   never had a problem with before this change. */
 @media (min-width: 1280px) {
-  .map-wrapper {
-    top: 4.5rem;
+  :host {
+    top: var(--header-h);
   }
 }
 
@@ -45,6 +51,19 @@
   align-items: flex-start;
   gap: 4px;
   transition: left 0.2s ease;
+}
+
+/* These "reopen a drawer" pill buttons (destination/attractions/hikes/bikes) are a mobile-only
+   affordance — at desktop the docked sidebar is always reachable directly (no collapse-to-map step
+   to recover from), so there's nothing for them to do. Hidden outright rather than repositioned.
+   Deliberately placed after the base .reopen-btns rule above, not inside the earlier media block
+   next to the :host rule: same specificity, and putting an override before its base rule in source
+   order lets the later (base) rule silently win even at desktop, cancelling the override (hit this
+   exact mistake once already fixing this same file's header-clearance rule — see git history). */
+@media (min-width: 1280px) {
+  .reopen-btns {
+    display: none;
+  }
 }
 
 .reopen-btns--docked {

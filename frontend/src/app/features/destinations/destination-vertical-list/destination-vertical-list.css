@@ -140,32 +140,72 @@
   text-overflow: ellipsis;
 }
 
-/* Desktop: photo left, text right */
-@media (min-width: 1024px) {
+/* Desktop (>=1280px, matching the split-view breakpoint used app-wide): image top / text below
+   (like mobile's own layout, not the old photo-left/text-right row), 3 cards per row, a footer
+   "Discover" button. Rendered as a separate template branch (destination-vertical-list.html),
+   not a CSS-only reskin of the mobile `.destination-card` — the whole card is a plain `<div>` here,
+   not a routerLink `<a>`, since only the footer button should navigate at this width (mobile keeps
+   the whole card as the link). `.card-title` is a new class rather than reusing `.card-name` (the
+   mobile card's absolute-positioned gradient-overlay heading) — the desktop heading sits in normal
+   flow inside `.card-text`, not overlaid on the photo, so reusing that class would need resetting
+   most of its properties anyway. */
+@media (min-width: 1280px) {
+  .card-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+  }
+
   .skeleton-card {
-    height: 180px;
+    height: 380px;
   }
 
-  .destination-card {
-    flex-direction: row;
-    height: 180px;
+  .destination-card--desktop .card-photo {
+    width: 100%;
+    height: 200px;
   }
 
-  .card-photo {
-    width: 45%;
-    height: 100%;
-  }
-
-  .card-text {
+  .destination-card--desktop .card-text {
     flex: 1;
-    display: flex;
-    align-items: center;
-    padding: 1.25rem;
+    padding: 1rem 1.25rem;
   }
 
-  .card-abstract {
+  .card-title {
+    margin: 0;
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--navy-900);
+  }
+
+  .destination-card--desktop .card-abstract {
     font-size: 0.9rem;
-    -webkit-line-clamp: 5;
-    line-clamp: 5;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+  }
+
+  .card-footer {
+    padding: 0 1.25rem 1.25rem;
+  }
+
+  .card-discover-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.6rem 1rem;
+    background: var(--color-white);
+    color: #e08700;
+    border: 1px solid #e08700;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 0.9rem;
+    text-decoration: none;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .card-discover-btn:hover {
+    background: #e08700;
+    color: var(--color-white);
   }
 }

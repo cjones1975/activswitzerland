@@ -8,6 +8,7 @@ import { DestinationsService } from '../../../shared/services/destinations';
 import { LangService } from '../../../shared/services/lang';
 import { Destination } from '../../../models/destination';
 import { CategoryKey } from '../../../models/destination-category';
+import { Breakpoint } from '../../../shared/services/breakpoint';
 
 @Component({
   selector: 'app-destination-horizontal-list',
@@ -29,6 +30,7 @@ export class DestinationHorizontalList implements OnInit {
   private translate = inject(TranslateService);
   protected langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
+  protected breakpoint = inject(Breakpoint);
 
   destinations: Destination[] = [];
   loading = signal(true);

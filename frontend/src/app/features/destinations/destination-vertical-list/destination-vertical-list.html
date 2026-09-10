@@ -21,16 +21,39 @@
       }
     } @else {
       @for (dest of destinations; track dest.identifier) {
-        <a class="destination-card" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="{ category: categoryKey() }">
-          <div class="card-photo">
-            <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
-            <span class="card-type">{{ config().cardTitle }}</span>
-            <span class="card-name">{{ dest.name }}</span>
+        @if (breakpoint.isDesktopSplitView()) {
+          <!-- Desktop: plain div, not a routerLink — only the footer's "Discover" button navigates,
+               per the user's explicit split between mobile (whole card is the route) and desktop
+               (button is the route). Avoids nesting an <a> inside an <a>, which the mobile branch
+               below would require if this were done via CSS instead of a separate template. -->
+          <div class="destination-card destination-card--desktop">
+            <div class="card-photo">
+              <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
+              <span class="card-type">{{ config().cardTitle }}</span>
+            </div>
+            <div class="card-text">
+              <h3 class="card-title">{{ dest.name }}</h3>
+              <p class="card-abstract">{{ dest.abstract }}</p>
+            </div>
+            <div class="card-footer">
+              <a class="card-discover-btn" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="{ category: categoryKey() }">
+                <i class="fa-solid fa-angle-right"></i>
+                {{ 'destinations.discover' | translate }}
+              </a>
+            </div>
           </div>
-          <div class="card-text">
-            <p class="card-abstract">{{ dest.abstract }}</p>
-          </div>
-        </a>
+        } @else {
+          <a class="destination-card" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="{ category: categoryKey() }">
+            <div class="card-photo">
+              <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
+              <span class="card-type">{{ config().cardTitle }}</span>
+              <span class="card-name">{{ dest.name }}</span>
+            </div>
+            <div class="card-text">
+              <p class="card-abstract">{{ dest.abstract }}</p>
+            </div>
+          </a>
+        }
       }
     }
   </div>
