@@ -38,7 +38,7 @@
     { "identifier": "067c43a1-12ec-4908-8cca-941961010196", "name": "Saas-Fee", "category": "village", "destId": "-2553924", "destType": "city" },
     { "identifier": "3de6c29a-b95e-4f10-a440-b641ff988a6d", "name": "Pontresina", "category": "village", "destId": "-2553646", "destType": "city" },
     { "identifier": "9e63cd28-f18e-4c49-8e14-488d7aeb96c8", "name": "Davos", "category": "village", "destId": "-2551753", "destType": "city" },
-    { "identifier": "27240e44-1e3d-4288-9728-df613a4e6bbf", "name": "Klosters", "category": "village", "destId": "4087", "destType": "city" },
+    { "identifier": "27240e44-1e3d-4288-9728-df613a4e6bbf", "name": "Klosters", "category": "village", "destId": "4087", "destType": "region" },
     { "identifier": "2f32e2a0-ce17-42a3-8568-5822c446ce59", "name": "Andermatt", "category": "village", "destId": "-2551037", "destType": "city" },
     { "identifier": "ee4aaf40-62f9-4e81-bf9e-96f9b9eabd06", "name": "Interlaken", "category": "village", "destId": "-2552548", "destType": "city" },
     { "identifier": "963d4f5c-b11a-4ea7-ab68-3b31b841fcf9", "name": "Gruyères", "category": "village", "destId": "-2552336", "destType": "city" },
