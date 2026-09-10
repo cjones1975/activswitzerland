@@ -11,6 +11,8 @@
     "login": "Log In",
     "logout": "Log out",
     "close": "Close",
+    "expand": "Expand",
+    "collapse": "Collapse",
     "showOnMap": "Show on map",
     "back": "Back",
     "search": "Search",
@@ -284,6 +286,7 @@
   },
   "destinations": {
     "viewAll": "View all",
+    "discover": "Discover",
     "allCities": {
       "subtitle": "{{count}} destinations"
     },

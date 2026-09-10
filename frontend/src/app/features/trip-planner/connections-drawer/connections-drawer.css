@@ -2,6 +2,17 @@
   padding: 1rem;
 }
 
+/* Less side padding specifically, mobile only (matches drawer-host.css's own full-width-below-768px
+   breakpoint for this drawer) — gives the connection card itself more width to work with, instead of
+   sitting in a narrow column with wide empty margins either side. Tablet/desktop keep the existing
+   1rem on every side. */
+@media (max-width: 767px) {
+  .cd-content {
+    padding-left: 0.25rem;
+    padding-right: 0.25rem;
+  }
+}
+
 .cd-date-badge {
   display: inline-flex;
   align-items: center;

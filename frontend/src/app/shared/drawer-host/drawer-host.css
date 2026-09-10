@@ -229,6 +229,13 @@
     width: 100%;
 }
 
+/* Rounded top corners on the sheet itself, matching the bottom-sheet convention — bottom corners
+   stay square since the sheet always touches the viewport's bottom edge. */
+::ng-deep .dest-drawer--sheet {
+    border-radius: 16px 16px 0 0 !important;
+    transition: height 0.2s ease !important;
+}
+
 .dest-back {
     display: inline-flex;
     align-items: center;
@@ -265,11 +272,11 @@
 /* Every drawer this app can host: desktop split-view (Phase 0/1 of the desktop responsive redesign,
    see context/features/desktop-redesign-phase0-foundations-spec.md). [modal]="false" above this same
    1280px breakpoint (drawer-host.ts's Breakpoint service) already removes PrimeNG's scrim, leaving
-   a plain fixed-position panel; this docks it below the header (top: 4.5rem, the value confirmed via
-   live testing to actually clear header-nav — trip-planner-layout.css's `.tp-wizard-host--docked`
-   uses the same value, for the same reason, after `connections` briefly used a different 3.5rem
-   value here and was found to overlap the header too) instead of covering it, and swaps the floating
-   drawer's shadow for a flush border. */
+   a plain fixed-position panel; this docks it flush below the header using the same `--header-h`
+   custom property (styles.css) header-nav.css itself is now pinned to, instead of an independently
+   hand-picked rem value — a hardcoded `4.5rem` here previously drifted ~15px from header-nav's real
+   (organic, un-pinned at the time) height, leaving a visible gap between the header and every docked
+   drawer. Also swaps the floating drawer's shadow for a flush border. */
 @media (min-width: 1280px) {
     ::ng-deep .dest-detail-drawer,
     ::ng-deep .all-attractions-drawer,
@@ -282,10 +289,20 @@
     ::ng-deep .hotels-drawer,
     ::ng-deep .connections-drawer,
     ::ng-deep .ai-chat-drawer {
-        top: 4.5rem !important;
-        height: calc(100% - 4.5rem) !important;
+        top: var(--header-h) !important;
+        height: calc(100% - var(--header-h)) !important;
         box-shadow: none !important;
         border-inline-end: 1px solid var(--gray-200) !important;
+    }
+
+    /* "Show on map" icon buttons (all-attractions, attraction-detail, destination-detail, hikes,
+       hike-detail, bikes, bike-detail — every `.menu-close` whose icon is specifically
+       fa-map-location, not the other close/back icons `.menu-close` is also reused for elsewhere)
+       — the map and its docked sidebar are already both visible and interactive at once here, so
+       there's nothing left for "show on map" to reveal. `:has()` targets exactly these buttons by
+       their icon rather than needing a dedicated class added to every template. */
+    ::ng-deep .dest-drawer .menu-close:has(.fa-map-location) {
+        display: none;
     }
 }
 

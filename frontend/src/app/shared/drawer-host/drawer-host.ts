@@ -57,6 +57,19 @@ export class DrawerHost {
 
   onDrawerClose(key: DrawerKey) {
     this.svc.close(key);
+    // Next drawer (of any kind) should always start at the default sheet height, not inherit
+    // whatever expansion state the previous one was left in.
+    this.sheetExpanded.set(false);
+  }
+
+  // Mobile bottom sheet (context/features/mobile-drawer-bottom-sheet-spec.md): the up/down caret
+  // toggles between the default 75vh height and the full window height. One shared signal, not one
+  // per drawer — these seven are mutually exclusive (only one is ever open at a time), matching the
+  // same assumption destinations-layout.ts's sidebarDocked/showXMarkers computeds already rely on.
+  sheetExpanded = signal(false);
+
+  toggleSheetExpanded(): void {
+    this.sheetExpanded.update(v => !v);
   }
 
   onClearAiChat() {
@@ -90,6 +103,9 @@ export class DrawerHost {
       this.svc.close('all-attractions');
       this.tripPlanner.showWizard();
     } else {
+      // Mobile bottom sheet no longer calls this method at all — its X is a plain onDrawerClose()
+      // (see drawer-host.html). This chevron-only path only ever runs at tablet width now, where
+      // collapse-and-preserve is still the right behavior, unchanged.
       this.svc.collapse('all-attractions');
       if (payload?.origin === 'destination-detail') {
         this.svc.open('destination-detail', payload.destination);
@@ -376,7 +392,11 @@ export class DrawerHost {
     const modal = signal(true);
     effect(() => {
       if (this.svc.isOpen(key)) {
-        modal.set(isTripPlannerMode() || !this.breakpoint.isDesktopSplitView());
+        // Non-modal at desktop split-view (docked sidebar, existing) AND at mobile (bottom sheet,
+        // context/features/mobile-drawer-bottom-sheet-spec.md — the visible map slice above the
+        // sheet stays interactive) — modal everywhere in between (tablet width, unchanged), and
+        // always modal in trip-planner mode regardless of width (a different, untouched feature).
+        modal.set(isTripPlannerMode() || (!this.breakpoint.isDesktopSplitView() && !this.breakpoint.isMobile()));
       }
     });
     return modal;
@@ -388,4 +408,19 @@ export class DrawerHost {
   hikeDetailModal = this.stickyModal('hike-detail', () => this.isHikeDetailTripPlanner());
   bikesModal = this.stickyModal('bikes', () => this.isBikesTripPlanner());
   bikeDetailModal = this.stickyModal('bike-detail', () => this.isBikeDetailTripPlanner());
+
+  // Mobile bottom sheet (context/features/mobile-drawer-bottom-sheet-spec.md): below
+  // Breakpoint.MOBILE_MAX_WIDTH these seven drawers render as a fixed-height sheet with the map
+  // visible above, instead of a full-screen left slide — EXCEPT when in "trip planner mode" (the
+  // existing isXTripPlanner computeds above, which also cover the search/explore-trips/trip-summary
+  // sources with no real map behind them) — those stay the full-screen modal they've always been, at
+  // every width, since they're a different feature this redesign doesn't touch.
+  allAttractionsMobileSheet = computed(() => this.breakpoint.isMobile() && !this.isAllAttractionsTripPlanner());
+  attractionDetailMobileSheet = computed(() => this.breakpoint.isMobile() && !this.isAttractionDetailTripPlanner());
+  hikesMobileSheet = computed(() => this.breakpoint.isMobile() && !this.isHikesTripPlanner());
+  hikeDetailMobileSheet = computed(() => this.breakpoint.isMobile() && !this.isHikeDetailTripPlanner());
+  bikesMobileSheet = computed(() => this.breakpoint.isMobile() && !this.isBikesTripPlanner());
+  bikeDetailMobileSheet = computed(() => this.breakpoint.isMobile() && !this.isBikeDetailTripPlanner());
+  // destination-detail has no trip-planner-picker variant, so no gate needed beyond isMobile itself.
+  destinationDetailMobileSheet = computed(() => this.breakpoint.isMobile());
 }

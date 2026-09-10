@@ -18,6 +18,7 @@ import { locLat, locLon } from '../../../shared/utils/geo-location';
 import { stopDayOptions, dayChoiceLabelParams } from '../../../shared/utils/date-range';
 import { formatDistanceKmMi } from '../../../shared/utils/distance';
 import { HikeDetailPayload } from '../hike-detail/hike-detail';
+import { Breakpoint } from '../../../shared/services/breakpoint';
 
 @Component({
   selector: 'app-hikes-list',
@@ -36,6 +37,7 @@ export class HikesList implements OnDestroy {
   // component on open/close — see hike-markers.ts for why.
   protected hikeMarkers = inject(HikeMarkersService);
   private plannerSvc = inject(TripPlannerService);
+  private breakpoint = inject(Breakpoint);
   private translate = inject(TranslateService);
   private langSvc = inject(LangService);
   private destroyRef = inject(DestroyRef);
@@ -133,6 +135,15 @@ export class HikesList implements OnDestroy {
     if (this.mode() === 'select') {
       const payload: HikeDetailPayload = { route, destination: dest, mode: 'select', stopId: this.stopId() };
       this.drawerSvc.open('hike-detail', payload);
+      return;
+    }
+    // Desktop split-view: map + sidebar are already both visible at once, so open hike-detail
+    // directly instead of collapsing to reveal a tooltip to click — same shape of payload
+    // destinations-layout.ts's own onMarkerClick builds for the map-tooltip flow this replaces.
+    // Mobile/tablet unchanged below.
+    if (this.breakpoint.isDesktopSplitView()) {
+      this.drawerSvc.close('hikes');
+      this.drawerSvc.open('hike-detail', { route, destination: dest });
       return;
     }
     // Reveal the map with the route selected and its tooltip visible — hike-detail

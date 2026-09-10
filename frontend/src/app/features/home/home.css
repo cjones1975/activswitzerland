@@ -70,7 +70,7 @@
     gap: 0.5rem;
     width: 100%;
     padding: 0.7rem 1.5rem;
-    background: var(--amber-600);
+    background: rgba(217, 119, 6, 0.9);
     color: var(--color-text-dark);
     border: none;
     border-radius: 999px;
@@ -86,12 +86,12 @@
 }
 
 .hero-cta--ai {
-    background: var(--color-white);
+    background: rgba(255, 255, 255, 0.9);
     color: var(--navy-900);
 }
 
 .hero-cta--ai:hover {
-    background: var(--gray-100);
+    background: var(--color-white);
 }
 
 .hero-stats {
@@ -138,6 +138,14 @@
         height: 700px;
     }
 
+    /* Hero image/overlay stay full-bleed (both are on .hero itself, untouched) — only the text/CTA
+       content is constrained and centered. */
+    .hero-content {
+        width: 100%;
+        max-width: 1280px;
+        margin: 0 auto;
+    }
+
     .hero-title {
         font-size: 4.8rem;
     }
@@ -147,14 +155,18 @@
         max-width: 680px;
     }
 
+    /* Side by side again (was deliberately stacked earlier this session; changed back per later
+       request), fixed-width buttons with an explicit 20px gap rather than the row-flex gap used
+       elsewhere, so this value stays exact regardless of any shared spacing scale changes. */
     .hero-cta-row {
         flex-direction: row;
         align-items: center;
+        gap: 20px;
     }
 
     .hero-cta {
-        flex: 1 1 0;
-        width: auto;
+        flex: none;
+        width: 300px;
     }
 }
 
@@ -168,7 +180,7 @@
 
 @media (min-width: 1024px) {
     .home-search-wrap {
-        margin-top: -1.5rem;
+        margin-top: -0.5rem;
         margin-bottom: 2rem;
     }
 }
@@ -182,9 +194,17 @@
 }
 
 .section-inner {
-    max-width: 2000px;
+    max-width: 1200px;
     margin: 0 auto;
     padding: 2rem 1.5rem 2.5rem;
+}
+
+/* Desktop cards grew taller (image-top + text + footer button, destination-horizontal-list.css) —
+   extra bottom breathing room so sections don't feel cramped against the next one. */
+@media (min-width: 1280px) {
+    .section-inner {
+        padding-bottom: 5.625rem;
+    }
 }
 
 /* Footer nav is fixed (64px tall) and stays visible on the homepage below 600px, so the

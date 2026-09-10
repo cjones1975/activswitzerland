@@ -86,26 +86,38 @@
     [closeOnEscape]="false"
     [modal]="allAttractionsModal()"
     (visibleChange)="onVisibleChange('all-attractions', $event)"
-    position="left"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
+    [position]="allAttractionsMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('all-attractions')"
-    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer all-attractions-drawer">
+    [style]="allAttractionsMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer all-attractions-drawer' + (allAttractionsMobileSheet() ? ' dest-drawer--sheet' : '')">
     <ng-template #header>
-        <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: allAttractionsDestinationName() }" (click)="onAllAttractionsBack()">
-                <i class="fa-regular fa-chevron-left"></i>
-            </button>
-            @if (!isAllAttractionsTripPlanner()) {
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('all-attractions')">
-                    <i class="fa-regular fa-map-location"></i>
+        @if (allAttractionsMobileSheet()) {
+            <div class="dest-header dest-header--sheet">
+                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
+                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
                 </button>
-            } @else {
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onAllAttractionsViewOnMap()">
-                    <i class="fa-regular fa-map-location"></i>
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('all-attractions')">
+                    <i class="pi pi-times"></i>
                 </button>
-            }
-        </div>
+            </div>
+        } @else {
+            <div class="dest-header">
+                <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: allAttractionsDestinationName() }" (click)="onAllAttractionsBack()">
+                    <i class="fa-regular fa-chevron-left"></i>
+                </button>
+                @if (!isAllAttractionsTripPlanner()) {
+                    <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('all-attractions')">
+                        <i class="fa-regular fa-map-location"></i>
+                    </button>
+                } @else {
+                    <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onAllAttractionsViewOnMap()">
+                        <i class="fa-regular fa-map-location"></i>
+                    </button>
+                }
+            </div>
+        }
     </ng-template>
     <hr class="header-divider" />
     <app-all-attractions></app-all-attractions>
@@ -119,36 +131,48 @@
     [closeOnEscape]="false"
     [modal]="attractionDetailModal()"
     (visibleChange)="onVisibleChange('attraction-detail', $event)"
-    position="left"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
+    [position]="attractionDetailMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('attraction-detail')"
-    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer attraction-detail-drawer">
+    [style]="attractionDetailMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer attraction-detail-drawer' + (attractionDetailMobileSheet() ? ' dest-drawer--sheet' : '')">
     <ng-template #header>
-        <div class="dest-header">
-            <button
-                class="dest-back dest-back-icon-only"
-                type="button"
-                [attr.aria-label]="attractionDetailSource() === 'destination-detail'
-                    ? ('attractions.backToDestination' | translate: { name: attractionDetailDestinationName() })
-                    : attractionDetailSource() === 'search'
-                        ? ('home.search.backToSearch' | translate)
-                        : attractionDetailSource() === 'explore-trips'
-                            ? ('exploreTrips.backToList' | translate)
-                            : ('attractions.backToAttractions' | translate)"
-                (click)="onAttractionDetailBack()">
-                <i class="fa-regular fa-chevron-left"></i>
-            </button>
-            @if (!isAttractionDetailTripPlanner()) {
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('attraction-detail')">
-                    <i class="fa-regular fa-map-location"></i>
+        @if (attractionDetailMobileSheet()) {
+            <div class="dest-header dest-header--sheet">
+                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
+                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
                 </button>
-            } @else if (attractionDetailWantsMask()) {
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onAttractionDetailViewOnMap()">
-                    <i class="fa-regular fa-map-location"></i>
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('attraction-detail')">
+                    <i class="pi pi-times"></i>
                 </button>
-            }
-        </div>
+            </div>
+        } @else {
+            <div class="dest-header">
+                <button
+                    class="dest-back dest-back-icon-only"
+                    type="button"
+                    [attr.aria-label]="attractionDetailSource() === 'destination-detail'
+                        ? ('attractions.backToDestination' | translate: { name: attractionDetailDestinationName() })
+                        : attractionDetailSource() === 'search'
+                            ? ('home.search.backToSearch' | translate)
+                            : attractionDetailSource() === 'explore-trips'
+                                ? ('exploreTrips.backToList' | translate)
+                                : ('attractions.backToAttractions' | translate)"
+                    (click)="onAttractionDetailBack()">
+                    <i class="fa-regular fa-chevron-left"></i>
+                </button>
+                @if (!isAttractionDetailTripPlanner()) {
+                    <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('attraction-detail')">
+                        <i class="fa-regular fa-map-location"></i>
+                    </button>
+                } @else if (attractionDetailWantsMask()) {
+                    <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onAttractionDetailViewOnMap()">
+                        <i class="fa-regular fa-map-location"></i>
+                    </button>
+                }
+            </div>
+        }
     </ng-template>
     <hr class="header-divider" />
     <app-attraction-detail></app-attraction-detail>
@@ -162,6 +186,7 @@
     [closeOnEscape]="false"
     [modal]="!breakpoint.isDesktopSplitView()"
     (visibleChange)="onVisibleChange('weather', $event)"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
     position="left"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('weather')"
@@ -190,6 +215,7 @@
     [closeOnEscape]="false"
     [modal]="!breakpoint.isDesktopSplitView()"
     (visibleChange)="onVisibleChange('connections', $event)"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
     position="left"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('connections')"
@@ -214,22 +240,34 @@
 <p-drawer
     [visible]="svc.isOpen('destination-detail')"
     [closable]="false"
-    [modal]="!breakpoint.isDesktopSplitView()"
+    [modal]="!breakpoint.isDesktopSplitView() && !breakpoint.isMobile()"
     (visibleChange)="onVisibleChange('destination-detail', $event)"
-    position="left"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
+    [position]="destinationDetailMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('destination-detail')"
-    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer dest-detail-drawer">
+    [style]="destinationDetailMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer dest-detail-drawer' + (destinationDetailMobileSheet() ? ' dest-drawer--sheet' : '')">
     <ng-template #header>
-        <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'nav.back' | translate" (click)="onDestinationBack()">
-                <i class="fa-regular fa-chevron-left"></i>
-            </button>
-            <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onDrawerClose('destination-detail')">
-                <i class="fa-regular fa-map-location"></i>
-            </button>
-        </div>
+        @if (destinationDetailMobileSheet()) {
+            <div class="dest-header dest-header--sheet">
+                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
+                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
+                </button>
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('destination-detail')">
+                    <i class="pi pi-times"></i>
+                </button>
+            </div>
+        } @else {
+            <div class="dest-header">
+                <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'nav.back' | translate" (click)="onDestinationBack()">
+                    <i class="fa-regular fa-chevron-left"></i>
+                </button>
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onDrawerClose('destination-detail')">
+                    <i class="fa-regular fa-map-location"></i>
+                </button>
+            </div>
+        }
     </ng-template>
     <hr class="header-divider" />
     <app-destination-detail></app-destination-detail>
@@ -243,22 +281,34 @@
     [closeOnEscape]="false"
     [modal]="hikesModal()"
     (visibleChange)="onVisibleChange('hikes', $event)"
-    position="left"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
+    [position]="hikesMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('hikes')"
-    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer hikes-drawer">
+    [style]="hikesMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer hikes-drawer' + (hikesMobileSheet() ? ' dest-drawer--sheet' : '')">
     <ng-template #header>
-        <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: hikesDestinationName() }" (click)="onHikesBack()">
-                <i class="fa-regular fa-chevron-left"></i>
-            </button>
-            @if (!isHikesTripPlanner()) {
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hikes')">
-                    <i class="fa-regular fa-map-location"></i>
+        @if (hikesMobileSheet()) {
+            <div class="dest-header dest-header--sheet">
+                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
+                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
                 </button>
-            }
-        </div>
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('hikes')">
+                    <i class="pi pi-times"></i>
+                </button>
+            </div>
+        } @else {
+            <div class="dest-header">
+                <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: hikesDestinationName() }" (click)="onHikesBack()">
+                    <i class="fa-regular fa-chevron-left"></i>
+                </button>
+                @if (!isHikesTripPlanner()) {
+                    <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hikes')">
+                        <i class="fa-regular fa-map-location"></i>
+                    </button>
+                }
+            </div>
+        }
     </ng-template>
     <hr class="header-divider" />
     @defer (on idle; when svc.isOpen('hikes')) {
@@ -276,22 +326,34 @@
     [closeOnEscape]="false"
     [modal]="hikeDetailModal()"
     (visibleChange)="onVisibleChange('hike-detail', $event)"
-    position="left"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
+    [position]="hikeDetailMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('hike-detail')"
-    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer hike-detail-drawer">
+    [style]="hikeDetailMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer hike-detail-drawer' + (hikeDetailMobileSheet() ? ' dest-drawer--sheet' : '')">
     <ng-template #header>
-        <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(hikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : hikeDetailSource() === 'ai-chat' ? 'aiChat.backToChat' : 'hikes.backToList') | translate" (click)="onHikeDetailBack()">
-                <i class="fa-regular fa-chevron-left"></i>
-            </button>
-            @if (!isHikeDetailTripPlanner()) {
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hike-detail')">
-                    <i class="fa-regular fa-map-location"></i>
+        @if (hikeDetailMobileSheet()) {
+            <div class="dest-header dest-header--sheet">
+                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
+                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
                 </button>
-            }
-        </div>
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('hike-detail')">
+                    <i class="pi pi-times"></i>
+                </button>
+            </div>
+        } @else {
+            <div class="dest-header">
+                <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(hikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : hikeDetailSource() === 'ai-chat' ? 'aiChat.backToChat' : 'hikes.backToList') | translate" (click)="onHikeDetailBack()">
+                    <i class="fa-regular fa-chevron-left"></i>
+                </button>
+                @if (!isHikeDetailTripPlanner()) {
+                    <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('hike-detail')">
+                        <i class="fa-regular fa-map-location"></i>
+                    </button>
+                }
+            </div>
+        }
     </ng-template>
     <hr class="header-divider" />
     @defer (on idle; when svc.isOpen('hike-detail')) {
@@ -309,22 +371,34 @@
     [closeOnEscape]="false"
     [modal]="bikesModal()"
     (visibleChange)="onVisibleChange('bikes', $event)"
-    position="left"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
+    [position]="bikesMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('bikes')"
-    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer bikes-drawer">
+    [style]="bikesMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer bikes-drawer' + (bikesMobileSheet() ? ' dest-drawer--sheet' : '')">
     <ng-template #header>
-        <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: bikesDestinationName() }" (click)="onBikesBack()">
-                <i class="fa-regular fa-chevron-left"></i>
-            </button>
-            @if (!isBikesTripPlanner()) {
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bikes')">
-                    <i class="fa-regular fa-map-location"></i>
+        @if (bikesMobileSheet()) {
+            <div class="dest-header dest-header--sheet">
+                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
+                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
                 </button>
-            }
-        </div>
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('bikes')">
+                    <i class="pi pi-times"></i>
+                </button>
+            </div>
+        } @else {
+            <div class="dest-header">
+                <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="'attractions.backToDestination' | translate: { name: bikesDestinationName() }" (click)="onBikesBack()">
+                    <i class="fa-regular fa-chevron-left"></i>
+                </button>
+                @if (!isBikesTripPlanner()) {
+                    <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bikes')">
+                        <i class="fa-regular fa-map-location"></i>
+                    </button>
+                }
+            </div>
+        }
     </ng-template>
     <hr class="header-divider" />
     @defer (on idle; when svc.isOpen('bikes')) {
@@ -342,22 +416,34 @@
     [closeOnEscape]="false"
     [modal]="bikeDetailModal()"
     (visibleChange)="onVisibleChange('bike-detail', $event)"
-    position="left"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
+    [position]="bikeDetailMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('bike-detail')"
-    [style]="{ width: 'min(600px, calc(100vw - 20px))' }"
-    styleClass="dest-drawer bike-detail-drawer">
+    [style]="bikeDetailMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer bike-detail-drawer' + (bikeDetailMobileSheet() ? ' dest-drawer--sheet' : '')">
     <ng-template #header>
-        <div class="dest-header">
-            <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(bikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : bikeDetailSource() === 'ai-chat' ? 'aiChat.backToChat' : 'bikes.backToList') | translate" (click)="onBikeDetailBack()">
-                <i class="fa-regular fa-chevron-left"></i>
-            </button>
-            @if (!isBikeDetailTripPlanner()) {
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bike-detail')">
-                    <i class="fa-regular fa-map-location"></i>
+        @if (bikeDetailMobileSheet()) {
+            <div class="dest-header dest-header--sheet">
+                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
+                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
                 </button>
-            }
-        </div>
+                <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('bike-detail')">
+                    <i class="pi pi-times"></i>
+                </button>
+            </div>
+        } @else {
+            <div class="dest-header">
+                <button class="dest-back dest-back-icon-only" type="button" [attr.aria-label]="(bikeDetailSource() === 'explore-trips' ? 'exploreTrips.backToList' : bikeDetailSource() === 'ai-chat' ? 'aiChat.backToChat' : 'bikes.backToList') | translate" (click)="onBikeDetailBack()">
+                    <i class="fa-regular fa-chevron-left"></i>
+                </button>
+                @if (!isBikeDetailTripPlanner()) {
+                    <button class="menu-close" type="button" [attr.aria-label]="'nav.showOnMap' | translate" (click)="onCollapse('bike-detail')">
+                        <i class="fa-regular fa-map-location"></i>
+                    </button>
+                }
+            </div>
+        }
     </ng-template>
     <hr class="header-divider" />
     @defer (on idle; when svc.isOpen('bike-detail')) {
@@ -373,6 +459,7 @@
     [closable]="false"
     [modal]="!breakpoint.isDesktopSplitView()"
     (visibleChange)="onVisibleChange('hotels', $event)"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
     position="left"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('hotels')"
@@ -418,6 +505,7 @@
 <p-drawer
     [visible]="svc.isOpen('ai-chat')"
     [closable]="false"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
     position="right"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('ai-chat')"
