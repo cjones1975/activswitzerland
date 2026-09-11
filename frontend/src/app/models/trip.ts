@@ -99,6 +99,9 @@ export interface SavedTrip extends PlannedTrip {
   nameTranslations?: { de?: string; fr?: string; it?: string };
   reviewTranslations?: { de?: string; fr?: string; it?: string };
   reviewLang?: 'en' | 'de' | 'fr' | 'it' | 'es' | 'other';
+  // Derived from the first activity added, when it's an attraction — see
+  // explore-trips-cover-image-spec.md. Server-computed, present once saved and public.
+  coverImageUrl?: string | null;
 }
 
 // Shape returned by GET /trips/public — a SavedTrip plus the derived fields the list view

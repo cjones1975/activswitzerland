@@ -34,18 +34,23 @@
         <span><i class="fa-light fa-eye"></i>{{ trip.activities.length }}</span>
       </div>
 
-      <div class="tc-map-wrap" (click)="$event.stopPropagation()">
-        <app-route-thumbnail
-          [routeCoordinates]="trip.routeCoordinates ?? []"
-          [tripType]="trip.type"
-          [markers]="activityMarkers()" />
-        <span class="tc-distance-badge">
-          <i class="fa-light fa-route"></i>{{ formatDistance(trip.distanceKm ?? 0) }}
-        </span>
-        <button class="tc-view-map" type="button" (click)="mapMaskSvc.open(trip._id!); $event.stopPropagation()">
-          <i class="fa-regular fa-expand"></i>
-          {{ 'exploreTrips.viewMap' | translate }}
-        </button>
+      <div class="tc-map-wrap" [class.tc-map-wrap--split]="trip.coverImageUrl" (click)="$event.stopPropagation()">
+        @if (trip.coverImageUrl) {
+          <img class="tc-cover-photo" [src]="trip.coverImageUrl" [alt]="localizedName(trip, langSvc.current)" loading="lazy" decoding="async">
+        }
+        <div class="tc-map-half">
+          <app-route-thumbnail
+            [routeCoordinates]="trip.routeCoordinates ?? []"
+            [tripType]="trip.type"
+            [markers]="activityMarkers()" />
+          <span class="tc-distance-badge">
+            <i class="fa-light fa-route"></i>{{ formatDistance(trip.distanceKm ?? 0) }}
+          </span>
+          <button class="tc-view-map" type="button" (click)="mapMaskSvc.open(trip._id!); $event.stopPropagation()">
+            <i class="fa-regular fa-expand"></i>
+            {{ 'exploreTrips.viewMap' | translate }}
+          </button>
+        </div>
       </div>
       @if (mapMaskSvc.isOpen(trip._id!)) {
         <div class="tc-map-mask" (click)="$event.stopPropagation()">

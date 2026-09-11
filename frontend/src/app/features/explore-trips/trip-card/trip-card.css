@@ -83,6 +83,25 @@
   background: var(--gray-100, #f1f5f9);
 }
 
+.tc-map-wrap--split {
+  display: flex;
+  gap: 2px;
+}
+
+.tc-cover-photo {
+  width: 50%;
+  height: 100%;
+  flex-shrink: 0;
+  object-fit: cover;
+}
+
+.tc-map-half {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  height: 100%;
+}
+
 .tc-view-map {
   position: absolute;
   bottom: 0.5rem;

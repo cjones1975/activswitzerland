@@ -5,6 +5,7 @@ import { routeDistanceKm } from '../utils/geo.js';
 import { generateUniqueSlug, tripDurationLabel } from '../utils/slug.js';
 import { detectReviewLang } from '../utils/detect-lang.js';
 import { translateTripContent } from '../utils/translate.js';
+import { resolveCoverImage } from '../utils/tripCoverImage.js';
 
 const isSlugTaken = slug => Trip.exists({ slug }).then(Boolean);
 const isCuratedAccount = userId => userId === process.env.CURATED_TRIPS_USER_ID;
@@ -28,6 +29,7 @@ export const createTrip = asyncHandler(async (req, res) => {
 
     let translationFields = {};
     let reviewLang;
+    let coverImageUrl = null;
     if (isPublic) {
         const curated = isCuratedAccount(req.user.id);
         reviewLang = curated ? 'en' : detectReviewLang(review || name);
@@ -35,6 +37,7 @@ export const createTrip = asyncHandler(async (req, res) => {
             const translations = await translateTripContent({ name, review });
             if (translations) translationFields = translations;
         }
+        coverImageUrl = await resolveCoverImage(activities ?? []);
     }
 
     const trip = await Trip.create({
@@ -51,6 +54,7 @@ export const createTrip = asyncHandler(async (req, res) => {
         anonymous: anonymous ?? true,
         review: review ?? '',
         distanceKm: routeDistanceKm(routeCoordinates ?? []),
+        coverImageUrl,
         ...(slug ? { slug } : {}),
         ...(reviewLang ? { reviewLang } : {}),
         ...translationFields,
@@ -84,6 +88,9 @@ export const updateTrip = asyncHandler(async (req, res, next) => {
     }
 
     const effectiveIsPublic = updates.isPublic ?? trip.isPublic;
+    if (effectiveIsPublic && updates.activities) {
+        updates.coverImageUrl = await resolveCoverImage(updates.activities);
+    }
     if (effectiveIsPublic && (updates.name !== undefined || updates.review !== undefined)) {
         const effectiveName = updates.name ?? trip.name;
         const effectiveReview = updates.review ?? trip.review;
