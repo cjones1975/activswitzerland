@@ -32,6 +32,10 @@ export class ActivityMapService {
       this.hikeMarkers.setSelected(null);
       this.hikeMarkers.setHasRoutes(false);
       this.hikeMarkers.clearStageOverview();
+      // Pins themselves must be wiped too, now that showHikeMarkers (destinations-layout.ts)
+      // gates on marker presence rather than drawer open/collapsed state — otherwise these
+      // would keep rendering over whichever category is now active.
+      this.hikeMarkers.clearMarkers();
     }
     if (active !== 'bikes') {
       this.drawer.close('bikes');
@@ -39,6 +43,7 @@ export class ActivityMapService {
       this.bikeMarkers.setSelected(null);
       this.bikeMarkers.setHasRoutes(false);
       this.bikeMarkers.clearStageOverview();
+      this.bikeMarkers.clearMarkers();
     }
   }
 }

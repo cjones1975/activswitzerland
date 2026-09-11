@@ -230,10 +230,16 @@
 }
 
 /* Rounded top corners on the sheet itself, matching the bottom-sheet convention — bottom corners
-   stay square since the sheet always touches the viewport's bottom edge. */
+   stay square since the sheet always touches the viewport's bottom edge. Squared off entirely once
+   expanded flush with the header (dest-drawer--sheet-expanded below) — rounded corners only read as
+   a "sheet" shape while there's visible map above it to round away from. */
 ::ng-deep .dest-drawer--sheet {
     border-radius: 16px 16px 0 0 !important;
-    transition: height 0.2s ease !important;
+    transition: height 0.2s ease, border-radius 0.2s ease !important;
+}
+
+::ng-deep .dest-drawer--sheet-expanded {
+    border-radius: 0 !important;
 }
 
 .dest-back {
@@ -316,7 +322,6 @@
     ::ng-deep .hike-detail-drawer,
     ::ng-deep .bikes-drawer,
     ::ng-deep .bike-detail-drawer,
-    ::ng-deep .hotels-drawer,
     ::ng-deep .auth-drawer,
     ::ng-deep .ai-chat-drawer {
         width: 100vw !important;

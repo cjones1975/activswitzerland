@@ -14,6 +14,66 @@
 
 <!-- Keep this updated. Earliest to latest -->
 
+### 2026-09-11 — Mobile Drawer Fixes: Hike/Bike Markers, Sheet Height/Corners, Hotel Drawer Reverted, dvh — Status: Completed
+
+- On `main` directly (small, unrelated-to-each-other fixes/tweaks surfaced by the user's own live
+  production testing after the hotel deep link merge, not a planned feature) — no new branch
+- **Real bug: hike/bike map markers vanished when the drawer was closed on mobile.** Root-caused via
+  investigation, not assumed: `showHikeMarkers`/`showBikeMarkers`
+  (`shell/destinations-layout/destinations-layout.ts`) gated pin visibility on
+  `drawer.isOpen('hikes') || drawer.isCollapsed('hikes')`. Before the mobile-bottom-sheet redesign
+  (2026-09-09 entry below), the drawer's old "show on map" icon called `collapse()`, which kept
+  `isCollapsed` true and markers visible after dismissal; that redesign's X button calls a plain
+  `close()` instead, which satisfies neither flag. The redesign's own spec had reasoned through the
+  impact on reopen pills but missed this exact dependency — a genuine gap, not a documented tradeoff.
+  Compounding it: `HikesList`/`BikesList`'s own `ngOnDestroy` unconditionally wiped the marker data
+  every time the list component unmounted (which PrimeNG does on *every* drawer hide), so loosening
+  the visibility gate alone wouldn't have been enough on its own. Fixed by making hike/bike markers
+  behave like attraction markers already correctly do: `showHikeMarkers`/`showBikeMarkers` now just
+  check `markers().length > 0` (no drawer-state dependency at all); removed the `ngOnDestroy` clears
+  from both list components; and — since `ActivityMapService.showOnly()` previously reset
+  selection/hasRoutes/stageOverview when switching categories but never the pins array itself, relying
+  on the now-removed drawer-state gating to hide it — added a new `clearMarkers()` method to both
+  marker services, called from `showOnly()`'s category-switch branches. Cross-destination staleness
+  (a lingering concern given the new gating has no drawer dependency) turned out to already be handled
+  by an existing `showOnly(null)` call on every route-param change (`destinations-layout.ts`'s
+  `ngOnInit`), which was simply extended to also clear the pins
+- **Follow-up UI requests on the mobile bottom sheets** (`destination-detail`/`all-attractions`/
+  `attraction-detail`/`hikes`/`hike-detail`/`bikes`/`bike-detail`, from
+  @context/features/mobile-drawer-bottom-sheet-spec.md): default height changed 75vh → 50vh; the
+  expand-caret's "full" state changed from a flat `100vh` (which ignored the header entirely) to
+  `calc(100vh - var(--header-h))`, stopping flush with the header's actual bottom edge using the
+  custom property already established during the desktop redesign; top corners now flatten to square
+  (new `dest-drawer--sheet-expanded` class + CSS rule) when expanded, staying rounded at the 50%
+  default — a rounded "sheet" shape only reads correctly when there's visible map above it to round
+  away from. `destination-detail` was initially left out of this pass (the request named only
+  "activity, hike and bike"), then folded in on a same-day follow-up once the user clarified it should
+  be included too
+- **Hotels drawer reverted off the bottom-sheet pattern entirely, back to a plain full-screen
+  slide-in matching `weather` exactly** — direct user feedback after seeing the hotel-booking
+  session's own bottom-sheet-parity decision live, overriding that earlier choice: `position="left"`
+  always (no more conditional `bottom`), modal at every width below desktop split-view including
+  mobile (dropped the mobile exception the sheet version had), width `min(600px, 100vw)` (matching
+  weather's own pattern, which needs no separate mobile-width CSS override since `min()` already
+  resolves to full-width), header reverted to its original single form (chevron-back + X, no
+  expand-caret branch). Removed the now-unused `hotelsMobileSheet` computed and `.hotels-drawer`'s
+  entry in `drawer-host.css`'s mobile full-width override list (redundant once `min()` handles it
+  directly)
+- **Real mobile bug, caught by the user's own device testing, not this agent**: sheet height set via
+  plain `vh` doesn't track a mobile browser's own address-bar show/hide — `100vh`/`50vh` are computed
+  against the "chrome hidden" viewport, so the expanded sheet could render taller than what's actually
+  visible, and the AI chat drawer (which had no explicit height at all, silently relying on PrimeNG's
+  own default) showed a strip of the underlying page at the bottom on swipe-up. Fixed by switching
+  every affected height to the `dvh` unit (tracks the actual visible viewport live) across all seven
+  sheet drawers, explicitly setting `height: '100dvh'` on the AI chat drawer (previously unset), and
+  — proactively, since it's the identical root cause though not reported — the Explore Trips filter
+  drawer's `maxHeight: 85vh` too
+- Verified via `tsc --noEmit` and a full `ng build`, clean every round (frontend-only changes, no
+  backend involved this time); no live browser testing from this agent's side — every bug in this
+  entry was found via the user's own production/device testing, not self-caught, consistent with
+  their standing preference ([[feedback_no_self_browser_verification]])
+- Committed directly on `main`, not yet pushed to `origin/main`
+
 ### 2026-09-10 — Booking.com Hotel Deep Link Implemented — Status: Completed
 
 - Branch `feature/hotel-booking-deeplink`, off the spec at

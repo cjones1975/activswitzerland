@@ -419,8 +419,4 @@ export class DrawerHost {
   bikeDetailMobileSheet = computed(() => this.breakpoint.isMobile() && !this.isBikeDetailTripPlanner());
   // destination-detail has no trip-planner-picker variant, so no gate needed beyond isMobile itself.
   destinationDetailMobileSheet = computed(() => this.breakpoint.isMobile());
-
-  // hotels has no trip-planner-picker variant either (only ever opened from destination-detail),
-  // same reasoning as destinationDetailMobileSheet above.
-  hotelsMobileSheet = computed(() => this.breakpoint.isMobile());
 }

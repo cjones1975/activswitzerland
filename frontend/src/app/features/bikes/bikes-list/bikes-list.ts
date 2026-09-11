@@ -1,4 +1,4 @@
-import { Component, DestroyRef, OnDestroy, computed, effect, inject, signal, untracked } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateService, TranslatePipe } from '@ngx-translate/core';
@@ -27,7 +27,7 @@ import { Breakpoint } from '../../../shared/services/breakpoint';
   templateUrl: './bikes-list.html',
   styleUrl: './bikes-list.css',
 })
-export class BikesList implements OnDestroy {
+export class BikesList {
   readonly formatDistanceKmMi = formatDistanceKmMi;
 
   private drawerSvc = inject(Drawer);
@@ -231,7 +231,4 @@ export class BikesList implements OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.bikeMarkers.clear();
-  }
 }

@@ -90,8 +90,8 @@
     [position]="allAttractionsMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('all-attractions')"
-    [style]="allAttractionsMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
-    [styleClass]="'dest-drawer all-attractions-drawer' + (allAttractionsMobileSheet() ? ' dest-drawer--sheet' : '')">
+    [style]="allAttractionsMobileSheet() ? { height: sheetExpanded() ? 'calc(100dvh - var(--header-h))' : '50dvh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer all-attractions-drawer' + (allAttractionsMobileSheet() ? ' dest-drawer--sheet' : '') + (allAttractionsMobileSheet() && sheetExpanded() ? ' dest-drawer--sheet-expanded' : '')">
     <ng-template #header>
         @if (allAttractionsMobileSheet()) {
             <div class="dest-header dest-header--sheet">
@@ -135,8 +135,8 @@
     [position]="attractionDetailMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('attraction-detail')"
-    [style]="attractionDetailMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
-    [styleClass]="'dest-drawer attraction-detail-drawer' + (attractionDetailMobileSheet() ? ' dest-drawer--sheet' : '')">
+    [style]="attractionDetailMobileSheet() ? { height: sheetExpanded() ? 'calc(100dvh - var(--header-h))' : '50dvh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer attraction-detail-drawer' + (attractionDetailMobileSheet() ? ' dest-drawer--sheet' : '') + (attractionDetailMobileSheet() && sheetExpanded() ? ' dest-drawer--sheet-expanded' : '')">
     <ng-template #header>
         @if (attractionDetailMobileSheet()) {
             <div class="dest-header dest-header--sheet">
@@ -246,8 +246,8 @@
     [position]="destinationDetailMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('destination-detail')"
-    [style]="destinationDetailMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
-    [styleClass]="'dest-drawer dest-detail-drawer' + (destinationDetailMobileSheet() ? ' dest-drawer--sheet' : '')">
+    [style]="destinationDetailMobileSheet() ? { height: sheetExpanded() ? 'calc(100dvh - var(--header-h))' : '50dvh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer dest-detail-drawer' + (destinationDetailMobileSheet() ? ' dest-drawer--sheet' : '') + (destinationDetailMobileSheet() && sheetExpanded() ? ' dest-drawer--sheet-expanded' : '')">
     <ng-template #header>
         @if (destinationDetailMobileSheet()) {
             <div class="dest-header dest-header--sheet">
@@ -285,8 +285,8 @@
     [position]="hikesMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('hikes')"
-    [style]="hikesMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
-    [styleClass]="'dest-drawer hikes-drawer' + (hikesMobileSheet() ? ' dest-drawer--sheet' : '')">
+    [style]="hikesMobileSheet() ? { height: sheetExpanded() ? 'calc(100dvh - var(--header-h))' : '50dvh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer hikes-drawer' + (hikesMobileSheet() ? ' dest-drawer--sheet' : '') + (hikesMobileSheet() && sheetExpanded() ? ' dest-drawer--sheet-expanded' : '')">
     <ng-template #header>
         @if (hikesMobileSheet()) {
             <div class="dest-header dest-header--sheet">
@@ -330,8 +330,8 @@
     [position]="hikeDetailMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('hike-detail')"
-    [style]="hikeDetailMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
-    [styleClass]="'dest-drawer hike-detail-drawer' + (hikeDetailMobileSheet() ? ' dest-drawer--sheet' : '')">
+    [style]="hikeDetailMobileSheet() ? { height: sheetExpanded() ? 'calc(100dvh - var(--header-h))' : '50dvh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer hike-detail-drawer' + (hikeDetailMobileSheet() ? ' dest-drawer--sheet' : '') + (hikeDetailMobileSheet() && sheetExpanded() ? ' dest-drawer--sheet-expanded' : '')">
     <ng-template #header>
         @if (hikeDetailMobileSheet()) {
             <div class="dest-header dest-header--sheet">
@@ -375,8 +375,8 @@
     [position]="bikesMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('bikes')"
-    [style]="bikesMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
-    [styleClass]="'dest-drawer bikes-drawer' + (bikesMobileSheet() ? ' dest-drawer--sheet' : '')">
+    [style]="bikesMobileSheet() ? { height: sheetExpanded() ? 'calc(100dvh - var(--header-h))' : '50dvh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer bikes-drawer' + (bikesMobileSheet() ? ' dest-drawer--sheet' : '') + (bikesMobileSheet() && sheetExpanded() ? ' dest-drawer--sheet-expanded' : '')">
     <ng-template #header>
         @if (bikesMobileSheet()) {
             <div class="dest-header dest-header--sheet">
@@ -420,8 +420,8 @@
     [position]="bikeDetailMobileSheet() ? 'bottom' : 'left'"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('bike-detail')"
-    [style]="bikeDetailMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
-    [styleClass]="'dest-drawer bike-detail-drawer' + (bikeDetailMobileSheet() ? ' dest-drawer--sheet' : '')">
+    [style]="bikeDetailMobileSheet() ? { height: sheetExpanded() ? 'calc(100dvh - var(--header-h))' : '50dvh' } : { width: 'min(600px, calc(100vw - 20px))' }"
+    [styleClass]="'dest-drawer bike-detail-drawer' + (bikeDetailMobileSheet() ? ' dest-drawer--sheet' : '') + (bikeDetailMobileSheet() && sheetExpanded() ? ' dest-drawer--sheet-expanded' : '')">
     <ng-template #header>
         @if (bikeDetailMobileSheet()) {
             <div class="dest-header dest-header--sheet">
@@ -457,35 +457,26 @@
 <p-drawer
     [visible]="svc.isOpen('hotels')"
     [closable]="false"
-    [modal]="!breakpoint.isDesktopSplitView() && !breakpoint.isMobile()"
+    [dismissible]="false"
+    [closeOnEscape]="false"
+    [modal]="!breakpoint.isDesktopSplitView()"
     (visibleChange)="onVisibleChange('hotels', $event)"
     [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
-    [position]="hotelsMobileSheet() ? 'bottom' : 'left'"
+    position="left"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('hotels')"
-    [style]="hotelsMobileSheet() ? { height: sheetExpanded() ? '100vh' : '75vh' } : { width: 'min(600px, calc(100vw - 20px))' }"
-    [styleClass]="'dest-drawer hotels-drawer' + (hotelsMobileSheet() ? ' dest-drawer--sheet' : '')">
+    [style]="{ width: 'min(600px, 100vw)' }"
+    styleClass="dest-drawer hotels-drawer">
     <ng-template #header>
-        @if (hotelsMobileSheet()) {
-            <div class="dest-header dest-header--sheet">
-                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
-                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
-                </button>
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('hotels')">
-                    <i class="pi pi-times"></i>
-                </button>
-            </div>
-        } @else {
-            <div class="dest-header">
-                <button class="dest-back" type="button" (click)="onHotelsBack()">
-                    <i class="fa-regular fa-chevron-left"></i>
-                    {{ 'attractions.backToDestination' | translate: { name: hotelsDestinationName() } }}
-                </button>
-                <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('hotels')">
-                    <i class="pi pi-times"></i>
-                </button>
-            </div>
-        }
+        <div class="dest-header">
+            <button class="dest-back" type="button" (click)="onHotelsBack()">
+                <i class="fa-regular fa-chevron-left"></i>
+                {{ 'attractions.backToDestination' | translate: { name: hotelsDestinationName() } }}
+            </button>
+            <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('hotels')">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
     </ng-template>
     <hr class="header-divider" />
     <app-hotel-search></app-hotel-search>
@@ -499,7 +490,7 @@
     position="bottom"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('explore-trips-filter')"
-    [style]="{ height: 'auto', maxHeight: '85vh' }"
+    [style]="{ height: 'auto', maxHeight: '85dvh' }"
     styleClass="explore-filter-drawer">
     <ng-template #header>
         <div class="menu-header">
@@ -520,7 +511,7 @@
     position="right"
     appendTo="body"
     [baseZIndex]="svc.zIndexFor('ai-chat')"
-    [style]="{ width: 'min(420px, 100vw)' }"
+    [style]="{ width: 'min(420px, 100vw)', height: '100dvh' }"
     styleClass="ai-chat-drawer">
     <ng-template #header>
         <div class="ai-chat-header">

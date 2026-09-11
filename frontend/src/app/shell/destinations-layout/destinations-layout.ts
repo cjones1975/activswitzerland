@@ -72,23 +72,18 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   // this array when another category (hikes/bikes) becomes active.
   private showAttractionMarkers = computed(() => this.attractionMarkers.markers().length > 0);
 
-  // Nearby-search markers are hidden while a "see all stages" overview is
-  // active, so the two never render on the map at once (mirrors the
-  // category-level "only one active category" rule from ActivityMapService,
-  // scoped here to hikes/bikes' own overview-vs-nearby-search distinction).
-  private showHikeMarkers = computed(() => {
-    this.drawer.list();
-    if (this.hikeMarkers.stageOverview()) return false;
-    return this.drawer.isOpen('hikes') || this.drawer.isCollapsed('hikes')
-      || this.drawer.isOpen('hike-detail') || this.drawer.isCollapsed('hike-detail');
-  });
+  // Nearby-search markers are shown unconditionally once populated, same as
+  // showAttractionMarkers above — not gated on hikes/hike-detail drawer open/collapsed
+  // state (previously was; broke on mobile once the bottom-sheet redesign's X button
+  // started doing a plain close() instead of collapse(), which left both flags false
+  // and hid markers the moment the sheet closed even though the list had already
+  // loaded them). Hidden only while a "see all stages" overview is active, so the two
+  // never render on the map at once. ActivityMapService.showOnly() wipes this array
+  // when a different category becomes active (or a new destination loads), same as it
+  // already does for attractionMarkers.
+  private showHikeMarkers = computed(() => this.hikeMarkers.markers().length > 0 && !this.hikeMarkers.stageOverview());
 
-  private showBikeMarkers = computed(() => {
-    this.drawer.list();
-    if (this.bikeMarkers.stageOverview()) return false;
-    return this.drawer.isOpen('bikes') || this.drawer.isCollapsed('bikes')
-      || this.drawer.isOpen('bike-detail') || this.drawer.isCollapsed('bike-detail');
-  });
+  private showBikeMarkers = computed(() => this.bikeMarkers.markers().length > 0 && !this.bikeMarkers.stageOverview());
 
   // "See all stages" nationwide overview — whichever of hikes/bikes is
   // active (only one at a time in practice, since it's triggered per-card

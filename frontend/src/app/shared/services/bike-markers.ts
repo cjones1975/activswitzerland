@@ -60,6 +60,11 @@ export class BikeMarkersService {
     this.selectedId.set(id);
   }
 
+  /** Just the pins — used when switching to a different activity category, where hasRoutes/stageOverview need their own distinct (non-`clear()`) reset. See ActivityMapService.showOnly(). */
+  clearMarkers(): void {
+    this.markers.set([]);
+  }
+
   setBikeType(type: BikeType): void {
     this.bikeType.set(type);
   }
