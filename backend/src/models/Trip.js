@@ -101,6 +101,10 @@ const TripSchema = new mongoose.Schema({
     reviewLang:       { type: String, enum: ['en', 'de', 'fr', 'it', 'es', 'other'] },
     likes:            { type: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User' }], default: [] },
     distanceKm:       { type: Number, default: 0 },
+    // Derived from the first activity added, when it's an attraction — see
+    // explore-trips-cover-image-spec.md. Recomputed on every save that touches activities, not
+    // assigned once like slug.
+    coverImageUrl:    { type: String, default: null },
     // Assigned once, on the isPublic false->true transition (see utils/slug.js); never
     // regenerated afterward, even if `name` later changes — see trip-detail-pages-spec.md.
     slug:             { type: String, unique: true, sparse: true, index: true },
