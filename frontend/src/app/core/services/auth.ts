@@ -5,6 +5,7 @@ import { firstValueFrom } from 'rxjs';
 import { TranslateService } from '@ngx-translate/core';
 import { environment } from '../../../environments/environment';
 import { Toast } from './toast';
+import { LangService } from '../../shared/services/lang';
 
 interface AuthResponse {
   token: string;
@@ -57,6 +58,7 @@ export class Auth {
   private http = inject(HttpClient);
   private toast = inject(Toast);
   private translate = inject(TranslateService);
+  private langSvc = inject(LangService);
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
 
   readonly token = signal<string | null>(this.isBrowser ? localStorage.getItem('auth-token') : null);
@@ -146,14 +148,27 @@ export class Auth {
   async forgotPassword(email: string): Promise<void> {
     try {
       await firstValueFrom(
-        this.http.post(`${environment.apiUrl}/api/v1/auth/forgotPassword`, { email })
+        this.http.post(`${environment.apiUrl}/api/v1/auth/forgotPassword`, { email, lang: this.langSvc.current })
       );
       this.toast.success(this.t('auth.toast.forgot_success'), this.t('auth.toast.forgot_success_detail'), 4000, 'toast-success');
     } catch (err: any) {
-      const detail = err?.status === 500
-        ? this.t('auth.toast.forgot_no_user')
+      this.toast.error(this.t('auth.toast.forgot_failed'), this.t('auth.toast.generic_error'), 4000, 'toast-error');
+      throw err;
+    }
+  }
+
+  async resetPassword(token: string, password: string): Promise<void> {
+    try {
+      const res = await firstValueFrom(
+        this.http.post<AuthResponse>(`${environment.apiUrl}/api/v1/auth/resetpassword/${token}`, { password })
+      );
+      this.storeToken(res.token);
+      this.toast.success(this.t('auth.toast.reset_success'), this.t('auth.toast.reset_success_detail'), 3000, 'toast-success');
+    } catch (err: any) {
+      const detail = err?.status === 400
+        ? this.t('auth.toast.reset_expired')
         : this.t('auth.toast.generic_error');
-      this.toast.error(this.t('auth.toast.forgot_failed'), detail, 4000, 'toast-error');
+      this.toast.error(this.t('auth.toast.reset_failed'), detail, 4000, 'toast-error');
       throw err;
     }
   }

@@ -86,7 +86,6 @@
       "forgot_success": "Email sent",
       "forgot_success_detail": "We have sent you a link to your email address to reset your password.",
       "forgot_failed": "Request failed",
-      "forgot_no_user": "No user with the provided email was found.",
       "generic_error": "Oops something went wrong. Please try again.",
       "verify_sent": "We've sent a verification code to your email.",
       "verify_required": "Verification required",
@@ -94,7 +93,11 @@
       "verify_failed": "Verification failed",
       "resend_success": "Code resent",
       "resend_failed": "Resend failed",
-      "update_failed": "Update failed"
+      "update_failed": "Update failed",
+      "reset_success": "Password reset",
+      "reset_success_detail": "You're signed in with your new password.",
+      "reset_failed": "Reset failed",
+      "reset_expired": "This link may have expired. Please request a new one."
     },
     "tabs": {
       "login": "Login",
@@ -110,6 +113,12 @@
       "title": "Terms & Conditions",
       "prefix": "I agree to the",
       "and": "and"
+    },
+    "resetPassword": {
+      "title": "Choose a new password",
+      "newPasswordLabel": "New password",
+      "confirmPasswordLabel": "Confirm password",
+      "submit": "Reset password"
     }
   },
   "trip": {

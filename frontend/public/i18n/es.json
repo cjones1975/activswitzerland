@@ -86,7 +86,6 @@
       "forgot_success": "Correo enviado",
       "forgot_success_detail": "Te hemos enviado un enlace a tu correo electrónico para restablecer tu contraseña.",
       "forgot_failed": "Error en la solicitud",
-      "forgot_no_user": "No se ha encontrado ningún usuario con ese correo electrónico.",
       "generic_error": "Vaya, algo salió mal. Inténtalo de nuevo.",
       "verify_sent": "Te hemos enviado un código de verificación por correo electrónico.",
       "verify_required": "Verificación necesaria",
@@ -94,7 +93,11 @@
       "verify_failed": "Error en la verificación",
       "resend_success": "Código reenviado",
       "resend_failed": "Error al reenviar",
-      "update_failed": "Error al actualizar"
+      "update_failed": "Error al actualizar",
+      "reset_success": "Contraseña restablecida",
+      "reset_success_detail": "Has iniciado sesión con tu nueva contraseña.",
+      "reset_failed": "Error al restablecer",
+      "reset_expired": "Este enlace puede haber caducado. Solicita uno nuevo."
     },
     "tabs": {
       "login": "Iniciar sesión",
@@ -110,6 +113,12 @@
       "title": "Términos y Condiciones",
       "prefix": "Acepto los",
       "and": "y la"
+    },
+    "resetPassword": {
+      "title": "Elige una nueva contraseña",
+      "newPasswordLabel": "Nueva contraseña",
+      "confirmPasswordLabel": "Confirmar contraseña",
+      "submit": "Restablecer contraseña"
     }
   },
   "trip": {

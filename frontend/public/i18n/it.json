@@ -86,7 +86,6 @@
       "forgot_success": "Email inviata",
       "forgot_success_detail": "Ti abbiamo inviato un link per reimpostare la password.",
       "forgot_failed": "Richiesta non riuscita",
-      "forgot_no_user": "Nessun utente trovato con l'email fornita.",
       "generic_error": "Qualcosa è andato storto. Riprova.",
       "verify_sent": "Ti abbiamo inviato un codice di verifica via email.",
       "verify_required": "Verifica richiesta",
@@ -94,7 +93,11 @@
       "verify_failed": "Verifica non riuscita",
       "resend_success": "Codice reinviato",
       "resend_failed": "Reinvio non riuscito",
-      "update_failed": "Aggiornamento non riuscito"
+      "update_failed": "Aggiornamento non riuscito",
+      "reset_success": "Password reimpostata",
+      "reset_success_detail": "Hai effettuato l'accesso con la tua nuova password.",
+      "reset_failed": "Reimpostazione non riuscita",
+      "reset_expired": "Questo link potrebbe essere scaduto. Richiedine uno nuovo."
     },
     "tabs": {
       "login": "Accedi",
@@ -110,6 +113,12 @@
       "title": "Termini e Condizioni",
       "prefix": "Accetto i",
       "and": "e"
+    },
+    "resetPassword": {
+      "title": "Scegli una nuova password",
+      "newPasswordLabel": "Nuova password",
+      "confirmPasswordLabel": "Conferma password",
+      "submit": "Reimposta password"
     }
   },
   "trip": {

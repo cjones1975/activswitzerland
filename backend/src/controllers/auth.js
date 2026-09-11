@@ -296,16 +296,20 @@ export const updatePassword = AsyncHandler(async (req, res, next) => {
     sendTokenResponse(user, 200, res);
 });
 
+// Matches the frontend's own SUPPORTED_LANGS (shared/services/lang.ts) — the reset email links
+// into a locale-prefixed frontend route, so an unrecognized/missing code falls back to English.
+const SUPPORTED_LANGS = ['en', 'de', 'fr', 'it', 'es'];
+
 // @desc    Forgot password
 // @route   POST /api/v1/auth/forgotpassword
 // @access  Public
 export const forgotPassword = AsyncHandler(async (req, res, next) => {
     const user = await User.findOne({ email: req.body.email });
 
+    // Whether this address is registered must not be observable from the response — same
+    // success shape either way.
     if (!user) {
-        return next(
-            new ErrorResponse(`There is no user with email: ${req.body.email}`, 500)
-        );
+        return res.status(200).json({ success: true, data: 'Email sent' });
     }
 
     // Get reset token
@@ -313,14 +317,12 @@ export const forgotPassword = AsyncHandler(async (req, res, next) => {
 
     await user.save({ validateBeforeSave: false });
 
-    // Create reset url
-    const resetUrl = `${req.protocol}://${req.get(
-        'host'
-    )}/api/v1/auth/resetpassword/${resetToken}`;
+    const lang = SUPPORTED_LANGS.includes(req.body.lang) ? req.body.lang : 'en';
+    const resetUrl = `${process.env.FRONTEND_URL}/${lang}/reset-password/${resetToken}`;
 
     // Create message
     const message = `You are recieving this email because you (or someone else) has
-    request the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+    request the reset of a password. Please visit the link below to choose a new one: \n\n ${resetUrl}`;
 
     try {
         await sendEmail({
@@ -331,7 +333,7 @@ export const forgotPassword = AsyncHandler(async (req, res, next) => {
 
         res.status(200).json({ success: true, data: 'Email sent' });
     } catch (err) {
-        user.getResetPasswordToken = undefined;
+        user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
 
         await user.save({ validateBeforeSave: false });
@@ -340,7 +342,7 @@ export const forgotPassword = AsyncHandler(async (req, res, next) => {
     }
 });
 
-// @desc    Forgot reset  password
+// @desc    Reset password
 // @route   POST /api/v1/auth/resetpassword/:resettoken
 // @access  Public
 export const resetPassword = AsyncHandler(async (req, res, next) => {
@@ -354,6 +356,10 @@ export const resetPassword = AsyncHandler(async (req, res, next) => {
         resetPasswordToken,
         resetPasswordExpire: { $gt: Date.now() },
     });
+
+    if (!user) {
+        return next(new ErrorResponse('Invalid or expired reset token', 400));
+    }
 
     // Set new password
     user.password = req.body.password;

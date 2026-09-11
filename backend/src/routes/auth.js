@@ -26,6 +26,7 @@ router.put('/updateUser', protect, updateUser);
 router.post('/verifyEmailChange', protect, verifyLimiter, verifyEmailChange);
 router.post('/updatePassword', protect, updatePassword);
 router.post('/forgotPassword', forgotPassword);
+router.post('/resetpassword/:resettoken', resetPassword);
 
 
 export default router;

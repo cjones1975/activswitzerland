@@ -57,6 +57,10 @@ export const routes: Routes = [
             loadComponent: () => import('./features/legal/privacy-policy/privacy-policy').then(m => m.PrivacyPolicy),
           },
           {
+            path: 'reset-password/:token',
+            loadComponent: () => import('./features/auth/reset-password/reset-password').then(m => m.ResetPassword),
+          },
+          {
             path: 'practical-info/:slug',
             loadComponent: () => import('./features/practical-info/practical-info-detail/practical-info-detail').then(m => m.PracticalInfoDetail),
           },

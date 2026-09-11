@@ -34,6 +34,7 @@ export const serverRoutes: ServerRoute[] = [
   // SSR/prerender spent here (see the spec's Confirmed decisions).
   { path: ':lang/trip-planner/**', renderMode: RenderMode.Client },
   { path: ':lang/auth/**', renderMode: RenderMode.Client },
+  { path: ':lang/reset-password/**', renderMode: RenderMode.Client },
   // Covers the bare-path redirect (any URL with no/garbage locale prefix).
   { path: '**', renderMode: RenderMode.Server },
 ];

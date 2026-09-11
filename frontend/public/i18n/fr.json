@@ -86,7 +86,6 @@
       "forgot_success": "E-mail envoyé",
       "forgot_success_detail": "Nous vous avons envoyé un lien pour réinitialiser votre mot de passe.",
       "forgot_failed": "Demande échouée",
-      "forgot_no_user": "Aucun utilisateur trouvé avec l'adresse e-mail fournie.",
       "generic_error": "Oups, une erreur s'est produite. Veuillez réessayer.",
       "verify_sent": "Nous vous avons envoyé un code de vérification par e-mail.",
       "verify_required": "Vérification requise",
@@ -94,7 +93,11 @@
       "verify_failed": "Échec de la vérification",
       "resend_success": "Code renvoyé",
       "resend_failed": "Échec du renvoi",
-      "update_failed": "Échec de la mise à jour"
+      "update_failed": "Échec de la mise à jour",
+      "reset_success": "Mot de passe réinitialisé",
+      "reset_success_detail": "Vous êtes connecté avec votre nouveau mot de passe.",
+      "reset_failed": "Échec de la réinitialisation",
+      "reset_expired": "Ce lien a peut-être expiré. Veuillez en demander un nouveau."
     },
     "tabs": {
       "login": "Connexion",
@@ -110,6 +113,12 @@
       "title": "Conditions générales",
       "prefix": "J'accepte les",
       "and": "et la"
+    },
+    "resetPassword": {
+      "title": "Choisissez un nouveau mot de passe",
+      "newPasswordLabel": "Nouveau mot de passe",
+      "confirmPasswordLabel": "Confirmer le mot de passe",
+      "submit": "Réinitialiser le mot de passe"
     }
   },
   "trip": {

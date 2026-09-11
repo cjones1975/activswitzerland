@@ -2,17 +2,125 @@
 
 ## Feature
 
+Forgot Password — Reset Flow Fix (@context/features/forgot-password-reset-fix-spec.md)
+
 ## Status
+
+Implemented on `feature/forgot-password-reset-fix` — verified via `node --check` (backend),
+`tsc --noEmit` and `ng build` (frontend), all clean; not yet committed, not yet reviewed live by
+the user
+
+One deliberate deviation from the spec text: Requirement 6 said to navigate home with the `auth`
+drawer opened to the login step, but also said the user should be signed in directly via the
+token `resetPassword` already returns — those two read as contradictory (opening a login form to
+someone who's already just been signed in). Implemented as: store the token (signed in) and
+navigate home, without opening the `auth` drawer, matching how `verify-code`'s own token hand-off
+works elsewhere in the app (auth-layout.ts's `onVerify`). Flagged here rather than guessed
+silently past.
 
 ## Goals
 
+- Make the existing backend `resetPassword` controller (already implemented, never wired up)
+  reachable from a real page — today a user who requests a reset link gets an email whose link
+  404s, with no way to actually set a new password
+- Fix real bugs found in the existing flow along the way: `resetPassword` crashes with an
+  unhandled `TypeError` on an invalid/expired token instead of failing gracefully; a failed-send
+  cleanup typo (`user.getResetPasswordToken = undefined`, the method, instead of
+  `user.resetPasswordToken`) means a token never actually gets invalidated when email delivery
+  fails; `forgotPassword`'s no-user-found branch leaks account existence via a distinguishable
+  500 response/toast (account enumeration)
+
 ## Phase breakdown
 
+1. Backend — register `router.post('/resetpassword/:resettoken', resetPassword)` in
+   `backend/src/routes/auth.js`, public (no `protect`), alongside the existing `forgotPassword`
+   route
+2. Backend — point `forgotPassword`'s emailed `resetUrl` at `FRONTEND_URL` (already present in
+   both env files, added for billing) instead of `req.protocol`/`req.get('host')`, with a
+   `{lang}/reset-password/:resettoken` locale-prefixed path
+3. Backend — guard `resetPassword` with a `next(new ErrorResponse('Invalid or expired reset
+   token', 400))` before touching `user.password` when no matching non-expired user is found
+4. Backend — fix the `getResetPasswordToken`/`resetPasswordToken` typo in `forgotPassword`'s
+   failed-send `catch` block
+5. Backend — stop leaking whether an email is registered: `forgotPassword`'s no-user branch
+   responds identically to the success path (200); remove the frontend's
+   `auth.toast.forgot_no_user` handling (`core/services/auth.ts`, `err?.status === 500` branch)
+   and the now-unused key from all 5 locale files
+6. Frontend — new routed (not drawer) page `features/auth/reset-password/`, mirroring
+   `forgot-password`'s standalone hero layout: password + confirm-password reactive form
+   (`minLength(8)`, match validator), success → toast + navigate home with `auth` drawer opened
+   to login (session token stored directly via the backend's `sendTokenResponse`, same as
+   `Auth.login`), failure → error toast pointing back to `Drawer.open('forgot-password')`
+7. Frontend — add `{ path: 'reset-password/:token', ... }` to `app.routes.ts` under the existing
+   locale-prefixed group (same tier as `terms-and-conditions`/`privacy-policy`); add to the
+   `noindex` grouping in `app.routes.server.ts` alongside `trip-planner`/`auth`
+8. Frontend — new `Auth.resetPassword(token, password): Promise<void>` in
+   `core/services/auth.ts`, following the existing `verifyEmail` method shape
+9. i18n — new `auth.resetPassword.*` (`title`/`newPasswordLabel`/`confirmPasswordLabel`/`submit`)
+   and `auth.toast.reset_success`/`.reset_success_detail`/`.reset_failed`/`.reset_expired` keys
+   across all 5 locale files in the same pass
+
 ## Notes
+
+- Not a redesign — no changes to the request-a-link step's UI, copy, or validation
+  (`features/auth/forgot-password/`), which stays a drawer opened from inside the app
+- The reset step can't follow the drawer pattern: it's opened cold from an email link with no
+  app/drawer context loaded, so it needs a real routable URL — unlike every other step in this
+  auth flow
+- Out of scope: rate-limiting `forgotPassword`/`resetPassword` (neither has one today, matching
+  `register`); HTML email formatting (`utils/sendEmail.js` stays plain text)
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-09-11 — Forgot Password: Reset Flow Fix Implemented — Status: Completed
+
+- Branch `feature/forgot-password-reset-fix`, off the spec at
+  @context/features/forgot-password-reset-fix-spec.md, written and implemented in the same
+  session. Closes a real dead end: the "forgot password" flow only ever built the request-a-link
+  half — the emailed link 404'd against an unregistered backend route, and even once routed
+  pointed at the API host with no frontend page to land on at all
+- **Backend**: registered `POST /resetpassword/:resettoken` (was imported into `routes/auth.js`
+  but never mounted); `forgotPassword`'s emailed `resetUrl` now builds off `FRONTEND_URL` (already
+  present in both env files, added for billing) with a locale prefix
+  (`{lang}/reset-password/:token`) instead of `req.protocol`/`req.get('host')`; fixed three real
+  bugs found reading the existing code: `resetPassword` crashed with an unhandled `TypeError` on
+  an invalid/expired token (no user-found guard before touching `user.password` — added a 400
+  `ErrorResponse`), the failed-send cleanup wiped `user.getResetPasswordToken` (the *method*)
+  instead of `user.resetPasswordToken` (the *field*, never actually cleared), and a request for an
+  unregistered email returned a distinguishable `500` (account-enumeration leak) — now responds
+  identically to the success path
+- **Frontend**: new routed (not drawer) page `features/auth/reset-password/`, mirroring
+  `forgot-password`'s own hero/card layout conventions; new `Auth.resetPassword()` (stores the
+  session token `resetPassword` already returns via `sendTokenResponse`, signing the user in
+  directly rather than sending them back to log in); `Auth.forgotPassword` now sends `lang` so the
+  backend can build the locale-prefixed link; removed the now-dead `auth.toast.forgot_no_user`
+  toast path (frontend + all 5 locale files) now that the leak it surfaced is fixed. Route added
+  under the existing locale-prefixed group in `app.routes.ts`, client-rendered/noindex-grouped in
+  `app.routes.server.ts` alongside `trip-planner`/`auth` (a reset-token URL should never be
+  crawled). New `auth.resetPassword.*`/`auth.toast.reset_*` i18n keys across all 5 locales
+- **One flagged spec ambiguity, resolved rather than guessed past silently**: Requirement 6 said
+  to navigate home with the `auth` drawer opened to the login step, but also said the user should
+  be signed in directly via the returned token — contradictory (a login form for someone already
+  just signed in). Implemented as: store the token and navigate home without opening the drawer,
+  matching how `verify-code`'s own token hand-off works elsewhere (`auth-layout.ts`'s `onVerify`)
+- **Real bug caught by the user's own testing, not this agent**: the first live test showed the
+  old, pre-fix email text/link — root-caused to the local Docker backend container simply not
+  having been rebuilt since the code change (no dev volume mount, same gotcha noted in the
+  hotel-booking-deeplink session). Rebuilt and restarted; confirmed fixed
+- **Two follow-up UI fixes from the user's own live review**: the fixed-position header
+  (`position: fixed`, height `--header-h`) was clipping the top of the new page's hero banner —
+  every other routed page is responsible for its own top clearance, and this one simply hadn't
+  added it; fixed with `padding-top: var(--header-h)` on `.rp-page`. Also added
+  `max-width: 1200px; margin: 0 auto` (unstretched full-bleed content at desktop widths), matching
+  the same convention `destination-vertical-list`'s page-content wrapper already uses
+- Verified via `node --check` (backend), `tsc --noEmit` and a full `ng build` (frontend,
+  `reset-password` confirmed as its own lazy chunk), clean throughout. No live browser testing
+  from this agent's side, per the user's standing preference
+  ([[feedback_no_self_browser_verification]]) — both real issues above (stale container, header
+  clipping/width) were found via the user's own testing, not self-caught
+- Committed on `feature/forgot-password-reset-fix`, merged to `main`, branch deleted
 
 ### 2026-09-11 — Mobile Drawer Fixes: Hike/Bike Markers, Sheet Height/Corners, Hotel Drawer Reverted, dvh — Status: Completed
 

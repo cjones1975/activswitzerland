@@ -86,7 +86,6 @@
       "forgot_success": "E-Mail gesendet",
       "forgot_success_detail": "Wir haben dir einen Link zum Zurücksetzen deines Passworts gesendet.",
       "forgot_failed": "Anfrage fehlgeschlagen",
-      "forgot_no_user": "Kein Benutzer mit der angegebenen E-Mail-Adresse gefunden.",
       "generic_error": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
       "verify_sent": "Wir haben Ihnen einen Bestätigungscode per E-Mail gesendet.",
       "verify_required": "Bestätigung erforderlich",
@@ -94,7 +93,11 @@
       "verify_failed": "Bestätigung fehlgeschlagen",
       "resend_success": "Code erneut gesendet",
       "resend_failed": "Erneutes Senden fehlgeschlagen",
-      "update_failed": "Aktualisierung fehlgeschlagen"
+      "update_failed": "Aktualisierung fehlgeschlagen",
+      "reset_success": "Passwort zurückgesetzt",
+      "reset_success_detail": "Du bist mit deinem neuen Passwort angemeldet.",
+      "reset_failed": "Zurücksetzen fehlgeschlagen",
+      "reset_expired": "Dieser Link ist möglicherweise abgelaufen. Bitte fordere einen neuen an."
     },
     "tabs": {
       "login": "Anmelden",
@@ -110,6 +113,12 @@
       "title": "AGB",
       "prefix": "Ich akzeptiere die",
       "and": "und die"
+    },
+    "resetPassword": {
+      "title": "Wähle ein neues Passwort",
+      "newPasswordLabel": "Neues Passwort",
+      "confirmPasswordLabel": "Passwort bestätigen",
+      "submit": "Passwort zurücksetzen"
     }
   },
   "trip": {
