@@ -2,77 +2,115 @@
 
 ## Feature
 
-Forgot Password — Reset Flow Fix (@context/features/forgot-password-reset-fix-spec.md)
+Explore Trips Cards: Static Route Thumbnail + On-Demand Map Mask
+(@context/features/explore-trips-card-map-scaling-spec.md)
 
 ## Status
 
-Implemented on `feature/forgot-password-reset-fix` — verified via `node --check` (backend),
-`tsc --noEmit` and `ng build` (frontend), all clean; not yet committed, not yet reviewed live by
-the user
-
-One deliberate deviation from the spec text: Requirement 6 said to navigate home with the `auth`
-drawer opened to the login step, but also said the user should be signed in directly via the
-token `resetPassword` already returns — those two read as contradictory (opening a login form to
-someone who's already just been signed in). Implemented as: store the token (signed in) and
-navigate home, without opening the `auth` drawer, matching how `verify-code`'s own token hand-off
-works elsewhere in the app (auth-layout.ts's `onVerify`). Flagged here rather than guessed
-silently past.
+Already implemented on `main` — verified directly against current code, not just the spec:
+`shared/route-thumbnail/` (`RouteThumbnail`), `shared/services/explore-map-mask.ts`
+(`ExploreMapMask`), and `trip-card.html`'s `.tc-map-wrap`/`.tc-map-mask` structure all match this
+spec's described end state exactly (confirmed while reading these same files for the unrelated
+cover-image work).
 
 ## Goals
 
-- Make the existing backend `resetPassword` controller (already implemented, never wired up)
-  reachable from a real page — today a user who requests a reset link gets an email whose link
-  404s, with no way to actually set a new password
-- Fix real bugs found in the existing flow along the way: `resetPassword` crashes with an
-  unhandled `TypeError` on an invalid/expired token instead of failing gracefully; a failed-send
-  cleanup typo (`user.getResetPasswordToken = undefined`, the method, instead of
-  `user.resetPasswordToken`) means a token never actually gets invalidated when email delivery
-  fails; `forgotPassword`'s no-user-found branch leaks account existence via a distinguishable
-  500 response/toast (account enumeration)
+- Replace the always-on live MapLibre map every Explore Trips card used to mount unconditionally
+  (one real WebGL context per visible card, no ceiling) with a zero-cost static SVG route
+  thumbnail by default — diagnosed live: mobile browsers cap simultaneous WebGL contexts low
+  enough that the last 1-2 cards of a 10-trip test failed to render their map at all
+- Keep the real, fully-interactive map available on demand via a "View map" mask, with exactly
+  one live `<app-map>` mounted app-wide at any time regardless of trip count
 
 ## Phase breakdown
 
-1. Backend — register `router.post('/resetpassword/:resettoken', resetPassword)` in
-   `backend/src/routes/auth.js`, public (no `protect`), alongside the existing `forgotPassword`
-   route
-2. Backend — point `forgotPassword`'s emailed `resetUrl` at `FRONTEND_URL` (already present in
-   both env files, added for billing) instead of `req.protocol`/`req.get('host')`, with a
-   `{lang}/reset-password/:resettoken` locale-prefixed path
-3. Backend — guard `resetPassword` with a `next(new ErrorResponse('Invalid or expired reset
-   token', 400))` before touching `user.password` when no matching non-expired user is found
-4. Backend — fix the `getResetPasswordToken`/`resetPasswordToken` typo in `forgotPassword`'s
-   failed-send `catch` block
-5. Backend — stop leaking whether an email is registered: `forgotPassword`'s no-user branch
-   responds identically to the success path (200); remove the frontend's
-   `auth.toast.forgot_no_user` handling (`core/services/auth.ts`, `err?.status === 500` branch)
-   and the now-unused key from all 5 locale files
-6. Frontend — new routed (not drawer) page `features/auth/reset-password/`, mirroring
-   `forgot-password`'s standalone hero layout: password + confirm-password reactive form
-   (`minLength(8)`, match validator), success → toast + navigate home with `auth` drawer opened
-   to login (session token stored directly via the backend's `sendTokenResponse`, same as
-   `Auth.login`), failure → error toast pointing back to `Drawer.open('forgot-password')`
-7. Frontend — add `{ path: 'reset-password/:token', ... }` to `app.routes.ts` under the existing
-   locale-prefixed group (same tier as `terms-and-conditions`/`privacy-policy`); add to the
-   `noindex` grouping in `app.routes.server.ts` alongside `trip-planner`/`auth`
-8. Frontend — new `Auth.resetPassword(token, password): Promise<void>` in
-   `core/services/auth.ts`, following the existing `verifyEmail` method shape
-9. i18n — new `auth.resetPassword.*` (`title`/`newPasswordLabel`/`confirmPasswordLabel`/`submit`)
-   and `auth.toast.reset_success`/`.reset_success_detail`/`.reset_failed`/`.reset_expired` keys
-   across all 5 locale files in the same pass
+1. New `RouteThumbnail` component (`shared/route-thumbnail/`), sibling to the existing
+   `TrailThumbnail` used by `hikes-list`/`bikes-list` — same bounding-box → SVG-viewBox
+   projection math, extended with a terrain-PNG background (`assets/map_bg.png`) and real
+   per-activity-kind `ACTIVITY_GROUPS` marker icons (dot fallback when a marker has no `image`).
+   Purely decorative, no click handling of its own
+2. `TripCard`'s `.tc-map-wrap` swaps the unconditional `<app-map>` for
+   `<app-route-thumbnail [routeCoordinates] [tripType] [markers]="activityMarkers()">`, reusing
+   the existing computed as-is
+3. New `ExploreMapMask` service (`shared/services/explore-map-mask.ts`) — single
+   current-trip-id signal (not a z-index stack like `Drawer`), since only one mask can ever be
+   open; `open()` overwrites, closing any other card's mask automatically
+4. "View map" button (bottom-right of the thumbnail) opens the mask: a plain `@if` block (never
+   `@defer (when ...)`, which was confirmed as the exact cause of a separate, still-open
+   `hike-detail`/`bike-detail` WebGL leak — `@defer` never reverts to its placeholder once
+   resolved) mounting the real `<app-map>`, destroyed via normal `ngOnDestroy`/`map.remove()` the
+   moment the mask closes or another card's mask opens
+5. Marker click-to-open-detail-drawer lives only on the real map inside the mask, never the
+   thumbnail — `activityMarkers()` gained `clickable: true, label: a.name`;
+   `onActivityMarkerClick()` mirrors `trip-planner-layout.ts`'s lookup-then-open pattern, with a
+   new `source: 'explore-trips'` value threaded through `AttractionDetailPayload`/
+   `HikeDetailPayload`/`BikeDetailPayload` so those drawers hide the "show on map" icon, force
+   modal at desktop widths, and back-navigate to Explore Trips instead of a list/trip-planner
 
 ## Notes
 
-- Not a redesign — no changes to the request-a-link step's UI, copy, or validation
-  (`features/auth/forgot-password/`), which stays a drawer opened from inside the app
-- The reset step can't follow the drawer pattern: it's opened cold from an email link with no
-  app/drawer context loaded, so it needs a real routable URL — unlike every other step in this
-  auth flow
-- Out of scope: rate-limiting `forgotPassword`/`resetPassword` (neither has one today, matching
-  `register`); HTML email formatting (`utils/sendEmail.js` stays plain text)
+- **Real latent maplibre-gl bug found and fixed along the way**, not specific to this feature:
+  a clickable popup's `closeOnClick: true` map-wide click listener has no check for whether the
+  click landed inside the popup's own content (confirmed by reading `maplibre-gl`'s source
+  directly), racing the popup button's own click handler and intermittently eating the
+  `markerClick` emit. Fixed via `closeOnClick: !marker.clickable` plus an explicit
+  `closeOtherPopups` on every popup's `open` event — this likely affected
+  `all-attractions`/`destination-vertical-list`/hike-bike markers' existing clickable popups too,
+  just never surfaced before
+- Not the same mechanism as the `hike-detail`/`bike-detail` drawers' small embedded preview map —
+  that one's `@defer`-based WebGL leak is a separate, still-open bug, explicitly out of scope here
+- Out of scope: `hikes-list`/`bikes-list` (`TrailThumbnail`, already using the non-live-map
+  pattern this mirrors), no backend changes, no static-image generation pipeline
 
 ## History
 
 <!-- Keep this updated. Earliest to latest -->
+
+### 2026-09-11 — Explore Trips: Cover Photo on Trip Cards Implemented — Status: Completed
+
+- Branch `feature/explore-trips-cover-image` (own worktree, `ACTIVSWITZERLAND-cover-image`), off
+  the spec at @context/features/explore-trips-cover-image-spec.md, written and implemented in the
+  same session — a design discussion first (photo half/map half within the existing
+  `.tc-map-wrap` row, no change to card height, "first activity added" as the simplest rule) then
+  formalized into the spec before any code
+- **Backend**: new `resolveCoverImage(activities)` (`backend/src/utils/tripCoverImage.js`) — looks
+  up a MySwitzerland attraction's image URL for use as a trip's cover photo, wrapped so a failed
+  lookup never blocks saving a trip. New `Trip.coverImageUrl`, computed in `createTrip`/
+  `updateTrip` alongside the existing `distanceKm` pattern (gated on `isPublic`/
+  `effectiveIsPublic`, recomputed on every relevant save, not "once ever" like `slug`). Only a URL
+  *string* is fetched server-side — no revival of the earlier abandoned image-bytes proxy
+  (MySwitzerland's CDN TLS-fingerprints and blocks that)
+- **Frontend**: `SavedTrip.coverImageUrl`; `trip-card.html`/`.css` split the existing 180px
+  `.tc-map-wrap` row in half when a cover photo is present (photo left, existing route thumbnail +
+  badges right), falling back to today's full-width map when absent
+- **Two real bugs found via the user's own live testing after merging to `main`, both fixed
+  directly on `main`** (small, live-tested follow-ups to already-merged code, same precedent as
+  other same-day entries in this file):
+  1. `resolveCoverImage` always silently resolved `null` — MySwitzerland's single-attraction
+     endpoint wraps the actual record one level deeper than assumed (`{ meta, links, data: {...,
+     image} }`), the same double-unwrap the frontend's own `AttractionsService.getAttraction`
+     already does (`res.data.data`) but missed in the new backend util. Confirmed live via a
+     direct query against the real endpoint before and after the fix
+  2. The "View map"/distance badges collided at the bottom corners once the map half narrowed to
+     ~50% width — fixed by repositioning them only in the split case (`.tc-map-wrap--split`):
+     "View map" moves to top-right, distance badge to bottom-right; the unsplit (no cover photo)
+     case keeps its original bottom-left/bottom-right positions unchanged
+- **Design revision after initial testing**: the original spec deliberately scoped this to strictly
+  `activities[0]` — a hike/bike-first trip (no photo data exists for hikes/bikes) was confirmed
+  upfront to show no image at all, same as a trip with no activities. After seeing this live, the
+  user asked to relax it: `resolveCoverImage` now scans the whole `activities` list in order for
+  the first `kind === 'attraction'` entry, wherever it sits — a hike/bike-first trip now falls
+  through to the next attraction instead of showing nothing; only a trip with no attraction
+  activities at all still shows none. Spec updated in place to match
+- Verified via `node --check` (backend) and `tsc --noEmit` + `ng build` (frontend), clean
+  throughout; the two live bugs above were found by the user's own testing, not self-caught, per
+  their standing preference ([[feedback_no_self_browser_verification]]) — confirmed fixed via a
+  direct MySwitzerland query (bug 1) and the user's own screenshot (bug 2)
+- Backend Docker container rebuilt twice during this session to pick up each fix (no dev volume
+  mount — same gotcha as the forgot-password session)
+- Committed on `feature/explore-trips-cover-image`, merged to `main` (regular merge, not
+  fast-forward — the branch had forked before the forgot-password merge landed); the two
+  live-testing fixes above are applied directly on `main`'s working tree but not yet committed
 
 ### 2026-09-11 — Forgot Password: Reset Flow Fix Implemented — Status: Completed
 

@@ -102,6 +102,19 @@
   height: 100%;
 }
 
+/* Split (cover photo present): the map half is narrower, so the two badges collide when both
+   sit at the bottom corners as they do in the unsplit/full-width case. Stack them on the right
+   edge instead — "View map" top-right, distance bottom-right — leaving the unsplit case alone. */
+.tc-map-wrap--split .tc-view-map {
+  top: 0.5rem;
+  bottom: auto;
+}
+
+.tc-map-wrap--split .tc-distance-badge {
+  left: auto;
+  right: 0.5rem;
+}
+
 .tc-view-map {
   position: absolute;
   bottom: 0.5rem;

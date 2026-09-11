@@ -45,15 +45,20 @@ MySwitzerland's CDN in the browser, exactly like `destination-vertical-list` alr
 
 - New `backend/src/utils/tripCoverImage.js` (or similar), exporting
   `resolveCoverImage(activities): Promise<string | null>`:
-  - Returns `null` immediately if `activities[0]` is missing or `kind !== 'attraction'` (no
-    lookup attempted) — this is the deliberate, agreed simplification: only ever the first
-    activity, never falling back to a later one.
-  - Otherwise calls MySwitzerland's attraction endpoint for `activities[0].refId` (same URL
+  - **Revised post-spec**: scans `activities` in order for the first `kind === 'attraction'`
+    entry — not strictly `activities[0]`. A hike/bike-first trip falls through to the next
+    attraction in the list rather than showing no image; only a trip with *no* attraction
+    activities at all shows none. Reverses this spec's original "Out of scope" call after live
+    testing surfaced the original strict-`activities[0]` behavior as too narrow in practice.
+  - Otherwise calls MySwitzerland's attraction endpoint for that activity's `refId` (same URL
     shape/headers as `getAttraction`, extracted or duplicated — implementer's call which reads
     cleaner) with a fixed `lang=en` (only the image URL is needed, which doesn't vary by locale;
     no need to know/store what locale the user was browsing in when they added the activity), and
-    returns `image?.[0]?.url ?? null` — same field destination cards already read
-    (`dest.image?.[0]?.url`).
+    returns `data.data.image?.[0]?.url ?? null` — MySwitzerland's single-record attraction
+    response wraps the actual record one level deeper than the list endpoints
+    (`{ meta, links, data: {...} }`), confirmed live and matching the double-unwrap the frontend's
+    own `AttractionsService.getAttraction` already does (`res.data.data`) — an early implementation
+    missed this and always silently resolved `null`.
   - Wrapped so a MySwitzerland failure (404/timeout/rate-limit) resolves `null` rather than
     throwing — a missing cover photo must never block saving a trip.
 - `Trip.js`: new `coverImageUrl: { type: String, default: null }`.
@@ -82,9 +87,6 @@ MySwitzerland's CDN in the browser, exactly like `destination-vertical-list` alr
 
 - `trip-detail` (the standalone `/trips/:slug` page) — this spec only covers the Explore Trips
   grid card. `coverImageUrl` would be trivially available there too if wanted later.
-- Any fallback beyond the first activity (e.g. first *attraction* specifically, skipping
-  hikes/bikes) — confirmed: a hike/bike-first trip simply shows no photo, same as a trip with no
-  activities at all.
 - Re-attempting the earlier backend image-proxy/cache approach — not needed here since only a URL
   string is fetched server-side (already done everywhere images are involved), never image bytes.
 - Any new attribution/copyright UI — this reuses the same attraction-image pipe already used

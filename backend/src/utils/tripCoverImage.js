@@ -1,11 +1,12 @@
 import axios from 'axios';
 
-// Only ever the first activity added, and only when it's an attraction (hikes/bikes have no
-// photo data — see explore-trips-cover-image-spec.md's "Confirmed decisions"). Never falls back
-// to a later activity.
+// The first *attraction* activity anywhere in the list, in order — hikes/bikes have no photo
+// data (see explore-trips-cover-image-spec.md's "Confirmed decisions"), so a hike/bike-first trip
+// falls through to whatever attraction comes next rather than showing no image. A trip with no
+// attraction activities at all still shows no image.
 export const resolveCoverImage = async (activities) => {
-    const first = activities?.[0];
-    if (!first || first.kind !== 'attraction') return null;
+    const first = activities?.find(a => a.kind === 'attraction');
+    if (!first) return null;
 
     try {
         const response = await axios({
@@ -16,7 +17,9 @@ export const resolveCoverImage = async (activities) => {
                 accept: 'application/json',
             },
         });
-        return response.data?.image?.[0]?.url ?? null;
+        // MySwitzerland wraps the actual record under `data.data` ({ meta, links, data }) — same
+        // double-unwrap the frontend's own AttractionsService.getAttraction relies on (`res.data.data`).
+        return response.data?.data?.image?.[0]?.url ?? null;
     } catch (err) {
         // A missing cover photo must never block saving a trip.
         console.error('resolveCoverImage: MySwitzerland lookup failed', err.message);
