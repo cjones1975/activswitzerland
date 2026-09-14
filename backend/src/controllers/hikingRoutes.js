@@ -1,6 +1,7 @@
 import ErrorResponse from '../utils/errorResponse.js';
 import asyncHandler from '../middleware/async.js';
 import { fetchSchweizMobilRoutes, searchSchweizMobilRoutes, buildGpx, fetchElevationProfile, fetchRouteStages } from '../utils/schweizMobilRoutes.js';
+import { fetchCustomHikesNear, searchCustomHikes } from '../utils/customHikes.js';
 
 // ch.astra.wanderland = official SchweizMobil hiking routes (Wanderland)
 const HIKING_LAYER = 'ch.astra.wanderland';
@@ -13,15 +14,19 @@ export const getHikes = asyncHandler(async (req, res, next) => {
     const radiusMeters = parseInt(req.query.radius, 10) || 30000;
 
     try {
-        const hikes = await fetchSchweizMobilRoutes({
-            layer: HIKING_LAYER,
-            easting,
-            northing,
-            radiusMeters,
-            lang: req.query.lang,
-        });
+        const [hikes, customHikes] = await Promise.all([
+            fetchSchweizMobilRoutes({
+                layer: HIKING_LAYER,
+                easting,
+                northing,
+                radiusMeters,
+                lang: req.query.lang,
+            }),
+            fetchCustomHikesNear({ easting, northing, radiusMeters }),
+        ]);
+        const data = [...hikes, ...customHikes];
 
-        res.status(200).json({ success: true, count: hikes.length, radiusMeters, data: hikes });
+        res.status(200).json({ success: true, count: data.length, radiusMeters, data });
     } catch (error) {
         console.error(error);
         next(
@@ -38,8 +43,13 @@ export const getHikesSearch = asyncHandler(async (req, res, next) => {
     if (!query) return next(new ErrorResponse('q query param is required', 400));
 
     try {
-        const hikes = await searchSchweizMobilRoutes({ layer: HIKING_LAYER, query, lang: req.query.lang });
-        res.status(200).json({ success: true, count: hikes.length, query, data: hikes });
+        const [hikes, customHikes] = await Promise.all([
+            searchSchweizMobilRoutes({ layer: HIKING_LAYER, query, lang: req.query.lang }),
+            searchCustomHikes(query),
+        ]);
+        const data = [...hikes, ...customHikes];
+
+        res.status(200).json({ success: true, count: data.length, query, data });
     } catch (error) {
         console.error(error);
         next(

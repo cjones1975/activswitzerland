@@ -22,7 +22,8 @@
         if (params.get('preview') === 'desktop') {
           localStorage.setItem('as-desktop-preview', '1');
         }
-        var bypass = localStorage.getItem('as-desktop-preview') === '1';
+        var bypass = localStorage.getItem('as-desktop-preview') === '1'
+          || window.location.pathname.indexOf('/admin') === 0;
         if (!bypass && window.matchMedia('(min-width: 1024px)').matches) {
           document.documentElement.classList.add('as-desktop-gate');
         }

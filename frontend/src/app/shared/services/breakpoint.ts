@@ -68,10 +68,14 @@ export class Breakpoint {
       localStorage.setItem(DESKTOP_PREVIEW_STORAGE_KEY, '1');
     }
     const previewBypass = localStorage.getItem(DESKTOP_PREVIEW_STORAGE_KEY) === '1';
+    // The single-admin /admin section always needs real desktop width, without the owner having
+    // to remember the ?preview=desktop toggle - bypassed by path instead, same effect.
+    const isAdminRoute = window.location.pathname.startsWith('/admin');
+    const bypassNotice = previewBypass || isAdminRoute;
 
     const noticeMql = window.matchMedia(`(min-width: ${DESKTOP_NOTICE_MIN_WIDTH}px)`);
-    this.isDesktopNotice.set(!previewBypass && noticeMql.matches);
-    noticeMql.addEventListener('change', e => this.isDesktopNotice.set(!previewBypass && e.matches));
+    this.isDesktopNotice.set(!bypassNotice && noticeMql.matches);
+    noticeMql.addEventListener('change', e => this.isDesktopNotice.set(!bypassNotice && e.matches));
 
     // Angular now has the same answer the inline script guessed at — safe to reveal app-root,
     // since the correct branch (real app vs. notice) renders synchronously from here before the

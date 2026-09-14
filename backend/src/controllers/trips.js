@@ -6,9 +6,9 @@ import { generateUniqueSlug, tripDurationLabel } from '../utils/slug.js';
 import { detectReviewLang } from '../utils/detect-lang.js';
 import { translateTripContent } from '../utils/translate.js';
 import { resolveCoverImage } from '../utils/tripCoverImage.js';
+import { isAdminAccount } from '../utils/adminAccount.js';
 
 const isSlugTaken = slug => Trip.exists({ slug }).then(Boolean);
-const isCuratedAccount = userId => userId === process.env.CURATED_TRIPS_USER_ID;
 
 // @desc   Get all trips for the logged-in user
 // @route  GET /api/v1/trips
@@ -31,7 +31,7 @@ export const createTrip = asyncHandler(async (req, res) => {
     let reviewLang;
     let coverImageUrl = null;
     if (isPublic) {
-        const curated = isCuratedAccount(req.user.id);
+        const curated = isAdminAccount(req.user.id);
         reviewLang = curated ? 'en' : detectReviewLang(review || name);
         if (curated) {
             const translations = await translateTripContent({ name, review });
@@ -94,7 +94,7 @@ export const updateTrip = asyncHandler(async (req, res, next) => {
     if (effectiveIsPublic && (updates.name !== undefined || updates.review !== undefined)) {
         const effectiveName = updates.name ?? trip.name;
         const effectiveReview = updates.review ?? trip.review;
-        const curated = isCuratedAccount(req.user.id);
+        const curated = isAdminAccount(req.user.id);
         updates.reviewLang = curated ? 'en' : detectReviewLang(effectiveReview || effectiveName);
 
         const nameChanged = updates.name !== undefined && updates.name !== trip.name;

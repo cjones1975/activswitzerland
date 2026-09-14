@@ -1,0 +1,153 @@
+<div class="ah-header">
+  <div>
+    <h1>Hikes</h1>
+    <p>Custom hikes shown alongside SchweizMobil routes</p>
+  </div>
+  <button type="button" class="ah-btn-primary" (click)="openAdd()">
+    <i class="fa-solid fa-plus"></i>
+    <span>Add Hike</span>
+  </button>
+</div>
+
+<div class="ah-body">
+  @if (loading()) {
+    <p class="ah-muted">Loading…</p>
+  } @else {
+    <p class="ah-muted">{{ hikes().length }} hikes</p>
+    <div class="ah-list">
+      @for (hike of hikes(); track hike._id) {
+        <div class="ah-card">
+          <div class="ah-card-main">
+            <div class="ah-card-title-row">
+              <span class="ah-card-title">{{ hike.name }}</span>
+              <span class="ah-pill ah-pill-category">{{ hike.category }}</span>
+              <span class="ah-pill ah-pill-source">{{ hike.source }}</span>
+            </div>
+            <div class="ah-card-meta">
+              {{ hike.distanceKm | number: '1.1-1' }} km
+              @if (hike.ascentM != null) {
+                &middot; Ascent {{ hike.ascentM | number: '1.0-0' }} m
+              }
+              @if (hike.descentM != null) {
+                &middot; Descent {{ hike.descentM | number: '1.0-0' }} m
+              }
+            </div>
+          </div>
+          <div class="ah-card-actions">
+            <button type="button" class="ah-icon-btn" (click)="openEdit(hike)" aria-label="Edit">
+              <i class="fa-solid fa-pen"></i>
+            </button>
+            <button type="button" class="ah-icon-btn ah-icon-btn-danger" (click)="confirmRemove(hike)" aria-label="Delete">
+              <i class="fa-solid fa-trash"></i>
+            </button>
+          </div>
+        </div>
+      } @empty {
+        <p class="ah-muted">No custom hikes yet.</p>
+      }
+    </div>
+  }
+</div>
+
+@if (drawerOpen()) {
+  <div class="ah-scrim" (click)="close()"></div>
+  <div class="ah-drawer">
+    <div class="ah-drawer-header">
+      <span>{{ editingId() ? 'Edit Hike' : 'Add Hike' }}</span>
+      <button type="button" class="ah-icon-btn" (click)="close()" aria-label="Close">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+    </div>
+    <div class="ah-drawer-body">
+      <label class="ah-field">
+        <span class="ah-label">Name</span>
+        <input type="text" [ngModel]="nameModel()" (ngModelChange)="nameModel.set($event)" />
+      </label>
+
+      @if (!editingId()) {
+        <label class="ah-field">
+          <span class="ah-label">GPX File</span>
+          @if (!gpxFilename()) {
+            <div class="ah-dropzone" (click)="fileInput.click()">
+              <i class="fa-solid fa-file-arrow-up"></i>
+              <span>Click to choose a GPX file</span>
+            </div>
+          } @else {
+            <div class="ah-file-chip">
+              <i class="fa-solid fa-file"></i>
+              <div class="ah-file-chip-text">
+                <div>{{ gpxFilename() }}</div>
+                @if (preview(); as p) {
+                  <div class="ah-muted-sm">{{ p.pointCount }} points &middot; {{ p.segmentCount }} segments</div>
+                }
+              </div>
+              @if (previewLoading()) {
+                <i class="fa-solid fa-spinner fa-spin"></i>
+              } @else if (preview()) {
+                <i class="fa-solid fa-check ah-ok"></i>
+              }
+            </div>
+            <button type="button" class="ah-link" (click)="fileInput.click()">Replace file</button>
+          }
+          <input #fileInput type="file" accept=".gpx" hidden (change)="onFileSelected($event)" />
+        </label>
+
+        @if (preview(); as p) {
+          <div class="ah-preview-label">Preview</div>
+          <div class="ah-map-preview">
+            <app-map
+              [trailRoute]="previewLines()"
+              [fitBounds]="previewBoundsPoints()"
+              trailColor="#d97706"
+              [distanceLabel]="previewDistanceLabel()"
+            />
+          </div>
+          <div class="ah-stats-grid">
+            <div class="ah-stat">
+              <div class="ah-stat-label">Distance</div>
+              <div class="ah-stat-value">{{ p.distanceKm | number: '1.2-2' }} km</div>
+            </div>
+            <div class="ah-stat">
+              <div class="ah-stat-label">Ascent</div>
+              <div class="ah-stat-value">
+                @if (p.ascentM != null) {
+                  {{ p.ascentM | number: '1.0-0' }} m
+                } @else {
+                  —
+                }
+              </div>
+            </div>
+            <div class="ah-stat">
+              <div class="ah-stat-label">Descent</div>
+              <div class="ah-stat-value">
+                @if (p.descentM != null) {
+                  {{ p.descentM | number: '1.0-0' }} m
+                } @else {
+                  —
+                }
+              </div>
+            </div>
+            <div class="ah-stat">
+              <div class="ah-stat-label">Elevation</div>
+              <div class="ah-stat-value">
+                @if (p.minElevation != null) {
+                  {{ p.minElevation | number: '1.0-0' }}–{{ p.maxElevation | number: '1.0-0' }} m
+                } @else {
+                  —
+                }
+              </div>
+            </div>
+          </div>
+        }
+      }
+    </div>
+    <div class="ah-drawer-footer">
+      <button type="button" class="ah-btn-secondary" (click)="close()">Cancel</button>
+      <button type="button" class="ah-btn-primary" [disabled]="!canSave() || saving()" (click)="save()">
+        {{ saving() ? 'Saving…' : 'Save Hike' }}
+      </button>
+    </div>
+  </div>
+}
+
+<p-confirmDialog />
