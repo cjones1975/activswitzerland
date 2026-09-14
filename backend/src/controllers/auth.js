@@ -4,6 +4,7 @@ import crypto from 'crypto';
 import sendEmail from '../utils/sendEmail.js';
 import User from '../models/User.js';
 import { createVerificationCode, verifyAndConsumeCode } from '../utils/verificationCode.js';
+import { isAdminAccount } from '../utils/adminAccount.js';
 
 const sendVerificationEmail = (email, code, subject) =>
     sendEmail({
@@ -190,6 +191,7 @@ export const getMe = AsyncHandler(async (req, res, next) => {
     const data = user.toObject();
     data.hasStripeCustomer = !!data.stripeCustomerId;
     delete data.stripeCustomerId;
+    data.isAdmin = isAdminAccount(user.id);
 
     res.status(200).json({
         success: true,

@@ -1,0 +1,26 @@
+<div class="admin-shell">
+  <aside class="admin-sidebar">
+    <div class="admin-brand">
+      <div class="admin-brand-name">ActivSwitzerland</div>
+      <div class="admin-brand-tag">Admin</div>
+    </div>
+    <nav class="admin-nav">
+      <a class="admin-nav-item" routerLink="hikes" routerLinkActive="active">
+        <i class="fa-solid fa-route"></i>
+        <span>Hikes</span>
+      </a>
+    </nav>
+    @if (auth.currentUser(); as user) {
+      <div class="admin-account">
+        <div class="admin-avatar">{{ user.firstName[0] }}</div>
+        <div>
+          <div class="admin-account-name">{{ user.firstName }} {{ user.lastName }}</div>
+          <div class="admin-account-role">Administrator</div>
+        </div>
+      </div>
+    }
+  </aside>
+  <main class="admin-content">
+    <router-outlet />
+  </main>
+</div>

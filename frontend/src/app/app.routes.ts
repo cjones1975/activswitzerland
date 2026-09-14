@@ -4,6 +4,7 @@ import { Home } from './features/home/home';
 import { Profile } from './features/auth/profile/profile';
 import { SearchPage } from './features/search/search-page/search-page';
 import { authGuard } from './core/guards/auth';
+import { adminGuard } from './core/guards/admin';
 import { bareLangMatcher, localeLangResolver, localeMatchGuard } from './core/guards/locale';
 import { DEFAULT_LANG } from './shared/services/lang';
 
@@ -76,6 +77,22 @@ export const routes: Routes = [
       // prefix again) sent the Router's recognizer into a spin that hung
       // every request the Node process was serving, not just this one.
       { path: '**', redirectTo: '' },
+    ],
+  },
+  // Single-admin-only section, deliberately outside the :lang/MainLayout tree - not a
+  // localized public page. :lang's canMatch already rejects 'admin' as an unrecognized locale,
+  // so this only needs to come before bareLangMatcher below (which would otherwise sweep it
+  // into the unprefixed -> /en redirect).
+  {
+    path: 'admin',
+    canActivate: [adminGuard],
+    loadComponent: () => import('./features/admin/admin-shell/admin-shell').then(m => m.AdminShell),
+    children: [
+      { path: '', redirectTo: 'hikes', pathMatch: 'full' },
+      {
+        path: 'hikes',
+        loadComponent: () => import('./features/admin/admin-hikes/admin-hikes').then(m => m.AdminHikes),
+      },
     ],
   },
   // Anything whose first segment isn't a recognized locale — including bare

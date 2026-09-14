@@ -28,6 +28,7 @@ export interface TrailRoute {
   // Nationwide stage count for a multi-day route (only set when isMultiDay
   // is true) - undefined if the best-effort backend lookup failed.
   totalStages?: number;
+  source: string;
   stages: TrailStage[];
 }
 

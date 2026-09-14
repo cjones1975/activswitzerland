@@ -49,6 +49,12 @@ function reprojectCoord([easting, northing]) {
     return proj4('EPSG:2056', 'EPSG:4326', [easting, northing]);
 }
 
+// Inverse of reprojectCoord: WGS84 (GPX's native lon/lat) -> LV95 meters. EPSG:4326 needs no
+// explicit proj4.defs() call - it's one of proj4's built-in well-known definitions.
+export function reprojectToLv95([lon, lat]) {
+    return proj4('EPSG:4326', 'EPSG:2056', [lon, lat]);
+}
+
 // geo.admin.ch returns LineString for simple stages but MultiLineString for
 // stages with a gap/discontinuity. Normalize both to an array of lines
 // (array of [x,y] arrays) so downstream code has one shape to deal with.
@@ -66,7 +72,7 @@ function reprojectGeometry(geometry) {
 
 // Geometry is already in LV95 meters, so summing Euclidean distance between
 // consecutive vertices gives trail length directly, no reprojection needed.
-function linesDistanceMeters(lines) {
+export function linesDistanceMeters(lines) {
     let meters = 0;
     for (const line of lines) {
         for (let i = 1; i < line.length; i++) {
@@ -229,6 +235,7 @@ async function buildRoutesFromFeatures(features, { layer, lang }) {
             totalStages: totalStagesByRoute.get(route.routeNumber),
             distanceKm,
             distanceMiles: distanceKm * 0.621371,
+            source: 'SwitzerlandMobility',
             stages: route.stages.map(stage => ({
                 ...stage,
                 geometryWgs84: reprojectGeometry(stage.geometry),
@@ -343,6 +350,7 @@ export async function fetchRouteStages({ layer, routeNumber, lang }) {
         isMultiDay: !!stages[0].hasSegment,
         distanceKm,
         distanceMiles: distanceKm * 0.621371,
+        source: 'SwitzerlandMobility',
         stages: stages.map(({ hasSegment, ...stage }) => ({
             ...stage,
             geometryWgs84: reprojectGeometry(stage.geometry),

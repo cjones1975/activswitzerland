@@ -28,6 +28,7 @@ import bikeRoutes from './routes/bikeRoutes.js';
 import ai from './routes/ai.js';
 import billing from './routes/billing.js';
 import hotels from './routes/hotels.js';
+import adminHikes from './routes/adminHikes.js';
 
 // Create an instance of Express
 const app = express();
@@ -54,6 +55,7 @@ app.use('/api/v1/hikes', hikingRoutes);
 app.use('/api/v1/bikes', bikeRoutes);
 app.use('/api/v1/ai', ai);
 app.use('/api/v1/hotels', hotels);
+app.use('/api/v1/admin/hikes', adminHikes);
 
 app.get('/', (req, res) => {
     res.send('Hello from ActivSwitzerland API');

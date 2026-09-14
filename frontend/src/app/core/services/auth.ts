@@ -33,6 +33,7 @@ export interface CurrentUser {
   email: string;
   emailUpdates: boolean;
   isPro?: boolean;
+  isAdmin?: boolean;
   hasStripeCustomer?: boolean;
   createdAt?: string;
   updatedAt?: string;
@@ -63,6 +64,7 @@ export class Auth {
 
   readonly token = signal<string | null>(this.isBrowser ? localStorage.getItem('auth-token') : null);
   readonly isLoggedIn = computed(() => !!this.token());
+  readonly currentUser = signal<CurrentUser | null>(null);
 
   /** Set whenever register/login requires a 5-digit email code before a session is granted. */
   readonly pendingVerification = signal<{ email: string } | null>(null);
@@ -177,6 +179,7 @@ export class Auth {
     const res = await firstValueFrom(
       this.http.get<{ data: CurrentUser }>(`${environment.apiUrl}/api/v1/auth/me`)
     );
+    this.currentUser.set(res.data);
     return res.data;
   }
 

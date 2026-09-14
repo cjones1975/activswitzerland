@@ -35,6 +35,11 @@ export const serverRoutes: ServerRoute[] = [
   { path: ':lang/trip-planner/**', renderMode: RenderMode.Client },
   { path: ':lang/auth/**', renderMode: RenderMode.Client },
   { path: ':lang/reset-password/**', renderMode: RenderMode.Client },
+  // Single-admin-only section - same reasoning as :lang/auth/** above: personal/authenticated,
+  // not canonical, and adminGuard's isLoggedIn() check would always fail during SSR (no
+  // localStorage on the server), bouncing even a logged-in admin home before the client's real
+  // token is ever read.
+  { path: 'admin/**', renderMode: RenderMode.Client },
   // Covers the bare-path redirect (any URL with no/garbage locale prefix).
   { path: '**', renderMode: RenderMode.Server },
 ];
