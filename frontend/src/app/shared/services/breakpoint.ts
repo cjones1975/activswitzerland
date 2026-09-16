@@ -24,6 +24,15 @@ export const DESKTOP_NOTICE_MIN_WIDTH = 1024;
  */
 export const MOBILE_MAX_WIDTH = 768;
 
+/**
+ * The desktop "use mobile for now" notice is switched off - real desktop users see the app again,
+ * not just the `?preview=desktop` bypass. Left as a single flag (rather than ripping the notice
+ * out) so it's cheap to re-enable if the desktop layout turns out not to be ready after all; the
+ * DesktopNotice component, the storage-key/class-name bypass plumbing, and index.html's matching
+ * no-flash script are all still in place, just unused while this is false.
+ */
+const DESKTOP_NOTICE_ENABLED = false;
+
 const DESKTOP_PREVIEW_STORAGE_KEY = 'as-desktop-preview';
 
 /** Must match the class name the inline no-flash script in index.html adds. */
@@ -74,8 +83,8 @@ export class Breakpoint {
     const bypassNotice = previewBypass || isAdminRoute;
 
     const noticeMql = window.matchMedia(`(min-width: ${DESKTOP_NOTICE_MIN_WIDTH}px)`);
-    this.isDesktopNotice.set(!bypassNotice && noticeMql.matches);
-    noticeMql.addEventListener('change', e => this.isDesktopNotice.set(!bypassNotice && e.matches));
+    this.isDesktopNotice.set(DESKTOP_NOTICE_ENABLED && !bypassNotice && noticeMql.matches);
+    noticeMql.addEventListener('change', e => this.isDesktopNotice.set(DESKTOP_NOTICE_ENABLED && !bypassNotice && e.matches));
 
     // Angular now has the same answer the inline script guessed at — safe to reveal app-root,
     // since the correct branch (real app vs. notice) renders synchronously from here before the

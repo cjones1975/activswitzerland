@@ -236,6 +236,7 @@ async function buildRoutesFromFeatures(features, { layer, lang }) {
             distanceKm,
             distanceMiles: distanceKm * 0.621371,
             source: 'SwitzerlandMobility',
+            ...deriveStartEnd(route.stages),
             stages: route.stages.map(stage => ({
                 ...stage,
                 geometryWgs84: reprojectGeometry(stage.geometry),
@@ -364,17 +365,98 @@ function escapeXml(value) {
     }[char]));
 }
 
+function pointDistance([x1, y1], [x2, y2]) {
+    return Math.hypot(x2 - x1, y2 - y1);
+}
+
+// Greedy nearest-endpoint chaining: reorders (and reverses where needed) a set of line segments
+// so consecutive segments' endpoints sit as close together as possible, instead of trusting the
+// order they happened to arrive in. GPS Visualizer (and similar KML->GPX converters) often split
+// one genuinely continuous hike into several <trk>/<trkseg> blocks in an arbitrary order and
+// direction - confirmed on a real upload where naive file-order concatenation produced several
+// multi-km straight-line "teleports" across the map, even though every segment's true endpoint
+// matched its neighbor's to within a few meters once correctly chained. Not a global optimum
+// (that's an NP-hard routing problem), but a small, correct fix for the common case of a handful
+// of out-of-order segments - genuinely disconnected input still ends up with a jump, just the
+// smallest one available rather than whatever the file order happened to produce.
+export function stitchLines(lines) {
+    if (lines.length <= 1) return lines;
+
+    const used = new Array(lines.length).fill(false);
+    const chain = [lines[0]];
+    used[0] = true;
+    let start = lines[0][0];
+    let end = lines[0][lines[0].length - 1];
+
+    for (let step = 1; step < lines.length; step++) {
+        let best = null;
+        for (let i = 0; i < lines.length; i++) {
+            if (used[i]) continue;
+            const line = lines[i];
+            const s = line[0];
+            const e = line[line.length - 1];
+            const candidates = [
+                { atFront: false, reversed: false, dist: pointDistance(end, s) },
+                { atFront: false, reversed: true, dist: pointDistance(end, e) },
+                { atFront: true, reversed: false, dist: pointDistance(e, start) },
+                { atFront: true, reversed: true, dist: pointDistance(s, start) },
+            ];
+            for (const c of candidates) {
+                if (!best || c.dist < best.dist) best = { idx: i, ...c };
+            }
+        }
+        const piece = best.reversed ? [...lines[best.idx]].reverse() : lines[best.idx];
+        if (best.atFront) {
+            chain.unshift(piece);
+            start = piece[0];
+        } else {
+            chain.push(piece);
+            end = piece[piece.length - 1];
+        }
+        used[best.idx] = true;
+    }
+
+    return chain;
+}
+
+// Start/end coordinates for a route, in WGS84 - used to place distinct start/finish markers on
+// the map. Stitches within the first and last stage independently (see stitchLines), rather than
+// pooling every stage's lines together - a multi-day route's stage order (day 1, day 2, ...) is
+// already authoritative and often has a deliberate large gap between days, which a global
+// nearest-neighbor pass could wrongly "correct". Stitching within just the relevant stage still
+// fixes the common case this was built for: a single-stage route whose own segments are stored
+// out of order (source data predating ingestion-time stitching, or never guaranteed correct).
+export function deriveStartEnd(stages) {
+    const list = stages ?? [];
+    if (!list.length) return { startPoint: null, endPoint: null };
+
+    const firstLines = stitchLines(getLines(list[0].geometry).filter(line => line.length >= 1));
+    const lastLines = stitchLines(getLines(list[list.length - 1].geometry).filter(line => line.length >= 1));
+    if (!firstLines.length || !lastLines.length) return { startPoint: null, endPoint: null };
+
+    const lastLine = lastLines[lastLines.length - 1];
+    const [startLon, startLat] = reprojectCoord(firstLines[0][0]);
+    const [endLon, endLat] = reprojectCoord(lastLine[lastLine.length - 1]);
+
+    return {
+        startPoint: { lat: startLat, lon: startLon },
+        endPoint: { lat: endLat, lon: endLon },
+    };
+}
+
 // Builds a GPX document from a route's stages (LV95 geometries), inverse-projecting each vertex
 // back to WGS84. Deliberately a single <trk> with a single <trkseg> - not one <trkseg> per line
 // segment - because Garmin Connect's course importer only reliably reads the first <trkseg> (and
 // the first <trk>) of a GPX file, silently dropping the rest; confirmed against a real multi-leg
-// export that only showed its first leg once imported. Flattening loses the visual "gap" a
-// MultiLineString preserves on our own map (an internal discontinuity gets bridged by a straight
-// line instead), but that's the right tradeoff for a file whose whole purpose is round-tripping
-// into third-party GPS tools.
+// export that only showed its first leg once imported. Each stage's own segments are stitched
+// into a sensible order first (see stitchLines) - flattening in raw file order previously bridged
+// genuinely out-of-order segments with wrong straight lines, also confirmed on a real upload.
+// Stitching is scoped per stage, not across all of them pooled together - a multi-day route's
+// stage order (day 1, day 2, ...) is already authoritative and often has a deliberate large gap
+// between days, which a global nearest-neighbor pass could wrongly "correct".
 export function buildGpx({ name, stages }) {
-    const points = (stages ?? [])
-        .flatMap(stage => getLines(stage.geometry))
+    const lines = (stages ?? []).flatMap(stage => stitchLines(getLines(stage.geometry)));
+    const points = lines
         .flat()
         .map(coord => {
             const [lon, lat] = reprojectCoord(coord);
@@ -418,7 +500,10 @@ async function fetchLineProfile(line) {
 // summation already does - the distance axis can show a false "seam" at a gap,
 // an accepted limitation rather than something this function corrects.
 export async function fetchElevationProfile(stages) {
-    const lines = (stages ?? []).flatMap(stage => getLines(stage.geometry)).filter(line => line.length >= 2);
+    // Stitched per stage, not across all of them pooled together - see buildGpx's comment on why.
+    const lines = (stages ?? [])
+        .flatMap(stage => stitchLines(getLines(stage.geometry)))
+        .filter(line => line.length >= 2);
 
     let distanceOffsetMeters = 0;
     let baseElevation = null;

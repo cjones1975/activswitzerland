@@ -1,6 +1,6 @@
 import { XMLParser } from 'fast-xml-parser';
 import Hike from '../models/Hike.js';
-import { reprojectToLv95, linesDistanceMeters } from './schweizMobilRoutes.js';
+import { reprojectToLv95, linesDistanceMeters, stitchLines, deriveStartEnd } from './schweizMobilRoutes.js';
 
 const xmlParser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '' });
 
@@ -33,14 +33,24 @@ export function parseGpx(gpxString) {
     const gpx = doc?.gpx;
     if (!gpx) throw new Error('Not a valid GPX file');
 
-    const lines = [];
+    const rawLines = [];
     for (const trk of asArray(gpx.trk)) {
         for (const seg of asArray(trk.trkseg)) {
             const points = asArray(seg.trkpt).map(parsePoint);
-            if (points.length >= 2) lines.push(points);
+            if (points.length >= 2) rawLines.push(points);
         }
     }
-    if (!lines.length) throw new Error('GPX file has no usable track segments');
+    if (!rawLines.length) throw new Error('GPX file has no usable track segments');
+
+    // Stitched once here, at ingestion, rather than leaving every reader (map, GPX export,
+    // elevation profile) to defensively reorder on every request - GPS Visualizer (and similar
+    // KML->GPX converters) often store one continuous hike as several segments in an arbitrary
+    // order and direction. A custom hike is always single-stage, so there's no multi-day stage
+    // boundary to accidentally cross here (see schweizMobilRoutes.js's stitchLines comment for
+    // why that distinction matters elsewhere). This also fixes ascent/descent below, which
+    // otherwise reads a spurious elevation jump at each wrong segment boundary as if it were a
+    // real climb.
+    const lines = stitchLines(rawLines);
 
     const lv95Lines = lines.map(line => line.map(([lon, lat]) => reprojectToLv95([lon, lat])));
     const distanceKm = linesDistanceMeters(lv95Lines) / 1000;
@@ -121,6 +131,10 @@ function hikeToTrailRoute(hike) {
         distanceKm: hike.distanceKm,
         distanceMiles: hike.distanceMiles,
         source: hike.source,
+        // Geometry-derived {lat, lon} for map start/finish markers - distinct from the
+        // Hike document's own startPoint/endPoint (named GPX <wpt> waypoints, admin-facing
+        // only, often absent - see parseGpx).
+        ...deriveStartEnd(hike.stages),
         stages: hike.stages,
     };
 }

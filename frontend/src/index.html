@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="utf-8">
-  <title>ActivSwitzerland - Plan Your Swiss Adventure</title>
+  <title>ActivSwitzerland</title>
   <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Plan your Swiss adventure - discover destinations, attractions, and hiking/biking routes across Switzerland, and build it all into a personalized itinerary.">
@@ -21,7 +21,9 @@
     // visible on a desktop-width screen while Angular's JS is still loading/hydrating. Breakpoint
     // (shared/services/breakpoint.ts) removes the class once it's made the same call client-side —
     // keep DESKTOP_NOTICE_MIN_WIDTH/storage key/class name here in sync with that file.
+    // DESKTOP_NOTICE_ENABLED must match breakpoint.ts's own flag of the same name.
     (function () {
+      var DESKTOP_NOTICE_ENABLED = false;
       try {
         var params = new URLSearchParams(window.location.search);
         if (params.get('preview') === 'desktop') {
@@ -29,7 +31,7 @@
         }
         var bypass = localStorage.getItem('as-desktop-preview') === '1'
           || window.location.pathname.indexOf('/admin') === 0;
-        if (!bypass && window.matchMedia('(min-width: 1024px)').matches) {
+        if (DESKTOP_NOTICE_ENABLED && !bypass && window.matchMedia('(min-width: 1024px)').matches) {
           document.documentElement.classList.add('as-desktop-gate');
         }
       } catch (e) {}

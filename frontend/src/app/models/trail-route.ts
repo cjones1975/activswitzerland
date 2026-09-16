@@ -16,6 +16,11 @@ export interface TrailStage {
   geometryWgs84: TrailGeometry;  // lon/lat
 }
 
+export interface TrailPoint {
+  lat: number;
+  lon: number;
+}
+
 export interface TrailRoute {
   routeNumber: string | number;
   name: string;
@@ -29,6 +34,9 @@ export interface TrailRoute {
   // is true) - undefined if the best-effort backend lookup failed.
   totalStages?: number;
   source: string;
+  // Geometry-derived (not from named waypoints) - always present when the route has geometry.
+  startPoint?: TrailPoint | null;
+  endPoint?: TrailPoint | null;
   stages: TrailStage[];
 }
 

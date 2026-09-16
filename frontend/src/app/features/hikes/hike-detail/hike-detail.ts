@@ -9,7 +9,7 @@ import { Drawer } from '../../../shared/services/drawer';
 import { Auth } from '../../../core/services/auth';
 import { TrailRoutesService } from '../../../shared/services/trail-routes';
 import { HikeMarkersService } from '../../../shared/services/hike-markers';
-import { MapComponent } from '../../../shared/map/map';
+import { MapComponent, MapMarker } from '../../../shared/map/map';
 import { ElevationChart } from '../../../shared/elevation-chart/elevation-chart';
 import { TrailRoute, trailCategoryColor } from '../../../models/trail-route';
 import { GeoLocation } from '../../../models/geo-point';
@@ -56,6 +56,30 @@ export class HikeDetail implements OnDestroy {
   trailColor = computed(() => trailCategoryColor(this.payload()?.route.category ?? 'local'));
 
   fitBoundsCoords = computed<[number, number][]>(() => this.trailLines().flat());
+
+  startEndMarkers = computed<MapMarker[]>(() => {
+    const route = this.payload()?.route;
+    const markers: MapMarker[] = [];
+    if (route?.startPoint) {
+      markers.push({
+        lng: route.startPoint.lon,
+        lat: route.startPoint.lat,
+        icon: 'fa-solid fa-flag-pennant',
+        color: '#1b8c5b',
+        className: 'trail-start-marker',
+      });
+    }
+    if (route?.endPoint) {
+      markers.push({
+        lng: route.endPoint.lon,
+        lat: route.endPoint.lat,
+        icon: 'fa-solid fa-flag-pennant',
+        color: '#dc2626',
+        className: 'trail-end-marker',
+      });
+    }
+    return markers;
+  });
 
   /** Sums every stage of a multi-day route already (see TrailRoute.distanceKm), so this is correct for all stages, not just single-stage routes. */
   distanceLabel = computed<string | null>(() => {
