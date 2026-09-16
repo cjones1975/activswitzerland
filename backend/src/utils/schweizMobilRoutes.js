@@ -364,19 +364,21 @@ function escapeXml(value) {
     }[char]));
 }
 
-// Builds a GPX document from a route's stages (LV95 geometries), inverse-projecting
-// each vertex back to WGS84. Each line within a stage becomes its own <trkseg>.
+// Builds a GPX document from a route's stages (LV95 geometries), inverse-projecting each vertex
+// back to WGS84. Deliberately a single <trk> with a single <trkseg> - not one <trkseg> per line
+// segment - because Garmin Connect's course importer only reliably reads the first <trkseg> (and
+// the first <trk>) of a GPX file, silently dropping the rest; confirmed against a real multi-leg
+// export that only showed its first leg once imported. Flattening loses the visual "gap" a
+// MultiLineString preserves on our own map (an internal discontinuity gets bridged by a straight
+// line instead), but that's the right tradeoff for a file whose whole purpose is round-tripping
+// into third-party GPS tools.
 export function buildGpx({ name, stages }) {
-    const trackSegments = (stages ?? [])
+    const points = (stages ?? [])
         .flatMap(stage => getLines(stage.geometry))
-        .map(line => {
-            const points = line
-                .map(coord => {
-                    const [lon, lat] = reprojectCoord(coord);
-                    return `      <trkpt lat="${lat}" lon="${lon}"></trkpt>`;
-                })
-                .join('\n');
-            return `    <trkseg>\n${points}\n    </trkseg>`;
+        .flat()
+        .map(coord => {
+            const [lon, lat] = reprojectCoord(coord);
+            return `      <trkpt lat="${lat}" lon="${lon}"></trkpt>`;
         })
         .join('\n');
 
@@ -384,7 +386,9 @@ export function buildGpx({ name, stages }) {
 <gpx version="1.1" creator="ActivSwitzerland" xmlns="http://www.topografix.com/GPX/1/1">
   <trk>
     <name>${escapeXml(name || 'Route')}</name>
-${trackSegments}
+    <trkseg>
+${points}
+    </trkseg>
   </trk>
 </gpx>`;
 }
