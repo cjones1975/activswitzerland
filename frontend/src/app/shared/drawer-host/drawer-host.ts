@@ -62,14 +62,47 @@ export class DrawerHost {
     this.sheetExpanded.set(false);
   }
 
-  // Mobile bottom sheet (context/features/mobile-drawer-bottom-sheet-spec.md): the up/down caret
-  // toggles between the default 75vh height and the full window height. One shared signal, not one
+  // Mobile bottom sheet (context/features/mobile-drawer-bottom-sheet-spec.md): the grab handle
+  // toggles between the default sheet height and the full window height. One shared signal, not one
   // per drawer — these seven are mutually exclusive (only one is ever open at a time), matching the
   // same assumption destinations-layout.ts's sidebarDocked/showXMarkers computeds already rely on.
   sheetExpanded = signal(false);
 
   toggleSheetExpanded(): void {
     this.sheetExpanded.update(v => !v);
+  }
+
+  // Grab handle (context/features/sheet-grab-handle-spec.md): tap toggles, a vertical swipe snaps
+  // to expanded (up) or collapsed (down) on release. A swipe suppresses the click the browser fires
+  // right after pointerup, so it isn't immediately undone by the tap toggle.
+  private sheetHandleStartY: number | null = null;
+  private sheetHandleSwiped = false;
+
+  onSheetHandlePointerDown(event: PointerEvent): void {
+    this.sheetHandleStartY = event.clientY;
+    this.sheetHandleSwiped = false;
+    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+  }
+
+  onSheetHandlePointerUp(event: PointerEvent): void {
+    if (this.sheetHandleStartY === null) return;
+    const dy = event.clientY - this.sheetHandleStartY;
+    this.sheetHandleStartY = null;
+    if (Math.abs(dy) < 20) return;
+    this.sheetHandleSwiped = true;
+    this.sheetExpanded.set(dy < 0);
+  }
+
+  onSheetHandleCancel(): void {
+    this.sheetHandleStartY = null;
+  }
+
+  onSheetHandleClick(): void {
+    if (this.sheetHandleSwiped) {
+      this.sheetHandleSwiped = false;
+      return;
+    }
+    this.toggleSheetExpanded();
   }
 
   onClearAiChat() {
