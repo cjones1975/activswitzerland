@@ -2500,3 +2500,13 @@
 - Scoped to the public hike-detail map only, and to all hikes (not just custom ones) - explicit choices when this was discussed, not deferred/unclear
 - Verification throughout was against the live local backend directly (curl-ing `/api/v1/hikes/search`, `/api/v1/hikes/gpx`, `/api/v1/hikes/elevation` with the real uploaded hike's actual stored data) rather than guessing from code alone - caught that a plain backend restart was needed twice (nodemon/dev-server not picking up the file edits on its own) before the user's own Garmin/app retests could show the fix actually working
 - Not yet committed as of this entry
+
+### 2026-09-29 — Mobile Bottom Sheet Grab Handle
+
+- Created `context/features/sheet-grab-handle-spec.md` and `feature/sheet-grab-handle` branch
+- Replaced the `fa-square-caret-up`/`-down` expand/collapse button on all seven mobile bottom sheets (`destination-detail`, `all-attractions`, `attraction-detail`, `hikes`, `hike-detail`, `bikes`, `bike-detail`) with a bottom-sheet-style grab handle, centred at the top of the sheet
+- Handle is a CSS pill (36×5px, `--gray-400`) inside a wider invisible 5rem×1.5rem `<button class="sheet-handle">` hit area, absolutely positioned against the sheet (`.p-drawer`) — chose a CSS bar over the originally-suggested `fa-solid fa-minus fa-sm` icon since it matches the native convention more closely
+- `drawer-host.ts`: tap still toggles `sheetExpanded`; new pointer handlers add swipe — ≥20px up expands, down collapses, snap-on-release between the existing two heights (no live finger-tracking, kept simple deliberately). A swipe suppresses the click that follows pointerup so it isn't immediately undone. Swipe down while collapsed does nothing (X remains the only close). `touch-action: none` on the handle
+- `drawer-host.css`: `.dest-header--sheet` now right-aligns the lone X; keyboard (Enter/Space) and existing `nav.expand`/`nav.collapse` aria-labels unchanged, no new i18n keys
+- Tablet/desktop and trip-planner-mode headers untouched
+- Build clean; verified in-browser by the user

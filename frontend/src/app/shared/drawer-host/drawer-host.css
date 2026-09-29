@@ -242,6 +242,49 @@
     border-radius: 0 !important;
 }
 
+/* Grab handle (context/features/sheet-grab-handle-spec.md) is absolutely positioned against the
+   sheet itself (.p-drawer is the nearest positioned ancestor), so the header row only holds the X. */
+.dest-header--sheet {
+    justify-content: flex-end;
+}
+
+/* Wide, invisible hit area around a small pill — easy to grab without the pill itself looking heavy.
+   touch-action: none keeps the swipe from being taken over by scroll / pull-to-refresh. */
+.sheet-handle {
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 5rem;
+    height: 1.5rem;
+    padding: 0;
+    background: none;
+    border: none;
+    cursor: grab;
+    touch-action: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sheet-handle::before {
+    content: '';
+    width: 36px;
+    height: 5px;
+    border-radius: 999px;
+    background: var(--gray-400);
+}
+
+.sheet-handle:active {
+    cursor: grabbing;
+}
+
+.sheet-handle:focus-visible {
+    outline: 2px solid var(--navy-800);
+    outline-offset: -2px;
+    border-radius: 6px;
+}
+
 .dest-back {
     display: inline-flex;
     align-items: center;

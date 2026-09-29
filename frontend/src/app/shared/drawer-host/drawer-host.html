@@ -95,9 +95,9 @@
     <ng-template #header>
         @if (allAttractionsMobileSheet()) {
             <div class="dest-header dest-header--sheet">
-                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
-                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
-                </button>
+                <button class="sheet-handle" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate"
+                    (pointerdown)="onSheetHandlePointerDown($event)" (pointerup)="onSheetHandlePointerUp($event)"
+                    (pointercancel)="onSheetHandleCancel()" (click)="onSheetHandleClick()"></button>
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('all-attractions')">
                     <i class="pi pi-times"></i>
                 </button>
@@ -140,9 +140,9 @@
     <ng-template #header>
         @if (attractionDetailMobileSheet()) {
             <div class="dest-header dest-header--sheet">
-                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
-                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
-                </button>
+                <button class="sheet-handle" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate"
+                    (pointerdown)="onSheetHandlePointerDown($event)" (pointerup)="onSheetHandlePointerUp($event)"
+                    (pointercancel)="onSheetHandleCancel()" (click)="onSheetHandleClick()"></button>
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('attraction-detail')">
                     <i class="pi pi-times"></i>
                 </button>
@@ -251,9 +251,9 @@
     <ng-template #header>
         @if (destinationDetailMobileSheet()) {
             <div class="dest-header dest-header--sheet">
-                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
-                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
-                </button>
+                <button class="sheet-handle" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate"
+                    (pointerdown)="onSheetHandlePointerDown($event)" (pointerup)="onSheetHandlePointerUp($event)"
+                    (pointercancel)="onSheetHandleCancel()" (click)="onSheetHandleClick()"></button>
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('destination-detail')">
                     <i class="pi pi-times"></i>
                 </button>
@@ -290,9 +290,9 @@
     <ng-template #header>
         @if (hikesMobileSheet()) {
             <div class="dest-header dest-header--sheet">
-                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
-                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
-                </button>
+                <button class="sheet-handle" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate"
+                    (pointerdown)="onSheetHandlePointerDown($event)" (pointerup)="onSheetHandlePointerUp($event)"
+                    (pointercancel)="onSheetHandleCancel()" (click)="onSheetHandleClick()"></button>
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('hikes')">
                     <i class="pi pi-times"></i>
                 </button>
@@ -335,9 +335,9 @@
     <ng-template #header>
         @if (hikeDetailMobileSheet()) {
             <div class="dest-header dest-header--sheet">
-                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
-                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
-                </button>
+                <button class="sheet-handle" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate"
+                    (pointerdown)="onSheetHandlePointerDown($event)" (pointerup)="onSheetHandlePointerUp($event)"
+                    (pointercancel)="onSheetHandleCancel()" (click)="onSheetHandleClick()"></button>
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('hike-detail')">
                     <i class="pi pi-times"></i>
                 </button>
@@ -380,9 +380,9 @@
     <ng-template #header>
         @if (bikesMobileSheet()) {
             <div class="dest-header dest-header--sheet">
-                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
-                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
-                </button>
+                <button class="sheet-handle" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate"
+                    (pointerdown)="onSheetHandlePointerDown($event)" (pointerup)="onSheetHandlePointerUp($event)"
+                    (pointercancel)="onSheetHandleCancel()" (click)="onSheetHandleClick()"></button>
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('bikes')">
                     <i class="pi pi-times"></i>
                 </button>
@@ -425,9 +425,9 @@
     <ng-template #header>
         @if (bikeDetailMobileSheet()) {
             <div class="dest-header dest-header--sheet">
-                <button class="menu-close" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate" (click)="toggleSheetExpanded()">
-                    <i [class]="sheetExpanded() ? 'fa-light fa-square-caret-down' : 'fa-light fa-square-caret-up'"></i>
-                </button>
+                <button class="sheet-handle" type="button" [attr.aria-label]="(sheetExpanded() ? 'nav.collapse' : 'nav.expand') | translate"
+                    (pointerdown)="onSheetHandlePointerDown($event)" (pointerup)="onSheetHandlePointerUp($event)"
+                    (pointercancel)="onSheetHandleCancel()" (click)="onSheetHandleClick()"></button>
                 <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('bike-detail')">
                     <i class="pi pi-times"></i>
                 </button>
