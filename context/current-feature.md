@@ -2499,7 +2499,7 @@
 - Frontend: `TrailRoute` gained `startPoint`/`endPoint` (new `TrailPoint` type); `hike-detail.ts` computes a `startEndMarkers` signal and passes it to the existing embedded `<app-map>` via `[markers]`. Markers use `fa-solid fa-flag-pennant` (green `#1b8c5b` start, red `#dc2626` end - both requested after an initial `fa-flag`/`fa-flag-checkered` pairing), sized down from the map's default 1.5rem marker icon size to 1.1rem via new `.trail-start-marker`/`.trail-end-marker` rules in `map.css`, following the same per-marker CSS-class-size-override pattern `.destination-marker` already used
 - Scoped to the public hike-detail map only, and to all hikes (not just custom ones) - explicit choices when this was discussed, not deferred/unclear
 - Verification throughout was against the live local backend directly (curl-ing `/api/v1/hikes/search`, `/api/v1/hikes/gpx`, `/api/v1/hikes/elevation` with the real uploaded hike's actual stored data) rather than guessing from code alone - caught that a plain backend restart was needed twice (nodemon/dev-server not picking up the file edits on its own) before the user's own Garmin/app retests could show the fix actually working
-- Not yet committed as of this entry
+- Committed as `85b4921` directly on `main` (the same commit also reinstated the desktop app via `breakpoint.ts`/`index.html`), pushed to `origin/main`
 
 ### 2026-09-29 — Mobile Bottom Sheet Grab Handle
 
