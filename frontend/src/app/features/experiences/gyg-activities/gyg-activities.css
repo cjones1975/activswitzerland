@@ -1,0 +1,42 @@
+:host {
+  display: block;
+  position: relative;
+}
+
+.gyg-skeleton {
+  width: 100%;
+  height: 320px;
+  background: linear-gradient(90deg, #dbeafe 25%, #bfdbfe 50%, #dbeafe 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 12px;
+}
+
+@keyframes shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* Keep the container in the DOM (GYG needs it laid out to render into) but out of sight until the
+   iframe has loaded, so the skeleton isn't followed by an empty box. */
+.gyg-slot-loading {
+  position: absolute;
+  visibility: hidden;
+  width: 100%;
+}
+
+.gyg-attribution {
+  margin: 0.4rem 0 0;
+  font-size: 0.7rem;
+  color: var(--gray-500);
+}
+
+.gyg-attribution a {
+  color: var(--amber-700);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.gyg-attribution a:hover {
+  text-decoration: underline;
+}

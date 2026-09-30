@@ -318,6 +318,9 @@
       "bikeRides": "Percorsi ciclabili",
       "hotels": "Hotel",
       "hotelsSubtitle": "Trova ottime sistemazioni nella zona.",
+      "experiences": "Esperienze / Gite di un giorno",
+      "experiencesSeeMore": "Mostra di più",
+      "experiencesPartner": "Tour prenotabili dal nostro partner GetYourGuide",
       "loadError": "Impossibile caricare questa destinazione."
     }
   },

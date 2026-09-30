@@ -16,6 +16,7 @@ export type DrawerKey =
   | 'bikes'
   | 'bike-detail'
   | 'hotels'
+  | 'experiences'
   | 'explore-trips-filter'
   | 'ai-chat'
 

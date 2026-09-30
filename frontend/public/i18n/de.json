@@ -318,6 +318,9 @@
       "bikeRides": "Velowege",
       "hotels": "Hotels",
       "hotelsSubtitle": "Finde tolle Unterkünfte in der Umgebung.",
+      "experiences": "Erlebnisse / Tagesausflüge",
+      "experiencesSeeMore": "Mehr anzeigen",
+      "experiencesPartner": "Buchbare Touren unseres Partners GetYourGuide",
       "loadError": "Dieses Reiseziel konnte nicht geladen werden."
     }
   },

@@ -4,7 +4,7 @@ import { AttractionMarkersService } from './attraction-markers';
 import { HikeMarkersService } from './hike-markers';
 import { BikeMarkersService } from './bike-markers';
 
-export type ActivityMapCategory = 'attractions' | 'hikes' | 'bikes' | 'hotels';
+export type ActivityMapCategory = 'attractions' | 'hikes' | 'bikes' | 'hotels' | 'experiences';
 
 /** Only one activity category's markers/reopen-button shows on the map at a time. */
 @Injectable({ providedIn: 'root' })
