@@ -318,6 +318,9 @@
       "bikeRides": "Pistes cyclables",
       "hotels": "Hôtels",
       "hotelsSubtitle": "Trouvez de superbes hébergements dans la région.",
+      "experiences": "Expériences / Excursions",
+      "experiencesSeeMore": "Voir plus",
+      "experiencesPartner": "Visites réservables auprès de notre partenaire GetYourGuide",
       "loadError": "Impossible de charger cette destination."
     }
   },

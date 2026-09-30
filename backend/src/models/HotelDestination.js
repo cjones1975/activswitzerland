@@ -27,6 +27,12 @@ const HotelDestinationSchema = new mongoose.Schema({
         required: true,
         trim: true,
         default: 'city'
+    },
+    // GetYourGuide location ID for the Experiences / Day trips widget. Optional and independent of
+    // the Booking.com fields above: rows without one simply don't show the Experiences section.
+    gygLocationId: {
+        type: Number,
+        required: false
     }
 });
 

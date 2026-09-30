@@ -7,14 +7,16 @@ import { Drawer } from '../../../shared/services/drawer';
 import { WeatherService } from '../../../shared/services/weather';
 import { ActivityMapService } from '../../../shared/services/activity-map';
 import { HotelsService } from '../../../shared/services/hotels';
+import { GygService } from '../../../shared/services/gyg';
 import { Destination } from '../../../models/destination';
 import { DailyForecast, WeatherPayload } from '../../../models/weather';
 import { AttractionVerticalList } from '../../attractions/attraction-vertical-list/attraction-vertical-list';
+import { GygActivities } from '../../experiences/gyg-activities/gyg-activities';
 
 @Component({
   selector: 'app-destination-detail',
   standalone: true,
-  imports: [TranslatePipe, GalleriaModule, AttractionVerticalList],
+  imports: [TranslatePipe, GalleriaModule, AttractionVerticalList, GygActivities],
   templateUrl: './destination-detail.html',
   styleUrl: './destination-detail.css',
 })
@@ -23,6 +25,7 @@ export class DestinationDetail {
   private weatherService = inject(WeatherService);
   private activityMap = inject(ActivityMapService);
   private hotelsSvc = inject(HotelsService);
+  private gygSvc = inject(GygService);
   private destroyRef = inject(DestroyRef);
 
   destination = computed(() => {
@@ -41,6 +44,8 @@ export class DestinationDetail {
   });
 
   hasHotelMapping = computed(() => !!this.hotelsSvc.mappingFor(this.destination()?.identifier ?? ''));
+
+  gygLocationId = computed(() => this.gygSvc.locationIdFor(this.destination()?.identifier ?? ''));
 
   todayWeather = signal<DailyForecast | null>(null);
   weatherLoading = signal(false);
@@ -109,5 +114,15 @@ export class DestinationDetail {
     this.drawerSvc.close('destination-detail');
     this.activityMap.showOnly('hotels');
     this.drawerSvc.open('hotels', { destination: dest });
+  }
+
+  openExperiences() {
+    const dest = this.destination();
+    if (!dest) return;
+    this.drawerSvc.close('destination-detail');
+    // GYG activities have no map markers — clear the attraction pins so the map doesn't suggest
+    // they belong to this list, same as hotels.
+    this.activityMap.showOnly('experiences');
+    this.drawerSvc.open('experiences', { destination: dest });
   }
 }

@@ -318,6 +318,9 @@
       "bikeRides": "Bike Trails",
       "hotels": "Hotels",
       "hotelsSubtitle": "Find great places to stay in the area.",
+      "experiences": "Experiences / Day trips",
+      "experiencesSeeMore": "See more",
+      "experiencesPartner": "Bookable tours from our partner GetYourGuide",
       "loadError": "Could not load this destination."
     }
   },

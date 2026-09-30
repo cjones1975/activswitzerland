@@ -318,6 +318,9 @@
       "bikeRides": "Rutas en bici",
       "hotels": "Hoteles",
       "hotelsSubtitle": "Encuentra buenos lugares para alojarte en la zona.",
+      "experiences": "Experiencias / Excursiones de un día",
+      "experiencesSeeMore": "Ver más",
+      "experiencesPartner": "Tours reservables de nuestro socio GetYourGuide",
       "loadError": "No se pudo cargar este destino."
     }
   },

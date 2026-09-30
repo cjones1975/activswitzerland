@@ -4,6 +4,8 @@ export interface HotelDestinationMapping {
   category: 'city' | 'village';
   destId: string;
   destType: string;
+  /** GetYourGuide location ID; absent for destinations with no Experiences section. */
+  gygLocationId?: number;
 }
 
 export interface HotelDeeplinkParams {

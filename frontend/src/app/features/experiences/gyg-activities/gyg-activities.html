@@ -1,0 +1,7 @@
+@if (loading()) {
+  <div class="gyg-skeleton"></div>
+}
+<div #slot class="gyg-slot" [class.gyg-slot-loading]="loading()"></div>
+<p class="gyg-attribution">
+  Powered by <a [href]="attributionUrl()" target="_blank" rel="sponsored noopener">GetYourGuide</a>
+</p>

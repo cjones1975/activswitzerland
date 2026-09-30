@@ -72,9 +72,22 @@
 
 .card-name {
   margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
   font-size: 0.82rem;
   font-weight: 700;
   color: var(--navy-900);
+}
+
+.card-pin {
+  width: 14px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.card-name-text {
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

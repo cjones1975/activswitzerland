@@ -252,3 +252,47 @@
   padding: 0.6rem;
   width: 100%;
 }
+
+/* GetYourGuide Experiences / Day trips (POC) — header mirrors attraction-vertical-list's; the
+   bordered panel sets partner content apart from our own attraction cards. */
+.experiences-section {
+  margin: 0 1rem 1.5rem;
+  padding: 0.875rem 0.5rem 0.75rem;
+  background: #f8c182;
+  border: 1px solid #d97706;
+  border-radius: 12px;
+}
+
+.experiences-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.experiences-title {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--navy-900);
+}
+
+.see-more-link {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--amber-700);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.see-more-link:hover {
+  text-decoration: underline;
+}
+
+.experiences-partner {
+  margin: 0.15rem 0 0.75rem;
+  font-size: 0.75rem;
+  color: var(--gray-600);
+}

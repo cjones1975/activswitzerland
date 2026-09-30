@@ -486,6 +486,43 @@
     }
 </p-drawer>
 
+<!-- EXPERIENCES (GetYourGuide POC) -->
+<p-drawer
+    [visible]="svc.isOpen('experiences')"
+    [closable]="false"
+    [dismissible]="false"
+    [closeOnEscape]="false"
+    [modal]="!breakpoint.isDesktopSplitView()"
+    (visibleChange)="onVisibleChange('experiences', $event)"
+    [motionOptions]="breakpoint.isDesktopSplitView() ? { duration: 1 } : undefined"
+    position="left"
+    appendTo="body"
+    [baseZIndex]="svc.zIndexFor('experiences')"
+    [style]="{ width: 'min(600px, 100vw)' }"
+    styleClass="dest-drawer experiences-drawer">
+    <ng-template #header>
+        <div class="dest-header">
+            <button class="dest-back" type="button" (click)="onExperiencesBack()">
+                <i class="fa-regular fa-chevron-left"></i>
+                {{ 'attractions.backToDestination' | translate: { name: experiencesDestinationName() } }}
+            </button>
+            <button class="menu-close" type="button" [attr.aria-label]="'nav.close' | translate" (click)="onDrawerClose('experiences')">
+                <i class="pi pi-times"></i>
+            </button>
+        </div>
+    </ng-template>
+    <hr class="header-divider" />
+    <!-- Same reason as the hotels drawer: projected content outlives p-drawer's own @if, and the
+         widget must be rebuilt fresh on every open. -->
+    @if (svc.isOpen('experiences') && experiencesLocationId(); as gygId) {
+        <div class="experiences-body">
+            <h2 class="experiences-title">{{ 'destinations.detail.experiences' | translate }}</h2>
+            <p class="experiences-partner">{{ 'destinations.detail.experiencesPartner' | translate }}</p>
+            <app-gyg-activities [locationId]="gygId" [numberOfItems]="30" />
+        </div>
+    }
+</p-drawer>
+
 <!-- EXPLORE TRIPS FILTER -->
 <p-drawer
     [visible]="svc.isOpen('explore-trips-filter')"

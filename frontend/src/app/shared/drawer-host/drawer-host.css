@@ -336,6 +336,7 @@
     ::ng-deep .bikes-drawer,
     ::ng-deep .bike-detail-drawer,
     ::ng-deep .hotels-drawer,
+    ::ng-deep .experiences-drawer,
     ::ng-deep .connections-drawer,
     ::ng-deep .ai-chat-drawer {
         top: var(--header-h) !important;
@@ -401,4 +402,23 @@
     letter-spacing: 0.1em;
     color: var(--gray-400);
     text-transform: uppercase;
+}
+
+/* GetYourGuide Experiences drawer (POC) — vertical padding only: PrimeNG's drawer content padding
+   already insets the sides, and the GYG iframe needs all the width it can get. */
+.experiences-body {
+    padding: 0.875rem 0 1.5rem;
+}
+
+.experiences-title {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 800;
+    color: var(--navy-900);
+}
+
+.experiences-partner {
+    margin: 0.15rem 0 0.75rem;
+    font-size: 0.75rem;
+    color: var(--gray-600);
 }

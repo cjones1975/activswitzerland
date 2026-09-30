@@ -23,6 +23,9 @@ import { BikesList } from '../../features/bikes/bikes-list/bikes-list';
 import { BikeDetail } from '../../features/bikes/bike-detail/bike-detail';
 import type { BikeDetailPayload } from '../../features/bikes/bike-detail/bike-detail';
 import { HotelSearch } from '../../features/hotels/hotel-search/hotel-search';
+import { GygActivities } from '../../features/experiences/gyg-activities/gyg-activities';
+import { GygService } from '../services/gyg';
+import { Destination } from '../../models/destination';
 import { ExploreTripsFilter } from '../../features/explore-trips/explore-trips-filter/explore-trips-filter';
 import { AiChatDrawer } from '../../features/ai-chat/ai-chat-drawer/ai-chat-drawer';
 import { AiChat } from '../services/ai-chat';
@@ -37,7 +40,7 @@ import { Breakpoint } from '../services/breakpoint';
 @Component({
   selector: 'app-drawer-host',
   standalone: true,
-  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelSearch, ExploreTripsFilter, AiChatDrawer, ActivityMapMaskOverlay],
+  imports: [CommonModule, DrawerModule, TranslatePipe, MenuNav, AuthLayout, ForgotPassword, DestinationDetail, AllAttractions, AttractionDetail, Weather, ConnectionsDrawer, HikesList, HikeDetail, BikesList, BikeDetail, HotelSearch, GygActivities, ExploreTripsFilter, AiChatDrawer, ActivityMapMaskOverlay],
   templateUrl: './drawer-host.html',
   styleUrl: './drawer-host.css',
 })
@@ -50,6 +53,7 @@ export class DrawerHost {
   private tripPlanner = inject(TripPlannerService);
   private aiChat = inject(AiChat);
   private activityMapMask = inject(ActivityMapMask);
+  private gygSvc = inject(GygService);
 
   onVisibleChange(key: DrawerKey, visible: boolean) {
     visible ? this.svc.open(key) : this.svc.close(key);
@@ -392,6 +396,23 @@ export class DrawerHost {
   hotelsDestinationName = computed(() => {
     this.svc.list();
     return this.svc.getPayload<ActivityPickerPayload>('hotels')?.destination?.name ?? '';
+  });
+
+  onExperiencesBack() {
+    const payload = this.svc.getPayload<{ destination: Destination }>('experiences');
+    this.svc.close('experiences');
+    this.svc.open('destination-detail', payload?.destination);
+  }
+
+  experiencesDestinationName = computed(() => {
+    this.svc.list();
+    return this.svc.getPayload<{ destination: Destination }>('experiences')?.destination?.name ?? '';
+  });
+
+  experiencesLocationId = computed(() => {
+    this.svc.list();
+    const identifier = this.svc.getPayload<{ destination: Destination }>('experiences')?.destination?.identifier;
+    return identifier ? this.gygSvc.locationIdFor(identifier) : undefined;
   });
 
   // Dismissing this drawer without hitting Apply/Reset (X button, backdrop tap) must not lose

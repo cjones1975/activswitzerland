@@ -84,5 +84,21 @@
       <app-attraction-vertical-list [lat]="dest.geo.latitude" [lon]="dest.geo.longitude" />
     }
 
+    <!-- Deliberately below our own MySwitzerland attractions, in a tinted panel with a partner label,
+         so affiliate content doesn't read as the page's main content (and isn't mistaken for what the
+         map pins show — the attraction cards carry the pin icon, these don't). -->
+    @if (gygLocationId(); as gygId) {
+      <section class="experiences-section">
+        <div class="experiences-header">
+          <h2 class="experiences-title">{{ 'destinations.detail.experiences' | translate }}</h2>
+          <button class="see-more-link" type="button" (click)="openExperiences()">
+            {{ 'destinations.detail.experiencesSeeMore' | translate }}
+          </button>
+        </div>
+        <p class="experiences-partner">{{ 'destinations.detail.experiencesPartner' | translate }}</p>
+        <app-gyg-activities [locationId]="gygId" [numberOfItems]="3" />
+      </section>
+    }
+
   </div>
 }
