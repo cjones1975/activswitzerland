@@ -2510,3 +2510,25 @@
 - `drawer-host.css`: `.dest-header--sheet` now right-aligns the lone X; keyboard (Enter/Space) and existing `nav.expand`/`nav.collapse` aria-labels unchanged, no new i18n keys
 - Tablet/desktop and trip-planner-mode headers untouched
 - Build clean; verified in-browser by the user
+
+### 2026-09-30 — GetYourGuide Experiences / Day trips POC (Lauterbrunnen)
+
+- Created `context/features/gyg-experiences-poc-spec.md` and `feature/gyg-experiences-poc` branch; GYG affiliate activities widget evaluated on one destination (Lauterbrunnen, GYG location `2863`) before a full rollout. GYG Partner API not an option yet (traffic threshold), so the embeddable widget (GYG-controlled iframe, no styling control) was the only route
+- Inspected GYG's scripts to settle the main technical risk: `pa.umd.production.min.js` is only analytics and injects `widget.js`, which renders any dynamically added `[data-gyg-widget]` via its own `MutationObserver` on `document.body` — so widgets inside drawers opened later render with no re-scan call. Re-injecting the loader wouldn't have worked anyway (`window.gygPAStatus` guard)
+- `data-gyg-location-id` used instead of the suggested `data-gyg-q` free-text search (more precise; "Experiences & Day trips" is our UI label, not a search term). Locale follows app language (`en-GB`/`de-CH`/`fr-CH`/`it-CH`/`es-ES`), currency CHF; partner ID `R1L1TFW` in both environment files (public anyway)
+- New `GygService` (`shared/services/gyg.ts`: locale mapping, browser-only lazy loader injection — no `index.html` script tag) and `GygActivities` component (`features/experiences/gyg-activities/`): builds the container in code, swaps in a fresh one on language change, skeleton until the iframe loads (10s fallback), "Powered by GetYourGuide" attribution link with partner ID (`getyourguide.com/-l{id}/` confirmed by the user to land correctly)
+- New `experiences` drawer (30 items) behind "See more", following the hotels drawer pattern (back to destination, plain X close); `openExperiences()` calls `activityMap.showOnly('experiences')` (new `ActivityMapCategory`) so attraction pins are cleared like for hotels
+- Revised after first look, since the widget out-weighed our own MySwitzerland attractions: moved below the attractions list and cut to 3 items; lazy-loaded via an `IntersectionObserver` rooted on the nearest scrolling ancestor (viewport-rooted `rootMargin` would be cancelled by the drawer's clipping); distinct rounded panel (`#f8c182` background, `#d97706` border — user's choice after amber-tint and `#f7f9fa` attempts) with a partner subtitle `destinations.detail.experiencesPartner`; attraction cards now show the map-pin image (`/assets/attraction.png`, same file as the marker) before each name. Side padding reduced in the panel and removed from the drawer body (PrimeNG's own padding already insets it) to give the iframe more width
+- New i18n keys `destinations.detail.experiences`/`experiencesSeeMore`/`experiencesPartner` in all five locales
+- Committed as `171e58d`; verified in-browser by the user
+
+### 2026-09-30 — GetYourGuide Experiences Rolled Out to All Mapped Destinations
+
+- Created `context/features/gyg-experiences-rollout-spec.md` and `feature/gyg-experiences-rollout` branch (off the POC branch)
+- `HotelDestination` model: new optional `gygLocationId: Number`, independent of the Booking.com fields; seed `hotelDestinations.json` updated for 46 of 48 rows (user-provided IDs, same row order as the seed so matched unambiguously). Delémont and Frauenfeld have no GYG location and get no field, so no section; Lauterbrunnen and Mürren intentionally share `2863`
+- Frontend: `HotelDestinationMapping.gygLocationId?`; `GygService.locationIdFor()` now reads `HotelsService.mappingFor()` (signal-backed, so existing `computed()`s stay reactive) — POC's hardcoded `GYG_LOCATIONS` constant removed
+- Local dev DB updated via targeted `mongosh` `$set` per identifier (46 matched/modified; verified Delémont/Frauenfeld lack the field, local API returns it even from the un-rebuilt backend container). Production NAS DB to be updated by the user via Compass (`gygLocationId` as a number); deploy order DB → backend → frontend
+- Noted, not changed: local DB's Klosters still has `destType: 'city'` (seed JSON/prod have the `region` fix)
+- Out of scope: privacy policy (user decision — no GYG mention); cookie consent banner planned as a separate feature, at which point `ensureScript()` must be gated on consent
+- Committed as `89b01d4`, merged into `main`; both feature branches deleted
+- `infra/.env.prod.example` excluded as always ([[project-env-prod-example-uncommitted]])
