@@ -479,7 +479,11 @@
         </div>
     </ng-template>
     <hr class="header-divider" />
-    <app-hotel-search></app-hotel-search>
+    <!-- Projected content outlives p-drawer's own @if, so without this the form (and its datepicker's
+         open/focus state) persisted across opens and the calendar could reappear already open. -->
+    @if (svc.isOpen('hotels')) {
+        <app-hotel-search></app-hotel-search>
+    }
 </p-drawer>
 
 <!-- EXPLORE TRIPS FILTER -->
