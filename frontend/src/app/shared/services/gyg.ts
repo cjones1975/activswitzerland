@@ -1,13 +1,8 @@
 import { Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { DOCUMENT, isPlatformBrowser } from '@angular/common';
 import { environment } from '../../../environments/environment';
+import { HotelsService } from './hotels';
 import { Lang } from './lang';
-
-// POC only (context/features/gyg-experiences-poc-spec.md) — replaced by a `gygLocationId` field on
-// HotelDestination if the POC is a go. Keyed by MySwitzerland destination identifier.
-export const GYG_LOCATIONS: Record<string, number> = {
-  'b92e2cfa-0216-4832-b38e-8fadb29d3b04': 2863, // Lauterbrunnen
-};
 
 // Swiss variants first; fall back to de-DE/fr-FR/it-IT here if GYG doesn't honour them.
 const GYG_LOCALES: Record<Lang, string> = {
@@ -24,11 +19,17 @@ const LOADER_SRC = 'https://widget.getyourguide.com/dist/pa.umd.production.min.j
 export class GygService {
   private document = inject(DOCUMENT);
   private isBrowser = isPlatformBrowser(inject(PLATFORM_ID));
+  private hotels = inject(HotelsService);
 
   readonly partnerId = environment.gygPartnerId;
 
+  /**
+   * GYG location IDs live on the hotelDestinations table (context/features/gyg-experiences-rollout-spec.md),
+   * already loaded by HotelsService. mappingFor() reads a signal, so computed()s built on this react
+   * once that load resolves.
+   */
   locationIdFor(identifier: string): number | undefined {
-    return GYG_LOCATIONS[identifier];
+    return this.hotels.mappingFor(identifier)?.gygLocationId;
   }
 
   localeFor(lang: Lang): string {
