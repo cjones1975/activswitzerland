@@ -36,14 +36,14 @@
 }
 
 .skeleton-card {
-  height: 90px;
+  height: 110px;
   border-radius: 10px;
   overflow: hidden;
 }
 
 .attraction-card {
   display: flex;
-  height: 90px;
+  height: 110px;
   cursor: pointer;
   transition: box-shadow 0.15s;
   border-radius: 10px;

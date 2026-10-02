@@ -4,12 +4,13 @@ import { environment } from '../../../environments/environment';
 import { HotelsService } from './hotels';
 import { Lang } from './lang';
 
-// Swiss variants first; fall back to de-DE/fr-FR/it-IT here if GYG doesn't honour them.
+// GYG honours de-CH, but silently falls back to English for fr-CH and it-CH, so those use the
+// France/Italy locales instead.
 const GYG_LOCALES: Record<Lang, string> = {
   en: 'en-GB',
   de: 'de-CH',
-  fr: 'fr-CH',
-  it: 'it-CH',
+  fr: 'fr-FR',
+  it: 'it-IT',
   es: 'es-ES',
 };
 
