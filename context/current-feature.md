@@ -2532,3 +2532,11 @@
 - Out of scope: privacy policy (user decision — no GYG mention); cookie consent banner planned as a separate feature, at which point `ensureScript()` must be gated on consent
 - Committed as `89b01d4`, merged into `main`; both feature branches deleted
 - `infra/.env.prod.example` excluded as always ([[project-env-prod-example-uncommitted]])
+
+### 2026-10-02 — Misc Fixes 3: Booking.com Link in Prod, GYG Locale, Attraction Card Height
+
+- Created `misc-fixes3` branch
+- Booking.com link failing in production ("Could not create the booking link") — data issue, not code: prod `/api/v1/hotels/deeplink` returned 404 "Destination is not mapped" for all 48 rows while `/destinations` listed them. Prod `hoteldestinations` had been hand-imported via a spreadsheet/CSV round-trip during the GYG rollout (44 `destId`s prefixed with `'`, Klosters `destType: 'city'` — so the earlier note that prod had the `region` fix was wrong) and the identifier lookup no longer matched. Fixed by the user re-importing `backend/src/data/hotelDestinations.json` with `mongoimport --jsonArray --drop`. Not caused by the hotel-search remount fix (`30bcba9`), which was ruled out
+- GYG widget not changing language: the rebuild on `onLangChange` worked, but GYG silently serves English for `fr-CH` and `it-CH` (verified by fetching `activities.frame` per locale; `de-CH` is honoured). `GygService` locale map now uses `fr-FR`/`it-IT`
+- Destination-detail attraction cards (`attraction-vertical-list`) cut off the 3-line abstract at 90px; card and skeleton height raised to 110px to match `all-attractions`
+- `infra/.env.prod.example` excluded as always ([[project-env-prod-example-uncommitted]])
