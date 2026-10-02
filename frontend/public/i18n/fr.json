@@ -1,5 +1,5 @@
 {
-   "nav-drawer": {
+  "nav-drawer": {
     "subtitle": "Découvrir · Explorer · Planifier"
   },
   "nav": {
@@ -583,6 +583,10 @@
     "destinations": {
       "title": "Destinations en Suisse",
       "description": "Découvrez villes, montagnes, lacs et parcs naturels à travers la Suisse. Trouvez la destination idéale pour votre prochain voyage."
+    },
+    "destinationDetail": {
+      "title": "{{name}} : que faire, randonnées et itinéraires vélo",
+      "description": "Préparez votre visite – {{name}} : sentiers de randonnée et de promenade, itinéraires vélo, météo, incontournables et accès en transports publics."
     },
     "exploreTrips": {
       "title": "Découvrir des idées de voyage",

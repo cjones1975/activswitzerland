@@ -584,6 +584,10 @@
       "title": "Destinos en Suiza",
       "description": "Explora ciudades, montañas, lagos y parques naturales en toda Suiza. Encuentra el destino perfecto para tu próximo viaje."
     },
+    "destinationDetail": {
+      "title": "{{name}}: qué hacer, rutas de senderismo y en bici",
+      "description": "Planifica tu visita – {{name}}: rutas de senderismo y paseos, rutas en bici, el tiempo, lugares imprescindibles y cómo llegar en transporte público."
+    },
     "exploreTrips": {
       "title": "Explora ideas de viaje",
       "description": "Inspírate con ideas de viaje seleccionadas por ciudades, montañas y paisajes de Suiza."

@@ -584,6 +584,10 @@
       "title": "Destinations in Switzerland",
       "description": "Browse cities, mountains, lakes, and nature parks across Switzerland. Find the perfect destination for your next trip."
     },
+    "destinationDetail": {
+      "title": "{{name}}: Things to Do, Hikes & Bike Routes",
+      "description": "Plan your visit to {{name}}: hiking and walking trails, bike routes, local weather, top attractions and how to get there by public transport."
+    },
     "exploreTrips": {
       "title": "Explore Trip Ideas",
       "description": "Get inspired with curated trip ideas across Switzerland's cities, mountains, and countryside."
