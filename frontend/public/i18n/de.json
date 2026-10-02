@@ -1,5 +1,5 @@
 {
-   "nav-drawer": {
+  "nav-drawer": {
     "subtitle": "Entdecken · Erkunden · Planen"
   },
   "nav": {
@@ -583,6 +583,10 @@
     "destinations": {
       "title": "Reiseziele in der Schweiz",
       "description": "Entdecke Städte, Berge, Seen und Naturparks in der ganzen Schweiz. Finde das perfekte Reiseziel für deine nächste Reise."
+    },
+    "destinationDetail": {
+      "title": "{{name}}: Ausflugsziele, Wanderungen & Velotouren",
+      "description": "{{name}} entdecken: Wander- und Spazierwege, Velotouren, das aktuelle Wetter, Sehenswürdigkeiten und die Anreise mit dem ÖV."
     },
     "exploreTrips": {
       "title": "Reiseideen entdecken",

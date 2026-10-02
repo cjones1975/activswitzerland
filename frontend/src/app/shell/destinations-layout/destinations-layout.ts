@@ -275,9 +275,11 @@ export class DestinationsLayout implements OnInit, OnDestroy {
       if (dest.geo?.latitude && dest.geo?.longitude) {
         this.center.set([dest.geo.longitude, dest.geo.latitude]);
       }
+      // Keyword-targeted templates (see seo-destination-titles-spec.md) rather than the bare
+      // name / MySwitzerland text — the latter duplicates what Google already indexes there.
       this.seo.set({
-        title: dest.name,
-        description: this.truncateDescription(dest.description || dest.abstract),
+        title: this.translate.instant('seo.destinationDetail.title', { name: dest.name }),
+        description: this.translate.instant('seo.destinationDetail.description', { name: dest.name }),
         image: dest.photo,
       });
       this.seo.setStructuredData({

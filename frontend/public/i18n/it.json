@@ -584,6 +584,10 @@
       "title": "Destinazioni in Svizzera",
       "description": "Esplora città, montagne, laghi e parchi naturali in tutta la Svizzera. Trova la destinazione perfetta per il tuo prossimo viaggio."
     },
+    "destinationDetail": {
+      "title": "{{name}}: cosa fare, escursioni e percorsi in bici",
+      "description": "Organizza la tua visita – {{name}}: sentieri escursionistici e passeggiate, percorsi in bici, meteo, attrazioni e come arrivare con i mezzi pubblici."
+    },
     "exploreTrips": {
       "title": "Scopri idee di viaggio",
       "description": "Lasciati ispirare da idee di viaggio curate tra città, montagne e paesaggi svizzeri."
