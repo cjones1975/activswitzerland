@@ -41,6 +41,17 @@ const stripNonCompliantImagesFromResponse = (response) => {
   // }
 };
 
+// Upstream 404 (unknown id) passes through as-is. Rate limiting (429), upstream
+// 5xx and network failures become 503 so callers — the cache middleware's
+// failure/stale handling and the SSR destination page — can tell "MySwitzerland
+// is temporarily unavailable" apart from a genuine bug (500).
+const upstreamStatus = (error) => {
+  const status = error.response?.status;
+  if (status === 404) return 404;
+  if (status === undefined || status === 429 || status >= 500) return 503;
+  return 500;
+};
+
 // Meteorological (calendar-month) seasons, Northern Hemisphere - matches
 // Switzerland. Attractions tagged with all four season values are available
 // year-round, so filtering on just the current one still surfaces them.
@@ -80,7 +91,7 @@ export const getDestinations = asyncHandler(async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(
-      new ErrorResponse(`An error occurred during the request: ${error}`, 500)
+      new ErrorResponse(`An error occurred during the request: ${error}`, upstreamStatus(error))
     );
   }
 });
@@ -108,7 +119,7 @@ export const getDestinationsByGeobBox = asyncHandler(async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(
-      new ErrorResponse(`An error occurred during the request: ${error}`, 500)
+      new ErrorResponse(`An error occurred during the request: ${error}`, upstreamStatus(error))
     );
   }
 });
@@ -147,7 +158,7 @@ export const getDestination = asyncHandler(async (req, res, next) => {
     next(
       new ErrorResponse(
         `An error occurred during the request: ${error.message}`,
-        500
+        upstreamStatus(error)
       )
     );
   }
@@ -176,7 +187,7 @@ export const searchDestinations = asyncHandler(async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(
-      new ErrorResponse(`An error occurred during the request: ${error}`, 500)
+      new ErrorResponse(`An error occurred during the request: ${error}`, upstreamStatus(error))
     );
   }
 });
@@ -203,7 +214,7 @@ export const getAttraction = asyncHandler(async (req, res, next) => {
     res.status(200).json({ success: true, data: response.data });
   } catch (error) {
     console.error(error);
-    next(new ErrorResponse(`An error occurred during the request: ${error.message}`, 500));
+    next(new ErrorResponse(`An error occurred during the request: ${error.message}`, upstreamStatus(error)));
   }
 });
 
@@ -232,7 +243,7 @@ export const getAttractions = asyncHandler(async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(
-      new ErrorResponse(`An error occurred during the request: ${error}`, 500)
+      new ErrorResponse(`An error occurred during the request: ${error}`, upstreamStatus(error))
     );
   }
 });
@@ -262,7 +273,7 @@ export const searchAttractions = asyncHandler(async (req, res, next) => {
   } catch (error) {
     console.error(error);
     next(
-      new ErrorResponse(`An error occurred during the request: ${error}`, 500)
+      new ErrorResponse(`An error occurred during the request: ${error}`, upstreamStatus(error))
     );
   }
 });

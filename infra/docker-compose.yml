@@ -39,6 +39,12 @@ services:
     image: redis:7-alpine
     container_name: activswitzerland_redis
     restart: unless-stopped
+    # Persisted (AOF) so a restart/deploy doesn't come back with an empty cache and
+    # re-fetch everything from MySwitzerland in one burst. Memory-capped with LRU
+    # eviction since stale fallbacks are kept 7 days (backend/src/middleware/cache.js).
+    command: redis-server --appendonly yes --maxmemory 256mb --maxmemory-policy allkeys-lru
+    volumes:
+      - redis_data:/data
     ports:
       - "6379:6379"
     networks:
@@ -68,3 +74,4 @@ networks:
 
 volumes:
   mongodb_data:
+  redis_data:

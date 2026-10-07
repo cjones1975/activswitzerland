@@ -1,4 +1,5 @@
-import { Component, DestroyRef, OnDestroy, OnInit, computed, inject, signal } from '@angular/core';
+import { Component, DestroyRef, OnDestroy, OnInit, RESPONSE_INIT, computed, inject, signal } from '@angular/core';
+import { HttpErrorResponse } from '@angular/common/http';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { catchError, of, startWith, switchMap, tap } from 'rxjs';
@@ -42,6 +43,9 @@ export class DestinationsLayout implements OnInit, OnDestroy {
   private activityMap = inject(ActivityMapService);
   private seo = inject(SeoService);
   private toast = inject(Toast);
+  // Only provided during SSR (null in the browser) — lets a failed load set the real HTTP status
+  // instead of serving a 200.
+  private responseInit = inject(RESPONSE_INIT, { optional: true });
 
   center = signal<[number, number] | undefined>(undefined);
   destination = signal<Destination | null>(null);
@@ -253,13 +257,23 @@ export class DestinationsLayout implements OnInit, OnDestroy {
             // subscribe's error callback — an uncaught error there would
             // tear down this entire subscription permanently, silently
             // breaking every future route/lang change on this component.
-            catchError(() => {
+            //
+            // Only a genuine 404 (unknown destination id) is marked noindex. Anything else means
+            // MySwitzerland was unavailable (rate limited, down) — the page itself is fine, so
+            // it's served as 503 + Retry-After during SSR: crawlers back off and retry later
+            // rather than being told to drop a real page from the index.
+            catchError((error: HttpErrorResponse) => {
+              const notFound = error.status === 404;
+              if (this.responseInit) {
+                this.responseInit.status = notFound ? 404 : 503;
+                if (!notFound) (this.responseInit.headers as Headers).set('Retry-After', '300');
+              }
               this.destination.set(null);
               this.drawer.close('destination-detail');
               this.seo.set({
                 title: this.translate.instant('destinations.detail.loadError'),
                 description: this.translate.instant('destinations.detail.loadError'),
-                noindex: true,
+                noindex: notFound,
               });
               this.seo.setStructuredData(null);
               this.toast.error(this.translate.instant('destinations.detail.loadError'));
