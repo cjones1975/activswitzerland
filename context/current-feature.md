@@ -2540,3 +2540,15 @@
 - GYG widget not changing language: the rebuild on `onLangChange` worked, but GYG silently serves English for `fr-CH` and `it-CH` (verified by fetching `activities.frame` per locale; `de-CH` is honoured). `GygService` locale map now uses `fr-FR`/`it-IT`
 - Destination-detail attraction cards (`attraction-vertical-list`) cut off the 3-line abstract at 90px; card and skeleton height raised to 110px to match `all-attractions`
 - `infra/.env.prod.example` excluded as always ([[project-env-prod-example-uncommitted]])
+
+### 2026-10-07 — MySwitzerland Bot-Traffic Resilience Implemented
+
+- Created `context/features/mys-bot-traffic-resilience-spec.md`; worked on `main` (uncommitted, alongside unrelated in-progress changes already in the tree)
+- Cause: Hetzner/OVH scrapers walking the sitemap (~8.8k of 13.3k requests/24h per Cloudflare analytics) exhausted the MySwitzerland quota (`429 {"message":"Limit Exceeded"}` — also seen on the dev key)
+- Cloudflare WAF custom rule (dashboard, deployed by the user): Managed Challenge for AS24940/AS16276, exempting verified bots and `/api/v1/billing/webhook`
+- `cache.js`: stale-if-error (24h fresh + jitter, 7-day stale fallback), 60s failure cache, per-key refresh lock with coalescing, legacy-entry compatibility, `X-Cache` header — applies to MySwitzerland, hikes and bikes routes
+- `controllers/myswitzerland.js`: `upstreamStatus()` maps upstream 404→404, 429/5xx/network→503 (was always 500)
+- `destinations-layout.ts`: SSR failures now return 503 + `Retry-After` without `noindex` (only a real 404 is noindexed) — previously a rate-limited render served noindex with HTTP 200
+- Redis: AOF persistence + `maxmemory 256mb allkeys-lru` + `redis_data` volume in both compose files
+- Verified: backend syntax, frontend `tsc`, compose config, and a 10-case middleware test against real Redis in a throwaway container — all pass. Not yet deployed or exercised end-to-end via SSR
+- Noted: `context/deployment-plan.md` doesn't reflect the Cloudflare setup
