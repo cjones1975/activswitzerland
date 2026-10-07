@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { mysApiKey } from './mysApiKey.js';
 
 // The first *attraction* activity anywhere in the list, in order — hikes/bikes have no photo
 // data (see explore-trips-cover-image-spec.md's "Confirmed decisions"), so a hike/bike-first trip
@@ -13,7 +14,7 @@ export const resolveCoverImage = async (activities) => {
             method: 'get',
             url: `${process.env.MYS_ENDPOINT}/v1/attractions/${first.refId}?lang=en&expand=true&striphtml=false`,
             headers: {
-                'x-api-key': process.env.MYS_KEY,
+                'x-api-key': mysApiKey(),
                 accept: 'application/json',
             },
         });

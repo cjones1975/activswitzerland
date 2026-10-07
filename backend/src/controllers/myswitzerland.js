@@ -1,6 +1,7 @@
 import axios from 'axios';
 import ErrorResponse from '../utils/errorResponse.js';
 import asyncHandler from '../middleware/async.js';
+import { mysApiKey } from '../utils/mysApiKey.js';
 
 // MySwitzerland occasionally returns destinations/attractions with missing or
 // placeholder (0,0) coordinates. Anything depending on lat/lon downstream
@@ -65,7 +66,7 @@ export const getDestinations = asyncHandler(async (req, res, next) => {
     method: 'get',
     url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}&facet.filter=${encodeURIComponent(req.query.facets)}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}&top=${req.query.top}`,
     headers: {
-      'x-api-key': process.env.MYS_KEY,
+      'x-api-key': mysApiKey(),
       accept: 'application/json'
     },
   };
@@ -93,7 +94,7 @@ export const getDestinationsByGeobBox = asyncHandler(async (req, res, next) => {
     method: 'get',
     url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}&geo.bbox=${encodeURIComponent(req.query.geobbox)}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}&top=${req.query.top}`,
     headers: {
-      'x-api-key': process.env.MYS_KEY,
+      'x-api-key': mysApiKey(),
       accept: 'application/json'
     },
   };
@@ -123,7 +124,7 @@ export const getDestination = asyncHandler(async (req, res, next) => {
     method: 'get',
     url: `${process.env.MYS_ENDPOINT}/v1/destinations/${id}?lang=${req.query.language}&expand=true&striphtml=${req.query.stripHtml}`,
     headers: {
-      'x-api-key': process.env.MYS_KEY,
+      'x-api-key': mysApiKey(),
       accept: 'application/json'
     },
   };
@@ -161,7 +162,7 @@ export const searchDestinations = asyncHandler(async (req, res, next) => {
     method: 'get',
     url: `${process.env.MYS_ENDPOINT}/v1/destinations/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}`,
     headers: {
-      'x-api-key': process.env.MYS_KEY,
+      'x-api-key': mysApiKey(),
       accept: 'application/json'
     },
   };
@@ -190,7 +191,7 @@ export const getAttraction = asyncHandler(async (req, res, next) => {
     method: 'get',
     url: `${process.env.MYS_ENDPOINT}/v1/attractions/${id}?lang=${req.query.language}&expand=true&striphtml=false`,
     headers: {
-      'x-api-key': process.env.MYS_KEY,
+      'x-api-key': mysApiKey(),
       accept: 'application/json'
     },
   };
@@ -217,7 +218,7 @@ export const getAttractions = asyncHandler(async (req, res, next) => {
     method: 'get',
     url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}${seasonFacetParam()}`,
     headers: {
-      'x-api-key': process.env.MYS_KEY,
+      'x-api-key': mysApiKey(),
       accept: 'application/json'
     },
   };
@@ -247,7 +248,7 @@ export const searchAttractions = asyncHandler(async (req, res, next) => {
     method: 'get',
     url: `${process.env.MYS_ENDPOINT}/v1/attractions/?lang=${req.query.language}&page=${req.query.page}&query=${encodeURIComponent(req.query.search)}&hitsPerPage=${req.query.hitsPerPage}${placeIdParam}${geoDistParam}&facets.translate=${req.query.translate}&expand=true&striphtml=${req.query.stripHtml}${seasonFacetParam()}`,
     headers: {
-      'x-api-key': process.env.MYS_KEY,
+      'x-api-key': mysApiKey(),
       accept: 'application/json'
     },
   };
