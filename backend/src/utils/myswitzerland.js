@@ -1,10 +1,11 @@
 import axios from 'axios';
+import { mysApiKey } from './mysApiKey.js';
 
 // Standalone, tool-appropriate MySwitzerland calls for the AI chat agent — deliberately not a
 // refactor of controllers/myswitzerland.js's existing endpoints (those pass through page/
 // hitsPerPage/translate/facets params the frontend already depends on; touching their behavior
 // isn't worth the risk for what the AI tool actually needs: a name → id/geo lookup, a single
-// destination by id, and a short attractions list). Same MYS_ENDPOINT/MYS_KEY, same
+// destination by id, and a short attractions list). Same MYS_ENDPOINT/mysApiKey(), same
 // invalid-geo filtering as the controller's `stripInvalidGeo` — the AI shouldn't be handed a
 // destination it can't then look up weather/hikes for.
 const hasValidGeo = (record) => {
@@ -19,7 +20,7 @@ function mysConfig(path, params) {
     url: `${process.env.MYS_ENDPOINT}${path}`,
     params,
     headers: {
-      'x-api-key': process.env.MYS_KEY,
+      'x-api-key': mysApiKey(),
       accept: 'application/json',
     },
   };
