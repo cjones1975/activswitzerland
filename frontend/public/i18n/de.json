@@ -412,6 +412,7 @@
       "loadError": "Der Buchungslink konnte nicht erstellt werden. Bitte versuchen Sie es erneut."
     }
   },
+  "mysAttribution": "Schweiz Tourismus",
   "attractions": {
     "title": "Attraktionen",
     "radius": "Umkreis",

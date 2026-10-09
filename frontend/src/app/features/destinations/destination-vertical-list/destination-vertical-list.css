@@ -71,9 +71,19 @@
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+  background: #f8fafc;
   text-decoration: none;
   color: inherit;
   cursor: pointer;
+}
+
+/* Mobile card's route link — wraps photo + text, leaving the attribution strip outside it. */
+.card-link {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  text-decoration: none;
+  color: inherit;
 }
 
 .card-photo {
@@ -185,6 +195,7 @@
 
   .card-footer {
     padding: 0 1.25rem 1.25rem;
+    background: #f8fafc;
   }
 
   .card-discover-btn {

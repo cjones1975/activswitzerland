@@ -89,6 +89,19 @@
   flex-direction: column;
   justify-content: flex-end;
   overflow: hidden;
+  background: #f8fafc;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Mobile overlay card's route link — fills the card above the attribution strip, and is the
+   positioning context for the absolutely-placed photo and type badge. */
+.card-link {
+  position: relative;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
   text-decoration: none;
   color: inherit;
 }

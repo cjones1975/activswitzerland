@@ -4,11 +4,12 @@ import { SkeletonModule } from 'primeng/skeleton';
 import { DestinationsService } from '../../../shared/services/destinations';
 import { LangService } from '../../../shared/services/lang';
 import { Destination } from '../../../models/destination';
+import { MysAttribution } from '../../../shared/mys-attribution/mys-attribution';
 
 @Component({
   selector: 'app-destination-search-results',
   standalone: true,
-  imports: [TranslatePipe, SkeletonModule],
+  imports: [TranslatePipe, SkeletonModule, MysAttribution],
   templateUrl: './destination-search-results.html',
   styleUrl: './destination-search-results.css',
 })

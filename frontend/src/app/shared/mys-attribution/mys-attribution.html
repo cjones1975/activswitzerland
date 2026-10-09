@@ -1,0 +1,6 @@
+@if (url(); as href) {
+  <!-- stopPropagation: the host cards are clickable and would otherwise also open their own detail view. -->
+  <a [href]="href" target="_blank" rel="noopener" (click)="$event.stopPropagation()">{{ 'mysAttribution' | translate }}</a>
+} @else {
+  <span>{{ 'mysAttribution' | translate }}</span>
+}

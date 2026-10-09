@@ -35,13 +35,19 @@
               <i class="fa-solid fa-angle-right"></i>
             </a>
           </div>
+          <app-mys-attribution [url]="dest.url" />
         </div>
       } @else {
-        <a class="destination-card" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="categoryKey ? { category: categoryKey } : {}">
-          <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
-          <span class="card-type">{{ cardTitle }}</span>
-          <span class="card-name">{{ dest.name }}</span>
-        </a>
+        <!-- The route link is an inner <a> rather than the card itself, so the attribution's own
+             external link can sit beside it instead of nested inside it (invalid, breaks SSR hydration). -->
+        <div class="destination-card">
+          <a class="card-link" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="categoryKey ? { category: categoryKey } : {}">
+            <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
+            <span class="card-type">{{ cardTitle }}</span>
+            <span class="card-name">{{ dest.name }}</span>
+          </a>
+          <app-mys-attribution [url]="dest.url" />
+        </div>
       }
     }
   }

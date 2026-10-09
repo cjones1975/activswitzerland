@@ -6,11 +6,12 @@ import { LangService } from '../../../shared/services/lang';
 import { Drawer } from '../../../shared/services/drawer';
 import { Attraction } from '../../../models/attraction';
 import { AttractionDetailPayload } from '../../attractions/attraction-detail/attraction-detail';
+import { MysAttribution } from '../../../shared/mys-attribution/mys-attribution';
 
 @Component({
   selector: 'app-attraction-search-results',
   standalone: true,
-  imports: [TranslatePipe, SkeletonModule],
+  imports: [TranslatePipe, SkeletonModule, MysAttribution],
   templateUrl: './attraction-search-results.html',
   styleUrl: './attraction-search-results.css',
 })

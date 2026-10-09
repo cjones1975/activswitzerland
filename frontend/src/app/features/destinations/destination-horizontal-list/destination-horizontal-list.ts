@@ -9,11 +9,12 @@ import { LangService } from '../../../shared/services/lang';
 import { Destination } from '../../../models/destination';
 import { CategoryKey } from '../../../models/destination-category';
 import { Breakpoint } from '../../../shared/services/breakpoint';
+import { MysAttribution } from '../../../shared/mys-attribution/mys-attribution';
 
 @Component({
   selector: 'app-destination-horizontal-list',
   standalone: true,
-  imports: [SkeletonModule, TranslatePipe, RouterLink],
+  imports: [SkeletonModule, TranslatePipe, RouterLink, MysAttribution],
   templateUrl: './destination-horizontal-list.html',
   styleUrl: './destination-horizontal-list.css',
 })
