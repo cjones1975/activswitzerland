@@ -53,8 +53,11 @@
                   }
                   @case ('destination') {
                     <div class="ai-chat-dest-card" (click)="onCardClick(card)">
-                      <img class="ai-chat-dest-photo" [src]="card.destination.image?.[0]?.url || '/assets/no_image.png'" [alt]="card.destination.name" loading="lazy" decoding="async">
-                      <div class="ai-chat-dest-name">{{ card.destination.name }}</div>
+                      <div class="ai-chat-dest-hero">
+                        <img class="ai-chat-dest-photo" [src]="card.destination.image?.[0]?.url || '/assets/no_image.png'" [alt]="card.destination.name" loading="lazy" decoding="async">
+                        <div class="ai-chat-dest-name">{{ card.destination.name }}</div>
+                      </div>
+                      <app-mys-attribution [url]="card.destination.url" />
                     </div>
                   }
                   @case ('connections') {

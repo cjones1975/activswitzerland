@@ -412,6 +412,7 @@
       "loadError": "Impossible de créer le lien de réservation. Veuillez réessayer."
     }
   },
+  "mysAttribution": "Suisse Tourisme",
   "attractions": {
     "title": "Attractions",
     "radius": "Rayon",

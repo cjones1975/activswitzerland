@@ -306,9 +306,11 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     const key = target.id ?? `${target.lng},${target.lat}`;
     const popup = this.popupInstances.get(key);
 
+    // No zoom given → keep the current zoom and only pan (used for attractions): zooming in
+    // close hid every other attraction pin, forcing the user to zoom back out to reach them.
     this.map?.flyTo({
       center: [target.lng, target.lat],
-      zoom: target.zoom ?? 15,
+      zoom: target.zoom ?? this.map.getZoom(),
       duration: 800,
     });
 

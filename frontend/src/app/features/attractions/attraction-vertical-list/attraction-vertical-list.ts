@@ -11,11 +11,12 @@ import { Drawer } from '../../../shared/services/drawer';
 import { LangService } from '../../../shared/services/lang';
 import { Attraction } from '../../../models/attraction';
 import { Destination } from '../../../models/destination';
+import { MysAttribution } from '../../../shared/mys-attribution/mys-attribution';
 
 @Component({
   selector: 'app-attraction-vertical-list',
   standalone: true,
-  imports: [TranslatePipe, SkeletonModule, Message],
+  imports: [TranslatePipe, SkeletonModule, Message, MysAttribution],
   templateUrl: './attraction-vertical-list.html',
   styleUrl: './attraction-vertical-list.css',
 })

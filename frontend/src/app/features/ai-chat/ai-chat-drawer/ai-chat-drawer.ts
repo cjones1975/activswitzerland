@@ -7,6 +7,7 @@ import { Billing } from '../../../shared/services/billing';
 import { Drawer } from '../../../shared/services/drawer';
 import { Toast } from '../../../core/services/toast';
 import { TrailThumbnail } from '../../../shared/trail-thumbnail/trail-thumbnail';
+import { MysAttribution } from '../../../shared/mys-attribution/mys-attribution';
 import { formatDistanceKmMi } from '../../../shared/utils/distance';
 import { formatChatText } from '../../../shared/utils/chat-markdown';
 import { buildForecastViewModel, DailyForecast } from '../../../models/weather';
@@ -35,7 +36,7 @@ const GENERIC_SUGGESTIONS: Suggestion[] = [
 @Component({
   selector: 'app-ai-chat-drawer',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, DecimalPipe, TrailThumbnail],
+  imports: [FormsModule, TranslatePipe, DecimalPipe, TrailThumbnail, MysAttribution],
   templateUrl: './ai-chat-drawer.html',
   styleUrl: './ai-chat-drawer.css',
 })

@@ -41,18 +41,24 @@
                 {{ 'destinations.discover' | translate }}
               </a>
             </div>
+            <app-mys-attribution [url]="dest.url" />
           </div>
         } @else {
-          <a class="destination-card" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="{ category: categoryKey() }">
-            <div class="card-photo">
-              <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
-              <span class="card-type">{{ config().cardTitle }}</span>
-              <span class="card-name">{{ dest.name }}</span>
-            </div>
-            <div class="card-text">
-              <p class="card-abstract">{{ dest.abstract }}</p>
-            </div>
-          </a>
+          <!-- The route link is an inner <a> rather than the card itself, so the attribution's own
+               external link can sit beside it instead of nested inside it (invalid, breaks SSR hydration). -->
+          <div class="destination-card">
+            <a class="card-link" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="{ category: categoryKey() }">
+              <div class="card-photo">
+                <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
+                <span class="card-type">{{ config().cardTitle }}</span>
+                <span class="card-name">{{ dest.name }}</span>
+              </div>
+              <div class="card-text">
+                <p class="card-abstract">{{ dest.abstract }}</p>
+              </div>
+            </a>
+            <app-mys-attribution [url]="dest.url" />
+          </div>
         }
       }
     }

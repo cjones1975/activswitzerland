@@ -11,11 +11,12 @@ import { MapComponent, MapMarker } from '../../../shared/map/map';
 import { CategoryConfig, CategoryKey, DESTINATION_CATEGORIES } from '../../../models/destination-category';
 import { SeoService } from '../../../shared/services/seo';
 import { Breakpoint } from '../../../shared/services/breakpoint';
+import { MysAttribution } from '../../../shared/mys-attribution/mys-attribution';
 
 @Component({
   selector: 'app-destination-vertical-list',
   standalone: true,
-  imports: [TranslatePipe, SkeletonModule, MapComponent, RouterLink],
+  imports: [TranslatePipe, SkeletonModule, MapComponent, RouterLink, MysAttribution],
   templateUrl: './destination-vertical-list.html',
   styleUrl: './destination-vertical-list.css',
 })

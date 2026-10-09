@@ -118,7 +118,6 @@
 .attraction-card {
   display: flex;
   flex-direction: column;
-  height: 110px;
   border-radius: 10px;
   overflow: hidden;
   margin: 0 1rem;
@@ -130,10 +129,6 @@
 
 .attraction-card:hover {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
-}
-
-.attraction-card--select {
-  height: auto;
 }
 
 .card-row {

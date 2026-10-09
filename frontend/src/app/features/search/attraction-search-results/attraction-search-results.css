@@ -20,7 +20,7 @@
 
 .result-card {
   display: flex;
-  height: 110px;
+  flex-direction: column;
   flex-shrink: 0;
   border-radius: 10px;
   overflow: hidden;
@@ -32,6 +32,11 @@
 
 .result-card:hover {
   box-shadow: 0 3px 10px rgba(0, 0, 0, 0.12);
+}
+
+.card-row {
+  display: flex;
+  height: 110px;
 }
 
 .card-photo {
@@ -79,7 +84,7 @@
    1536px tier) and slightly larger text, on top of the wider container from search-page.css. */
 @media (min-width: 1024px) {
   .skeleton-card,
-  .result-card {
+  .card-row {
     height: 140px;
   }
 
@@ -94,7 +99,7 @@
 
 @media (min-width: 1536px) {
   .skeleton-card,
-  .result-card {
+  .card-row {
     height: 170px;
   }
 

@@ -412,6 +412,7 @@
       "loadError": "No se pudo crear el enlace de reserva. Inténtalo de nuevo."
     }
   },
+  "mysAttribution": "Suiza Turismo",
   "attractions": {
     "title": "Atracciones",
     "radius": "Radio",

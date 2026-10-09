@@ -412,6 +412,7 @@
       "loadError": "Could not create the booking link. Please try again."
     }
   },
+  "mysAttribution": "Switzerland Tourism",
   "attractions": {
     "title": "Attractions",
     "radius": "Radius",
