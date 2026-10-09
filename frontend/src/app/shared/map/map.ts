@@ -14,7 +14,8 @@ import {
   inject,
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
-import maplibregl, { Map as MapLibreMap, Marker, Popup } from 'maplibre-gl';
+import type maplibregl from 'maplibre-gl';
+import type { LngLat, Map as MapLibreMap, Marker, Popup } from 'maplibre-gl';
 
 export interface MapMarker {
   lng: number;
@@ -76,12 +77,22 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   private popupInstances = new Map<string, Popup>();
   private mapLoaded = false;
   private resizeObserver?: ResizeObserver;
+  private destroyed = false;
+  // maplibre-gl (~780 kB) is loaded on demand rather than imported statically, so it stays out of
+  // the initial bundle — pages without a map never download it. Every use below runs only after
+  // ngAfterViewInit has assigned this (all other entry points are gated on this.map/mapLoaded).
+  private ml!: typeof maplibregl;
 
-  ngAfterViewInit(): void {
+  async ngAfterViewInit(): Promise<void> {
     // MapLibre GL needs a real WebGL/canvas context — never available under
     // Node SSR/prerendering, so the map is simply omitted server-side; the
     // page's indexable content (title/meta/text) doesn't depend on it.
     if (!this.isBrowser) return;
+    const mod = await import('maplibre-gl');
+    // Component may have been destroyed while the chunk was loading.
+    if (this.destroyed) return;
+    this.ml = (mod as { default?: typeof maplibregl }).default ?? (mod as unknown as typeof maplibregl);
+    const maplibregl = this.ml;
     this.map = new maplibregl.Map({
       container: this.mapContainer.nativeElement,
       style: this.style,
@@ -168,7 +179,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   private applyFitBounds(coords: [number, number][], animate: boolean): void {
     const bounds = coords.reduce(
       (b, c) => b.extend(c),
-      new maplibregl.LngLatBounds(coords[0], coords[0])
+      new this.ml.LngLatBounds(coords[0], coords[0])
     );
     this.map?.fitBounds(bounds, { padding: 60, duration: animate ? 800 : 0 });
   }
@@ -210,14 +221,14 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     container.dataset['customClass'] = marker.className ?? '';
     container.appendChild(el);
 
-    const instance = new maplibregl.Marker({ element: container, anchor: 'center' }).setLngLat([marker.lng, marker.lat]);
+    const instance = new this.ml.Marker({ element: container, anchor: 'center' }).setLngLat([marker.lng, marker.lat]);
 
     if (marker.label) {
       const popupHtml = marker.clickable
         ? `<button class="popup-btn" type="button"><span class="popup-name">${marker.label}</span><i class="fa-solid fa-circle-arrow-right popup-arrow"></i></button>`
         : `<span class="popup-name">${marker.label}</span>`;
 
-      const popup = new maplibregl.Popup({
+      const popup = new this.ml.Popup({
         closeButton: false,
         // maplibre-gl's closeOnClick registers a map-wide 'click' listener that unconditionally
         // calls popup.remove() — with no check for whether the click landed inside the popup's
@@ -296,7 +307,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
     }
   }
 
-  private previousView?: { center: maplibregl.LngLat; zoom: number };
+  private previousView?: { center: LngLat; zoom: number };
 
   private activateMarker(target: { lng: number; lat: number; zoom?: number; id?: string }): void {
     if (!this.previousView && this.map) {
@@ -391,7 +402,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         const el = document.createElement('div');
         el.className = 'map-marker-container';
         el.appendChild(icon);
-        const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+        const marker = new this.ml.Marker({ element: el, anchor: 'center' })
           .setLngLat(coord)
           .addTo(this.map!);
         this.tripStopMarkers.push(marker);
@@ -419,7 +430,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
       });
 
-      const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+      const marker = new this.ml.Marker({ element: el, anchor: 'center' })
         .setLngLat(coord)
         .addTo(this.map!);
       this.tripStopMarkers.push(marker);
@@ -504,7 +515,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
         border: '2px solid #fff', boxShadow: '0 1px 4px rgba(0,0,0,0.3)',
       });
 
-      const marker = new maplibregl.Marker({ element: el, anchor: 'center' })
+      const marker = new this.ml.Marker({ element: el, anchor: 'center' })
         .setLngLat([stage.lng, stage.lat])
         .addTo(this.map!);
       this.stageOverviewMarkers.push(marker);
@@ -512,6 +523,7 @@ export class MapComponent implements AfterViewInit, OnChanges, OnDestroy {
   }
 
   ngOnDestroy(): void {
+    this.destroyed = true;
     this.resizeObserver?.disconnect();
     this.markerInstances.forEach(({ marker }) => marker.remove());
     this.stageOverviewMarkers.forEach(m => m.remove());
