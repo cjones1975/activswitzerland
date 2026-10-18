@@ -2,7 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { DecimalPipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
-import { AiChat, ChatCard, ChatStatus } from '../../../shared/services/ai-chat';
+import { AiChat, ChatCard, ChatStatus, MAX_MESSAGE_LENGTH } from '../../../shared/services/ai-chat';
 import { Billing } from '../../../shared/services/billing';
 import { Drawer } from '../../../shared/services/drawer';
 import { Toast } from '../../../core/services/toast';
@@ -46,6 +46,8 @@ export class AiChatDrawer {
   private drawerSvc = inject(Drawer);
   private translate = inject(TranslateService);
   private toast = inject(Toast);
+
+  readonly maxMessageLength = MAX_MESSAGE_LENGTH;
 
   draft = signal('');
   subscribingPlan = signal<'monthly' | 'yearly' | null>(null);

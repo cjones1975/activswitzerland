@@ -29,6 +29,9 @@ const errorHandler = (err, req, res, next) => {
   res.status(error.statusCode || 500).json({
     success: false,
     err: error.message || 'Server Error',
+    // Machine-readable code (ErrorResponse's third arg) — string-only so Mongo's numeric
+    // err.code (e.g. 11000) never leaks into the response.
+    ...(typeof error.code === 'string' && { code: error.code }),
   });
 };
 

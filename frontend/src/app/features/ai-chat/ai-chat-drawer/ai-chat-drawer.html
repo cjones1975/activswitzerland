@@ -188,6 +188,13 @@
         </button>
       </div>
     </div>
+  } @else if (chat.conversationFull()) {
+    <div class="ai-chat-paywall">
+      <p class="ai-chat-paywall-body">{{ 'aiChat.conversationLimit' | translate }}</p>
+      <button type="button" class="ai-chat-subscribe-btn" (click)="chat.reset()">
+        {{ 'aiChat.newConversation' | translate }}
+      </button>
+    </div>
   } @else {
     @if (chat.usageChecked() && !chat.hasUnlimitedAccess()) {
       <div class="ai-chat-usage-note">
@@ -198,6 +205,7 @@
       <input
         type="text"
         class="ai-chat-input-field"
+        [attr.maxlength]="maxMessageLength"
         [placeholder]="'aiChat.placeholder' | translate"
         [ngModel]="draft()"
         (ngModelChange)="draft.set($event)"

@@ -33,6 +33,11 @@ function toChatCard(raw: RawChatCard): ChatCard {
   return raw;
 }
 
+/** Mirrors the backend's MAX_MESSAGE_LENGTH / MAX_CONVERSATION_TURNS (controllers/ai.js) — the
+ * server checks stay authoritative; these only let the UI avoid a round trip. */
+export const MAX_MESSAGE_LENGTH = 1000;
+const MAX_CONVERSATION_TURNS = 20;
+
 export interface ChatMessage {
   role: 'user' | 'assistant';
   text: string;
@@ -76,6 +81,14 @@ export class AiChat {
   readonly paywalled = computed(() =>
     this.usageChecked() && !this.hasUnlimitedAccess() && this.messagesUsed() >= this.freeLimit()
   );
+  /** Set when the server reports conversation_limit, covering any drift from the client-side
+   * count below. Cleared by reset(). */
+  private readonly serverLimitHit = signal(false);
+  readonly conversationFull = computed(() =>
+    this.serverLimitHit() ||
+    this.messages().filter(m => m.role === 'user').length >= MAX_CONVERSATION_TURNS
+  );
+
   /** The tool call currently in flight, if any — null while the model is composing its final
    * reply (or hasn't started a tool call yet), driving the "Checking the forecast…" status row. */
   readonly currentStatus = signal<ChatStatus | null>(null);
@@ -139,7 +152,7 @@ export class AiChat {
 
   async sendMessage(text: string): Promise<void> {
     const trimmed = text.trim();
-    if (!trimmed || this.sending() || this.paywalled()) return;
+    if (!trimmed || this.sending() || this.paywalled() || this.conversationFull()) return;
 
     if (!this.auth.isLoggedIn()) {
       this.drawerSvc.open('auth');
@@ -169,6 +182,21 @@ export class AiChat {
         await this.refreshUsage();
         this.messages.set(this.messages().slice(0, -1));
         return;
+      }
+      if (response.status === 409 || response.status === 400) {
+        const code = (await response.json().catch(() => null))?.code;
+        if (code === 'conversation_limit') {
+          this.messages.set(this.messages().slice(0, -1));
+          this.serverLimitHit.set(true);
+          return;
+        }
+        if (code === 'message_too_long') {
+          this.messages.set([
+            ...this.messages().slice(0, -1),
+            { role: 'assistant', text: this.translate.instant('aiChat.messageTooLong', { max: MAX_MESSAGE_LENGTH }) },
+          ]);
+          return;
+        }
       }
       if (!response.ok || !response.body) throw new Error('Request failed');
 
@@ -227,5 +255,6 @@ export class AiChat {
   reset(): void {
     this.conversationId.set(null);
     this.messages.set([]);
+    this.serverLimitHit.set(false);
   }
 }
