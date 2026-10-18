@@ -60,7 +60,10 @@
     "paywallBody": "Abbonati per continuare a chattare con l'assistente di viaggio IA.",
     "subscribeMonthly": "Mensile — CHF 3.50/mese",
     "subscribeYearly": "Annuale — CHF 20/anno",
-    "subscribeSaveBadge": "Risparmia il 50%"
+    "subscribeSaveBadge": "Risparmia il 50%",
+    "conversationLimit": "Questa conversazione ha raggiunto la lunghezza massima. Avviane una nuova per continuare.",
+    "newConversation": "Nuova conversazione",
+    "messageTooLong": "Questo messaggio è troppo lungo. Mantienilo sotto i {{max}} caratteri."
   },
   "billing": {
     "title": "Abbonamento Chat IA",

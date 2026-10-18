@@ -78,14 +78,21 @@ function cardsFromToolResult(toolName, input, result) {
   return (Array.isArray(result) ? result : []).slice(0, 2).map(route => ({ type, route }));
 }
 
-async function requestTurn(messages) {
+// Max tool rounds per user message — each round is another paid model call. Past this, one final
+// call with tool_choice 'none' forces a plain-text answer from what's already been gathered.
+const MAX_TOOL_ITERATIONS = 6;
+
+async function requestTurn(messages, { allowTools = true } = {}) {
   return client.messages.create({
     model: MODEL,
     max_tokens: 4096,
     thinking: { type: 'adaptive' },
     output_config: { effort: 'medium' },
     system: SYSTEM_PROMPT,
+    // tools stays set even when disallowed — the history contains tool_use blocks, which the API
+    // requires tool definitions for.
     tools: AI_TOOLS,
+    ...(allowTools ? {} : { tool_choice: { type: 'none' } }),
     messages,
   });
 }
@@ -109,7 +116,9 @@ export async function runConversation({ messages, context, onStatus }) {
   let response = await requestTurn(working);
   working.push({ role: 'assistant', content: response.content });
 
+  let toolRounds = 0;
   while (response.stop_reason === 'tool_use') {
+    toolRounds += 1;
     const toolResults = [];
     for (const block of response.content) {
       if (block.type !== 'tool_use') continue;
@@ -131,7 +140,7 @@ export async function runConversation({ messages, context, onStatus }) {
     }
     working.push({ role: 'user', content: toolResults });
 
-    response = await requestTurn(working);
+    response = await requestTurn(working, { allowTools: toolRounds < MAX_TOOL_ITERATIONS });
     working.push({ role: 'assistant', content: response.content });
   }
 

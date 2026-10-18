@@ -5,6 +5,8 @@ import User from '../models/User.js';
 import { runConversation } from '../utils/aiAgent.js';
 
 const FREE_MESSAGE_LIMIT = 5;
+const MAX_MESSAGE_LENGTH = 1000;
+const MAX_CONVERSATION_TURNS = 20;
 
 // @desc    Send a message to the AI chat assistant — starts a new conversation when
 //          conversationId is omitted, otherwise continues an existing one. Streamed as
@@ -16,6 +18,9 @@ export const postChatMessage = asyncHandler(async (req, res, next) => {
     const { conversationId, message, context } = req.body;
     if (!message || !String(message).trim()) {
         return next(new ErrorResponse('message is required', 400));
+    }
+    if (typeof message !== 'string' || message.length > MAX_MESSAGE_LENGTH) {
+        return next(new ErrorResponse('message is too long', 400, 'message_too_long'));
     }
 
     // protect's User.findById doesn't select these (select: false on the schema) — re-fetch
@@ -33,6 +38,14 @@ export const postChatMessage = asyncHandler(async (req, res, next) => {
         conversation = await AiConversation.findOne({ _id: conversationId, user: req.user.id });
         if (!conversation) {
             return next(new ErrorResponse('Conversation not found', 404));
+        }
+        // Tool results are also role:'user' but carry array content — only string content is a
+        // real user turn. Checked before the free-message increment so a rejected message isn't
+        // charged.
+        const userTurns = conversation.messages
+            .filter(m => m.role === 'user' && typeof m.content === 'string').length;
+        if (userTurns >= MAX_CONVERSATION_TURNS) {
+            return next(new ErrorResponse('Conversation limit reached', 409, 'conversation_limit'));
         }
     } else {
         conversation = await AiConversation.create({ user: req.user.id, messages: [] });

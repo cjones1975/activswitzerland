@@ -60,7 +60,10 @@
     "paywallBody": "Abonniere, um weiter mit dem KI-Reiseassistenten zu chatten.",
     "subscribeMonthly": "Monatlich — CHF 3.50/Mt.",
     "subscribeYearly": "Jährlich — CHF 20/Jahr",
-    "subscribeSaveBadge": "50% sparen"
+    "subscribeSaveBadge": "50% sparen",
+    "conversationLimit": "Diese Unterhaltung hat ihre maximale Länge erreicht. Starte eine neue, um weiterzuchatten.",
+    "newConversation": "Neue Unterhaltung starten",
+    "messageTooLong": "Diese Nachricht ist zu lang. Bitte halte sie unter {{max}} Zeichen."
   },
   "billing": {
     "title": "KI-Chat-Abonnement",

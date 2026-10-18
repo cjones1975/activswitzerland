@@ -60,7 +60,10 @@
     "paywallBody": "Subscribe to keep chatting with the AI travel assistant.",
     "subscribeMonthly": "Monthly — CHF 3.50/mo",
     "subscribeYearly": "Yearly — CHF 20/yr",
-    "subscribeSaveBadge": "Save 50%"
+    "subscribeSaveBadge": "Save 50%",
+    "conversationLimit": "This conversation has reached its length limit. Start a new one to keep chatting.",
+    "newConversation": "Start new conversation",
+    "messageTooLong": "That message is too long. Please keep it under {{max}} characters."
   },
   "billing": {
     "title": "AI Chat Subscription",
