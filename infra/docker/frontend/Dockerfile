@@ -8,7 +8,7 @@
 # see context/features/seo-ssr-foundation-spec.md. Missing/unreachable falls
 # back gracefully (Home's category lists empty, smaller sitemap) rather than
 # failing the build.
-FROM node:20-alpine AS builder
+FROM node:24-alpine AS builder
 
 ARG SITE_URL=https://www.activswitzerland.com
 ARG SSR_API_URL=http://localhost:3000
@@ -56,7 +56,7 @@ CMD ["nginx", "-g", "daemon off;"]
 # (http://backend:3000, the compose service name), which is a different
 # value than whatever reached the backend at build time. Supplied via
 # docker-compose.prod.yml's environment: for this service.
-FROM node:20-alpine AS frontend-ssr
+FROM node:24-alpine AS frontend-ssr
 
 WORKDIR /app
 
