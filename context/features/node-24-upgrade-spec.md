@@ -24,7 +24,7 @@ Nothing in the repo pins a Node version besides the Dockerfiles: no `.nvmrc`, no
 ## Verification
 
 - Frontend: `npx ng build --configuration production` succeeds on Node 24; check the existing bundle-size warning is unchanged.
-- Backend: existing test suite passes on Node 24.
+- Backend: no test suite exists; `npm ci` succeeds and `node --check src/server.js` passes on Node 24, then rely on the smoke test below.
 - Build both images locally, then on the NAS under a different project name or port before touching production.
 - SSR smoke test: load a destination page through the SSR container and confirm it renders.
 - Backend smoke test against real MongoDB/Redis: login, an AI chat message, a Stripe webhook.
