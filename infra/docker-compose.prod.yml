@@ -78,6 +78,21 @@ services:
     networks:
       - app_network
 
+  # Cloudflare Tunnel connector — the only public ingress. Without it Cloudflare returns
+  # Error 1033. Public hostnames/ingress targets are configured on the tunnel in the
+  # Cloudflare Zero Trust dashboard, not here.
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: activswitzerland_cloudflared
+    restart: unless-stopped
+    command: tunnel --no-autoupdate run
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN}
+    depends_on:
+      - frontend
+    networks:
+      - app_network
+
   mongo-express:
     image: mongo-express:1
     container_name: activswitzerland_mongo_express
