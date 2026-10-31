@@ -52,7 +52,7 @@ On a failed `getDestination` during SSR (via `RESPONSE_INIT`): 404 → HTTP 404 
 
 - AI agent's MySwitzerland calls (`backend/src/utils/myswitzerland.js`) still uncached.
 - Nightly paced sync of destinations into Mongo so page renders don't depend on MySwitzerland at all.
-- Cloudflare edge caching of destination HTML (`cf-cache-status: DYNAMIC` today).
+- ~~Cloudflare edge caching of destination HTML (`cf-cache-status: DYNAMIC` today).~~ Done since: a dashboard Cache Rule (`uri.path contains "/destinations/"`, 4h) now caches destination pages and the destination detail API. See the 2026-10-28 entry in `current-feature.md`.
 - `context/deployment-plan.md` predates the move to Cloudflare (tunnel token in `.env.prod`) and needs updating.
 
 ---

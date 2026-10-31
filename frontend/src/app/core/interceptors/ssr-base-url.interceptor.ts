@@ -1,4 +1,4 @@
-import { PLATFORM_ID, inject } from '@angular/core';
+import { PLATFORM_ID, REQUEST, inject } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { HttpInterceptorFn } from '@angular/common/http';
 
@@ -27,5 +27,29 @@ export const ssrBaseUrlInterceptor: HttpInterceptorFn = (req, next) => {
   }
 
   const apiUrl = process.env['SSR_API_URL'] ?? 'http://localhost:3000';
-  return next(req.clone({ url: `${apiUrl}${req.url}` }));
+  return next(req.clone({ url: `${apiUrl}${req.url}`, setHeaders: visitorHeaders() }));
 };
+
+// The backend logs every MySwitzerland call with the visitor who caused it
+// (backend/src/utils/mysCallLog.js). Calls made here during SSR come from this
+// server, not the visitor, so the page request's Cloudflare details are passed
+// along. Empty during build-time prerender, where there is no visitor.
+function visitorHeaders(): Record<string, string> {
+  const request = inject(REQUEST, { optional: true });
+  if (!request) return {};
+
+  const headers: Record<string, string> = {
+    'x-visitor-page': new URL(request.url).pathname,
+  };
+  const forward: [string, string][] = [
+    ['cf-connecting-ip', 'x-visitor-ip'],
+    ['cf-ipcountry', 'x-visitor-country'],
+    ['x-cf-asn', 'x-visitor-asn'],
+    ['user-agent', 'x-visitor-ua'],
+  ];
+  for (const [from, to] of forward) {
+    const value = request.headers.get(from);
+    if (value) headers[to] = value;
+  }
+  return headers;
+}
