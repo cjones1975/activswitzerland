@@ -29,6 +29,7 @@
           <div class="destination-card destination-card--desktop">
             <div class="card-photo">
               <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
+              <app-image-credit [holder]="dest.image?.[0]?.copyrightHolder" />
               <span class="card-type">{{ config().cardTitle }}</span>
             </div>
             <div class="card-text">
@@ -50,6 +51,7 @@
             <a class="card-link" [routerLink]="langSvc.localize(['destinations', dest.identifier])" [queryParams]="{ category: categoryKey() }">
               <div class="card-photo">
                 <img class="card-bg" [src]="dest.image?.[0]?.url || '/assets/no_image.png'" [alt]="dest.name" loading="lazy" decoding="async">
+                <app-image-credit [holder]="dest.image?.[0]?.copyrightHolder" />
                 <span class="card-type">{{ config().cardTitle }}</span>
                 <span class="card-name">{{ dest.name }}</span>
               </div>

@@ -14,6 +14,7 @@
           <ng-template #item let-img>
             <div class="galleria-img">
               <img class="galleria-bg" [src]="img.url" [alt]="img.name || ''" loading="eager" fetchpriority="high" decoding="async">
+              <app-image-credit [holder]="img.copyrightHolder" />
             </div>
           </ng-template>
           <ng-template #thumbnail let-img>

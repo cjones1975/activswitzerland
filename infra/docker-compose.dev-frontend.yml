@@ -1,0 +1,24 @@
+# Local Angular dev server, layered on docker-compose.yml:
+#   docker compose -f docker-compose.yml -f docker-compose.dev-frontend.yml up -d
+# It shares the backend container's network, so the dev environment's
+# apiUrl (http://localhost:3000) also works during server-side rendering.
+# Port 4200 is therefore published on the backend service.
+services:
+  backend:
+    ports:
+      - "4200:4200"
+
+  frontend-dev:
+    image: node:24-alpine
+    container_name: activswitzerland_frontend_dev
+    working_dir: /app
+    command: npx ng serve --host 0.0.0.0 --poll 1000
+    user: "${UID:-1000}:${GID:-1000}"
+    environment:
+      NG_CLI_ANALYTICS: "false"
+      NG_ALLOWED_HOSTS: "localhost"
+    volumes:
+      - ../frontend:/app
+    network_mode: "service:backend"
+    depends_on:
+      - backend

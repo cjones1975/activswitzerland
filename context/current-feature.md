@@ -2576,3 +2576,15 @@
 - Optional dashboard step: Transform Rule adding `x-cf-asn`
 - Verified: backend syntax, isolated logger test, frontend `tsc`, and end-to-end in an isolated Docker stack with a fake MySwitzerland server (nginx real-IP log, `ssr`/`api` attribution, 429 message, spoof ignored, summary script, log rotation). Not yet deployed
 - Finding: one SSR destination page render = 2 MySwitzerland calls (destination + nearby attractions) per language
+
+### 2026-10-31 — MySwitzerland Terms Compliance: Image Credits + CC BY-SA Notice
+
+- Reviewed https://developer.myswitzerland.io/terms-and-conditions (v9, 15 Jul 2022) against the app. Already compliant: API key server-side only and not shared; source named + backlink on every card, detail page and AI chat card (`app-mys-attribution`); 24h refresh fits "regular updating"
+- Images without a `copyrightHolder` stay displayed (filter in `controllers/myswitzerland.js` remains disabled) — user decision: every image is used in the same context as on myswitzerland.com
+- New `shared/image-credit` component: small "© holder" chip, white at 75% opacity, bottom-right of the photo. Added to detail galleries (main image only, not thumbnails), destination cards, attraction cards, search results and AI chat destination cards. Row thumbnails wrapped in a `.card-photo` div (image now `.card-photo-img`) to give the chip a positioning context; overlay cards' name bar got extra bottom padding so the chip doesn't cover the name
+- `credit-label.ts`: `copyrightHolder` mixes credits and usage terms. Parts split on " / " (spaced; "Switzerland Tourism/Andre Meier" stays one name); parts matching usage terms are dropped — "Editorial and touristic use", "redaktionelle und touristische Nutzung", "Full buy-out", "weltweit/medienunabhängig". No chip when nothing is left. "Partner image for editorial and touristic use / Jakob Christen" → "© Jakob Christen". Checked against 13 real values sampled from the API
+- `MysImage` model gained `copyrightHolder`
+- Terms & Conditions §11: paragraph stating MySwitzerland data is CC BY-SA 4.0 (links to myswitzerland.com and the licence), adaptations are shared under the same licence, images are excluded and stay with their rights holder
+- Not covered: Explore Trips cover photos (`tripCoverImage.js` stores only the URL, so no credit available)
+- Finding: the local `MYS_DEV_KEY` was the same key as production's `MYS_KEY` in `infra/.env.prod`, so dev and prod shared one quota (local testing got `429 Limit Exceeded`). Swapped the two values in local `backend/config/.env` and `infra/.env`; production unchanged. Production may still be hitting the limit — check the new call log
+- Local dev setup: created `infra/.env` (gitignored) for `infra/docker-compose.yml`. Added `infra/docker-compose.dev-frontend.yml` to run `ng serve` in Docker (Docker Desktop doesn't support `--network host`); Node 24 is now installed in WSL via nvm, so plain `npx ng serve` also works with `docker compose up -d` for the backend. `angular.json`: `cli.analytics: false`

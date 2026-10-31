@@ -55,6 +55,7 @@
                     <div class="ai-chat-dest-card" (click)="onCardClick(card)">
                       <div class="ai-chat-dest-hero">
                         <img class="ai-chat-dest-photo" [src]="card.destination.image?.[0]?.url || '/assets/no_image.png'" [alt]="card.destination.name" loading="lazy" decoding="async">
+                        <app-image-credit [holder]="card.destination.image?.[0]?.copyrightHolder" />
                         <div class="ai-chat-dest-name">{{ card.destination.name }}</div>
                       </div>
                       <app-mys-attribution [url]="card.destination.url" />
