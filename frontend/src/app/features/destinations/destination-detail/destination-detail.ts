@@ -12,11 +12,12 @@ import { Destination } from '../../../models/destination';
 import { DailyForecast, WeatherPayload } from '../../../models/weather';
 import { AttractionVerticalList } from '../../attractions/attraction-vertical-list/attraction-vertical-list';
 import { GygActivities } from '../../experiences/gyg-activities/gyg-activities';
+import { ImageCredit } from '../../../shared/image-credit/image-credit';
 
 @Component({
   selector: 'app-destination-detail',
   standalone: true,
-  imports: [TranslatePipe, GalleriaModule, AttractionVerticalList, GygActivities],
+  imports: [TranslatePipe, GalleriaModule, AttractionVerticalList, GygActivities, ImageCredit],
   templateUrl: './destination-detail.html',
   styleUrl: './destination-detail.css',
 })

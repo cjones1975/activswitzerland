@@ -1,3 +1,12 @@
+# Docker's default json-file logging never rotates. The backend and nginx logs
+# now include visitor IPs (MySwitzerland call log, access log), so cap them:
+# at most 5 x 10 MB per container, oldest dropped first.
+x-logging: &rotated-logs
+  driver: json-file
+  options:
+    max-size: "10m"
+    max-file: "5"
+
 services:
   mongodb:
     image: mongo:7
@@ -38,6 +47,7 @@ services:
     image: ghcr.io/cjones1975/activswitzerland-backend:${IMAGE_TAG:-latest}
     container_name: activswitzerland_backend
     restart: unless-stopped
+    logging: *rotated-logs
     env_file:
       - .env.prod
     depends_on:
@@ -52,6 +62,7 @@ services:
     image: ghcr.io/cjones1975/activswitzerland-frontend-ssr:${IMAGE_TAG:-latest}
     container_name: activswitzerland_frontend_ssr
     restart: unless-stopped
+    logging: *rotated-logs
     environment:
       # destinations, destinations/:id, explore-trips, and search render
       # live per request — this is the compose-network address, distinct
@@ -70,6 +81,7 @@ services:
     image: ghcr.io/cjones1975/activswitzerland-frontend:${IMAGE_TAG:-latest}
     container_name: activswitzerland_frontend
     restart: unless-stopped
+    logging: *rotated-logs
     ports:
       - "127.0.0.1:8080:80"
     depends_on:

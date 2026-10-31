@@ -18,11 +18,12 @@ import { GeoLocation, ActivityPickerPayload } from '../../../models/geo-point';
 import { locId, locLat, locLon } from '../../../shared/utils/geo-location';
 import { stopDayOptions, dayChoiceLabelParams } from '../../../shared/utils/date-range';
 import { MysAttribution } from '../../../shared/mys-attribution/mys-attribution';
+import { ImageCredit } from '../../../shared/image-credit/image-credit';
 
 @Component({
   selector: 'app-all-attractions',
   standalone: true,
-  imports: [FormsModule, InputTextModule, SkeletonModule, Select, SelectButton, TranslatePipe, Message, MysAttribution],
+  imports: [FormsModule, InputTextModule, SkeletonModule, Select, SelectButton, TranslatePipe, Message, MysAttribution, ImageCredit],
   templateUrl: './all-attractions.html',
   styleUrl: './all-attractions.css',
 })

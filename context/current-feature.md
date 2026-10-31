@@ -2552,3 +2552,39 @@
 - Redis: AOF persistence + `maxmemory 256mb allkeys-lru` + `redis_data` volume in both compose files
 - Verified: backend syntax, frontend `tsc`, compose config, and a 10-case middleware test against real Redis in a throwaway container — all pass. Not yet deployed or exercised end-to-end via SSR
 - Noted: `context/deployment-plan.md` doesn't reflect the Cloudflare setup
+
+### 2026-10-28 — Caching Layers for Destinations (Documented)
+
+- No code change; records how destinations are cached, since the docs disagreed (the bot-traffic spec said destination HTML wasn't edge-cached, the Matomo spec said it was)
+- **Layer 1 — Cloudflare edge:** a dashboard Cache Rule (set up by the user, not in the repo) caches any request where `http.request.uri.path contains "/destinations/"`. Edge TTL 4h per `cookie-consent-matomo-spec.md`. A cached hit never reaches the NAS. The rule matches both:
+  - destination pages (`/<lang>/destinations/:id`, SSR HTML)
+  - the destination detail API (`/api/v1/myswitzerland/destinations/:id`) — public data, so edge-caching it is fine
+  - Not matched: the list endpoint `/api/v1/myswitzerland/destinations` (no trailing slash), `destinationsbygeobbox`, `searchdestinations`, `/api/v1/hotels/destinations` — these are cached by Redis only
+- **Layer 2 — Redis (backend `cache.js`, from the 2026-10-07 bot-traffic work):** MySwitzerland, hikes and bikes responses — 24h fresh + jitter, 7-day stale fallback if MySwitzerland fails, keys prefixed `mys:`
+- Worst-case staleness after a MySwitzerland change: ~4h (edge) + ~24h (Redis). To force a refresh, purge both: Cloudflare cache (by URL or prefix) and the matching `mys:` keys in Redis
+- The analytics host (`analytics.activswitzerland.com`) must stay outside the Cache Rule (see the Matomo spec)
+- Corrected `mys-bot-traffic-resilience-spec.md`, which still listed edge caching as a follow-up with `cf-cache-status: DYNAMIC`
+
+### 2026-10-30 — MySwitzerland Call Logging
+
+- Branch: `feature/mys-call-logging`; spec `context/features/mys-call-logging-spec.md`
+- Context: the Cloudflare firewall export (29–30 Oct) only lists challenged/blocked requests, which never reach the origin, and Cloudflare can't export passed traffic. Its dashboard showed ~2.5k requests/24h: 1.83k served by origin, 495 from cache, 207 mitigated. That's low, yet the quota still runs out
+- Backend: `visitorContext` middleware (AsyncLocalStorage) + `mysCallLog` axios interceptors write one JSON line per MySwitzerland call with the visitor, the route and the upstream message (`Limit Exceeded` vs `Too Many Requests`); `src/scripts/mysCallSummary.js` summarises it
+- SSR interceptor forwards the page visitor's Cloudflare details to the backend as `x-visitor-*`
+- nginx access log now records `CF-Connecting-IP`/country/ASN instead of the tunnel IP
+- Prod compose: log rotation (10 MB × 5) for backend, frontend-ssr, frontend
+- Optional dashboard step: Transform Rule adding `x-cf-asn`
+- Verified: backend syntax, isolated logger test, frontend `tsc`, and end-to-end in an isolated Docker stack with a fake MySwitzerland server (nginx real-IP log, `ssr`/`api` attribution, 429 message, spoof ignored, summary script, log rotation). Not yet deployed
+- Finding: one SSR destination page render = 2 MySwitzerland calls (destination + nearby attractions) per language
+
+### 2026-10-31 — MySwitzerland Terms Compliance: Image Credits + CC BY-SA Notice
+
+- Reviewed https://developer.myswitzerland.io/terms-and-conditions (v9, 15 Jul 2022) against the app. Already compliant: API key server-side only and not shared; source named + backlink on every card, detail page and AI chat card (`app-mys-attribution`); 24h refresh fits "regular updating"
+- Images without a `copyrightHolder` stay displayed (filter in `controllers/myswitzerland.js` remains disabled) — user decision: every image is used in the same context as on myswitzerland.com
+- New `shared/image-credit` component: small "© holder" chip, white at 75% opacity, bottom-right of the photo. Added to detail galleries (main image only, not thumbnails), destination cards, attraction cards, search results and AI chat destination cards. Row thumbnails wrapped in a `.card-photo` div (image now `.card-photo-img`) to give the chip a positioning context; overlay cards' name bar got extra bottom padding so the chip doesn't cover the name
+- `credit-label.ts`: `copyrightHolder` mixes credits and usage terms. Parts split on " / " (spaced; "Switzerland Tourism/Andre Meier" stays one name); parts matching usage terms are dropped — "Editorial and touristic use", "redaktionelle und touristische Nutzung", "Full buy-out", "weltweit/medienunabhängig". No chip when nothing is left. "Partner image for editorial and touristic use / Jakob Christen" → "© Jakob Christen". Checked against 13 real values sampled from the API
+- `MysImage` model gained `copyrightHolder`
+- Terms & Conditions §11: paragraph stating MySwitzerland data is CC BY-SA 4.0 (links to myswitzerland.com and the licence), adaptations are shared under the same licence, images are excluded and stay with their rights holder
+- Not covered: Explore Trips cover photos (`tripCoverImage.js` stores only the URL, so no credit available)
+- Finding: the local `MYS_DEV_KEY` was the same key as production's `MYS_KEY` in `infra/.env.prod`, so dev and prod shared one quota (local testing got `429 Limit Exceeded`). Swapped the two values in local `backend/config/.env` and `infra/.env`; production unchanged. Production may still be hitting the limit — check the new call log
+- Local dev setup: created `infra/.env` (gitignored) for `infra/docker-compose.yml`. Added `infra/docker-compose.dev-frontend.yml` to run `ng serve` in Docker (Docker Desktop doesn't support `--network host`); Node 24 is now installed in WSL via nvm, so plain `npx ng serve` also works with `docker compose up -d` for the backend. `angular.json`: `cli.analytics: false`

@@ -11,6 +11,7 @@ import { AttractionMarkersService } from '../../../shared/services/attraction-ma
 import { LangService } from '../../../shared/services/lang';
 import { Attraction } from '../../../models/attraction';
 import { GeoLocation } from '../../../models/geo-point';
+import { ImageCredit } from '../../../shared/image-credit/image-credit';
 
 export interface AttractionDetailPayload {
   attraction: Attraction;
@@ -35,7 +36,7 @@ const LANG_NAMES: Record<string, string> = {
 @Component({
   selector: 'app-attraction-detail',
   standalone: true,
-  imports: [TranslatePipe, GalleriaModule, SkeletonModule, Message],
+  imports: [TranslatePipe, GalleriaModule, SkeletonModule, Message, ImageCredit],
   templateUrl: './attraction-detail.html',
   styleUrl: './attraction-detail.css',
 })

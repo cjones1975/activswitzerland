@@ -6,9 +6,15 @@ import errorHandler from './middleware/error.js';
 import corsHandler from './middleware/cors.js';
 import connectDB from './middleware/mongodb.js';
 import { connectRedis } from './middleware/redis.js';
+import { visitorContext } from './middleware/visitorContext.js';
+import { installMysCallLog } from './utils/mysCallLog.js';
 
 // Configure dotenv to load environment variables
 dotenv.config({ path: './config/.env' });
+
+// One log line per MySwitzerland call (quota use), tagged with the visitor
+// who triggered it — see utils/mysCallLog.js.
+installMysCallLog();
 
 // Connect to database
 if (process.env.NODE_ENV !== 'test') {
@@ -34,6 +40,7 @@ import adminHikes from './routes/adminHikes.js';
 const app = express();
 
 // Middleware
+app.use(visitorContext());
 app.use(corsHandler());
 
 // Billing is mounted ahead of the global JSON parser so /webhook's express.raw() sees Stripe's

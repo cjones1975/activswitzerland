@@ -122,7 +122,8 @@
 .card-name {
   position: relative;
   z-index: 1;
-  padding: 2rem 0.75rem 0.75rem;
+  /* Extra bottom room keeps the name clear of the image-credit chip in the corner. */
+  padding: 2rem 0.75rem 1.35rem;
   font-size: 2rem;
   font-weight: 700;
   color: #fff;

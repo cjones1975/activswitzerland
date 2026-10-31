@@ -274,7 +274,8 @@
   left: 0;
   right: 0;
   bottom: 0;
-  padding: 0.5rem 0.65rem;
+  /* Extra bottom room keeps the name clear of the image-credit chip in the corner. */
+  padding: 0.5rem 0.65rem 1.2rem;
   background: linear-gradient(to top, rgba(12, 35, 64, 0.85), rgba(12, 35, 64, 0));
   color: var(--color-white);
   font-size: 0.82rem;

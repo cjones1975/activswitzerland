@@ -7,11 +7,12 @@ import { Drawer } from '../../../shared/services/drawer';
 import { Attraction } from '../../../models/attraction';
 import { AttractionDetailPayload } from '../../attractions/attraction-detail/attraction-detail';
 import { MysAttribution } from '../../../shared/mys-attribution/mys-attribution';
+import { ImageCredit } from '../../../shared/image-credit/image-credit';
 
 @Component({
   selector: 'app-attraction-search-results',
   standalone: true,
-  imports: [TranslatePipe, SkeletonModule, MysAttribution],
+  imports: [TranslatePipe, SkeletonModule, MysAttribution, ImageCredit],
   templateUrl: './attraction-search-results.html',
   styleUrl: './attraction-search-results.css',
 })

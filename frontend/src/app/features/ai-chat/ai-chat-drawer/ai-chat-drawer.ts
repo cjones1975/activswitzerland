@@ -14,6 +14,7 @@ import { buildForecastViewModel, DailyForecast } from '../../../models/weather';
 import { TripConnection } from '../../../models/trip';
 import type { HikeDetailPayload } from '../../hikes/hike-detail/hike-detail';
 import type { BikeDetailPayload } from '../../bikes/bike-detail/bike-detail';
+import { ImageCredit } from '../../../shared/image-credit/image-credit';
 
 interface Suggestion {
   icon: string;
@@ -36,7 +37,7 @@ const GENERIC_SUGGESTIONS: Suggestion[] = [
 @Component({
   selector: 'app-ai-chat-drawer',
   standalone: true,
-  imports: [FormsModule, TranslatePipe, DecimalPipe, TrailThumbnail, MysAttribution],
+  imports: [FormsModule, TranslatePipe, DecimalPipe, TrailThumbnail, MysAttribution, ImageCredit],
   templateUrl: './ai-chat-drawer.html',
   styleUrl: './ai-chat-drawer.css',
 })
